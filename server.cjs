@@ -630,57 +630,51 @@ app.get('/api/activity', (req, res) => {
   res.json(readActivity());
 });
 
-const generateAgentOpinion = (agent, summary) => {
-  const s = summary.trim();
-  const sl = s.toLowerCase();
+const callLocalGemma = async (systemPrompt, userPrompt) => {
+  try {
+    const response = await axios.post('http://localhost:11434/api/chat', {
+      model: 'gemma4:latest',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
+      ],
+      options: {
+        temperature: 0.7
+      },
+      stream: false
+    });
+    return response.data?.message?.content || '';
+  } catch (error) {
+    console.error('Error calling local Gemma:', error.message);
+    try {
+      const response = await axios.post('http://localhost:11434/api/chat', {
+        model: 'gemma4-fast:latest',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ],
+        stream: false
+      });
+      return response.data?.message?.content || '';
+    } catch (e) {
+      console.error('Fallback model also failed:', e.message);
+      return '';
+    }
+  }
+};
 
-  // Extract topic keywords to make opinions contextually specific
-  const isTech = sl.match(/api|backend|servidor|banco|banco de dados|cloud|infra|deploy|docker|kubernetes|node|auth|login|oauth|token/);
-  const isDesign = sl.match(/tela|design|layout|cor|tema|ui|ux|interface|dark|light|botao|modal|componente|figma/);
-  const isProcess = sl.match(/sprint|scrum|daily|retro|kanban|processo|metodologia|cerimonia|reuniao/);
-  const isHR = sl.match(/contratar|demitir|feedback|equipe|people|rh|time|onboarding|salario/);
-  const isProduct = sl.match(/produto|feature|funcionalidade|usuario|cliente|metrica|conversao|funil|kpi/);
-
-  if (agent.id === 'ceo') {
-    const urgency = isTech ? 'nossa stack tecnológica' : isDesign ? 'a experiência visual do produto' : isProduct ? 'as métricas de crescimento' : 'nossa posição competitiva';
-    return `Pessoas, "${s}" vai impactar diretamente ${urgency}. Meu dilema aqui é claro: ${agent.dilemma}. Mas considerando o mercado e a velocidade que nossos concorrentes estão se movendo, votamos por ir. Vamos validar rápido, medir e iterar. Deadline: próxima sprint. Aprovo!`;
-  }
-  if (agent.id === 'cto') {
-    const concern = isTech ? `A arquitetura de "${s}" exige revisão da camada de serviços para não comprometer a escalabilidade horizontal.` : isDesign ? `Precisamos garantir que "${s}" não introduza componentes que quebrem o SSR ou aumentem o bundle size.` : `A implementação de "${s}" requer avaliação de impacto na infraestrutura existente.`;
-    return `${concern} Como CTO, meu dilema é ${agent.dilemma}. Recomendo criarmos uma spike técnica de 2 dias para mapear os riscos antes de commitar a implementação completa. Precisamos de arquitetura limpa, não apenas de código funcionando.`;
-  }
-  if (agent.id === 'dir_ops') {
-    return `Operacionalmente, preciso entender o custo total de ownership de "${s}". Isso impacta orçamento de ferramental, horas de engenharia e possíveis custos de infraestrutura? Meu dilema é ${agent.dilemma}. Apoio condicionalmente — mas quero um forecast de esforço antes do kick-off.`;
-  }
-  if (agent.id === 'dir_design') {
-    const designNote = isDesign ? `Para "${s}", já tenho referências visuais no Figma que podemos usar como base.` : `Mesmo que "${s}" pareça técnico, toda entrega tem um impacto visual na interface do usuário.`;
-    return `${designNote} Não abriremos mão da consistência do design system da Flose. Meu dilema é ${agent.dilemma}. Preciso estar no loop de todas as decisões de interface — qualquer componente novo passa pela aprovação do Design antes do merge.`;
-  }
-  if (agent.id === 'mgr_eng') {
-    return `Para entregarmos "${s}" com qualidade e sem comprometer o time, precisamos de um planejamento de sprint realista. Meu dilema é ${agent.dilemma}. Proponho que quebremos isso em incrementos entregáveis: um MVP funcional primeiro, depois as otimizações. O time já está em capacidade alta — precisamos proteger a saúde deles.`;
-  }
-  if (agent.id === 'mgr_prod') {
-    const productAngle = isProduct ? `Os dados de comportamento do usuário mostram que "${s}" é uma das top 3 solicitações do nosso NPS.` : isTech ? `Do ponto de produto, "${s}" vai desbloquear features que estão bloqueadas há meses por limitações técnicas.` : `Nossa pesquisa qualitativa confirma que "${s}" resolve uma fricção real na jornada do usuário.`;
-    return `${productAngle} Sou completamente a favor. Meu dilema aqui é ${agent.dilemma}, mas nesse caso o impacto no produto supera os riscos de scope creep. Já preparei os critérios de aceite e os KPIs de sucesso para medirmos após o lançamento.`;
-  }
-  if (agent.id === 'coord_scrum') {
-    return `Facilitando a discussão sobre "${s}": precisamos garantir que temos Definition of Ready antes de entrar na sprint. Meu dilema é ${agent.dilemma}. Sugiro: refinamento na quarta-feira, estimativa em story points na quinta, e kick-off na segunda-feira. Vou criar as subtarefas no board e acompanhar o burndown diariamente.`;
-  }
-  if (agent.id === 'coord_qa') {
-    const qaRisk = isTech ? `Para "${s}", os riscos críticos são: vazamentos de memória, falhas de autenticação e timeouts em produção.` : isDesign ? `Para "${s}", os riscos são: quebra de layout em mobile, acessibilidade (WCAG 2.1) e cross-browser compatibility.` : `Para "${s}", precisamos definir os critérios de aceite antes de qualquer linha de código.`;
-    return `${qaRisk} Não aprovarei nenhum merge sem cobertura mínima de 80% em testes unitários e testes de integração passando no CI/CD. Meu dilema é ${agent.dilemma} — mas nesse caso, qualidade não é negociável.`;
-  }
-  if (agent.id === 'sr_dev') {
-    const devEstimate = isTech ? `Para "${s}", estimo 3-5 dias de desenvolvimento puro + 2 dias de testes e documentação.` : isDesign ? `O componente de "${s}" leva uns 2 dias para codificar seguindo o design system.` : `Posso entregar a primeira versão de "${s}" em 2-4 dias dependendo da complexidade do backend.`;
-    return `${devEstimate} Vou criar a branch feature/${slugify(s).slice(0, 30)} e já mando o PR para code review assim que tiver o MVP. Prefiro entregas incrementais para ir colhendo feedback do time cedo. Stack: TypeScript + React + Node, conforme o padrão atual.`;
-  }
-  if (agent.id === 'sr_ux') {
-    const uxNote = isDesign ? `Para "${s}", já tenho um fluxo de navegação em mente que segue o padrão do design system.` : `Mesmo que "${s}" seja mais técnico, o ponto de contato do usuário precisa ser fluido e intuitivo.`;
-    return `${uxNote} Vou montar o protótipo no Figma primeiro para validar com o time antes de entrar em desenvolvimento. Meu dilema é ${agent.dilemma} — mas para "${s}" vou priorizar usabilidade comprovada sobre inovação visual radical.`;
+const generateAgentOpinion = async (agent, summary) => {
+  const cleanSummary = summary.trim();
+  const systemPrompt = `Você é ${agent.name}, com cargo de ${agent.role} (nível ${agent.level}) na Flose Startup. Sua principal vantagem é: "${agent.advantage}". Seu principal dilema corporativo é: "${agent.dilemma}". Sua personalidade é: "${agent.personality}".`;
+  const userPrompt = `Escreva um comentário curto (máximo 3 frases) em português de Portugal/Brasil, em primeira pessoa, expressando sua opinião profissional sincera sobre a proposta do CEO: "${cleanSummary}". Justifique sua opinião com base em seu dilema e sua vantagem corporativa. Responda diretamente como o personagem, sem introduções ou explicações fora do personagem.`;
+  
+  const opinion = await callLocalGemma(systemPrompt, userPrompt);
+  if (opinion) {
+    return opinion.trim().replace(/^"(.*)"$/, '$1');
   }
 
-  // Dynamic fallback for dynamically hired agents
-  return `Analisando a proposta de "${s}" sob a ótica de ${agent.role}, vejo uma oportunidade. Minha principal vantagem é que ${agent.advantage.toLowerCase()}, mas meu dilema principal é ${agent.dilemma}. Acredito que devemos avançar focando nisso de forma proativa. Minha personalidade é descrita como ${agent.personality.toLowerCase()}.`;
+  // Fallback if model fails
+  return `Como ${agent.role}, avaliei "${cleanSummary}". Meu dilema é ${agent.dilemma} e minha vantagem é ${agent.advantage}. Acredito que devemos agir com cautela operacional.`;
 };
 
 const createRealGitHubPR = async (branchName, title, description) => {
@@ -755,127 +749,36 @@ const createRealGitHubPR = async (branchName, title, description) => {
   }
 };
 
-const generateRealFunctionalCode = (issueKey, summary, decision, developerAgent) => {
+const generateRealFunctionalCode = async (issueKey, summary, decision, developerAgent) => {
   const sl = summary.toLowerCase();
-  
-  if (sl.includes('cpu') || sl.includes('memoria') || sl.includes('ram') || sl.includes('mac')) {
-    return {
-      relativePath: `src/simulations/${issueKey}-monitor.js`,
-      content: `// Monitor de Sistema real gerado pela engenharia da Flose Startup
-// Ticket Jira: ${issueKey}
-// Desenvolvedor: ${developerAgent.name}
+  const isReact = sl.match(/tela|layout|login|visual|ui|ux|componente|botao|modal|tabela|card|jogo|velha/);
+  const extension = isReact ? 'tsx' : 'js';
+  const relativePath = `src/simulations/${issueKey}-code.${extension}`;
 
-const os = require('os');
+  const systemPrompt = `Você é o Engenheiro de Software Sênior (David Dev) na Flose Startup.
+Gere apenas o código-fonte de uma solução funcional, real e limpa para a tarefa solicitada.
+Se for React, use TypeScript (.tsx). Se for Node.js, use CommonJS (.js).
+IMPORTANTE: Não coloque explicações antes ou depois, não use blocos de código markdown com crases (\`\`\`). Retorne unicamente o código puro que possa ser salvo diretamente no arquivo.`;
 
-function monitorSystem() {
-  const totalMem = os.totalmem();
-  const freeMem = os.freemem();
-  const usedMem = totalMem - freeMem;
-  const cpus = os.cpus();
-  
-  const ramUsage = (usedMem / totalMem * 100).toFixed(2);
-  
-  console.log('--- FLOSESYSTEM MONITOR ---');
-  console.log('CPU Cores:', cpus.length);
-  console.log('CPU Model:', cpus[0].model);
-  console.log('RAM Usada:', (usedMem / 1024 / 1024 / 1024).toFixed(2), 'GB');
-  console.log('RAM Total:', (totalMem / 1024 / 1024 / 1024).toFixed(2), 'GB');
-  console.log('Percentual de RAM:', ramUsage + '%');
-  
-  return {
-    cpus: cpus.length,
-    model: cpus[0].model,
-    ramUsedGB: (usedMem / 1024 / 1024 / 1024).toFixed(2),
-    ramTotalGB: (totalMem / 1024 / 1024 / 1024).toFixed(2),
-    percentage: ramUsage
-  };
-}
+  const userPrompt = `Tarefa: "${summary}"
+Resolução Consensual da Equipe: "${decision}"
+Identificador do Ticket: ${issueKey}
+Responsável: ${developerAgent.name}`;
 
-module.exports = { monitorSystem };
-if (require.main === module) {
-  monitorSystem();
-}
-`
-    };
+  let content = await callLocalGemma(systemPrompt, userPrompt);
+  
+  if (content) {
+    content = content.replace(/^```[a-zA-Z]*\n/, '').replace(/\n```$/, '').trim();
+  } else {
+    content = `// Fallback code for ${issueKey}
+module.exports = {
+  run: () => console.log("Task executed: ${summary}")
+};`;
   }
 
-  if (sl.includes('login') || sl.includes('senha') || sl.includes('autentic') || sl.includes('oauth')) {
-    return {
-      relativePath: `src/simulations/${issueKey}-login.tsx`,
-      content: `// Componente de Login real gerado pela engenharia da Flose Startup
-// Ticket Jira: ${issueKey}
-// Desenvolvedor: ${developerAgent.name}
-
-import React, { useState } from 'react';
-
-export const LoginForm = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      alert('Login efetuado com sucesso!');
-    }, 1000);
-  };
-
-  return (
-    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '24px', background: '#0f172a', borderRadius: '8px', color: '#fff', maxWidth: '380px' }}>
-      <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>Acessar Flose Platform</h2>
-      <input 
-        type="email" 
-        value={email} 
-        onChange={e => setEmail(e.target.value)} 
-        placeholder="email@empresa.com" 
-        style={{ padding: '8px', borderRadius: '4px', background: '#1e293b', border: '1px solid #475569', color: '#fff' }} 
-        required 
-      />
-      <input 
-        type="password" 
-        value={password} 
-        onChange={e => setPassword(e.target.value)} 
-        placeholder="Senha" 
-        style={{ padding: '8px', borderRadius: '4px', background: '#1e293b', border: '1px solid #475569', color: '#fff' }} 
-        required 
-      />
-      <button type="submit" disabled={loading} style={{ background: '#4f46e5', padding: '8px', borderRadius: '4px', fontWeight: 'bold', border: 'none', color: '#fff', cursor: 'pointer' }}>
-        {loading ? 'Entrando...' : 'Entrar'}
-      </button>
-    </form>
-  );
-};
-`
-    };
-  }
-
-  // Fallback default node code
   return {
-    relativePath: `src/simulations/${issueKey}-runner.js`,
-    content: `// Feature real gerada de forma autônoma
-// Ticket Jira: ${issueKey}
-// Proposta: ${summary}
-// Desenvolvedor: ${developerAgent.name}
-
-function runFeature() {
-  const result = {
-    feature: "${summary.replace(/"/g, '\\"')}",
-    status: "Delivered",
-    timestamp: "${new Date().toISOString()}",
-    consensus: "${decision.replace(/"/g, '\\"')}"
-  };
-  console.log('--- Feature Executed ---');
-  console.log(JSON.stringify(result, null, 2));
-  return result;
-}
-
-module.exports = { runFeature };
-if (require.main === module) {
-  runFeature();
-}
-`
+    relativePath,
+    content
   };
 };
 
@@ -949,9 +852,8 @@ const executeDebateSimulation = async ({ issueKey, issueSummary, issueDescriptio
   const logs = [];
   let debateSummary = `🤖 **Gemma 4 Startup Debate Engine**\n\nDiscussão de decisão para o Ticket: [${finalIssueKey}] - ${finalIssueSummary}\n\n`;
 
-  activeAgents.forEach(agent => {
-    // Formulate agent contribution reflecting personality, advantages, and specific dilemmas
-    let responseText = generateAgentOpinion(agent, finalIssueSummary);
+  for (const agent of activeAgents) {
+    let responseText = await generateAgentOpinion(agent, finalIssueSummary);
 
     logs.push({
       agentId: agent.id,
@@ -963,7 +865,7 @@ const executeDebateSimulation = async ({ issueKey, issueSummary, issueDescriptio
     });
 
     debateSummary += `🔹 **${agent.name} (${agent.role})**:\n> "${responseText}"\n> *Dilema considerado: ${agent.dilemma}*\n\n`;
-  });
+  }
 
   // Synthesize the resolution (Gemma 4 decision model)
   const hasCeo = selectedAgentIds.includes('ceo');
@@ -1049,7 +951,7 @@ ${decision}
 *Simulação autônoma de especificação pela equipe Flose Startup.*`;
   } else {
     isCode = true;
-    const generated = generateRealFunctionalCode(finalIssueKey, finalIssueSummary, decision, developerAgent);
+    const generated = await generateRealFunctionalCode(finalIssueKey, finalIssueSummary, decision, developerAgent);
     fileRelativePath = generated.relativePath;
     fileContent = generated.content;
   }
@@ -1095,14 +997,23 @@ ${decision}
   let githubPrUrl = null;
   if (gitCommitResult === 'Commit efetuado com sucesso!') {
     try {
+      const sysPrPrompt = `Você é Sarah Backlog (Gerente de Produto) e Charlie Agile (Scrum Master) na Flose Startup.
+Escreva um texto descritivo e profissional em formato markdown para a descrição de uma Pull Request no GitHub.
+Descreva o escopo da tarefa, justifique a mudança baseando-se no debate consensual da equipe e detalhe o que foi entregue. Responda em português (Portugal/Brasil). Retorne unicamente o markdown, sem introduções de narrador.`;
+
+      const userPrPrompt = `Tarefa: "${finalIssueSummary}"
+Resolução Consensual: "${decision}"
+Ticket Jira: ${finalIssueKey}
+Desenvolvedor Executor: ${developerAgent.name} (${developerAgent.role})
+Arquivo: \`${fileRelativePath}\``;
+
+      const prDescription = await callLocalGemma(sysPrPrompt, userPrPrompt) || 
+        `PR autônoma para ${finalIssueKey} - ${finalIssueSummary}. Desenvolvida por ${developerAgent.name}.`;
+
       const prData = await createRealGitHubPR(
         gitBranchName,
         `feat: ${finalIssueKey} - ${finalIssueSummary}`,
-        `Esta Pull Request foi criada de forma totalmente autônoma pela equipe de engenharia da Flose Startup.\n\n` +
-        `**Ticket Jira:** ${finalIssueKey}\n` +
-        `**Desenvolvedor Responsável:** ${developerAgent.name} (${developerAgent.role})\n` +
-        `**Resolução Consensual:**\n> ${decision}\n\n` +
-        `**Arquivo Modificado:** \`${fileRelativePath}\``
+        prDescription
       );
       githubPrUrl = prData.url;
     } catch (prErr) {
