@@ -749,6 +749,35 @@ const createRealGitHubPR = async (branchName, title, description) => {
   }
 };
 
+const mergeRealGitHubPR = async (prNumber) => {
+  const token = process.env.GITHUB_TOKEN;
+  const owner = process.env.GITHUB_OWNER || 'felipeflose';
+  const repo = process.env.GITHUB_REPO || 'startup_flose';
+
+  if (!token || !prNumber) return false;
+
+  try {
+    const res = await axios.put(
+      `https://api.github.com/repos/${owner}/${repo}/pulls/${prNumber}/merge`,
+      {
+        commit_title: `chore: merge PR #${prNumber} automatically by Flose Startup QA`,
+        commit_message: `Pull Request #${prNumber} merged successfully after automatic QA validation.`
+      },
+      {
+        headers: {
+          Authorization: `token ${token}`,
+          Accept: 'application/vnd.github.v3+json'
+        }
+      }
+    );
+    console.log(`GitHub PR #${prNumber} successfully merged.`);
+    return true;
+  } catch (err) {
+    console.error(`Failed to merge GitHub PR #${prNumber}:`, err.response?.data || err.message);
+    return false;
+  }
+};
+
 const generateRealFunctionalCode = async (issueKey, summary, decision, developerAgent) => {
   const sl = summary.toLowerCase();
   const isReact = sl.match(/tela|layout|login|visual|ui|ux|componente|botao|modal|tabela|card|jogo|velha/);
@@ -995,6 +1024,7 @@ ${decision}
 
   // Create REAL GitHub Pull Request!
   let githubPrUrl = null;
+  let prNumber = null;
   if (gitCommitResult === 'Commit efetuado com sucesso!') {
     try {
       const sysPrPrompt = `Você é Sarah Backlog (Gerente de Produto) e Charlie Agile (Scrum Master) na Flose Startup.
@@ -1016,12 +1046,23 @@ Arquivo: \`${fileRelativePath}\``;
         prDescription
       );
       githubPrUrl = prData.url;
+      prNumber = prData.prNumber;
     } catch (prErr) {
       console.error('Failed to create real GitHub PR:', prErr.message);
     }
   }
 
   const sprintTickets = await runAgentTasksSimulation(finalIssueKey, finalIssueSummary, activeAgents);
+
+  // Automatically merge PR on QA completion
+  if (prNumber) {
+    try {
+      console.log(`Sprint QA complete. Automating PR #${prNumber} merge...`);
+      await mergeRealGitHubPR(prNumber);
+    } catch (mergeErr) {
+      console.error('Error merging PR at QA completion:', mergeErr.message);
+    }
+  }
 
   // Save decision to persistent file (lastro)
   const decisionEntry = {
@@ -1041,15 +1082,20 @@ Arquivo: \`${fileRelativePath}\``;
     generatedFile: fileRelativePath,
     commitHash: commitHash,
     gitCommitResult: gitCommitResult,
-    sprintTickets: sprintTickets
+    sprintTickets: sprintTickets,
+    prMerged: !!prNumber
   };
   saveDecision(decisionEntry);
   try {
     await new Promise((resolve) => {
-      exec('git checkout main', (err) => resolve());
+      const token = process.env.GITHUB_TOKEN;
+      const owner = process.env.GITHUB_OWNER || 'felipeflose';
+      const repo = process.env.GITHUB_REPO || 'startup_flose';
+      const pullUrl = `https://${token}@github.com/${owner}/${repo}.git`;
+      exec(`git checkout main && git pull "${pullUrl}" main`, (err) => resolve());
     });
   } catch (checkoutErr) {
-    console.error('Failed to checkout main at completion:', checkoutErr.message);
+    console.error('Failed to checkout main and pull at completion:', checkoutErr.message);
   }
   return decisionEntry;
 };

@@ -1,5 +1,125 @@
 [
   {
+    "id": "1782859723267n5pgwm33up9",
+    "agentId": "coord_qa",
+    "agentName": "Diana Test",
+    "agentAvatar": "🔍",
+    "action": "closed",
+    "ticketKey": "KAN-1915",
+    "ticketSummary": "[QA] Validação: cria um jogo da velha 3",
+    "at": "2026-06-30T22:48:43.267Z"
+  },
+  {
+    "id": "1782859720789cy93fhou6vg",
+    "agentId": "coord_qa",
+    "agentName": "Diana Test",
+    "agentAvatar": "🔍",
+    "action": "progressing",
+    "ticketKey": "KAN-1915",
+    "ticketSummary": "[QA] Validação: cria um jogo da velha 3",
+    "at": "2026-06-30T22:48:40.789Z"
+  },
+  {
+    "id": "1782859719815q6amzcxez6",
+    "agentId": "coord_qa",
+    "agentName": "Diana Test",
+    "agentAvatar": "🔍",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[QA] Validação: cria um jogo da velha 3",
+    "at": "2026-06-30T22:48:39.815Z"
+  },
+  {
+    "id": "1782859719814lznfqsfgbjd",
+    "agentId": "sr_dev",
+    "agentName": "David Dev",
+    "agentAvatar": "⚡",
+    "action": "closed",
+    "ticketKey": "KAN-1914",
+    "ticketSummary": "[DEV] Implementação: cria um jogo da velha 3",
+    "at": "2026-06-30T22:48:39.814Z"
+  },
+  {
+    "id": "178285971758556x8jkdg0if",
+    "agentId": "sr_dev",
+    "agentName": "David Dev",
+    "agentAvatar": "⚡",
+    "action": "progressing",
+    "ticketKey": "KAN-1914",
+    "ticketSummary": "[DEV] Implementação: cria um jogo da velha 3",
+    "at": "2026-06-30T22:48:37.585Z"
+  },
+  {
+    "id": "1782859716000f2f28wsx0eg",
+    "agentId": "sr_dev",
+    "agentName": "David Dev",
+    "agentAvatar": "⚡",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[DEV] Implementação: cria um jogo da velha 3",
+    "at": "2026-06-30T22:48:36.000Z"
+  },
+  {
+    "id": "1782859715998r163uefjlvi",
+    "agentId": "sr_ux",
+    "agentName": "Elsa Pixel",
+    "agentAvatar": "✨",
+    "action": "closed",
+    "ticketKey": "KAN-1913",
+    "ticketSummary": "[UX] Design: cria um jogo da velha 3",
+    "at": "2026-06-30T22:48:35.998Z"
+  },
+  {
+    "id": "1782859713704b0fo00rkhc",
+    "agentId": "sr_ux",
+    "agentName": "Elsa Pixel",
+    "agentAvatar": "✨",
+    "action": "progressing",
+    "ticketKey": "KAN-1913",
+    "ticketSummary": "[UX] Design: cria um jogo da velha 3",
+    "at": "2026-06-30T22:48:33.704Z"
+  },
+  {
+    "id": "17828597122124wvkwbxzf34",
+    "agentId": "sr_ux",
+    "agentName": "Elsa Pixel",
+    "agentAvatar": "✨",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[UX] Design: cria um jogo da velha 3",
+    "at": "2026-06-30T22:48:32.212Z"
+  },
+  {
+    "id": "1782859712210ygy07b85dzh",
+    "agentId": "mgr_prod",
+    "agentName": "Sarah Backlog",
+    "agentAvatar": "📋",
+    "action": "closed",
+    "ticketKey": "KAN-1912",
+    "ticketSummary": "[PM] Planejamento: cria um jogo da velha 3",
+    "at": "2026-06-30T22:48:32.210Z"
+  },
+  {
+    "id": "178285970994433a1ln6307t",
+    "agentId": "mgr_prod",
+    "agentName": "Sarah Backlog",
+    "agentAvatar": "📋",
+    "action": "progressing",
+    "ticketKey": "KAN-1912",
+    "ticketSummary": "[PM] Planejamento: cria um jogo da velha 3",
+    "at": "2026-06-30T22:48:29.944Z"
+  },
+  {
+    "id": "1782859708300isodpl7ppxk",
+    "agentId": "mgr_prod",
+    "agentName": "Sarah Backlog",
+    "agentAvatar": "📋",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[PM] Planejamento: cria um jogo da velha 3",
+    "at": "2026-06-30T22:48:28.300Z"
+  },
+  {
     "id": "1782858276587wekugqpmjw",
     "agentId": "coord_qa",
     "agentName": "Diana Test",
