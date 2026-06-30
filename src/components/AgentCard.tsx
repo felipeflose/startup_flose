@@ -13,6 +13,7 @@ export interface Agent {
   status?: string;
   schedule?: string;
   feedbacks?: any[];
+  fired?: boolean;
 }
 
 interface AgentCardProps {

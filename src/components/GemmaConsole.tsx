@@ -12,11 +12,10 @@ interface DebateLog {
 interface GemmaConsoleProps {
   selectedIssue: { key: string; summary: string; description: string } | null;
   selectedAgentIds: string[];
-  allAgentIds: string[];
   onDebateComplete?: () => void;
 }
 
-export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selectedAgentIds, allAgentIds, onDebateComplete }) => {
+export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selectedAgentIds, onDebateComplete }) => {
   const [debating, setDebating] = useState(false);
   const [logs, setLogs] = useState<DebateLog[]>([]);
   const [decision, setDecision] = useState<string | null>(null);
@@ -24,7 +23,12 @@ export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selec
   const [customIdea, setCustomIdea] = useState('');
   const [gitBranch, setGitBranch] = useState<string | null>(null);
   const [githubUrl, setGithubUrl] = useState<string | null>(null);
-  const [selectedEpic, setSelectedEpic] = useState('Infraestrutura & Tecnologia');
+  const [commandResult, setCommandResult] = useState<{
+    actionType: string;
+    reasoning: string;
+    details: string;
+    jiraKey?: string;
+  } | null>(null);
   const [executorName, setExecutorName] = useState<string | null>(null);
   const [executorRole, setExecutorRole] = useState<string | null>(null);
   const [generatedFile, setGeneratedFile] = useState<string | null>(null);
@@ -85,13 +89,9 @@ export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selec
     }
   };
 
-  const startCustomIdeaDebate = async () => {
+  const handleSendCommand = async () => {
     if (!customIdea.trim()) {
-      alert('Digite uma ideia/proposta primeiro!');
-      return;
-    }
-    if (allAgentIds.length === 0) {
-      alert('Carregando lista de agentes. Por favor, aguarde...');
+      alert('Por favor, digite um pedido/comando primeiro!');
       return;
     }
 
@@ -105,33 +105,40 @@ export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selec
     setExecutorRole(null);
     setGeneratedFile(null);
     setCommitHash(null);
+    setCommandResult(null);
 
     try {
-      const res = await fetch('http://localhost:5001/api/simulate-debate', {
+      const res = await fetch('http://localhost:5001/api/command', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          issueKey: '',
-          issueSummary: customIdea,
-          issueDescription: 'Ideia customizada de Felipe Flose para debate geral da empresa.',
-          selectedAgentIds: allAgentIds, // Toda a empresa participa
-          epicName: selectedEpic
+          commandText: customIdea
         })
       });
 
-      if (!res.ok) throw new Error('Falha no motor de simulação de ideias.');
+      if (!res.ok) throw new Error('Falha no motor de comando da empresa.');
       const data = await res.json();
       
-      setLogs(data.logs || []);
-      setDecision(data.decision || '');
-      setJiraResult(data.jiraCommentResult || '');
-      setGitBranch(data.gitBranchName || null);
-      setGithubUrl(data.githubIssueUrl || null);
-      setExecutorName(data.executorName || null);
-      setExecutorRole(data.executorRole || null);
-      setGeneratedFile(data.generatedFile || null);
-      setCommitHash(data.commitHash || null);
-      setCustomIdea(''); // Limpar campo após envio de sucesso
+      setCommandResult({
+        actionType: data.actionType,
+        reasoning: data.reasoning,
+        details: data.details,
+        jiraKey: data.jiraKey
+      });
+
+      if (data.actionType === 'DEBATE') {
+        setLogs(data.logs || []);
+        setDecision(data.decision || '');
+        setJiraResult(data.jiraCommentResult || '');
+        setGitBranch(data.gitBranchName || null);
+        setGithubUrl(data.githubIssueUrl || null);
+        setExecutorName(data.executorName || null);
+        setExecutorRole(data.executorRole || null);
+        setGeneratedFile(data.generatedFile || null);
+        setCommitHash(data.commitHash || null);
+      }
+      
+      setCustomIdea(''); // Limpar
       if (onDebateComplete) {
         onDebateComplete();
       }
@@ -145,7 +152,7 @@ export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selec
   return (
     <div className="glass" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', textAlign: 'left' }}>
       
-      {/* Enviar nova ideia customizada */}
+      {/* Central de Comando da Empresa (Pedir Algo) */}
       <div style={{
         padding: '16px',
         background: 'var(--bg-secondary)',
@@ -155,36 +162,22 @@ export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selec
         flexDirection: 'column',
         gap: '12px'
       }}>
-        <strong style={{ fontSize: '0.95rem', color: 'var(--color-primary)' }}>💡 Propor nova Ideia para toda a Empresa</strong>
+        <strong style={{ fontSize: '0.95rem', color: 'var(--color-primary)' }}>💡 Central de Comando da Empresa (Pedir Algo)</strong>
         <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: 0 }}>
-          Ao enviar uma ideia aqui, um novo ticket no Jira será gerado e todos os agentes da empresa (C-Levels, Diretores, Gerentes e Analistas) serão chamados para debater e dar o lastro do processo.
+          Digite qualquer ordem ou ideia em linguagem natural. Os agentes de IA interpretarão o pedido e executarão as ações (contratar colaboradores, demissões, dar feedbacks, ajustar horários ou debater e comitar códigos).
         </p>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Vincular ao Épico Jira:</span>
-          <select
-            value={selectedEpic}
-            onChange={e => setSelectedEpic(e.target.value)}
-            style={{
-              padding: '6px 12px',
-              borderRadius: 'var(--radius-sm)',
-              background: 'var(--bg-tertiary)',
-              border: '1px solid var(--border-color)',
-              color: '#fff',
-              fontSize: '0.8rem',
-              outline: 'none'
-            }}
-          >
-            <option value="Infraestrutura & Tecnologia">⚙️ Infraestrutura & Tecnologia</option>
-            <option value="Design & Produto">🎨 Design & Produto</option>
-            <option value="Processos Ágeis">🔄 Processos Ágeis</option>
-            <option value="Gestão de Pessoas">👥 Gestão de Pessoas</option>
-          </select>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+          <span style={{ fontWeight: 600 }}>Exemplos:</span>
+          <code style={{ cursor: 'pointer', background: 'var(--bg-tertiary)', padding: '2px 6px', borderRadius: '4px' }} onClick={() => setCustomIdea("Contrate um dev Python backend")}>"Contrate um dev Python backend"</code>
+          <code style={{ cursor: 'pointer', background: 'var(--bg-tertiary)', padding: '2px 6px', borderRadius: '4px' }} onClick={() => setCustomIdea("Dar feedback positivo para o David Dev")}>"Dar feedback positivo para o David Dev"</code>
+          <code style={{ cursor: 'pointer', background: 'var(--bg-tertiary)', padding: '2px 6px', borderRadius: '4px' }} onClick={() => setCustomIdea("Demitir o Charlie Agile")}>"Demitir o Charlie Agile"</code>
+          <code style={{ cursor: 'pointer', background: 'var(--bg-tertiary)', padding: '2px 6px', borderRadius: '4px' }} onClick={() => setCustomIdea("Precisamos de um novo design escuro para a tela de login")}>"Novo design de tela de login"</code>
         </div>
         <div style={{ display: 'flex', gap: '12px', alignItems: 'stretch' }}>
           <textarea
             value={customIdea}
             onChange={e => setCustomIdea(e.target.value)}
-            placeholder="Digite sua ideia aqui... Ex: Implementar inteligência artificial no suporte ao cliente de forma sustentável."
+            placeholder="Digite o comando para a sua empresa..."
             rows={2}
             style={{
               flex: 1,
@@ -200,7 +193,7 @@ export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selec
             }}
           />
           <button
-            onClick={startCustomIdeaDebate}
+            onClick={handleSendCommand}
             disabled={debating || !customIdea.trim()}
             className="bg-gradient"
             style={{
@@ -210,15 +203,15 @@ export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selec
               color: '#fff',
               fontWeight: 700,
               cursor: 'pointer',
-              opacity: (debating || !customIdea.trim()) ? 0.5 : 1,
-              boxShadow: '0 0 15px hsla(var(--hue-primary), 90%, 65%, 0.3)',
+              opacity: debating || !customIdea.trim() ? 0.6 : 1,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)',
               fontSize: '0.85rem'
             }}
           >
-            {debating ? 'Disparando...' : 'Disparar para Empresa'}
+            {debating ? 'Processando...' : 'Enviar Pedido'}
           </button>
         </div>
       </div>
@@ -317,6 +310,33 @@ export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selec
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {commandResult && (
+        <div style={{
+          padding: '16px',
+          background: 'rgba(255, 255, 255, 0.02)',
+          border: '1px solid var(--border-color)',
+          borderRadius: 'var(--radius-md)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+          fontSize: '0.85rem'
+        }}>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <span style={{ background: 'var(--color-primary)', color: '#fff', padding: '2px 8px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600 }}>
+              {commandResult.actionType}
+            </span>
+            <strong style={{ color: 'var(--text-primary)' }}>Linha de Raciocínio dos Agentes:</strong>
+          </div>
+          <p style={{ margin: 0, color: 'var(--text-secondary)', fontStyle: 'italic' }}>{commandResult.reasoning}</p>
+          <div style={{ color: '#34d399', fontWeight: 500, marginTop: '4px' }}>✓ {commandResult.details}</div>
+          {commandResult.jiraKey && (
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+              🔗 Ticket Jira Criado: <strong style={{ color: 'var(--color-secondary)' }}>{commandResult.jiraKey}</strong>
+            </div>
+          )}
         </div>
       )}
 

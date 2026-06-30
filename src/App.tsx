@@ -40,6 +40,7 @@ function App() {
       .catch(err => console.error('Erro ao buscar agentes:', err));
 
     fetchDecisions();
+    fetchAgents();
   }, []);
 
   const handleSelectAgentToggle = (id: string) => {
@@ -224,7 +225,6 @@ function App() {
             <GemmaConsole 
               selectedIssue={selectedIssue}
               selectedAgentIds={selectedAgentIds}
-              allAgentIds={agents.map(a => a.id)}
               onDebateComplete={fetchDecisions}
             />
           </>
@@ -445,229 +445,97 @@ function App() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <div>
               <h1 style={{ fontSize: '2.25rem', fontWeight: 800, textAlign: 'left' }}>
-                Painel de <span className="text-gradient">RH & Gestão Corporativa</span>
+                Quadro de <span className="text-gradient">Colaboradores & Performance</span>
               </h1>
               <p style={{ color: 'var(--text-secondary)', textAlign: 'left' }}>
-                Simule a governança da startup: contrate inteligências, desligue colaboradores, emita feedbacks de desempenho e defina a escala de horários.
+                Monitore a governança autônoma da sua startup. Contratações, demissões e feedbacks são processados diretamente pelos agentes a partir dos seus comandos na Sala de Decisão.
               </p>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', alignItems: 'start' }}>
-              {/* Contratar Agente */}
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px', alignItems: 'start' }}>
+              {/* Quadro de Colaboradores Ativos */}
               <div className="glass" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left' }}>
-                <h2 style={{ fontSize: '1.25rem', fontWeight: 600 }}>➕ Contratar Novo Colaborador (IA)</h2>
-                <form
-                  onSubmit={async (e) => {
-                    e.preventDefault();
-                    const formData = new FormData(e.currentTarget);
-                    const name = formData.get('name') as string;
-                    const role = formData.get('role') as string;
-                    const level = formData.get('level') as string;
-                    const avatar = formData.get('avatar') as string;
-                    const advantage = formData.get('advantage') as string;
-                    const disadvantage = formData.get('disadvantage') as string;
-                    const dilemma = formData.get('dilemma') as string;
-                    const personality = formData.get('personality') as string;
-
-                    try {
-                      const res = await fetch('http://localhost:5001/api/agents/hire', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ name, role, level, avatar, advantage, disadvantage, dilemma, personality })
-                      });
-                      if (!res.ok) throw new Error('Falha ao contratar agente.');
-                      const data = await res.json();
-                      alert(`Colaborador ${name} contratado com sucesso! Sincronizado no Jira: ${data.jiraKey || 'N/A'}`);
-                      fetchAgents();
-                      e.currentTarget.reset();
-                    } catch (err: any) {
-                      alert(err.message);
-                    }
-                  }}
-                  style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
-                >
-                  <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '8px' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                      <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Nome Completo</label>
-                      <input type="text" name="name" required placeholder="Ex: Lucas Cloud" style={{ padding: '8px 12px', borderRadius: '8px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: '#fff', outline: 'none' }} />
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                      <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Avatar (Emoji)</label>
-                      <input type="text" name="avatar" defaultValue="🤖" placeholder="Ex: 🤖" style={{ padding: '8px 12px', borderRadius: '8px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: '#fff', outline: 'none', textAlign: 'center' }} />
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                      <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Cargo / Função</label>
-                      <input type="text" name="role" required placeholder="Ex: Dev SecOps" style={{ padding: '8px 12px', borderRadius: '8px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: '#fff', outline: 'none' }} />
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                      <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Nível de Governança</label>
-                      <select name="level" style={{ padding: '8px 12px', borderRadius: '8px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: '#fff', outline: 'none' }}>
-                        <option value="C-Level">C-Level</option>
-                        <option value="Diretor">Diretor</option>
-                        <option value="Gerente">Gerente</option>
-                        <option value="Coordenador">Coordenador</option>
-                        <option value="Analista SR">Analista SR</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Principal Vantagem</label>
-                    <input type="text" name="advantage" required placeholder="Ex: Foco extremo em segurança e auditoria de código." style={{ padding: '8px 12px', borderRadius: '8px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: '#fff', outline: 'none' }} />
-                  </div>
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Desvantagem / Ponto Fraco</label>
-                    <input type="text" name="disadvantage" required placeholder="Ex: Demora a liberar código devido a testes de penetração excessivos." style={{ padding: '8px 12px', borderRadius: '8px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: '#fff', outline: 'none' }} />
-                  </div>
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Dilema Essencial</label>
-                    <input type="text" name="dilemma" required placeholder="Ex: Mitigação Total de Riscos vs. Time-to-Market." style={{ padding: '8px 12px', borderRadius: '8px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: '#fff', outline: 'none' }} />
-                  </div>
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Personalidade</label>
-                    <textarea name="personality" rows={2} required placeholder="Ex: Cauteloso, detalhista, introvertido e fiel a conformidades de segurança." style={{ padding: '8px 12px', borderRadius: '8px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: '#fff', outline: 'none', resize: 'none' }} />
-                  </div>
-
-                  <button type="submit" className="bg-gradient" style={{ padding: '10px', borderRadius: '8px', border: 'none', color: '#fff', fontWeight: 600, cursor: 'pointer', marginTop: '8px', boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)' }}>
-                    Registrar Contratação
-                  </button>
-                </form>
-              </div>
-
-              {/* Lista e Controle de Agentes */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                <div className="glass" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left' }}>
-                  <h2 style={{ fontSize: '1.25rem', fontWeight: 600 }}>👥 Quadro de Colaboradores Ativos</h2>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxHeight: '600px', overflowY: 'auto', paddingRight: '4px' }}>
-                    {agents.map((agent) => (
-                      <div key={agent.id} style={{ padding: '16px', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <span style={{ fontSize: '1.75rem' }}>{agent.avatar}</span>
-                            <div>
-                              <strong style={{ fontSize: '1rem', color: 'var(--color-primary)' }}>{agent.name}</strong>
-                              <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)' }}>{agent.role} ({agent.level})</p>
-                            </div>
-                          </div>
-                          
-                          {/* Demitir */}
-                          <button
-                            onClick={async () => {
-                              if (!confirm(`Deseja mesmo demitir o colaborador ${agent.name}?`)) return;
-                              try {
-                                const res = await fetch('http://localhost:5001/api/agents/fire', {
-                                  method: 'POST',
-                                  headers: { 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({ agentId: agent.id })
-                                });
-                                if (!res.ok) throw new Error('Falha ao demitir.');
-                                const data = await res.json();
-                                alert(`Colaborador ${agent.name} demitido. Sincronizado no Jira: ${data.jiraKey || 'N/A'}`);
-                                fetchAgents();
-                              } catch (err: any) {
-                                alert(err.message);
-                              }
-                            }}
-                            style={{ padding: '4px 8px', borderRadius: '4px', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid #ef4444', color: '#f87171', fontSize: '0.7rem', fontWeight: 600, cursor: 'pointer' }}
-                          >
-                            Demitir
-                          </button>
-                        </div>
-
-                        {/* Configurações de Jornada e Status */}
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', background: 'rgba(255, 255, 255, 0.02)', padding: '10px', borderRadius: '6px', border: '1px solid var(--border-color)', fontSize: '0.75rem' }}>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                            <span>Jornada de Trabalho:</span>
-                            <input
-                              type="text"
-                              defaultValue={agent.schedule || '09:00 - 18:00'}
-                              onBlur={async (e) => {
-                                try {
-                                  await fetch('http://localhost:5001/api/agents/schedule', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ agentId: agent.id, schedule: e.target.value, status: agent.status || 'Disponível' })
-                                  });
-                                } catch (err) {}
-                              }}
-                              style={{ padding: '4px 8px', borderRadius: '4px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: '#fff', fontSize: '0.75rem' }}
-                            />
-                          </div>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                            <span>Status Atual:</span>
-                            <select
-                              defaultValue={agent.status || 'Disponível'}
-                              onChange={async (e) => {
-                                try {
-                                  await fetch('http://localhost:5001/api/agents/schedule', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ agentId: agent.id, schedule: agent.schedule || '09:00 - 18:00', status: e.target.value })
-                                  });
-                                  fetchAgents();
-                                } catch (err) {}
-                              }}
-                              style={{ padding: '4px 8px', borderRadius: '4px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: '#fff', fontSize: '0.75rem' }}
-                            >
-                              <option value="Disponível">Disponível</option>
-                              <option value="Fora de Horário">Fora de Horário</option>
-                              <option value="Férias">Férias</option>
-                            </select>
+                <h2 style={{ fontSize: '1.25rem', fontWeight: 600 }}>👥 Equipe Ativa ({agents.filter(a => !a.fired).length})</h2>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxHeight: '700px', overflowY: 'auto', paddingRight: '4px' }}>
+                  {agents.filter(a => !a.fired).map((agent) => (
+                    <div key={agent.id} style={{ padding: '20px', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <span style={{ fontSize: '2.25rem' }}>{agent.avatar}</span>
+                          <div>
+                            <strong style={{ fontSize: '1.15rem', color: 'var(--color-primary)' }}>{agent.name}</strong>
+                            <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)' }}>{agent.role} • <strong>{agent.level}</strong></p>
                           </div>
                         </div>
 
-                        {/* Enviar Feedback */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Emitir Avaliação de Performance (Feedback):</span>
-                          <form
-                            onSubmit={async (e) => {
-                              e.preventDefault();
-                              const fData = new FormData(e.currentTarget);
-                              const text = fData.get('feedbackText') as string;
-                              const rating = fData.get('rating') as string;
-                              if (!text.trim()) return;
-
-                              try {
-                                const res = await fetch('http://localhost:5001/api/agents/feedback', {
-                                  method: 'POST',
-                                  headers: { 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({ agentId: agent.id, feedbackText: text, rating })
-                                });
-                                if (!res.ok) throw new Error('Erro ao enviar feedback.');
-                                const data = await res.json();
-                                alert(`Feedback registrado! Sincronizado no Jira: ${data.jiraKey || 'N/A'}`);
-                                fetchAgents();
-                                e.currentTarget.reset();
-                              } catch (err: any) {
-                                alert(err.message);
-                              }
-                            }}
-                            style={{ display: 'flex', gap: '8px', alignItems: 'stretch' }}
-                          >
-                            <input
-                              type="text"
-                              name="feedbackText"
-                              required
-                              placeholder="Parabéns pela entrega rápida! / Precisa detalhar os testes..."
-                              style={{ flex: 1, padding: '6px 10px', borderRadius: '4px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: '#fff', fontSize: '0.75rem', outline: 'none' }}
-                            />
-                            <select name="rating" style={{ padding: '6px', borderRadius: '4px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: '#fff', fontSize: '0.75rem' }}>
-                              <option value="positivo">👍 Positivo</option>
-                              <option value="negativo">👎 Corretivo</option>
-                            </select>
-                            <button type="submit" style={{ padding: '6px 12px', borderRadius: '4px', background: 'var(--color-primary)', border: 'none', color: '#fff', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>
-                              Enviar
-                            </button>
-                          </form>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
+                          <span style={{
+                            fontSize: '0.7rem',
+                            padding: '3px 8px',
+                            borderRadius: '12px',
+                            background: agent.status === 'Disponível' ? 'rgba(52, 211, 153, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                            border: agent.status === 'Disponível' ? '1px solid #34d399' : '1px solid #ef4444',
+                            color: agent.status === 'Disponível' ? '#34d399' : '#f87171',
+                            fontWeight: 600
+                          }}>
+                            {agent.status || 'Disponível'}
+                          </span>
+                          <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>⏱ Jornada: {agent.schedule || '09:00 - 18:00'}</span>
                         </div>
                       </div>
-                    ))}
+
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '0.8rem', borderTop: '1px solid var(--border-color)', paddingTop: '10px' }}>
+                        <div>
+                          <strong style={{ color: 'var(--color-secondary)' }}>✓ Vantagem:</strong>
+                          <p style={{ margin: '2px 0 0 0', color: 'var(--text-secondary)' }}>{agent.advantage}</p>
+                        </div>
+                        <div>
+                          <strong style={{ color: '#ef4444' }}>✗ Desvantagem:</strong>
+                          <p style={{ margin: '2px 0 0 0', color: 'var(--text-secondary)' }}>{agent.disadvantage}</p>
+                        </div>
+                      </div>
+
+                      <div style={{ fontSize: '0.8rem', background: 'rgba(255,255,255,0.01)', padding: '8px 12px', borderRadius: '6px', border: '1px solid var(--border-color)' }}>
+                        <strong>⚠️ Dilema Estratégico:</strong> {agent.dilemma}
+                      </div>
+
+                      {/* Feedbacks list */}
+                      {agent.feedbacks && agent.feedbacks.length > 0 && (
+                        <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '10px' }}>
+                          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)' }}>Histórico de Feedbacks:</span>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '6px' }}>
+                            {agent.feedbacks.map((f: any, idx: number) => (
+                              <div key={idx} style={{ padding: '6px 10px', borderRadius: '4px', background: 'var(--bg-tertiary)', borderLeft: f.rating === 'positivo' ? '3px solid #34d399' : '3px solid #ef4444', fontSize: '0.75rem', display: 'flex', justifyContent: 'space-between' }}>
+                                <span>"{f.text}"</span>
+                                <span style={{ color: f.rating === 'positivo' ? '#34d399' : '#f87171', fontWeight: 600 }}>{f.rating === 'positivo' ? '👍' : '👎'}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Lado direito - Colaboradores desligados */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div className="glass" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left' }}>
+                  <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--text-secondary)' }}>❌ Desligados ({agents.filter(a => a.fired).length})</h2>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '400px', overflowY: 'auto' }}>
+                    {agents.filter(a => a.fired).length === 0 ? (
+                      <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>Nenhum colaborador desligado no momento.</span>
+                    ) : (
+                      agents.filter(a => a.fired).map((agent) => (
+                        <div key={agent.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 14px', background: 'rgba(255, 255, 255, 0.01)', borderRadius: '8px', border: '1px solid var(--border-color)', opacity: 0.5 }}>
+                          <span style={{ fontSize: '1.5rem', filter: 'grayscale(100%)' }}>{agent.avatar}</span>
+                          <div>
+                            <strong style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', textDecoration: 'line-through' }}>{agent.name}</strong>
+                            <p style={{ margin: 0, fontSize: '0.7rem', color: 'var(--text-muted)' }}>{agent.role}</p>
+                          </div>
+                        </div>
+                      ))
+                    )}
                   </div>
                 </div>
               </div>

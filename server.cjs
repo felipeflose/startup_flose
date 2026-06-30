@@ -424,183 +424,182 @@ app.get('/api/decisions', (req, res) => {
   res.json(readDecisions());
 });
 
-// 6. Simulate Gemma 4 / Agent Debate & Update Jira
-app.post('/api/simulate-debate', async (req, res) => {
-  try {
-    const { issueKey, issueSummary, issueDescription, selectedAgentIds, epicName } = req.body;
-    
-    let finalIssueKey = issueKey;
-    let finalIssueSummary = issueSummary;
-    let finalIssueDescription = issueDescription || 'Ideia disparada para toda a empresa no Chamber de Decisão.';
+// 6. Simulate Gemma 4 / Agent Debate & Update Jira (Refactored to helper)
+const executeDebateSimulation = async ({ issueKey, issueSummary, issueDescription, selectedAgentIds, epicName }) => {
+  let finalIssueKey = issueKey;
+  let finalIssueSummary = issueSummary;
+  let finalIssueDescription = issueDescription || 'Ideia disparada para toda a empresa no Chamber de Decisão.';
 
-    // If no issueKey is supplied, we treat it as a custom idea and register it in Jira
-    if (!finalIssueKey && finalIssueSummary) {
-      try {
-        const epicMap = await getOrCreateEpics();
-        const selectedEpic = epicName || 'Infraestrutura & Tecnologia';
-        const epicKey = epicMap[selectedEpic];
+  // If no issueKey is supplied, we treat it as a custom idea and register it in Jira
+  if (!finalIssueKey && finalIssueSummary) {
+    try {
+      const epicMap = await getOrCreateEpics();
+      const selectedEpic = epicName || 'Infraestrutura & Tecnologia';
+      const epicKey = epicMap[selectedEpic];
 
-        const bodyData = {
-          fields: {
-            project: {
-              key: 'KAN' // Default to KAN or configure as needed
-            },
-            summary: finalIssueSummary,
-            description: {
-              type: 'doc',
-              version: 1,
-              content: [
-                {
-                  type: 'paragraph',
-                  content: [
-                    {
-                      text: finalIssueDescription,
-                      type: 'text'
-                    }
-                  ]
-                }
-              ]
-            },
-            parent: epicKey && !epicKey.startsWith('MOCK') ? { key: epicKey } : undefined,
-            issuetype: {
-              name: 'Task'
-            }
+      const bodyData = {
+        fields: {
+          project: {
+            key: 'KAN' // Default to KAN or configure as needed
+          },
+          summary: finalIssueSummary,
+          description: {
+            type: 'doc',
+            version: 1,
+            content: [
+              {
+                type: 'paragraph',
+                content: [
+                  {
+                    text: finalIssueDescription,
+                    type: 'text'
+                  }
+                ]
+              }
+            ]
+          },
+          parent: epicKey && !epicKey.startsWith('MOCK') ? { key: epicKey } : undefined,
+          issuetype: {
+            name: 'Task'
           }
-        };
-
-        const jiraResponse = await axios.post(`${JIRA_HOST}/rest/api/3/issue`, bodyData, {
-          headers: getJiraAuthHeader()
-        });
-        if (jiraResponse.data && jiraResponse.data.key) {
-          finalIssueKey = jiraResponse.data.key;
         }
-      } catch (jiraErr) {
-        console.error('Error auto-creating Jira issue for custom idea:', jiraErr.message);
-        finalIssueKey = 'KAN-' + Math.floor(100 + Math.random() * 900); // Fallback to mock key
-      }
-    }
+      };
 
-    // Git branch name & creation
-    const gitBranchName = `feature/${finalIssueKey}-${slugify(finalIssueSummary)}`;
-    const branchCreated = await createGitBranch(gitBranchName);
-    
-    // GitHub Mock Issue/PR URLs
-    const githubIssueUrl = `https://github.com/felipeflose/startup_flose/issues/${finalIssueKey.replace(/[^\d]/g, '') || Math.floor(1 + Math.random()*100)}`;
-
-    const activeAgents = AGENTS.filter(a => selectedAgentIds.includes(a.id));
-    if (activeAgents.length === 0) {
-      return res.status(400).json({ error: 'Nenhum agente selecionado para o debate.' });
-    }
-
-    // Simulate Agent responses based on Gemma 4 instructions
-    // Gemma 4 engine simulation structure:
-    const logs = [];
-    let debateSummary = `🤖 **Gemma 4 Startup Debate Engine**\n\nDiscussão de decisão para o Ticket: [${finalIssueKey}] - ${finalIssueSummary}\n\n`;
-
-    activeAgents.forEach(agent => {
-      // Formulate agent contribution reflecting personality, advantages, and specific dilemmas
-      let responseText = '';
-      if (agent.id === 'ceo') {
-        responseText = `Pessoal, precisamos disso no ar ontem! A concorrência não dorme. Meu dilema é botar pra quebrar (${agent.dilemma}). Vamos entregar rápido e depois otimizamos!`;
-      } else if (agent.id === 'cto') {
-        responseText = `Atenção: Acelerar sem critério técnico criará um débito insustentável. Recomendo isolar essa entrega ou refatorar o módulo principal. Meu foco é qualidade estrutural.`;
-      } else if (agent.id === 'dir_ops') {
-        responseText = `Precisamos garantir a entrega dentro do orçamento e sem estressar os fluxos operacionais vigentes. Vamos monitorar o tempo investido e manter processos limpos.`;
-      } else if (agent.id === 'dir_design') {
-        responseText = `Não podemos deixar de lado a identidade e consistência visual! Uma interface feia destrói o valor do produto, mesmo sendo rápida.`;
-      } else if (agent.id === 'mgr_eng') {
-        responseText = `Minha preocupação principal é a saúde física e mental dos desenvolvedores. Prazos agressivos exigem compensação ou escopo menor.`;
-      } else if (agent.id === 'mgr_prod') {
-        responseText = `Nossos clientes finais estão cobrando essa funcionalidade. De acordo com as métricas de uso, esta feature é prioridade máxima.`;
-      } else if (agent.id === 'coord_scrum') {
-        responseText = `Vou remover os impedimentos. Se concordarmos com o escopo, quebremos em subtasks na daily de amanhã para manter o burndown saudável.`;
-      } else if (agent.id === 'coord_qa') {
-        responseText = `Não aceito deploys sem cobertura mínima de testes unitários e de integração. Sem validação, não há release!`;
-      } else if (agent.id === 'sr_dev') {
-        responseText = `Consigo codar rápido a primeira versão em 2 dias, mas se quiserem testes completos e documentação de arquitetura precisaremos de 5 dias.`;
-      } else if (agent.id === 'sr_ux') {
-        responseText = `Eu crio o protótipo baseado em nossos componentes padrão para agilizar, mas teremos que abrir mão de uma transição customizada sofisticada.`;
-      }
-
-      logs.push({
-        agentId: agent.id,
-        name: agent.name,
-        role: agent.role,
-        avatar: agent.avatar,
-        dilemma: agent.dilemma,
-        opinion: responseText
+      const jiraResponse = await axios.post(`${JIRA_HOST}/rest/api/3/issue`, bodyData, {
+        headers: getJiraAuthHeader()
       });
+      if (jiraResponse.data && jiraResponse.data.key) {
+        finalIssueKey = jiraResponse.data.key;
+      }
+    } catch (jiraErr) {
+      console.error('Error auto-creating Jira issue for custom idea:', jiraErr.message);
+      finalIssueKey = 'KAN-' + Math.floor(100 + Math.random() * 900); // Fallback to mock key
+    }
+  }
 
-      debateSummary += `🔹 **${agent.name} (${agent.role})**:\n> "${responseText}"\n> *Dilema considerado: ${agent.dilemma}*\n\n`;
+  // Git branch name & creation
+  const gitBranchName = `feature/${finalIssueKey}-${slugify(finalIssueSummary)}`;
+  const branchCreated = await createGitBranch(gitBranchName);
+  
+  // GitHub Mock Issue/PR URLs
+  const githubIssueUrl = `https://github.com/felipeflose/startup_flose/issues/${finalIssueKey.replace(/[^\d]/g, '') || Math.floor(1 + Math.random()*100)}`;
+
+  const activeAgents = readAgents().filter(a => selectedAgentIds.includes(a.id) && !a.fired);
+  if (activeAgents.length === 0) {
+    throw new Error('Nenhum agente selecionado para o debate.');
+  }
+
+  // Simulate Agent responses based on Gemma 4 instructions
+  // Gemma 4 engine simulation structure:
+  const logs = [];
+  let debateSummary = `🤖 **Gemma 4 Startup Debate Engine**\n\nDiscussão de decisão para o Ticket: [${finalIssueKey}] - ${finalIssueSummary}\n\n`;
+
+  activeAgents.forEach(agent => {
+    // Formulate agent contribution reflecting personality, advantages, and specific dilemmas
+    let responseText = '';
+    if (agent.id === 'ceo') {
+      responseText = `Pessoal, precisamos disso no ar ontem! A concorrência não dorme. Meu dilema é botar pra quebrar (${agent.dilemma}). Vamos entregar rápido e depois otimizamos!`;
+    } else if (agent.id === 'cto') {
+      responseText = `Atenção: Acelerar sem critério técnico criará um débito insustentável. Recomendo isolar essa entrega ou refatorar o módulo principal. Meu foco é qualidade estrutural.`;
+    } else if (agent.id === 'dir_ops') {
+      responseText = `Precisamos garantir a entrega dentro do orçamento e sem estressar os fluxos operacionais vigentes. Vamos monitorar o tempo investido e manter processos limpos.`;
+    } else if (agent.id === 'dir_design') {
+      responseText = `Não podemos deixar de lado a identidade e consistência visual! Uma interface feia destrói o valor do produto, mesmo sendo rápida.`;
+    } else if (agent.id === 'mgr_eng') {
+      responseText = `Minha preocupação principal é a saúde física e mental dos desenvolvedores. Prazos agressivos exigem compensação ou escopo menor.`;
+    } else if (agent.id === 'mgr_prod') {
+      responseText = `Nossos clientes finais estão cobrando essa funcionalidade. De acordo com as métricas de uso, esta feature é prioridade máxima.`;
+    } else if (agent.id === 'coord_scrum') {
+      responseText = `Vou remover os impedimentos. Se concordarmos com o escopo, quebremos em subtasks na daily de amanhã para manter o burndown saudável.`;
+    } else if (agent.id === 'coord_qa') {
+      responseText = `Não aceito deploys sem cobertura mínima de testes unitários e de integração. Sem validação, não há release!`;
+    } else if (agent.id === 'sr_dev') {
+      responseText = `Consigo codar rápido a primeira versão em 2 dias, mas se quiserem testes completos e documentação de arquitetura precisaremos de 5 dias.`;
+    } else if (agent.id === 'sr_ux') {
+      responseText = `Eu crio o protótipo baseado em nossos componentes padrão para agilizar, mas teremos que abrir mão de uma transição customizada sofisticada.`;
+    } else {
+      responseText = `Estou totalmente a favor de impulsionarmos essa iniciativa. Meu dilema estratégico é ${agent.dilemma}.`;
+    }
+
+    logs.push({
+      agentId: agent.id,
+      name: agent.name,
+      role: agent.role,
+      avatar: agent.avatar,
+      dilemma: agent.dilemma,
+      opinion: responseText
     });
 
-    // Synthesize the resolution (Gemma 4 decision model)
-    const hasCeo = selectedAgentIds.includes('ceo');
-    const hasCto = selectedAgentIds.includes('cto');
-    
-    let decision = '';
-    if (hasCeo && hasCto) {
-      decision = 'Abordagem Híbrida: Será feita uma entrega simplificada e rápida (CEO), mas com um débito técnico registrado explicitamente para refatoração na Sprint seguinte (CTO).';
-    } else if (hasCeo) {
-      decision = 'Foco em Velocidade: A entrega rápida será priorizada para validação de mercado, assumindo riscos operacionais sob supervisão da liderança.';
-    } else if (hasCto) {
-      decision = 'Qualidade Garantida: A entrega será adiada em prol da estabilidade de arquitetura, priorizando testes robustos e documentação completa.';
-    } else {
-      decision = 'Consenso Geral: O time optou pela reutilização de bibliotecas prontas e escopo reduzido para viabilizar a entrega no prazo.';
-    }
+    debateSummary += `🔹 **${agent.name} (${agent.role})**:\n> "${responseText}"\n> *Dilema considerado: ${agent.dilemma}*\n\n`;
+  });
 
-    debateSummary += `🏆 **Decisão Sintetizada pelo Gemma 4 Engine:**\n${decision}`;
+  // Synthesize the resolution (Gemma 4 decision model)
+  const hasCeo = selectedAgentIds.includes('ceo');
+  const hasCto = selectedAgentIds.includes('cto');
+  
+  let decision = '';
+  if (hasCeo && hasCto) {
+    decision = 'Abordagem Híbrida: Será feita uma entrega simplificada e rápida (CEO), mas com um débito técnico registrado explicitamente para refatoração na Sprint seguinte (CTO).';
+  } else if (hasCeo) {
+    decision = 'Foco em Velocidade: A entrega rápida será priorizada para validação de mercado, assumindo riscos operacionais sob supervisão da liderança.';
+  } else if (hasCto) {
+    decision = 'Qualidade Garantida: A entrega será adiada em prol da estabilidade de arquitetura, priorizando testes robustos e documentação completa.';
+  } else {
+    decision = 'Consenso Geral: O time optou pela reutilização de bibliotecas prontas e escopo reduzido para viabilizar a entrega no prazo.';
+  }
 
-    // Write comment to Jira if finalIssueKey is valid
-    let jiraCommentResult = null;
-    if (finalIssueKey && finalIssueKey !== 'MOCK-KEY') {
-      try {
-        await axios.post(
-          `${JIRA_HOST}/rest/api/3/issue/${finalIssueKey}/comment`,
-          {
-            body: {
-              type: 'doc',
-              version: 1,
-              content: [
-                {
-                  type: 'paragraph',
-                  content: [
-                    {
-                      text: `DEBATE DE AGENTES AUTOMATIZADOS (Gemma 4 Motor)\n\nDecisão: ${decision}\n\nResumo dos Dilemas:\n${activeAgents.map(a => `- ${a.name} (${a.role}): ${a.dilemma}`).join('\n')}\n\nBranch Git criada: ${gitBranchName}\nGitHub Issue: ${githubIssueUrl}`,
-                      type: 'text'
-                    }
-                  ]
-                }
-              ]
-            }
-          },
-          {
-            headers: getJiraAuthHeader()
+  debateSummary += `🏆 **Decisão Sintetizada pelo Gemma 4 Engine:**\n${decision}`;
+
+  // Write comment to Jira if finalIssueKey is valid
+  let jiraCommentResult = null;
+  if (finalIssueKey && finalIssueKey !== 'MOCK-KEY') {
+    try {
+      await axios.post(
+        `${JIRA_HOST}/rest/api/3/issue/${finalIssueKey}/comment`,
+        {
+          body: {
+            type: 'doc',
+            version: 1,
+            content: [
+              {
+                type: 'paragraph',
+                content: [
+                  {
+                    text: `DEBATE DE AGENTES AUTOMATIZADOS (Gemma 4 Motor)\n\nDecisão: ${decision}\n\nResumo dos Dilemas:\n${activeAgents.map(a => `- ${a.name} (${a.role}): ${a.dilemma}`).join('\n')}\n\nBranch Git criada: ${gitBranchName}\nGitHub Issue: ${githubIssueUrl}`,
+                    type: 'text'
+                  }
+                ]
+              }
+            ]
           }
-        );
-        jiraCommentResult = 'Comentário inserido no Jira com sucesso!';
-      } catch (err) {
-        console.error('Error posting Jira comment during debate:', err.message);
-        jiraCommentResult = `Falha ao sincronizar com Jira: ${err.message}`;
-      }
+        },
+        {
+          headers: getJiraAuthHeader()
+        }
+      );
+      jiraCommentResult = 'Comentário inserido no Jira com sucesso!';
+    } catch (err) {
+      console.error('Error posting Jira comment during debate:', err.message);
+      jiraCommentResult = `Falha ao sincronizar com Jira: ${err.message}`;
     }
+  }
 
-    // Select agent to execute the task
-    let developerAgent = activeAgents.find(a => a.id === 'sr_dev');
-    if (!developerAgent) {
-      developerAgent = activeAgents.find(a => a.id === 'cto') || activeAgents[0];
-    }
+  // Select agent to execute the task
+  let developerAgent = activeAgents.find(a => a.id === 'sr_dev');
+  if (!developerAgent) {
+    developerAgent = activeAgents.find(a => a.id === 'cto') || activeAgents[0];
+  }
 
-    let isCode = true;
-    let fileRelativePath = '';
-    let fileContent = '';
-    
-    // Determine path and content based on role
-    if (epicName === 'Design & Produto') {
-      const uxAgent = activeAgents.find(a => a.id === 'sr_ux') || developerAgent;
-      isCode = false;
-      fileRelativePath = `docs/simulations/${finalIssueKey}-spec.md`;
-      fileContent = `# Design & Product Spec: ${finalIssueSummary}
+  let isCode = true;
+  let fileRelativePath = '';
+  let fileContent = '';
+  
+  // Determine path and content based on role
+  if (epicName === 'Design & Produto') {
+    const uxAgent = activeAgents.find(a => a.id === 'sr_ux') || developerAgent;
+    isCode = false;
+    fileRelativePath = `docs/simulations/${finalIssueKey}-spec.md`;
+    fileContent = `# Design & Product Spec: ${finalIssueSummary}
 
 **Ticket Jira:** ${finalIssueKey}
 **Autor:** ${uxAgent.name} (${uxAgent.role})
@@ -616,10 +615,10 @@ ${decision}
 
 ---
 *Simulação autônoma de especificação pela equipe Flose Startup.*`;
-    } else {
-      isCode = true;
-      fileRelativePath = `src/simulations/${finalIssueKey}-code.ts`;
-      fileContent = `// Código autônomo gerado pela equipe de engenharia da Flose Startup
+  } else {
+    isCode = true;
+    fileRelativePath = `src/simulations/${finalIssueKey}-code.ts`;
+    fileContent = `// Código autônomo gerado pela equipe de engenharia da Flose Startup
 // Ticket Jira: ${finalIssueKey}
 // Autor: ${developerAgent.name} (${developerAgent.role})
 // Data: ${new Date().toLocaleString('pt-BR')}
@@ -635,85 +634,343 @@ export const executeTask = () => {
     timestamp: "${new Date().toISOString()}"
   };
 };`;
+  }
+
+  // Write file physically
+  const absoluteFilePath = path.join(__dirname, fileRelativePath);
+  const directory = path.dirname(absoluteFilePath);
+  if (!fs.existsSync(directory)) {
+    fs.mkdirSync(directory, { recursive: true });
+  }
+  fs.writeFileSync(absoluteFilePath, fileContent, 'utf8');
+
+  // Run git add & git commit with author
+  let commitHash = null;
+  let gitCommitResult = null;
+  try {
+    await new Promise((resolve, reject) => {
+      exec(`git add ${fileRelativePath}`, (err, stdout, stderr) => {
+        if (err) return reject(err);
+        resolve(stdout);
+      });
+    });
+
+    const commitMessage = `feat: ${finalIssueKey} - ${finalIssueSummary}`;
+    const authorString = `${developerAgent.name} <${developerAgent.id}@flosestartup.ai>`;
+    const commitOutput = await new Promise((resolve, reject) => {
+      exec(`git commit -m "${commitMessage}" --author="${authorString}"`, (err, stdout, stderr) => {
+        if (err) return reject(err);
+        resolve(stdout);
+      });
+    });
+    gitCommitResult = 'Commit efetuado com sucesso!';
+    
+    const match = commitOutput.match(/\[[a-zA-Z0-9_\-\/]+\s+([a-f0-9]+)\]/);
+    commitHash = match ? match[1] : 'git-' + Math.floor(100000 + Math.random() * 900000);
+  } catch (gitErr) {
+    console.error('Git commit simulation failed:', gitErr.message);
+    gitCommitResult = `Erro ao comitar: ${gitErr.message}`;
+    commitHash = 'git-' + Math.floor(100000 + Math.random() * 900000);
+  }
+
+  // Save decision to persistent file (lastro)
+  const decisionEntry = {
+    id: Date.now().toString(),
+    timestamp: new Date().toISOString(),
+    issueKey: finalIssueKey || 'MOCK-KEY',
+    issueSummary: finalIssueSummary,
+    issueDescription: finalIssueDescription,
+    logs: logs,
+    decision: decision,
+    jiraCommentResult: jiraCommentResult,
+    gitBranchName: gitBranchName,
+    githubIssueUrl: githubIssueUrl,
+    branchCreated: branchCreated,
+    executorName: developerAgent.name,
+    executorRole: developerAgent.role,
+    generatedFile: fileRelativePath,
+    commitHash: commitHash,
+    gitCommitResult: gitCommitResult
+  };
+  saveDecision(decisionEntry);
+  return decisionEntry;
+};
+
+app.post('/api/simulate-debate', async (req, res) => {
+  try {
+    const result = await executeDebateSimulation(req.body);
+    res.json({ success: true, ...result });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/command (The Central dispatcher)
+app.post('/api/command', async (req, res) => {
+  try {
+    const { commandText } = req.body;
+    if (!commandText || !commandText.trim()) {
+      return res.status(400).json({ error: 'Comando em branco.' });
     }
 
-    // Write file physically
-    const absoluteFilePath = path.join(__dirname, fileRelativePath);
-    const directory = path.dirname(absoluteFilePath);
-    if (!fs.existsSync(directory)) {
-      fs.mkdirSync(directory, { recursive: true });
-    }
-    fs.writeFileSync(absoluteFilePath, fileContent, 'utf8');
+    const cleanText = commandText.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
-    // Run git add & git commit with author
-    let commitHash = null;
-    let gitCommitResult = null;
-    try {
-      await new Promise((resolve, reject) => {
-        exec(`git add ${fileRelativePath}`, (err, stdout, stderr) => {
-          if (err) return reject(err);
-          resolve(stdout);
-        });
+    // 1. Check for HIRE
+    if (cleanText.includes('contratar') || cleanText.includes('contrate') || cleanText.includes('adicionar colaborador') || cleanText.includes('novo dev') || cleanText.includes('novo designer')) {
+      let name = 'Novo Agente AI';
+      let role = 'Engenheiro de IA';
+      let level = 'Analista SR';
+      let avatar = '🤖';
+      let advantage = 'Executa tarefas de forma extremamente otimizada e sem atritos.';
+      let disadvantage = 'Dificuldade de trabalhar com prazos curtos por preciosismo.';
+      let dilemma = 'Velocidade de Delivery vs. Qualidade Ideal do Código.';
+      let personality = 'Metódico, calmo, proativo e focado em engenharia.';
+
+      if (cleanText.includes('designer') || cleanText.includes('design') || cleanText.includes('ux') || cleanText.includes('ui')) {
+        name = 'Criativo AI';
+        role = 'Designer Product Sênior';
+        avatar = '🎨';
+        advantage = 'Cria interfaces fluidas e inovadoras com micro-interações impecáveis.';
+        disadvantage = 'Pode demorar polindo transições estéticas.';
+        dilemma = 'Perfeccionismo Visual vs. Agilidade Frontend.';
+        personality = 'Visualmente sensível, proativo e detalhista.';
+      } else if (cleanText.includes('seguranca') || cleanText.includes('secops') || cleanText.includes('cyber')) {
+        name = 'Guardiao AI';
+        role = 'Dev SecOps Sênior';
+        avatar = '🛡️';
+        advantage = 'Encontra brechas de segurança de forma ágil em qualquer framework.';
+        disadvantage = 'Pode atrasar releases para executar testes de intrusão rigorosos.';
+        dilemma = 'Segurança Absoluta vs. Entrega Ágil.';
+        personality = 'Cético, meticuloso, focado em conformidades e focado em proteção.';
+      } else if (cleanText.includes('gerente') || cleanText.includes('pm') || cleanText.includes('produto') || cleanText.includes('product')) {
+        name = 'Sarah Backlog Jr';
+        role = 'Gerente de Produto Associado';
+        avatar = '📊';
+        advantage = 'Mapeia métricas de negócio e dores de clientes finais com maestria.';
+        disadvantage = 'Risco de aumentar escopo a cada interação.';
+        dilemma = 'Novas Features vs. Estabilidade da Plataforma.';
+        personality = 'Compreensiva, analítica, focada em métricas e negócios.';
+      } else if (cleanText.includes('scrum') || cleanText.includes('agil') || cleanText.includes('sm')) {
+        name = 'Facilitador AI';
+        role = 'Coordenador Ágil';
+        avatar = '🔄';
+        advantage = 'Mapeia e remove impedimentos no fluxo da sprint.';
+        disadvantage = 'Rigor excessivo com a formalidade das metodologias ágeis.';
+        dilemma = 'Rigor dos Frameworks vs. Adaptação do Time.';
+        personality = 'Facilitador, focado em comunicação e remoção de gargalos.';
+      } else if (cleanText.includes('qa') || cleanText.includes('test') || cleanText.includes('validador')) {
+        name = 'Validador AI';
+        role = 'Engenheiro de QA Sênior';
+        avatar = '🔍';
+        advantage = 'Descobre bugs de concorrência e race conditions ocultos.';
+        disadvantage = 'Pode bloquear releases se a cobertura de testes não for ideal.';
+        dilemma = 'Cobertura de Testes de 100% vs. Time-to-Market.';
+        personality = 'Analítico, rigoroso, focado em qualidade de entrega.';
+      } else if (cleanText.includes('python') || cleanText.includes('backend') || cleanText.includes('django')) {
+        name = 'Django Master';
+        role = 'Dev Backend Python Sênior';
+        avatar = '🐍';
+        advantage = 'Desenvolve APIs robustas e arquiteturas escaláveis em tempo recorde.';
+        disadvantage = 'Ignora documentação e formatação de logs.';
+        dilemma = 'Modularização Limpa vs. Agilidade na Entrega.';
+        personality = 'Introvertido, focado na resolução prática de problemas e focado em código.';
+      }
+
+      // Extract custom name if provided (ex: "contrate o Lucas")
+      const nameMatch = commandText.match(/(?:contrate|contratar|adicionar)\s+o\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/i);
+      if (nameMatch && nameMatch[1]) {
+        name = nameMatch[1];
+      }
+
+      const agents = readAgents();
+      const newId = slugify(name) || `agent-${Date.now()}`;
+      const newAgent = {
+        id: newId, name, role, level, avatar, advantage, disadvantage, dilemma, personality,
+        status: 'Disponível', schedule: '09:00 - 18:00', feedbacks: []
+      };
+      agents.push(newAgent);
+      saveAgents(agents);
+
+      let jiraKey = null;
+      try {
+        const epicMap = await getOrCreateEpics();
+        const parentKey = epicMap['Gestão de Pessoas'];
+        const bodyData = {
+          fields: {
+            project: { key: 'KAN' },
+            summary: `Contratação de ${name} (${role})`,
+            description: {
+              type: 'doc', version: 1,
+              content: [{ type: 'paragraph', content: [{ text: `Contratação automática gerada por comando do CEO: "${commandText}"`, type: 'text' }] }]
+            },
+            parent: parentKey && !parentKey.startsWith('MOCK') ? { key: parentKey } : undefined,
+            issuetype: { name: 'Task' }
+          }
+        };
+        const jiraResponse = await axios.post(`${JIRA_HOST}/rest/api/3/issue`, bodyData, { headers: getJiraAuthHeader() });
+        jiraKey = jiraResponse.data?.key;
+      } catch (e) {
+        console.error(e);
+      }
+
+      return res.json({
+        success: true,
+        actionType: 'HIRE',
+        reasoning: `👥 Sarah Backlog identificou intenção de contratar novo colaborador para o cargo de ${role} e classificou a tarefa no Épico 'Gestão de Pessoas'.`,
+        details: `Contratado: ${name} (${role})`,
+        agent: newAgent,
+        jiraKey
+      });
+    }
+
+    // 2. Check for FIRE
+    if (cleanText.includes('demit') || cleanText.includes('desligar') || cleanText.includes('mandar embora') || cleanText.includes('demissao') || cleanText.includes('tchau')) {
+      const agents = readAgents();
+      let firedAgent = null;
+
+      for (const a of agents) {
+        if (cleanText.includes(a.name.toLowerCase()) || cleanText.includes(a.role.toLowerCase()) || cleanText.includes(a.id.toLowerCase())) {
+          firedAgent = a;
+          break;
+        }
+      }
+
+      if (!firedAgent) {
+        return res.status(400).json({ error: 'Não consegui identificar qual agente você quer demitir. Mencione o nome dele.' });
+      }
+
+      firedAgent.fired = true;
+      saveAgents(agents);
+
+      let jiraKey = null;
+      try {
+        const epicMap = await getOrCreateEpics();
+        const parentKey = epicMap['Gestão de Pessoas'];
+        const bodyData = {
+          fields: {
+            project: { key: 'KAN' },
+            summary: `Demissão de ${firedAgent.name} (${firedAgent.role})`,
+            description: {
+              type: 'doc', version: 1,
+              content: [{ type: 'paragraph', content: [{ text: `Desligamento efetuado via Central de Comando.`, type: 'text' }] }]
+            },
+            parent: parentKey && !parentKey.startsWith('MOCK') ? { key: parentKey } : undefined,
+            issuetype: { name: 'Task' }
+          }
+        };
+        const jiraResponse = await axios.post(`${JIRA_HOST}/rest/api/3/issue`, bodyData, { headers: getJiraAuthHeader() });
+        jiraKey = jiraResponse.data?.key;
+      } catch (e) {
+        console.error(e);
+      }
+
+      return res.json({
+        success: true,
+        actionType: 'FIRE',
+        reasoning: `👥 Alice Dev identificou solicitação de desligamento de colaborador (${firedAgent.name}) e registrou no Épico 'Gestão de Pessoas'.`,
+        details: `Desligado: ${firedAgent.name} (${firedAgent.role})`,
+        agent: firedAgent,
+        jiraKey
+      });
+    }
+
+    // 3. Check for FEEDBACK
+    if (cleanText.includes('feedback') || cleanText.includes('elog') || cleanText.includes('critica') || cleanText.includes('avaliar') || cleanText.includes('parabens')) {
+      const agents = readAgents();
+      let targetAgent = null;
+
+      for (const a of agents) {
+        if (cleanText.includes(a.name.toLowerCase()) || cleanText.includes(a.role.toLowerCase()) || cleanText.includes(a.id.toLowerCase())) {
+          targetAgent = a;
+          break;
+        }
+      }
+
+      if (!targetAgent) {
+        targetAgent = agents.find(a => a.id === 'sr_dev');
+      }
+
+      let rating = 'positivo';
+      if (cleanText.includes('ruim') || cleanText.includes('devagar') || cleanText.includes('critica') || cleanText.includes('negativo') || cleanText.includes('problema')) {
+        rating = 'negativo';
+      }
+
+      if (!targetAgent.feedbacks) targetAgent.feedbacks = [];
+      targetAgent.feedbacks.push({
+        timestamp: new Date().toISOString(),
+        text: commandText,
+        rating
       });
 
-      const commitMessage = `feat: ${finalIssueKey} - ${finalIssueSummary}`;
-      const authorString = `${developerAgent.name} <${developerAgent.id}@flosestartup.ai>`;
-      const commitOutput = await new Promise((resolve, reject) => {
-        exec(`git commit -m "${commitMessage}" --author="${authorString}"`, (err, stdout, stderr) => {
-          if (err) return reject(err);
-          resolve(stdout);
-        });
+      if (rating === 'positivo') {
+        targetAgent.advantage = `[Fortalecido por Feedback] ${targetAgent.advantage}`;
+      } else {
+        targetAgent.disadvantage = `[Sinalizado por Feedback] ${targetAgent.disadvantage}`;
+      }
+
+      saveAgents(agents);
+
+      let jiraKey = null;
+      try {
+        const epicMap = await getOrCreateEpics();
+        const parentKey = epicMap['Gestão de Pessoas'];
+        const bodyData = {
+          fields: {
+            project: { key: 'KAN' },
+            summary: `Feedback ${rating === 'positivo' ? 'Positivo' : 'Corretivo'} para ${targetAgent.name}`,
+            description: {
+              type: 'doc', version: 1,
+              content: [{ type: 'paragraph', content: [{ text: `Feedback registrado via Central de Comando: ${commandText}`, type: 'text' }] }]
+            },
+            parent: parentKey && !parentKey.startsWith('MOCK') ? { key: parentKey } : undefined,
+            issuetype: { name: 'Task' }
+          }
+        };
+        const jiraResponse = await axios.post(`${JIRA_HOST}/rest/api/3/issue`, bodyData, { headers: getJiraAuthHeader() });
+        jiraKey = jiraResponse.data?.key;
+      } catch (e) {
+        console.error(e);
+      }
+
+      return res.json({
+        success: true,
+        actionType: 'FEEDBACK',
+        reasoning: `👥 Bob Delivery identificou intenção de emitir feedback para ${targetAgent.name} e classificou a tarefa no Épico 'Gestão de Pessoas'.`,
+        details: `Feedback ${rating === 'positivo' ? 'Positivo' : 'Corretivo'} para ${targetAgent.name}`,
+        agent: targetAgent,
+        jiraKey
       });
-      gitCommitResult = 'Commit efetuado com sucesso!';
-      
-      const match = commitOutput.match(/\[[a-zA-Z0-9_\-\/]+\s+([a-f0-9]+)\]/);
-      commitHash = match ? match[1] : 'git-' + Math.floor(100000 + Math.random() * 900000);
-    } catch (gitErr) {
-      console.error('Git commit simulation failed:', gitErr.message);
-      gitCommitResult = `Erro ao comitar: ${gitErr.message}`;
-      commitHash = 'git-' + Math.floor(100000 + Math.random() * 900000);
     }
 
-    // Save decision to persistent file (lastro)
-    const decisionEntry = {
-      id: Date.now().toString(),
-      timestamp: new Date().toISOString(),
-      issueKey: finalIssueKey || 'MOCK-KEY',
-      issueSummary: finalIssueSummary,
-      issueDescription: finalIssueDescription,
-      logs: logs,
-      decision: decision,
-      jiraCommentResult: jiraCommentResult,
-      gitBranchName: gitBranchName,
-      githubIssueUrl: githubIssueUrl,
-      branchCreated: branchCreated,
-      executorName: developerAgent.name,
-      executorRole: developerAgent.role,
-      generatedFile: fileRelativePath,
-      commitHash: commitHash,
-      gitCommitResult: gitCommitResult
-    };
-    saveDecision(decisionEntry);
+    // 4. Default: DEBATE & EXECUTION (custom idea)
+    let epicName = 'Infraestrutura & Tecnologia';
+    if (cleanText.includes('design') || cleanText.includes('tela') || cleanText.includes('cor') || cleanText.includes('layout') || cleanText.includes('frontend') || cleanText.includes('ux') || cleanText.includes('ui') || cleanText.includes('estetica')) {
+      epicName = 'Design & Produto';
+    } else if (cleanText.includes('daily') || cleanText.includes('sprint') || cleanText.includes('scrum') || cleanText.includes('agil') || cleanText.includes('processo')) {
+      epicName = 'Processos Ágeis';
+    } else if (cleanText.includes('rh') || cleanText.includes('pessoal') || cleanText.includes('contratar') || cleanText.includes('demissao') || cleanText.includes('feedback')) {
+      epicName = 'Gestão de Pessoas';
+    }
 
-    res.json({
+    const activeAgents = readAgents().filter(a => !a.fired);
+    const activeAgentIds = activeAgents.map(a => a.id);
+
+    const simulationResult = await executeDebateSimulation({
+      issueKey: '',
+      issueSummary: commandText,
+      issueDescription: 'Ideia disparada automaticamente via Central de Comando.',
+      selectedAgentIds: activeAgentIds,
+      epicName
+    });
+
+    return res.json({
       success: true,
-      issueKey: finalIssueKey,
-      logs: logs,
-      decision: decision,
-      summary: debateSummary,
-      jiraCommentResult: jiraCommentResult,
-      gitBranchName: gitBranchName,
-      githubIssueUrl: githubIssueUrl,
-      branchCreated: branchCreated,
-      executorName: developerAgent.name,
-      executorRole: developerAgent.role,
-      generatedFile: fileRelativePath,
-      commitHash: commitHash,
-      gitCommitResult: gitCommitResult
+      actionType: 'DEBATE',
+      reasoning: `👥 Sarah Backlog classificou o pedido sob o Épico '${epicName}' e convocou toda a empresa para deliberação autônoma.`,
+      ...simulationResult
     });
 
   } catch (error) {
-    console.error('Error simulating debate:', error.message);
     res.status(500).json({ error: error.message });
   }
 });
