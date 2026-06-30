@@ -1,0 +1,101 @@
+[
+  {
+    "id": "1782856138517",
+    "timestamp": "2026-06-30T21:48:58.517Z",
+    "issueKey": "KAN-1897",
+    "issueSummary": "quero um sistema de controle de ativos",
+    "issueDescription": "Ideia disparada automaticamente via Central de Comando.",
+    "logs": [
+      {
+        "agentId": "ceo",
+        "name": "Felipe Flose",
+        "role": "CEO (Chief Executive Officer)",
+        "avatar": "💼",
+        "dilemma": "Crescimento Acelerado (Burn Rate Alto) vs. Sustentabilidade Financeira.",
+        "opinion": "Pessoal, precisamos disso no ar ontem! A concorrência não dorme. Meu dilema é botar pra quebrar (Crescimento Acelerado (Burn Rate Alto) vs. Sustentabilidade Financeira.). Vamos entregar rápido e depois otimizamos!"
+      },
+      {
+        "agentId": "cto",
+        "name": "Gemma Tech",
+        "role": "CTO (Chief Technology Officer)",
+        "avatar": "💻",
+        "dilemma": "Refatoração da Dívida Técnica vs. Lançamento Rápido de Novidades.",
+        "opinion": "Atenção: Acelerar sem critério técnico criará um débito insustentável. Recomendo isolar essa entrega ou refatorar o módulo principal. Meu foco é qualidade estrutural."
+      },
+      {
+        "agentId": "dir_ops",
+        "name": "Alice Dev",
+        "role": "Diretora de Operações",
+        "avatar": "📈",
+        "dilemma": "Redução de Custos de Ferramental vs. Manutenção da Satisfação da Equipe.",
+        "opinion": "Precisamos garantir a entrega dentro do orçamento e sem estressar os fluxos operacionais vigentes. Vamos monitorar o tempo investido e manter processos limpos."
+      },
+      {
+        "agentId": "dir_design",
+        "name": "Vibrant UI",
+        "role": "Diretora de Design & Experiência",
+        "avatar": "🎨",
+        "dilemma": "Consistência Estética Premium vs. Agilidade de Desenvolvimento Frontend.",
+        "opinion": "Não podemos deixar de lado a identidade e consistência visual! Uma interface feia destrói o valor do produto, mesmo sendo rápida."
+      },
+      {
+        "agentId": "mgr_eng",
+        "name": "Bob Delivery",
+        "role": "Gerente de Engenharia",
+        "avatar": "⚙️",
+        "dilemma": "Preservar a Saúde Mental do Time vs. Atender Prazos Agressivos de Entrega.",
+        "opinion": "Minha preocupação principal é a saúde física e mental dos desenvolvedores. Prazos agressivos exigem compensação ou escopo menor."
+      },
+      {
+        "agentId": "mgr_prod",
+        "name": "Sarah Backlog",
+        "role": "Gerente de Produto",
+        "avatar": "📋",
+        "dilemma": "Focar em Novas Funcionalidades vs. Estabilizar a Base Existente.",
+        "opinion": "Nossos clientes finais estão cobrando essa funcionalidade. De acordo com as métricas de uso, esta feature é prioridade máxima."
+      },
+      {
+        "agentId": "coord_scrum",
+        "name": "Charlie Agile",
+        "role": "Coordenador Scrum Master",
+        "avatar": "🔄",
+        "dilemma": "Padrão Rigoroso do Scrum vs. Flexibilidade Operacional da Equipe.",
+        "opinion": "Vou remover os impedimentos. Se concordarmos com o escopo, quebremos em subtasks na daily de amanhã para manter o burndown saudável."
+      },
+      {
+        "agentId": "coord_qa",
+        "name": "Diana Test",
+        "role": "Coordenadora de Garantia de Qualidade",
+        "avatar": "🔍",
+        "dilemma": "Rigidez nos Critérios de Aceite vs. Velocidade de Time-to-Market.",
+        "opinion": "Não aceito deploys sem cobertura mínima de testes unitários e de integração. Sem validação, não há release!"
+      },
+      {
+        "agentId": "sr_dev",
+        "name": "David Dev",
+        "role": "Desenvolvedor Frontend Sênior",
+        "avatar": "⚡",
+        "dilemma": "Entregar Rápido Codificando vs. Documentar e Padronizar Processos.",
+        "opinion": "Consigo codar rápido a primeira versão em 2 dias, mas se quiserem testes completos e documentação de arquitetura precisaremos de 5 dias."
+      },
+      {
+        "agentId": "sr_ux",
+        "name": "Elsa Pixel",
+        "role": "Designer UX Sênior",
+        "avatar": "✨",
+        "dilemma": "Criar Componentes Customizados Únicos vs. Reutilizar Bibliotecas Padrão.",
+        "opinion": "Eu crio o protótipo baseado em nossos componentes padrão para agilizar, mas teremos que abrir mão de uma transição customizada sofisticada."
+      }
+    ],
+    "decision": "Abordagem Híbrida: Será feita uma entrega simplificada e rápida (CEO), mas com um débito técnico registrado explicitamente para refatoração na Sprint seguinte (CTO).",
+    "jiraCommentResult": "Comentário inserido no Jira com sucesso!",
+    "gitBranchName": "feature/KAN-1897-quero-um-sistema-de-controle-de-ativos",
+    "githubIssueUrl": "https://github.com/felipeflose/startup_flose/issues/1897",
+    "branchCreated": true,
+    "executorName": "David Dev",
+    "executorRole": "Desenvolvedor Frontend Sênior",
+    "generatedFile": "src/simulations/KAN-1897-code.ts",
+    "commitHash": "edaafb9",
+    "gitCommitResult": "Commit efetuado com sucesso!"
+  }
+]
