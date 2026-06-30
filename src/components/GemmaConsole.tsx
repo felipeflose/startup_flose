@@ -12,13 +12,23 @@ interface DebateLog {
 interface GemmaConsoleProps {
   selectedIssue: { key: string; summary: string; description: string } | null;
   selectedAgentIds: string[];
+  allAgentIds: string[];
+  onDebateComplete?: () => void;
 }
 
-export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selectedAgentIds }) => {
+export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selectedAgentIds, allAgentIds, onDebateComplete }) => {
   const [debating, setDebating] = useState(false);
   const [logs, setLogs] = useState<DebateLog[]>([]);
   const [decision, setDecision] = useState<string | null>(null);
   const [jiraResult, setJiraResult] = useState<string | null>(null);
+  const [customIdea, setCustomIdea] = useState('');
+  const [gitBranch, setGitBranch] = useState<string | null>(null);
+  const [githubUrl, setGithubUrl] = useState<string | null>(null);
+  const [selectedEpic, setSelectedEpic] = useState('Infraestrutura & Tecnologia');
+  const [executorName, setExecutorName] = useState<string | null>(null);
+  const [executorRole, setExecutorRole] = useState<string | null>(null);
+  const [generatedFile, setGeneratedFile] = useState<string | null>(null);
+  const [commitHash, setCommitHash] = useState<string | null>(null);
 
   const startDebate = async () => {
     if (!selectedIssue) {
@@ -34,6 +44,12 @@ export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selec
     setLogs([]);
     setDecision(null);
     setJiraResult(null);
+    setGitBranch(null);
+    setGithubUrl(null);
+    setExecutorName(null);
+    setExecutorRole(null);
+    setGeneratedFile(null);
+    setCommitHash(null);
 
     try {
       const res = await fetch('http://localhost:5001/api/simulate-debate', {
@@ -53,6 +69,72 @@ export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selec
       setLogs(data.logs || []);
       setDecision(data.decision || '');
       setJiraResult(data.jiraCommentResult || '');
+      setGitBranch(data.gitBranchName || null);
+      setGithubUrl(data.githubIssueUrl || null);
+      setExecutorName(data.executorName || null);
+      setExecutorRole(data.executorRole || null);
+      setGeneratedFile(data.generatedFile || null);
+      setCommitHash(data.commitHash || null);
+      if (onDebateComplete) {
+        onDebateComplete();
+      }
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setDebating(false);
+    }
+  };
+
+  const startCustomIdeaDebate = async () => {
+    if (!customIdea.trim()) {
+      alert('Digite uma ideia/proposta primeiro!');
+      return;
+    }
+    if (allAgentIds.length === 0) {
+      alert('Carregando lista de agentes. Por favor, aguarde...');
+      return;
+    }
+
+    setDebating(true);
+    setLogs([]);
+    setDecision(null);
+    setJiraResult(null);
+    setGitBranch(null);
+    setGithubUrl(null);
+    setExecutorName(null);
+    setExecutorRole(null);
+    setGeneratedFile(null);
+    setCommitHash(null);
+
+    try {
+      const res = await fetch('http://localhost:5001/api/simulate-debate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          issueKey: '',
+          issueSummary: customIdea,
+          issueDescription: 'Ideia customizada de Felipe Flose para debate geral da empresa.',
+          selectedAgentIds: allAgentIds, // Toda a empresa participa
+          epicName: selectedEpic
+        })
+      });
+
+      if (!res.ok) throw new Error('Falha no motor de simulação de ideias.');
+      const data = await res.json();
+      
+      setLogs(data.logs || []);
+      setDecision(data.decision || '');
+      setJiraResult(data.jiraCommentResult || '');
+      setGitBranch(data.gitBranchName || null);
+      setGithubUrl(data.githubIssueUrl || null);
+      setExecutorName(data.executorName || null);
+      setExecutorRole(data.executorRole || null);
+      setGeneratedFile(data.generatedFile || null);
+      setCommitHash(data.commitHash || null);
+      setCustomIdea(''); // Limpar campo após envio de sucesso
+      if (onDebateComplete) {
+        onDebateComplete();
+      }
     } catch (err: any) {
       alert(err.message);
     } finally {
@@ -62,6 +144,87 @@ export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selec
 
   return (
     <div className="glass" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', textAlign: 'left' }}>
+      
+      {/* Enviar nova ideia customizada */}
+      <div style={{
+        padding: '16px',
+        background: 'var(--bg-secondary)',
+        borderRadius: 'var(--radius-md)',
+        border: '1px solid var(--border-color)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '12px'
+      }}>
+        <strong style={{ fontSize: '0.95rem', color: 'var(--color-primary)' }}>💡 Propor nova Ideia para toda a Empresa</strong>
+        <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: 0 }}>
+          Ao enviar uma ideia aqui, um novo ticket no Jira será gerado e todos os agentes da empresa (C-Levels, Diretores, Gerentes e Analistas) serão chamados para debater e dar o lastro do processo.
+        </p>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Vincular ao Épico Jira:</span>
+          <select
+            value={selectedEpic}
+            onChange={e => setSelectedEpic(e.target.value)}
+            style={{
+              padding: '6px 12px',
+              borderRadius: 'var(--radius-sm)',
+              background: 'var(--bg-tertiary)',
+              border: '1px solid var(--border-color)',
+              color: '#fff',
+              fontSize: '0.8rem',
+              outline: 'none'
+            }}
+          >
+            <option value="Infraestrutura & Tecnologia">⚙️ Infraestrutura & Tecnologia</option>
+            <option value="Design & Produto">🎨 Design & Produto</option>
+            <option value="Processos Ágeis">🔄 Processos Ágeis</option>
+            <option value="Gestão de Pessoas">👥 Gestão de Pessoas</option>
+          </select>
+        </div>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'stretch' }}>
+          <textarea
+            value={customIdea}
+            onChange={e => setCustomIdea(e.target.value)}
+            placeholder="Digite sua ideia aqui... Ex: Implementar inteligência artificial no suporte ao cliente de forma sustentável."
+            rows={2}
+            style={{
+              flex: 1,
+              padding: '10px 14px',
+              borderRadius: 'var(--radius-sm)',
+              background: 'var(--bg-tertiary)',
+              border: '1px solid var(--border-color)',
+              color: 'var(--text-primary)',
+              fontFamily: 'inherit',
+              fontSize: '0.85rem',
+              resize: 'none',
+              outline: 'none'
+            }}
+          />
+          <button
+            onClick={startCustomIdeaDebate}
+            disabled={debating || !customIdea.trim()}
+            className="bg-gradient"
+            style={{
+              padding: '0 24px',
+              borderRadius: 'var(--radius-sm)',
+              border: 'none',
+              color: '#fff',
+              fontWeight: 700,
+              cursor: 'pointer',
+              opacity: (debating || !customIdea.trim()) ? 0.5 : 1,
+              boxShadow: '0 0 15px hsla(var(--hue-primary), 90%, 65%, 0.3)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '0.85rem'
+            }}
+          >
+            {debating ? 'Disparando...' : 'Disparar para Empresa'}
+          </button>
+        </div>
+      </div>
+
+      <div style={{ borderTop: '1px dashed var(--border-color)', margin: '10px 0' }}></div>
+
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h2 style={{ fontSize: '1.25rem', fontWeight: 600 }}>🤖 Sala de Decisão (Motor Gemma 4)</h2>
@@ -182,7 +345,65 @@ export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selec
               fontSize: '0.8rem',
               fontWeight: 500
             }}>
-              🔗 {jiraResult}
+              🔗 Atlassian Jira: {jiraResult}
+            </div>
+          )}
+
+          {gitBranch && (
+            <div style={{
+              marginTop: '8px',
+              padding: '8px 12px',
+              background: 'rgba(99, 102, 241, 0.1)',
+              border: '1px solid #6366f1',
+              borderRadius: '6px',
+              color: '#a5b4fc',
+              fontSize: '0.8rem',
+              fontWeight: 500,
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <span>🌿 Branch Git Criada: <code>{gitBranch}</code></span>
+              <span style={{ fontSize: '0.7rem', opacity: 0.8, background: '#6366f1', color: '#fff', padding: '2px 6px', borderRadius: '4px' }}>Criada</span>
+            </div>
+          )}
+
+          {githubUrl && (
+            <div style={{
+              marginTop: '8px',
+              padding: '8px 12px',
+              background: 'rgba(31, 41, 55, 0.5)',
+              border: '1px solid var(--border-color)',
+              borderRadius: '6px',
+              color: '#e5e7eb',
+              fontSize: '0.8rem',
+              fontWeight: 500
+            }}>
+              🐙 GitHub Issue: <a href={githubUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'underline' }}>{githubUrl}</a>
+            </div>
+          )}
+
+          {executorName && (
+            <div style={{
+              marginTop: '8px',
+              padding: '12px',
+              background: 'rgba(251, 191, 36, 0.05)',
+              border: '1px dashed #fbbf24',
+              borderRadius: '6px',
+              color: '#fef3c7',
+              fontSize: '0.8rem',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '6px'
+            }}>
+              <div><strong>🔧 Executado Autonomamente por:</strong> {executorName} ({executorRole})</div>
+              {generatedFile && <div><strong>📄 Arquivo Gerado:</strong> <code>{generatedFile}</code></div>}
+              {commitHash && (
+                <div>
+                  <strong>💾 Git Commit:</strong> <code style={{ color: '#fbbf24' }}>{commitHash}</code>
+                  <span style={{ marginLeft: '8px', fontSize: '0.7rem', color: '#34d399', background: 'rgba(52, 211, 153, 0.1)', padding: '1px 6px', borderRadius: '4px' }}>Comitado por Agente</span>
+                </div>
+              )}
             </div>
           )}
         </div>

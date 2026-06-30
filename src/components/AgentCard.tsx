@@ -10,6 +10,9 @@ export interface Agent {
   disadvantage: string;
   dilemma: string;
   personality: string;
+  status?: string;
+  schedule?: string;
+  feedbacks?: any[];
 }
 
 interface AgentCardProps {
