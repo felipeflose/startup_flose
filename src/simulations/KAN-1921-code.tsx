@@ -1,279 +1,283 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
-// Define types for clarity
-type Position = { x: number; y: number };
-type Direction = 'up' | 'down' | 'left' | 'right';
+// --- Types and Constants ---
 
-// --- Componentes Simples ---
+type EntityType = 'player' | 'vehicle' | 'npc';
 
-/**
- * Simula o personagem principal.
- * Responsável por exibir a posição e gerenciar o estado básico do jogador.
- */
-const Character: React.FC<{ position: Position }> = ({ position }) => {
-  return (
-    <div style={{
-      position: 'absolute',
-      left: `${position.x}px`,
-      top: `${position.y}px`,
-      transform: 'translate(-50%, -50%)',
-      width: '30px',
-      height: '30px',
-      backgroundColor: 'blue',
-      borderRadius: '50%',
-      border: '2px solid #000',
-      boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)',
-      zIndex: 10,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      color: 'white',
-      fontWeight: 'bold',
-    }}>
-      YOU
-    </div>
-  );
-};
-
-/**
- * Simula o mapa e o ambiente do jogo.
- * Contém pontos de interesse e limites.
- */
-const Map: React.FC<{ playerPosition: Position }> = ({ playerPosition }) => {
-  const containerStyle: React.CSSProperties = {
-    width: '800px',
-    height: '600px',
-    backgroundColor: '#8bc34d', // Gramado/Cidade
-    border: '5px solid #333',
-    position: 'relative',
-    overflow: 'hidden',
-    cursor: 'crosshair',
-  };
-
-  const InterestPoint: React.FC<{ position: Position; name: string; description: string }> = ({ position, name, description }) => (
-    <div
-      style={{
-        position: 'absolute',
-        left: `${position.x}px`,
-        top: `${position.y}px`,
-        transform: 'translate(-50%, -50%)',
-        width: '15px',
-        height: '15px',
-        backgroundColor: '#e91e63', // Cor de interesse
-        borderRadius: '50%',
-        cursor: 'pointer',
-        border: '2px solid #c2185b',
-        zIndex: 5,
-        transition: 'transform 0.2s',
-      }}
-      title={description}
-    >
-      <span style={{ fontSize: '10px', lineHeight: '1' }}>{name[0].toUpperCase()}</span>
-    </div>
-  );
-
-  return (
-    <div style={containerStyle}>
-      <InterestPoint position={{ x: 200, y: 150 }} name="Rádio" description="Ponto de rádio frequência." />
-      <InterestPoint position={{ x: 650, y: 400 }} name="Mundo" description="Área de atividade suspeita." />
-      <InterestPoint position={{ x: 50, y: 500 }} name="Garagem" description="Local para veículos." />
-    </div>
-  );
-};
-
-/**
- * Componente principal do jogo.
- * Gerencia o estado e a lógica de movimento simplificada.
- */
-const GTAPrototype: React.FC = () => {
-  const [position, setPosition] = useState<Position>({ x: 100, y: 100 });
-  const [money, setMoney] = useState<number>(1500);
-  const [status, setStatus] = useState<string>("Bem-vindo à Los Santos. Use WASD ou as setas para se mover.");
-
-  // Constantes do mapa
-  const MAP_WIDTH = 800;
-  const MAP_HEIGHT = 600;
-  const MOVEMENT_SPEED = 10;
-
-  // Lógica de movimento
-  const handleMove = useCallback((direction: Direction) => {
-    setPosition(prevPos => {
-      let newX = prevPos.x;
-      let newY = prevPos.y;
-
-      switch (direction) {
-        case 'up':
-          newY -= MOVEMENT_SPEED;
-          break;
-        case 'down':
-          newY += MOVEMENT_SPEED;
-          break;
-        case 'left':
-          newX -= MOVEMENT_SPEED;
-          break;
-        case 'right':
-          newX += MOVEMENT_SPEED;
-          break;
-      }
-
-      // Limitar movimento dentro dos limites do mapa
-      newX = Math.max(0, Math.min(MAP_WIDTH, newX));
-      newY = Math.max(0, Math.min(MAP_HEIGHT, newY));
-
-      return { x: newX, y: newY };
-    });
-  }, []);
-
-  // Efeito para lidar com o teclado (Melhor UX para jogos)
-  useEffect(() => {
-    const handleKeydown = (e: KeyboardEvent) => {
-      let direction: Direction | null = null;
-      switch (e.key.toLowerCase()) {
-        case 'w':
-        case 'arrowup':
-          direction = 'up';
-          break;
-        case 's':
-        case 'arrowdown':
-          direction = 'down';
-          break;
-        case 'a':
-        case 'arrowleft':
-          direction = 'left';
-          break;
-        case 'd':
-        case 'arrowright':
-          direction = 'right';
-          break;
-        default:
-          return;
-      }
-      e.preventDefault();
-      handleMove(direction);
-    };
-
-    window.addEventListener('keydown', handleKeydown);
-    return () => {
-      window.removeEventListener('keydown', handleKeydown);
-    };
-  }, [handleMove]);
-
-  // Lógica de interação (Exemplo: Crime/Missão)
-  const handleInteract = () => {
-    if (money < 50) {
-      setStatus("Você não tem dinheiro suficiente para iniciar esta missão.");
-      return;
-    }
-    
-    // Lógica simplificada de "crime"
-    const success = Math.random() > 0.3;
-    
-    if (success) {
-      const reward = Math.floor(Math.random() * 1000) + 500;
-      setMoney(prev => prev + reward);
-      setStatus(`SUCESSO! Você completou a missão e ganhou $${reward}.`);
-    } else {
-      const fine = 100;
-      setMoney(prev => Math.max(0, prev - fine));
-      setStatus(`FALHA. Você foi pego. Perdeu $${fine} em multas.`);
-    }
-  };
-
-  // Estilos para a interface
-  const gameContainerStyle: React.CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '20px',
-    padding: '20px',
-    maxWidth: '1000px',
-    margin: '0 auto',
-    fontFamily: 'Arial, sans-serif',
-    border: '1px solid #ccc',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-  };
-
-  const statusStyle: React.CSSProperties = {
-    padding: '10px',
-    backgroundColor: '#fff3e0',
-    border: '1px solid #ff9800',
-    borderRadius: '5px',
-    minHeight: '30px',
-  };
-  
-  // Renderização
-  return (
-    <div style={gameContainerStyle}>
-      <h1>Los Santos Prototype (KAN-1921)</h1>
-      <p>
-        <span style={{ color: 'green', fontWeight: 'bold' }}>[Status]</span> {status}
-      </p>
-
-      {/* HUD / Status Bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px', borderBottom: '2px solid #ddd' }}>
-        <div>
-          💰 Dinheiro: ${money.toLocaleString()}
-        </div>
-        <div>
-          🗺️ Posição: ({Math.round(position.x)}, {Math.round(position.y)})
-        </div>
-      </div>
-
-      {/* Mapa e Personagem */}
-      <div style={{ position: 'relative' }}>
-        <Map playerPosition={position} />
-        <Character position={position} />
-      </div>
-
-      {/* Controles e Ações */}
-      <div style={{ display: 'flex', gap: '20px' }}>
-        
-        {/* Controles de Movimento (Simplificação de UI) */}
-        <div style={{ border: '1px solid #ccc', padding: '15px', borderRadius: '8px', width: '200px' }}>
-          <h3>Controles (WASD/Setas)</h3>
-          <p>Use as teclas de seta ou WASD para mover o personagem no mapa.</p>
-          <button 
-            onClick={() => handleMove('up')} 
-            style={{ display: 'block', margin: '5px 0', padding: '10px', width: '100%' }}
-          >
-            ↑ Cima
-          </button>
-          <button 
-            onClick={() => handleMove('left')} 
-            style={{ display: 'block', margin: '5px 0', padding: '10px', width: '100%' }}
-          >
-            ← Esquerda
-          </button>
-          <button 
-            onClick={() => handleMove('down')} 
-            style={{ display: 'block', margin: '5px 0', padding: '10px', width: '100%' }}
-          >
-            ↓ Baixo
-          </button>
-          <button 
-            onClick={() => handleMove('right')} 
-            style={{ display: 'block', margin: '5px 0', padding: '10px', width: '100%' }}
-          >
-            → Direita
-          </button>
-        </div>
-
-        {/* Ações de Jogo */}
-        <div style={{ border: '1px solid #ccc', padding: '15px', borderRadius: '8px', flexGrow: 1 }}>
-          <h3>Ações</h3>
-          <p>Este é o local para implementar a lógica de interações complexas (ex: veículo, combate).</p>
-          <button 
-            onClick={handleInteract} 
-            style={{ padding: '10px 20px', backgroundColor: '#d32f2f', color: 'white', border: 'none', cursor: 'pointer' }}
-          >
-            [E] Iniciar Missão Rápida (Debito Técnico)
-          </button>
-          <p style={{marginTop: '10px', fontSize: '0.9em', color: '#666'}}>
-            * Esta funcionalidade simula a lógica de "Crime/Missão" que será refinada na próxima sprint (CTO).
-          </p>
-        </div>
-      </div>
-    </div>
-  );
+interface Position {
+    x: number;
+    y: number;
 }
 
-export default GTAPrototype;
+interface Entity {
+    id: string;
+    type: EntityType;
+    name: string;
+    position: Position;
+    health: number;
+    isControlled: boolean;
+}
+
+interface GameState {
+    entities: Entity[];
+    player: Entity;
+    isDriving: boolean;
+    mapScale: number; // Used for movement speed/world size
+    time: number; // Simulates game time
+}
+
+const INITIAL_STATE: GameState = {
+    entities: [
+        { id: 'car1', type: 'vehicle', name: 'Police Cruiser', position: { x: 50, y: 150 }, health: 100, isControlled: false },
+        { id: 'npc1', type: 'npc', name: 'Pedestrian', position: { x: 20, y: 200 }, health: 100, isControlled: false },
+    ],
+    player: { id: 'player', type: 'player', name: 'You', position: { x: 10, y: 10 }, health: 100, isControlled: true },
+    isDriving: false,
+    mapScale: 10,
+    time: 0,
+};
+
+// --- Component Implementation ---
+
+const GameSimulation: React.FC = () => {
+    const [gameState, setGameState] = useState<GameState>(INITIAL_STATE);
+    const [message, setMessage] = useState<string>("Bem-vindo à Los Santos. O crime espera.");
+
+    // --- Core Game Logic (The Technical Debt Area) ---
+    // TODO: CRITICAL DEBT: Physics, collision detection, and AI pathfinding are stubbed out.
+    // Refactor this entire block into a dedicated 'PhysicsEngine' service module.
+    const updateGamePhysics = useCallback((currentState: GameState): GameState => {
+        let newEntities = [...currentState.entities];
+        let newPlayer = { ...currentState.player };
+        let newGameState = { ...currentState, entities: [...newEntities] };
+
+        // 1. Player Movement (Simplified Input Handling)
+        let newX = newPlayer.position.x;
+        let newY = newPlayer.position.y;
+
+        // Simulate movement based on simple directional input (e.g., key presses handled by useEffect)
+        // For the prototype, we just simulate a slight drift.
+        if (currentState.isDriving) {
+            newX += 0.5;
+            newY -= 0.2;
+        } else {
+            // Simple drift simulation if not in vehicle
+            newX += 0.1;
+            newY += 0.05;
+        }
+
+        newPlayer = { ...newPlayer, position: { x: newX, y: newY } };
+        newGameState = { ...newGameState, player: newPlayer };
+
+        // 2. Entity Updates (Very basic AI simulation)
+        newEntities = newEntities.map(entity => {
+            // TODO: Implement proper pathfinding and threat assessment here.
+            if (entity.type === 'npc' && Math.random() < 0.01) {
+                return { ...entity, position: { x: entity.position.x + 1, y: entity.position.y } };
+            }
+            return entity;
+        });
+
+        // 3. Collision Check (Placeholder)
+        // TODO: Implement AABB or SAT collision checks.
+        // If collision detected, adjust health/position.
+
+        return { ...newGameState, entities: newEntities };
+    }, []);
+
+    // --- Game Loop Effect (The Engine) ---
+    useEffect(() => {
+        // Using setInterval for simplified game loop simulation (less performant than requestAnimationFrame, but faster for prototype)
+        const intervalId = setInterval(() => {
+            setGameState(currentState => {
+                const nextState = updateGamePhysics(currentState);
+                return {
+                    ...nextState,
+                    time: nextState.time + 1,
+                };
+            });
+        }, 50); // ~20 FPS simulation
+
+        return () => clearInterval(intervalId);
+    }, [updateGamePhysics]);
+
+    // --- Input Handling (The Interface) ---
+    const handleKeyDown = useCallback((e: KeyboardEvent) => {
+        let newGameState = { ...gameState };
+        let newPlayer = { ...gameState.player };
+
+        // Simplified Input Mapping
+        switch (e.key) {
+            case 'ArrowUp':
+            case 'w':
+                newPlayer.position = { x: newPlayer.position.x, y: Math.max(0, newPlayer.position.y - 1) };
+                setMessage("Movendo para o Norte.");
+                break;
+            case 'ArrowDown':
+            case 's':
+                newPlayer.position = { x: newPlayer.position.x, y: Math.min(100, newPlayer.position.y + 1) };
+                setMessage("Movendo para o Sul.");
+                break;
+            case 'ArrowLeft':
+            case 'a':
+                newPlayer.position = { x: Math.max(0, newPlayer.position.x - 1), y: newPlayer.position.y };
+                setMessage("Movendo para o Oeste.");
+                break;
+            case 'ArrowRight':
+            case 'd':
+                newPlayer.position = { x: Math.min(200, newPlayer.position.x + 1), y: newPlayer.position.y };
+                setMessage("Movendo para o Leste.");
+                break;
+            case 'e':
+                // Simulated interaction (e.g., enter car)
+                if (!gameState.isDriving) {
+                    setMessage("Interagindo com o ambiente...");
+                    // Logic to detect nearby vehicle and change state
+                    setGameState(prev => ({ ...prev, isDriving: true }));
+                } else {
+                    setMessage("Você já está dirigindo. Pressione ESC para sair.");
+                }
+                break;
+            case 'Escape':
+                // Exit vehicle
+                setGameState(prev => ({ ...prev, isDriving: false }));
+                setMessage("Saiu do veículo. Voltando a caminhar.");
+                break;
+            default:
+                setMessage("");
+        }
+
+        // Force state update after key press to reflect movement immediately
+        setGameState(prev => ({ ...prev, player: newPlayer }));
+
+    }, [gameState]);
+
+    useEffect(() => {
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [handleKeyDown]);
+
+    // --- Rendering Helpers ---
+
+    const renderEntity = (entity: Entity) => {
+        const style = {
+            left: `${entity.position.x}%`,
+            top: `${entity.position.y}%`,
+            transform: `translate(-50%, -50%)`,
+            opacity: entity.type === 'player' ? 1 : 0.8,
+        };
+
+        let icon = '';
+        if (entity.type === 'player') icon = '👤';
+        else if (entity.type === 'vehicle') icon = '🚗';
+        else if (entity.type === 'npc') icon = '🚶';
+
+        return (
+            <div key={entity.id} style={style} className="entity-marker">
+                {icon} {entity.name} ({entity.health}%)
+            </div>
+        );
+    };
+
+    return (
+        <div className="game-container">
+            <div className="game-map-area">
+                <div style={{
+                    position: 'absolute',
+                    left: `${gameState.player.position.x}%`,
+                    top: `${gameState.player.position.y}%`,
+                    transform: `translate(-50%, -50%)`,
+                    transition: 'all 0.1s linear',
+                    width: '20px',
+                    height: '20px',
+                    backgroundColor: 'rgba(0, 255, 0, 0.7)',
+                    borderRadius: '50%',
+                    boxShadow: '0 0 10px green',
+                }}></div>
+                {gameState.entities.map(renderEntity)}
+            </div>
+
+            <div className="info-panel">
+                <div className="status-box">
+                    <h2>Status do Jogo</h2>
+                    <p><strong>Tempo:</strong> {Math.floor(gameState.time / 60)} Min</p>
+                    <p><strong>Modo:</strong> {gameState.isDriving ? 'DIRIGINDO' : 'A PEDESTRE'}</p>
+                    <p><strong>Mensagem:</strong> {message}</p>
+                </div>
+                <div className="controls-box">
+                    <h3>Controles (Tecla)</h3>
+                    <p>Movimento: WASD / Setas</p>
+                    <p>Interagir/Entrar: E</p>
+                    <p>Sair do Carro: ESC</p>
+                    <p class="debt-warning">
+                        ⚠️ DÉBITO TÉCNICO (CTO): Física e IA complexa devem ser refatoradas.
+                    </p>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// --- Global Styles (Simplified CSS for Prototype) ---
+// Note: In a real project, this would be a CSS module or styled-components.
+const StyleInjector = () => (
+    <style>{`
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            font-family: 'Arial', sans-serif;
+            background-color: #222;
+            color: #eee;
+        }
+        .game-map-area {
+            flex-grow: 1;
+            background-color: #444;
+            position: relative;
+            overflow: hidden;
+            /* Simulates the open world map area */
+            border-bottom: 1px solid #666;
+        }
+        .entity-marker {
+            position: absolute;
+            cursor: pointer;
+            font-size: 1.2em;
+            padding: 5px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 5px;
+            white-space: nowrap;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease-out;
+        }
+        .info-panel {
+            display: flex;
+            padding: 20px;
+            background-color: #1a1a1a;
+            border-top: 3px solid #333;
+            gap: 30px;
+        }
+        .status-box, .controls-box {
+            flex: 1;
+            padding: 15px;
+            background-color: #2c2c2c;
+            border-radius: 8px;
+        }
+        .debt-warning {
+            color: #ff8800;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    `}</style>
+);
+
+// --- Export the main application component ---
+const App: React.FC = () => (
+    <>
+        <StyleInjector />
+        <GameSimulation />
+    </>
+);
+
+export default App;
