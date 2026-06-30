@@ -656,6 +656,36 @@ function App() {
                         </div>
                       </div>
 
+                      {/* Sprint Tickets da Entrega */}
+                      {currentDec.sprintTickets && currentDec.sprintTickets.length > 0 && (
+                        <div className="glass" style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: '8px', textAlign: 'left', marginBottom: '8px' }}>
+                          <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)' }}>📋 Chamados Individuais da Sprint (Jira)</span>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                            {currentDec.sprintTickets.map((ticket: any, idx: number) => (
+                              <div
+                                key={idx}
+                                style={{
+                                  padding: '6px 12px',
+                                  background: 'rgba(255, 255, 255, 0.02)',
+                                  border: '1px solid var(--border-color)',
+                                  borderRadius: '6px',
+                                  fontSize: '0.7rem',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '8px'
+                                }}
+                              >
+                                <span>{ticket.agentAvatar}</span>
+                                <div>
+                                  <strong style={{ color: '#fff' }}>{ticket.ticketKey}</strong>
+                                  <span style={{ color: 'var(--text-muted)', marginLeft: '4px' }}>{ticket.agentName} ({ticket.status})</span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
                       {/* Device Simulator Frame */}
                       <div style={{
                         background: '#090d16',

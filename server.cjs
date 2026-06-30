@@ -413,7 +413,86 @@ const getOrCreateEpics = async () => {
     };
   }
 };
+const transitionJiraIssue = async (issueKey, targetStatusName) => {
+  try {
+    const res = await axios.get(`${JIRA_HOST}/rest/api/3/issue/${issueKey}/transitions`, {
+      headers: getJiraAuthHeader()
+    });
+    const transitions = res.data?.transitions || [];
+    const match = transitions.find(t => 
+      t.name.toLowerCase().includes(targetStatusName.toLowerCase()) || 
+      (t.to && t.to.name.toLowerCase().includes(targetStatusName.toLowerCase()))
+    );
 
+    if (match) {
+      await axios.post(
+        `${JIRA_HOST}/rest/api/3/issue/${issueKey}/transitions`,
+        { transition: { id: match.id } },
+        { headers: getJiraAuthHeader() }
+      );
+      console.log(`Jira issue ${issueKey} successfully transitioned to ${targetStatusName}`);
+    } else {
+      console.warn(`No transition found for status "${targetStatusName}" on issue ${issueKey}`);
+    }
+  } catch (err) {
+    console.error(`Failed to transition Jira issue ${issueKey} to ${targetStatusName}:`, err.message);
+  }
+};
+
+const runAgentTasksSimulation = async (parentKey, summary, activeAgents) => {
+  const sprintTickets = [];
+  const taskRoles = [
+    { id: 'mgr_prod', title: 'PM - Planejamento & Requisitos', desc: 'Definição detalhada dos requisitos de produto e objetivos de negócio.' },
+    { id: 'sr_ux', title: 'UX - Design & Layout', desc: 'Criação de wireframes, guias de estilo e protótipos de usabilidade.' },
+    { id: 'sr_dev', title: 'DEV - Codificação & Arquitetura', desc: 'Implementação física do código, testes e deploy da branch local.' },
+    { id: 'coord_qa', title: 'QA - Varredura & Testes', desc: 'Execução de testes de integração, regressão e validação de qualidade.' }
+  ];
+
+  for (const role of taskRoles) {
+    const agent = activeAgents.find(a => a.id === role.id) || activeAgents.find(a => a.role.toLowerCase().includes(role.id.split('_')[1]));
+    if (!agent) continue;
+
+    let ticketKey = null;
+    try {
+      const bodyData = {
+        fields: {
+          project: { key: 'KAN' },
+          summary: `[${role.title.split(' ')[0]}] ${summary}`,
+          description: {
+            type: 'doc', version: 1,
+            content: [{ type: 'paragraph', content: [{ text: `${role.desc} Responsável: ${agent.name}. Iniciado automaticamente pelo motor Flose Startup.`, type: 'text' }] }]
+          },
+          parent: parentKey ? { key: parentKey } : undefined,
+          issuetype: { name: 'Task' }
+        }
+      };
+
+      const jiraResponse = await axios.post(`${JIRA_HOST}/rest/api/3/issue`, bodyData, {
+        headers: getJiraAuthHeader()
+      });
+      ticketKey = jiraResponse.data?.key;
+
+      if (ticketKey) {
+        await transitionJiraIssue(ticketKey, 'Progress');
+        await transitionJiraIssue(ticketKey, 'Done');
+      }
+    } catch (err) {
+      console.error(`Error simulating ticket for ${agent.name}:`, err.message);
+      ticketKey = `MOCK-${role.id.toUpperCase()}-${Math.floor(100+Math.random()*900)}`;
+    }
+
+    sprintTickets.push({
+      agentName: agent.name,
+      agentRole: agent.role,
+      agentAvatar: agent.avatar,
+      ticketKey,
+      ticketSummary: `[${role.title.split(' ')[0]}] ${summary}`,
+      status: 'Concluído'
+    });
+  }
+
+  return sprintTickets;
+};
 app.get('/api/jira/epics', async (req, res) => {
   const epicMap = await getOrCreateEpics();
   res.json(epicMap);
@@ -689,6 +768,7 @@ export const executeTask = () => {
     gitCommitResult = `Erro ao comitar: ${gitErr.message}`;
     commitHash = 'git-' + Math.floor(100000 + Math.random() * 900000);
   }
+  const sprintTickets = await runAgentTasksSimulation(finalIssueKey, finalIssueSummary, activeAgents);
 
   // Save decision to persistent file (lastro)
   const decisionEntry = {
@@ -707,7 +787,8 @@ export const executeTask = () => {
     executorRole: developerAgent.role,
     generatedFile: fileRelativePath,
     commitHash: commitHash,
-    gitCommitResult: gitCommitResult
+    gitCommitResult: gitCommitResult,
+    sprintTickets: sprintTickets
   };
   saveDecision(decisionEntry);
   return decisionEntry;

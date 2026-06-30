@@ -33,6 +33,7 @@ export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selec
   const [executorRole, setExecutorRole] = useState<string | null>(null);
   const [generatedFile, setGeneratedFile] = useState<string | null>(null);
   const [commitHash, setCommitHash] = useState<string | null>(null);
+  const [sprintTickets, setSprintTickets] = useState<any[]>([]);
 
   const startDebate = async () => {
     if (!selectedIssue) {
@@ -54,6 +55,7 @@ export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selec
     setExecutorRole(null);
     setGeneratedFile(null);
     setCommitHash(null);
+    setSprintTickets([]);
 
     try {
       const res = await fetch('http://localhost:5001/api/simulate-debate', {
@@ -79,6 +81,7 @@ export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selec
       setExecutorRole(data.executorRole || null);
       setGeneratedFile(data.generatedFile || null);
       setCommitHash(data.commitHash || null);
+      setSprintTickets(data.sprintTickets || []);
       if (onDebateComplete) {
         onDebateComplete();
       }
@@ -106,6 +109,7 @@ export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selec
     setGeneratedFile(null);
     setCommitHash(null);
     setCommandResult(null);
+    setSprintTickets([]);
 
     try {
       const res = await fetch('http://localhost:5001/api/command', {
@@ -136,6 +140,7 @@ export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selec
         setExecutorRole(data.executorRole || null);
         setGeneratedFile(data.generatedFile || null);
         setCommitHash(data.commitHash || null);
+        setSprintTickets(data.sprintTickets || []);
       }
       
       setCustomIdea(''); // Limpar
@@ -337,6 +342,59 @@ export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selec
               🔗 Ticket Jira Criado: <strong style={{ color: 'var(--color-secondary)' }}>{commandResult.jiraKey}</strong>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Sprint Timeline / Chamados Autônomos de Cada Agente */}
+      {sprintTickets.length > 0 && (
+        <div className="glass" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left', marginTop: '16px', marginBottom: '16px' }}>
+          <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            🔄 Ciclo de Vida da Sprint Autônoma (Chamados Jira)
+          </h4>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
+            {sprintTickets.map((ticket, idx) => (
+              <div
+                key={idx}
+                style={{
+                  padding: '12px',
+                  background: 'rgba(255, 255, 255, 0.02)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '8px',
+                  position: 'relative'
+                }}
+              >
+                {/* Status indicator */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '1.2rem' }}>{ticket.agentAvatar}</span>
+                  <span style={{
+                    fontSize: '0.65rem',
+                    background: '#10b981',
+                    color: '#fff',
+                    padding: '2px 6px',
+                    borderRadius: '4px',
+                    fontWeight: 700
+                  }}>
+                    {ticket.status}
+                  </span>
+                </div>
+                <div>
+                  <strong style={{ fontSize: '0.75rem', color: '#fff', display: 'block' }}>{ticket.agentName}</strong>
+                  <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)' }}>{ticket.agentRole}</span>
+                </div>
+                <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '6px', fontSize: '0.7rem' }}>
+                  <div style={{ color: 'var(--text-secondary)', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {ticket.ticketSummary}
+                  </div>
+                  <div style={{ color: '#fbbf24', marginTop: '2px', fontWeight: 700 }}>
+                    🎫 {ticket.ticketKey}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
