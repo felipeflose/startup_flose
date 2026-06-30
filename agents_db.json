@@ -81,7 +81,10 @@
     "personality": "Comunicativa, focada em dados, orientada a negócios e flexível.",
     "status": "Disponível",
     "schedule": "09:00 - 18:00",
-    "feedbacks": []
+    "feedbacks": [],
+    "currentTask": null,
+    "lastActive": "2026-06-30T22:20:37.635Z",
+    "totalTasksCompleted": 1
   },
   {
     "id": "coord_scrum",
@@ -109,7 +112,10 @@
     "personality": "Meticulosa, cética de promessas de desenvolvedores, e direta.",
     "status": "Disponível",
     "schedule": "09:00 - 18:00",
-    "feedbacks": []
+    "feedbacks": [],
+    "currentTask": null,
+    "lastActive": "2026-06-30T22:20:48.278Z",
+    "totalTasksCompleted": 1
   },
   {
     "id": "sr_dev",
@@ -123,7 +129,10 @@
     "personality": "Introvertido, focado na resolução prática de problemas, e focado em código.",
     "status": "Disponível",
     "schedule": "09:00 - 18:00",
-    "feedbacks": []
+    "feedbacks": [],
+    "currentTask": null,
+    "lastActive": "2026-06-30T22:20:44.511Z",
+    "totalTasksCompleted": 1
   },
   {
     "id": "sr_ux",
@@ -137,6 +146,9 @@
     "personality": "Detalhista, questionadora, focada na usabilidade e orientada a feedbacks.",
     "status": "Disponível",
     "schedule": "09:00 - 18:00",
-    "feedbacks": []
+    "feedbacks": [],
+    "currentTask": null,
+    "lastActive": "2026-06-30T22:20:41.426Z",
+    "totalTasksCompleted": 1
   }
 ]

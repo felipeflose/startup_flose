@@ -21,12 +21,19 @@ const slugify = (text) => {
 
 const createGitBranch = (branchName) => {
   return new Promise((resolve) => {
-    exec(`git branch ${branchName}`, (error, stdout, stderr) => {
+    exec(`git checkout -b ${branchName}`, (error, stdout, stderr) => {
       if (error) {
-        console.error(`Error creating git branch ${branchName}:`, error.message);
-        resolve(false);
+        exec(`git checkout ${branchName}`, (err2, stdout2, stderr2) => {
+          if (err2) {
+            console.error(`Error checking out git branch ${branchName}:`, err2.message);
+            resolve(false);
+          } else {
+            console.log(`Switched to existing git branch ${branchName}.`);
+            resolve(true);
+          }
+        });
       } else {
-        console.log(`Git branch ${branchName} created successfully.`);
+        console.log(`Git branch ${branchName} created and checked out successfully.`);
         resolve(true);
       }
     });
@@ -1126,6 +1133,13 @@ ${decision}
     sprintTickets: sprintTickets
   };
   saveDecision(decisionEntry);
+  try {
+    await new Promise((resolve) => {
+      exec('git checkout main', (err) => resolve());
+    });
+  } catch (checkoutErr) {
+    console.error('Failed to checkout main at completion:', checkoutErr.message);
+  }
   return decisionEntry;
 };
 
