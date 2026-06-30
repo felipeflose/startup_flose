@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Agent, AgentCard } from './components/AgentCard';
+import type { Agent } from './components/AgentCard';
+import { AgentCard } from './components/AgentCard';
 import { OrgChart } from './components/OrgChart';
 import { JiraDashboard } from './components/JiraDashboard';
 import { GemmaConsole } from './components/GemmaConsole';
-import { Award, Briefcase, Cpu, FileText, Layers, Terminal } from 'lucide-react';
+import { Briefcase, Cpu, FileText, Layers, Terminal } from 'lucide-react';
 
 function App() {
   const [agents, setAgents] = useState<Agent[]>([]);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Agent } from './AgentCard';
+import type { Agent } from './AgentCard';
 
 interface OrgChartProps {
   agents: Agent[];
