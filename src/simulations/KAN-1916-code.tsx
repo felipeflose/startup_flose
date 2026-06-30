@@ -172,7 +172,7 @@ const styles: { [key: string]: React.CSSProperties } = {
         cursor: 'pointer',
         padding: '0',
         margin: 0,
-        transition: 'background-color 0.2s';
-        appearance: 'none', /* Remove estilos padrão de botão */
+        transition: 'background-color 0.2s',
+        appearance: 'none' /* Remove estilos padrão de botão */
     }
 };
