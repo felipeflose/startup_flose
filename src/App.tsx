@@ -5,6 +5,7 @@ import { OrgChart } from './components/OrgChart';
 import { JiraDashboard } from './components/JiraDashboard';
 import { GemmaConsole } from './components/GemmaConsole';
 import { Briefcase, Cpu, FileText, Layers, Terminal, History, Users, Monitor } from 'lucide-react';
+import { CompanyPulse } from './components/CompanyPulse';
 
 function App() {
   const [agents, setAgents] = useState<Agent[]>([]);
@@ -253,6 +254,9 @@ function App() {
               selectedAgentIds={selectedAgentIds}
               onDebateComplete={fetchDecisions}
             />
+
+            {/* Company Activity Stream Panel */}
+            <CompanyPulse agents={agents} />
           </>
         )}
 

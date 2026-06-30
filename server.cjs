@@ -337,14 +337,12 @@ app.post('/api/jira/issue/:issueKey/comment', async (req, res) => {
 });
 
 const DECISIONS_FILE = path.join(__dirname, 'decisions_log.json');
+const ACTIVITY_LOG_FILE = path.join(__dirname, 'activity_log.json');
 
 const readDecisions = () => {
   try {
-    if (!fs.existsSync(DECISIONS_FILE)) {
-      return [];
-    }
-    const data = fs.readFileSync(DECISIONS_FILE, 'utf8');
-    return JSON.parse(data);
+    if (!fs.existsSync(DECISIONS_FILE)) return [];
+    return JSON.parse(fs.readFileSync(DECISIONS_FILE, 'utf8'));
   } catch (error) {
     console.error('Error reading decisions log:', error);
     return [];
@@ -361,44 +359,94 @@ const saveDecision = (decisionEntry) => {
   }
 };
 
+const readActivity = () => {
+  try {
+    if (!fs.existsSync(ACTIVITY_LOG_FILE)) return [];
+    return JSON.parse(fs.readFileSync(ACTIVITY_LOG_FILE, 'utf8'));
+  } catch { return []; }
+};
+
+const logActivity = (agentId, agentName, agentAvatar, action, ticketKey, ticketSummary) => {
+  try {
+    const log = readActivity();
+    log.unshift({
+      id: Date.now().toString() + Math.random().toString(36).slice(2),
+      agentId, agentName, agentAvatar, action, ticketKey, ticketSummary,
+      at: new Date().toISOString()
+    });
+    // keep last 100 entries
+    fs.writeFileSync(ACTIVITY_LOG_FILE, JSON.stringify(log.slice(0, 100), null, 2), 'utf8');
+  } catch (e) {
+    console.error('Error writing activity log:', e.message);
+  }
+};
+
+const setAgentStatus = (agentId, status, currentTask = null) => {
+  try {
+    const agents = readAgents();
+    const agent = agents.find(a => a.id === agentId);
+    if (agent) {
+      agent.status = status;
+      agent.currentTask = currentTask;
+      agent.lastActive = new Date().toISOString();
+      if (status === 'Disponível' && currentTask === null) {
+        agent.totalTasksCompleted = (agent.totalTasksCompleted || 0) + 1;
+      }
+      saveAgents(agents);
+    }
+  } catch (e) {
+    console.error('Error setting agent status:', e.message);
+  }
+};
+
+// Fetch existing epics from the real Jira board — never create duplicates
 const getOrCreateEpics = async () => {
   try {
     const searchRes = await axios.get(`${JIRA_HOST}/rest/api/3/search/jql`, {
       headers: getJiraAuthHeader(),
-      params: {
-        jql: 'project = KAN AND issuetype = Epic',
-        fields: 'summary'
-      }
+      params: { jql: 'project = KAN AND issuetype = Epic ORDER BY created ASC', fields: 'summary', maxResults: 50 }
     });
     const epics = searchRes.data.issues || [];
     const epicMap = {};
-    epics.forEach(e => {
-      epicMap[e.fields.summary] = e.key;
-    });
 
-    const requiredEpics = [
-      'Gestão de Pessoas',
-      'Infraestrutura & Tecnologia',
-      'Design & Produto',
-      'Processos Ágeis'
-    ];
+    // Map existing epics by name
+    epics.forEach(e => { epicMap[e.fields.summary] = e.key; });
 
-    for (const name of requiredEpics) {
-      if (!epicMap[name]) {
+    // Smart fallback matching: if user's board has 2 epics with different names, map them to our categories
+    const categoryKeywords = {
+      'Gestão de Pessoas':       ['pessoas', 'rh', 'people', 'gestao', 'equipe', 'time', 'colaborador'],
+      'Infraestrutura & Tecnologia': ['tech', 'infra', 'tecnologia', 'backend', 'sistema', 'api', 'cloud'],
+      'Design & Produto':        ['design', 'produto', 'ux', 'ui', 'produto', 'layout', 'interface'],
+      'Processos Ágeis':         ['agil', 'scrum', 'sprint', 'processo', 'kanban', 'metodologia']
+    };
+
+    const requiredCategories = Object.keys(categoryKeywords);
+    for (const category of requiredCategories) {
+      if (epicMap[category]) continue; // Already mapped exactly
+
+      // Try fuzzy match against existing epics
+      const keywords = categoryKeywords[category];
+      const fuzzyMatch = epics.find(e => {
+        const name = e.fields.summary.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        return keywords.some(kw => name.includes(kw));
+      });
+
+      if (fuzzyMatch) {
+        epicMap[category] = fuzzyMatch.key;
+        console.log(`Mapped category "${category}" → existing epic ${fuzzyMatch.key} ("${fuzzyMatch.fields.summary}")`);
+      } else {
+        // Create if truly missing
         try {
           const createRes = await axios.post(`${JIRA_HOST}/rest/api/3/issue`, {
-            fields: {
-              project: { key: 'KAN' },
-              summary: name,
-              issuetype: { name: 'Epic' }
-            }
+            fields: { project: { key: 'KAN' }, summary: category, issuetype: { name: 'Epic' } }
           }, { headers: getJiraAuthHeader() });
-          if (createRes.data && createRes.data.key) {
-            epicMap[name] = createRes.data.key;
+          if (createRes.data?.key) {
+            epicMap[category] = createRes.data.key;
+            console.log(`Created new epic "${category}" → ${createRes.data.key}`);
           }
         } catch (createErr) {
-          console.error(`Failed to create Epic "${name}":`, createErr.message);
-          epicMap[name] = 'MOCK-EPIC-' + slugify(name);
+          console.error(`Failed to create Epic "${category}":`, createErr.message);
+          epicMap[category] = 'MOCK-EPIC-' + slugify(category);
         }
       }
     }
@@ -439,55 +487,124 @@ const transitionJiraIssue = async (issueKey, targetStatusName) => {
   }
 };
 
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 const runAgentTasksSimulation = async (parentKey, summary, activeAgents) => {
   const sprintTickets = [];
+
+  // Define the 4-role sprint lifecycle
   const taskRoles = [
-    { id: 'mgr_prod', title: 'PM - Planejamento & Requisitos', desc: 'Definição detalhada dos requisitos de produto e objetivos de negócio.' },
-    { id: 'sr_ux', title: 'UX - Design & Layout', desc: 'Criação de wireframes, guias de estilo e protótipos de usabilidade.' },
-    { id: 'sr_dev', title: 'DEV - Codificação & Arquitetura', desc: 'Implementação física do código, testes e deploy da branch local.' },
-    { id: 'coord_qa', title: 'QA - Varredura & Testes', desc: 'Execução de testes de integração, regressão e validação de qualidade.' }
+    {
+      id: 'mgr_prod',
+      prefix: 'PM',
+      title: `[PM] Planejamento: ${summary}`,
+      desc: `Sarah Backlog abriu este chamado para definir os requisitos funcionais e não-funcionais de "${summary}". Inclui mapeamento de jornada do usuário, critérios de aceite, e definição do MVP.`
+    },
+    {
+      id: 'sr_ux',
+      prefix: 'UX',
+      title: `[UX] Design: ${summary}`,
+      desc: `Elsa Pixel abriu este chamado para criar wireframes de alta fidelidade, guia de estilo visual e protótipos interativos de "${summary}". Componentes e acessibilidade incluídos.`
+    },
+    {
+      id: 'sr_dev',
+      prefix: 'DEV',
+      title: `[DEV] Implementação: ${summary}`,
+      desc: `David Dev abriu este chamado para codificar, revisar e realizar o deploy da feature "${summary}". Inclui testes unitários, documentação de arquitetura e pull request para code review.`
+    },
+    {
+      id: 'coord_qa',
+      prefix: 'QA',
+      title: `[QA] Validação: ${summary}`,
+      desc: `Diana Test abriu este chamado para executar a bateria completa de testes de integração, regressão e smoke tests de "${summary}". Critério de aceite validado antes do merge.`
+    }
   ];
 
   for (const role of taskRoles) {
-    const agent = activeAgents.find(a => a.id === role.id) || activeAgents.find(a => a.role.toLowerCase().includes(role.id.split('_')[1]));
+    const agent = activeAgents.find(a => a.id === role.id)
+      || activeAgents.find(a => a.role.toLowerCase().includes(role.prefix.toLowerCase()));
     if (!agent) continue;
+
+    // Update agent status: Em Sprint
+    setAgentStatus(agent.id, `Em Sprint: ${role.prefix}`, role.title);
+    logActivity(agent.id, agent.name, agent.avatar, 'opened', '...', role.title);
 
     let ticketKey = null;
     try {
-      const bodyData = {
+      const subtaskBody = {
         fields: {
           project: { key: 'KAN' },
-          summary: `[${role.title.split(' ')[0]}] ${summary}`,
+          summary: role.title,
           description: {
             type: 'doc', version: 1,
-            content: [{ type: 'paragraph', content: [{ text: `${role.desc} Responsável: ${agent.name}. Iniciado automaticamente pelo motor Flose Startup.`, type: 'text' }] }]
+            content: [
+              { type: 'paragraph', content: [{ text: role.desc, type: 'text' }] },
+              { type: 'paragraph', content: [{ text: `Responsável: ${agent.name} (${agent.role})`, type: 'text' }] },
+              { type: 'paragraph', content: [{ text: `Tarefa iniciada em: ${new Date().toLocaleString('pt-BR')}`, type: 'text' }] }
+            ]
           },
           parent: parentKey ? { key: parentKey } : undefined,
-          issuetype: { name: 'Task' }
+          issuetype: { name: 'Subtask' }
         }
       };
 
-      const jiraResponse = await axios.post(`${JIRA_HOST}/rest/api/3/issue`, bodyData, {
+      const jiraResponse = await axios.post(`${JIRA_HOST}/rest/api/3/issue`, subtaskBody, {
         headers: getJiraAuthHeader()
       });
       ticketKey = jiraResponse.data?.key;
 
       if (ticketKey) {
-        await transitionJiraIssue(ticketKey, 'Progress');
+        logActivity(agent.id, agent.name, agent.avatar, 'progressing', ticketKey, role.title);
+        await sleep(500);
+        await transitionJiraIssue(ticketKey, 'In Progress');
+        await sleep(800);
         await transitionJiraIssue(ticketKey, 'Done');
+        logActivity(agent.id, agent.name, agent.avatar, 'closed', ticketKey, role.title);
       }
     } catch (err) {
-      console.error(`Error simulating ticket for ${agent.name}:`, err.message);
-      ticketKey = `MOCK-${role.id.toUpperCase()}-${Math.floor(100+Math.random()*900)}`;
+      console.error(`Subtask error for ${agent.name}:`, err.message);
+      // Subtasks may not be supported — fall back to Task
+      try {
+        const taskBody = {
+          fields: {
+            project: { key: 'KAN' },
+            summary: role.title,
+            description: {
+              type: 'doc', version: 1,
+              content: [{ type: 'paragraph', content: [{ text: role.desc, type: 'text' }] }]
+            },
+            parent: parentKey ? { key: parentKey } : undefined,
+            issuetype: { name: 'Task' }
+          }
+        };
+        const fallbackRes = await axios.post(`${JIRA_HOST}/rest/api/3/issue`, taskBody, { headers: getJiraAuthHeader() });
+        ticketKey = fallbackRes.data?.key;
+        if (ticketKey) {
+          await sleep(500);
+          await transitionJiraIssue(ticketKey, 'In Progress');
+          await sleep(600);
+          await transitionJiraIssue(ticketKey, 'Done');
+          logActivity(agent.id, agent.name, agent.avatar, 'closed', ticketKey, role.title);
+        }
+      } catch (fallbackErr) {
+        ticketKey = `MOCK-${role.prefix}-${Math.floor(100 + Math.random() * 900)}`;
+        logActivity(agent.id, agent.name, agent.avatar, 'closed', ticketKey, role.title);
+      }
     }
 
+    // Restore agent status
+    setAgentStatus(agent.id, 'Disponível', null);
+
     sprintTickets.push({
+      agentId: agent.id,
       agentName: agent.name,
       agentRole: agent.role,
       agentAvatar: agent.avatar,
+      prefix: role.prefix,
       ticketKey,
-      ticketSummary: `[${role.title.split(' ')[0]}] ${summary}`,
-      status: 'Concluído'
+      ticketSummary: role.title,
+      status: 'Concluído',
+      closedAt: new Date().toISOString()
     });
   }
 
@@ -498,49 +615,261 @@ app.get('/api/jira/epics', async (req, res) => {
   res.json(epicMap);
 });
 
-// 5.5. Get Decisions Log
 app.get('/api/decisions', (req, res) => {
   res.json(readDecisions());
 });
 
+app.get('/api/activity', (req, res) => {
+  res.json(readActivity());
+});
+
 const generateAgentOpinion = (agent, summary) => {
-  const cleanSummary = summary.trim();
-  const lowerSummary = cleanSummary.toLowerCase();
-  
-  // Custom speech generator based on agent profile
+  const s = summary.trim();
+  const sl = s.toLowerCase();
+
+  // Extract topic keywords to make opinions contextually specific
+  const isTech = sl.match(/api|backend|servidor|banco|banco de dados|cloud|infra|deploy|docker|kubernetes|node|auth|login|oauth|token/);
+  const isDesign = sl.match(/tela|design|layout|cor|tema|ui|ux|interface|dark|light|botao|modal|componente|figma/);
+  const isProcess = sl.match(/sprint|scrum|daily|retro|kanban|processo|metodologia|cerimonia|reuniao/);
+  const isHR = sl.match(/contratar|demitir|feedback|equipe|people|rh|time|onboarding|salario/);
+  const isProduct = sl.match(/produto|feature|funcionalidade|usuario|cliente|metrica|conversao|funil|kpi/);
+
   if (agent.id === 'ceo') {
-    return `Como CEO, vejo que "${cleanSummary}" é fundamental para acelerar nosso crescimento no mercado. Meu dilema é ${agent.dilemma}. Portanto, concordo totalmente em disparar isso de imediato, mesmo que tenhamos débitos técnicos ou de design para corrigir depois. O importante é o time-to-market e a validação do cliente!`;
+    const urgency = isTech ? 'nossa stack tecnológica' : isDesign ? 'a experiência visual do produto' : isProduct ? 'as métricas de crescimento' : 'nossa posição competitiva';
+    return `Pessoas, "${s}" vai impactar diretamente ${urgency}. Meu dilema aqui é claro: ${agent.dilemma}. Mas considerando o mercado e a velocidade que nossos concorrentes estão se movendo, votamos por ir. Vamos validar rápido, medir e iterar. Deadline: próxima sprint. Aprovo!`;
   }
   if (agent.id === 'cto') {
-    return `Analisando a proposta de "${cleanSummary}", minha preocupação técnica é com a escalabilidade. Como meu dilema é ${agent.dilemma}, não posso deixar passar sem alertar que acelerar sem critério técnico criará um débito insustentável. Sugiro criarmos uma branch isolada para refatoração e focar na qualidade do código.`;
+    const concern = isTech ? `A arquitetura de "${s}" exige revisão da camada de serviços para não comprometer a escalabilidade horizontal.` : isDesign ? `Precisamos garantir que "${s}" não introduza componentes que quebrem o SSR ou aumentem o bundle size.` : `A implementação de "${s}" requer avaliação de impacto na infraestrutura existente.`;
+    return `${concern} Como CTO, meu dilema é ${agent.dilemma}. Recomendo criarmos uma spike técnica de 2 dias para mapear os riscos antes de commitar a implementação completa. Precisamos de arquitetura limpa, não apenas de código funcionando.`;
   }
   if (agent.id === 'dir_ops') {
-    return `Temos que avaliar o impacto operacional de implementar "${cleanSummary}". O orçamento e os prazos atuais estão apertados. Vamos monitorar o tempo investido no Git e garantir que isso não cause atritos nos deploys. Apoio, contanto que mantenhamos a integridade operacional.`;
+    return `Operacionalmente, preciso entender o custo total de ownership de "${s}". Isso impacta orçamento de ferramental, horas de engenharia e possíveis custos de infraestrutura? Meu dilema é ${agent.dilemma}. Apoio condicionalmente — mas quero um forecast de esforço antes do kick-off.`;
   }
   if (agent.id === 'dir_design') {
-    return `Do ponto de vista de UX e identidade de marca, "${cleanSummary}" precisa manter uma experiência fluida e visualmente impecável. Não podemos tolerar interfaces sem polimento estético. Quero garantir que o design system da Flose Startup seja respeitado.`;
+    const designNote = isDesign ? `Para "${s}", já tenho referências visuais no Figma que podemos usar como base.` : `Mesmo que "${s}" pareça técnico, toda entrega tem um impacto visual na interface do usuário.`;
+    return `${designNote} Não abriremos mão da consistência do design system da Flose. Meu dilema é ${agent.dilemma}. Preciso estar no loop de todas as decisões de interface — qualquer componente novo passa pela aprovação do Design antes do merge.`;
   }
   if (agent.id === 'mgr_eng') {
-    return `Para entregarmos "${cleanSummary}" no prazo, precisaremos organizar bem as subtasks do time. Minha prioridade é a saúde mental do time e evitar burnout com prazos impossíveis. Vamos balancear o escopo e planejar isso de forma saudável.`;
+    return `Para entregarmos "${s}" com qualidade e sem comprometer o time, precisamos de um planejamento de sprint realista. Meu dilema é ${agent.dilemma}. Proponho que quebremos isso em incrementos entregáveis: um MVP funcional primeiro, depois as otimizações. O time já está em capacidade alta — precisamos proteger a saúde deles.`;
   }
   if (agent.id === 'mgr_prod') {
-    return `Mapeando o feedback dos usuários, vejo que "${cleanSummary}" resolve uma das maiores dores do nosso público atualmente. As métricas de engajamento mostram que priorizar isso fará o nosso produto decolar. Sou totalmente a favor e considero prioridade máxima!`;
+    const productAngle = isProduct ? `Os dados de comportamento do usuário mostram que "${s}" é uma das top 3 solicitações do nosso NPS.` : isTech ? `Do ponto de produto, "${s}" vai desbloquear features que estão bloqueadas há meses por limitações técnicas.` : `Nossa pesquisa qualitativa confirma que "${s}" resolve uma fricção real na jornada do usuário.`;
+    return `${productAngle} Sou completamente a favor. Meu dilema aqui é ${agent.dilemma}, mas nesse caso o impacto no produto supera os riscos de scope creep. Já preparei os critérios de aceite e os KPIs de sucesso para medirmos após o lançamento.`;
   }
   if (agent.id === 'coord_scrum') {
-    return `Vou atuar facilitando o desenvolvimento de "${cleanSummary}" e limpando qualquer impedimento no board. Se concordarmos com essa linha de ação, sugiro quebrarmos a entrega em tarefas menores na daily de amanhã para manter o burndown estável.`;
+    return `Facilitando a discussão sobre "${s}": precisamos garantir que temos Definition of Ready antes de entrar na sprint. Meu dilema é ${agent.dilemma}. Sugiro: refinamento na quarta-feira, estimativa em story points na quinta, e kick-off na segunda-feira. Vou criar as subtarefas no board e acompanhar o burndown diariamente.`;
   }
   if (agent.id === 'coord_qa') {
-    return `Sem cobertura de testes automatizados, não há deploy de "${cleanSummary}" em ambiente de produção! Como meu dilema é ${agent.dilemma}, exijo testes unitários e de integração completos antes de integrarmos essa branch.`;
+    const qaRisk = isTech ? `Para "${s}", os riscos críticos são: vazamentos de memória, falhas de autenticação e timeouts em produção.` : isDesign ? `Para "${s}", os riscos são: quebra de layout em mobile, acessibilidade (WCAG 2.1) e cross-browser compatibility.` : `Para "${s}", precisamos definir os critérios de aceite antes de qualquer linha de código.`;
+    return `${qaRisk} Não aprovarei nenhum merge sem cobertura mínima de 80% em testes unitários e testes de integração passando no CI/CD. Meu dilema é ${agent.dilemma} — mas nesse caso, qualidade não é negociável.`;
   }
   if (agent.id === 'sr_dev') {
-    return `Entendido. Posso codar a primeira versão de "${cleanSummary}" em poucos dias usando o stack padrão. Mas se for necessário cobrir com 100% de testes e documentação de arquitetura refinada, precisarei de mais prazo na sprint.`;
+    const devEstimate = isTech ? `Para "${s}", estimo 3-5 dias de desenvolvimento puro + 2 dias de testes e documentação.` : isDesign ? `O componente de "${s}" leva uns 2 dias para codificar seguindo o design system.` : `Posso entregar a primeira versão de "${s}" em 2-4 dias dependendo da complexidade do backend.`;
+    return `${devEstimate} Vou criar a branch feature/${slugify(s).slice(0, 30)} e já mando o PR para code review assim que tiver o MVP. Prefiro entregas incrementais para ir colhendo feedback do time cedo. Stack: TypeScript + React + Node, conforme o padrão atual.`;
   }
   if (agent.id === 'sr_ux') {
-    return `Já tenho algumas ideias de layout na cabeça para "${cleanSummary}". Vou montar um protótipo focado na melhor usabilidade para que o cliente se encante à primeira vista com a simplicidade.`;
+    const uxNote = isDesign ? `Para "${s}", já tenho um fluxo de navegação em mente que segue o padrão do design system.` : `Mesmo que "${s}" seja mais técnico, o ponto de contato do usuário precisa ser fluido e intuitivo.`;
+    return `${uxNote} Vou montar o protótipo no Figma primeiro para validar com o time antes de entrar em desenvolvimento. Meu dilema é ${agent.dilemma} — mas para "${s}" vou priorizar usabilidade comprovada sobre inovação visual radical.`;
   }
 
   // Dynamic fallback for dynamically hired agents
-  return `Analisando a proposta de "${cleanSummary}" sob a ótica de ${agent.role}, vejo uma oportunidade. Minha principal vantagem é que ${agent.advantage.toLowerCase()}, mas meu dilema principal é ${agent.dilemma}. Acredito que devemos avançar focando nisso de forma proativa. Minha personalidade é descrita como ${agent.personality.toLowerCase()}.`;
+  return `Analisando a proposta de "${s}" sob a ótica de ${agent.role}, vejo uma oportunidade. Minha principal vantagem é que ${agent.advantage.toLowerCase()}, mas meu dilema principal é ${agent.dilemma}. Acredito que devemos avançar focando nisso de forma proativa. Minha personalidade é descrita como ${agent.personality.toLowerCase()}.`;
+};
+
+const createRealGitHubPR = async (branchName, title, description) => {
+  const token = process.env.GITHUB_TOKEN;
+  const owner = process.env.GITHUB_OWNER || 'felipeflose';
+  const repo = process.env.GITHUB_REPO || 'startup_flose';
+  
+  if (!token) {
+    console.warn('GITHUB_TOKEN not found in .env. Skipping real PR creation.');
+    return { url: null, prNumber: null };
+  }
+
+  try {
+    // 1. Push branch to remote (authenticated)
+    await new Promise((resolve, reject) => {
+      const pushUrl = `https://${token}@github.com/${owner}/${repo}.git`;
+      exec(`git push "${pushUrl}" "${branchName}":"${branchName}" --force`, (err, stdout, stderr) => {
+        if (err) {
+          console.error('Git push failed:', err.message);
+          return reject(err);
+        }
+        resolve(stdout);
+      });
+    });
+    console.log(`Branch ${branchName} successfully pushed to origin.`);
+
+    // 2. Create PR
+    const prRes = await axios.post(
+      `https://api.github.com/repos/${owner}/${repo}/pulls`,
+      {
+        title: title,
+        head: branchName,
+        base: 'main',
+        body: description
+      },
+      {
+        headers: {
+          Authorization: `token ${token}`,
+          Accept: 'application/vnd.github.v3+json'
+        }
+      }
+    );
+
+    const prUrl = prRes.data?.html_url;
+    const prNumber = prRes.data?.number;
+    console.log(`GitHub PR successfully created: ${prUrl}`);
+    return { url: prUrl, prNumber };
+  } catch (err) {
+    console.error('Failed to create GitHub PR:', err.response?.data || err.message);
+    // Try to find existing PR
+    try {
+      const searchRes = await axios.get(
+        `https://api.github.com/repos/${owner}/${repo}/pulls`,
+        {
+          headers: {
+            Authorization: `token ${token}`,
+            Accept: 'application/vnd.github.v3+json'
+          },
+          params: {
+            head: `${owner}:${branchName}`,
+            state: 'open'
+          }
+        }
+      );
+      if (searchRes.data && searchRes.data.length > 0) {
+        return { url: searchRes.data[0].html_url, prNumber: searchRes.data[0].number };
+      }
+    } catch (e) {
+      console.error('Failed to search existing GitHub PRs:', e.message);
+    }
+    return { url: `https://github.com/${owner}/${repo}/pulls`, prNumber: null };
+  }
+};
+
+const generateRealFunctionalCode = (issueKey, summary, decision, developerAgent) => {
+  const sl = summary.toLowerCase();
+  
+  if (sl.includes('cpu') || sl.includes('memoria') || sl.includes('ram') || sl.includes('mac')) {
+    return {
+      relativePath: `src/simulations/${issueKey}-monitor.js`,
+      content: `// Monitor de Sistema real gerado pela engenharia da Flose Startup
+// Ticket Jira: ${issueKey}
+// Desenvolvedor: ${developerAgent.name}
+
+const os = require('os');
+
+function monitorSystem() {
+  const totalMem = os.totalmem();
+  const freeMem = os.freemem();
+  const usedMem = totalMem - freeMem;
+  const cpus = os.cpus();
+  
+  const ramUsage = (usedMem / totalMem * 100).toFixed(2);
+  
+  console.log('--- FLOSESYSTEM MONITOR ---');
+  console.log('CPU Cores:', cpus.length);
+  console.log('CPU Model:', cpus[0].model);
+  console.log('RAM Usada:', (usedMem / 1024 / 1024 / 1024).toFixed(2), 'GB');
+  console.log('RAM Total:', (totalMem / 1024 / 1024 / 1024).toFixed(2), 'GB');
+  console.log('Percentual de RAM:', ramUsage + '%');
+  
+  return {
+    cpus: cpus.length,
+    model: cpus[0].model,
+    ramUsedGB: (usedMem / 1024 / 1024 / 1024).toFixed(2),
+    ramTotalGB: (totalMem / 1024 / 1024 / 1024).toFixed(2),
+    percentage: ramUsage
+  };
+}
+
+module.exports = { monitorSystem };
+if (require.main === module) {
+  monitorSystem();
+}
+`
+    };
+  }
+
+  if (sl.includes('login') || sl.includes('senha') || sl.includes('autentic') || sl.includes('oauth')) {
+    return {
+      relativePath: `src/simulations/${issueKey}-login.tsx`,
+      content: `// Componente de Login real gerado pela engenharia da Flose Startup
+// Ticket Jira: ${issueKey}
+// Desenvolvedor: ${developerAgent.name}
+
+import React, { useState } from 'react';
+
+export const LoginForm = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      alert('Login efetuado com sucesso!');
+    }, 1000);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '24px', background: '#0f172a', borderRadius: '8px', color: '#fff', maxWidth: '380px' }}>
+      <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>Acessar Flose Platform</h2>
+      <input 
+        type="email" 
+        value={email} 
+        onChange={e => setEmail(e.target.value)} 
+        placeholder="email@empresa.com" 
+        style={{ padding: '8px', borderRadius: '4px', background: '#1e293b', border: '1px solid #475569', color: '#fff' }} 
+        required 
+      />
+      <input 
+        type="password" 
+        value={password} 
+        onChange={e => setPassword(e.target.value)} 
+        placeholder="Senha" 
+        style={{ padding: '8px', borderRadius: '4px', background: '#1e293b', border: '1px solid #475569', color: '#fff' }} 
+        required 
+      />
+      <button type="submit" disabled={loading} style={{ background: '#4f46e5', padding: '8px', borderRadius: '4px', fontWeight: 'bold', border: 'none', color: '#fff', cursor: 'pointer' }}>
+        {loading ? 'Entrando...' : 'Entrar'}
+      </button>
+    </form>
+  );
+};
+`
+    };
+  }
+
+  // Fallback default node code
+  return {
+    relativePath: `src/simulations/${issueKey}-runner.js`,
+    content: `// Feature real gerada de forma autônoma
+// Ticket Jira: ${issueKey}
+// Proposta: ${summary}
+// Desenvolvedor: ${developerAgent.name}
+
+function runFeature() {
+  const result = {
+    feature: "${summary.replace(/"/g, '\\"')}",
+    status: "Delivered",
+    timestamp: "${new Date().toISOString()}",
+    consensus: "${decision.replace(/"/g, '\\"')}"
+  };
+  console.log('--- Feature Executed ---');
+  console.log(JSON.stringify(result, null, 2));
+  return result;
+}
+
+module.exports = { runFeature };
+if (require.main === module) {
+  runFeature();
+}
+`
+  };
 };
 
 // 6. Simulate Gemma 4 / Agent Debate & Update Jira (Refactored to helper)
@@ -713,23 +1042,9 @@ ${decision}
 *Simulação autônoma de especificação pela equipe Flose Startup.*`;
   } else {
     isCode = true;
-    fileRelativePath = `src/simulations/${finalIssueKey}-code.ts`;
-    fileContent = `// Código autônomo gerado pela equipe de engenharia da Flose Startup
-// Ticket Jira: ${finalIssueKey}
-// Autor: ${developerAgent.name} (${developerAgent.role})
-// Data: ${new Date().toLocaleString('pt-BR')}
-
-export const executeTask = () => {
-  console.log("Executando a resolução consensual da equipe:");
-  console.log("${decision.replace(/"/g, '\\"')}");
-  
-  return {
-    status: "delivered",
-    engineer: "${developerAgent.name}",
-    consensualResolution: "${decision.replace(/"/g, '\\"')}",
-    timestamp: "${new Date().toISOString()}"
-  };
-};`;
+    const generated = generateRealFunctionalCode(finalIssueKey, finalIssueSummary, decision, developerAgent);
+    fileRelativePath = generated.relativePath;
+    fileContent = generated.content;
   }
 
   // Write file physically
@@ -768,6 +1083,26 @@ export const executeTask = () => {
     gitCommitResult = `Erro ao comitar: ${gitErr.message}`;
     commitHash = 'git-' + Math.floor(100000 + Math.random() * 900000);
   }
+
+  // Create REAL GitHub Pull Request!
+  let githubPrUrl = null;
+  if (gitCommitResult === 'Commit efetuado com sucesso!') {
+    try {
+      const prData = await createRealGitHubPR(
+        gitBranchName,
+        `feat: ${finalIssueKey} - ${finalIssueSummary}`,
+        `Esta Pull Request foi criada de forma totalmente autônoma pela equipe de engenharia da Flose Startup.\n\n` +
+        `**Ticket Jira:** ${finalIssueKey}\n` +
+        `**Desenvolvedor Responsável:** ${developerAgent.name} (${developerAgent.role})\n` +
+        `**Resolução Consensual:**\n> ${decision}\n\n` +
+        `**Arquivo Modificado:** \`${fileRelativePath}\``
+      );
+      githubPrUrl = prData.url;
+    } catch (prErr) {
+      console.error('Failed to create real GitHub PR:', prErr.message);
+    }
+  }
+
   const sprintTickets = await runAgentTasksSimulation(finalIssueKey, finalIssueSummary, activeAgents);
 
   // Save decision to persistent file (lastro)
@@ -781,7 +1116,7 @@ export const executeTask = () => {
     decision: decision,
     jiraCommentResult: jiraCommentResult,
     gitBranchName: gitBranchName,
-    githubIssueUrl: githubIssueUrl,
+    githubIssueUrl: githubPrUrl || githubIssueUrl,
     branchCreated: branchCreated,
     executorName: developerAgent.name,
     executorRole: developerAgent.role,
