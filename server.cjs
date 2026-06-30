@@ -424,6 +424,46 @@ app.get('/api/decisions', (req, res) => {
   res.json(readDecisions());
 });
 
+const generateAgentOpinion = (agent, summary) => {
+  const cleanSummary = summary.trim();
+  const lowerSummary = cleanSummary.toLowerCase();
+  
+  // Custom speech generator based on agent profile
+  if (agent.id === 'ceo') {
+    return `Como CEO, vejo que "${cleanSummary}" é fundamental para acelerar nosso crescimento no mercado. Meu dilema é ${agent.dilemma}. Portanto, concordo totalmente em disparar isso de imediato, mesmo que tenhamos débitos técnicos ou de design para corrigir depois. O importante é o time-to-market e a validação do cliente!`;
+  }
+  if (agent.id === 'cto') {
+    return `Analisando a proposta de "${cleanSummary}", minha preocupação técnica é com a escalabilidade. Como meu dilema é ${agent.dilemma}, não posso deixar passar sem alertar que acelerar sem critério técnico criará um débito insustentável. Sugiro criarmos uma branch isolada para refatoração e focar na qualidade do código.`;
+  }
+  if (agent.id === 'dir_ops') {
+    return `Temos que avaliar o impacto operacional de implementar "${cleanSummary}". O orçamento e os prazos atuais estão apertados. Vamos monitorar o tempo investido no Git e garantir que isso não cause atritos nos deploys. Apoio, contanto que mantenhamos a integridade operacional.`;
+  }
+  if (agent.id === 'dir_design') {
+    return `Do ponto de vista de UX e identidade de marca, "${cleanSummary}" precisa manter uma experiência fluida e visualmente impecável. Não podemos tolerar interfaces sem polimento estético. Quero garantir que o design system da Flose Startup seja respeitado.`;
+  }
+  if (agent.id === 'mgr_eng') {
+    return `Para entregarmos "${cleanSummary}" no prazo, precisaremos organizar bem as subtasks do time. Minha prioridade é a saúde mental do time e evitar burnout com prazos impossíveis. Vamos balancear o escopo e planejar isso de forma saudável.`;
+  }
+  if (agent.id === 'mgr_prod') {
+    return `Mapeando o feedback dos usuários, vejo que "${cleanSummary}" resolve uma das maiores dores do nosso público atualmente. As métricas de engajamento mostram que priorizar isso fará o nosso produto decolar. Sou totalmente a favor e considero prioridade máxima!`;
+  }
+  if (agent.id === 'coord_scrum') {
+    return `Vou atuar facilitando o desenvolvimento de "${cleanSummary}" e limpando qualquer impedimento no board. Se concordarmos com essa linha de ação, sugiro quebrarmos a entrega em tarefas menores na daily de amanhã para manter o burndown estável.`;
+  }
+  if (agent.id === 'coord_qa') {
+    return `Sem cobertura de testes automatizados, não há deploy de "${cleanSummary}" em ambiente de produção! Como meu dilema é ${agent.dilemma}, exijo testes unitários e de integração completos antes de integrarmos essa branch.`;
+  }
+  if (agent.id === 'sr_dev') {
+    return `Entendido. Posso codar a primeira versão de "${cleanSummary}" em poucos dias usando o stack padrão. Mas se for necessário cobrir com 100% de testes e documentação de arquitetura refinada, precisarei de mais prazo na sprint.`;
+  }
+  if (agent.id === 'sr_ux') {
+    return `Já tenho algumas ideias de layout na cabeça para "${cleanSummary}". Vou montar um protótipo focado na melhor usabilidade para que o cliente se encante à primeira vista com a simplicidade.`;
+  }
+
+  // Dynamic fallback for dynamically hired agents
+  return `Analisando a proposta de "${cleanSummary}" sob a ótica de ${agent.role}, vejo uma oportunidade. Minha principal vantagem é que ${agent.advantage.toLowerCase()}, mas meu dilema principal é ${agent.dilemma}. Acredito que devemos avançar focando nisso de forma proativa. Minha personalidade é descrita como ${agent.personality.toLowerCase()}.`;
+};
+
 // 6. Simulate Gemma 4 / Agent Debate & Update Jira (Refactored to helper)
 const executeDebateSimulation = async ({ issueKey, issueSummary, issueDescription, selectedAgentIds, epicName }) => {
   let finalIssueKey = issueKey;
@@ -496,30 +536,7 @@ const executeDebateSimulation = async ({ issueKey, issueSummary, issueDescriptio
 
   activeAgents.forEach(agent => {
     // Formulate agent contribution reflecting personality, advantages, and specific dilemmas
-    let responseText = '';
-    if (agent.id === 'ceo') {
-      responseText = `Pessoal, precisamos disso no ar ontem! A concorrência não dorme. Meu dilema é botar pra quebrar (${agent.dilemma}). Vamos entregar rápido e depois otimizamos!`;
-    } else if (agent.id === 'cto') {
-      responseText = `Atenção: Acelerar sem critério técnico criará um débito insustentável. Recomendo isolar essa entrega ou refatorar o módulo principal. Meu foco é qualidade estrutural.`;
-    } else if (agent.id === 'dir_ops') {
-      responseText = `Precisamos garantir a entrega dentro do orçamento e sem estressar os fluxos operacionais vigentes. Vamos monitorar o tempo investido e manter processos limpos.`;
-    } else if (agent.id === 'dir_design') {
-      responseText = `Não podemos deixar de lado a identidade e consistência visual! Uma interface feia destrói o valor do produto, mesmo sendo rápida.`;
-    } else if (agent.id === 'mgr_eng') {
-      responseText = `Minha preocupação principal é a saúde física e mental dos desenvolvedores. Prazos agressivos exigem compensação ou escopo menor.`;
-    } else if (agent.id === 'mgr_prod') {
-      responseText = `Nossos clientes finais estão cobrando essa funcionalidade. De acordo com as métricas de uso, esta feature é prioridade máxima.`;
-    } else if (agent.id === 'coord_scrum') {
-      responseText = `Vou remover os impedimentos. Se concordarmos com o escopo, quebremos em subtasks na daily de amanhã para manter o burndown saudável.`;
-    } else if (agent.id === 'coord_qa') {
-      responseText = `Não aceito deploys sem cobertura mínima de testes unitários e de integração. Sem validação, não há release!`;
-    } else if (agent.id === 'sr_dev') {
-      responseText = `Consigo codar rápido a primeira versão em 2 dias, mas se quiserem testes completos e documentação de arquitetura precisaremos de 5 dias.`;
-    } else if (agent.id === 'sr_ux') {
-      responseText = `Eu crio o protótipo baseado em nossos componentes padrão para agilizar, mas teremos que abrir mão de uma transição customizada sofisticada.`;
-    } else {
-      responseText = `Estou totalmente a favor de impulsionarmos essa iniciativa. Meu dilema estratégico é ${agent.dilemma}.`;
-    }
+    let responseText = generateAgentOpinion(agent, finalIssueSummary);
 
     logs.push({
       agentId: agent.id,
