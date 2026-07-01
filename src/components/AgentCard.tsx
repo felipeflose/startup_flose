@@ -108,6 +108,29 @@ export const AgentCard: React.FC<AgentCardProps> = ({ agent, isSelected, onSelec
         </div>
       </div>
 
+      {agent.feedbacks && agent.feedbacks.length > 0 && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', borderTop: '1px dashed var(--border-color)', paddingTop: '12px', marginTop: '8px' }}>
+          <strong style={{ fontSize: '0.8rem', color: '#10b981' }}>📋 Histórico de Performance (RH):</strong>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '100px', overflowY: 'auto', paddingRight: '4px' }}>
+            {agent.feedbacks.map((f: any, i: number) => (
+              <div key={i} style={{
+                background: f.type === 'elogio' ? 'rgba(16, 185, 129, 0.05)' : 'rgba(239, 68, 68, 0.05)',
+                border: f.type === 'elogio' ? '1px solid rgba(16, 185, 129, 0.1)' : '1px solid rgba(239, 68, 68, 0.1)',
+                padding: '6px 8px',
+                borderRadius: '6px',
+                fontSize: '0.72rem'
+              }}>
+                <div style={{ fontWeight: 600, color: f.type === 'elogio' ? '#10b981' : '#ef4444', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span>{f.type === 'elogio' ? '⭐ Elogio' : '⚠️ Advertência'} ({f.impact})</span>
+                  <span style={{ fontSize: '0.62rem', color: 'var(--text-muted)' }}>{f.sprintTicket || 'Custom'}</span>
+                </div>
+                <div style={{ color: 'var(--text-secondary)', marginTop: '2px', lineHeight: '1.25' }}>{f.text}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div style={{
         marginTop: 'auto',
         paddingTop: '12px',

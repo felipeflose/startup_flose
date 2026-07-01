@@ -1,5 +1,125 @@
 [
   {
+    "id": "17828987413310kp98id83lvb",
+    "agentId": "coord_qa",
+    "agentName": "Diana Test",
+    "agentAvatar": "🔍",
+    "action": "closed",
+    "ticketKey": "KAN-1973",
+    "ticketSummary": "[QA] Validação: cria um jogo da velha 5",
+    "at": "2026-07-01T09:39:01.331Z"
+  },
+  {
+    "id": "178289873866490qgjyxmx1u",
+    "agentId": "coord_qa",
+    "agentName": "Diana Test",
+    "agentAvatar": "🔍",
+    "action": "progressing",
+    "ticketKey": "KAN-1973",
+    "ticketSummary": "[QA] Validação: cria um jogo da velha 5",
+    "at": "2026-07-01T09:38:58.664Z"
+  },
+  {
+    "id": "1782898737603n9wixmyfh4",
+    "agentId": "coord_qa",
+    "agentName": "Diana Test",
+    "agentAvatar": "🔍",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[QA] Validação: cria um jogo da velha 5",
+    "at": "2026-07-01T09:38:57.603Z"
+  },
+  {
+    "id": "1782898737601ihl8ax0iv6",
+    "agentId": "sr_dev",
+    "agentName": "David Dev",
+    "agentAvatar": "⚡",
+    "action": "closed",
+    "ticketKey": "KAN-1972",
+    "ticketSummary": "[DEV] Implementação: cria um jogo da velha 5",
+    "at": "2026-07-01T09:38:57.601Z"
+  },
+  {
+    "id": "1782898734869lromuq1uvso",
+    "agentId": "sr_dev",
+    "agentName": "David Dev",
+    "agentAvatar": "⚡",
+    "action": "progressing",
+    "ticketKey": "KAN-1972",
+    "ticketSummary": "[DEV] Implementação: cria um jogo da velha 5",
+    "at": "2026-07-01T09:38:54.869Z"
+  },
+  {
+    "id": "1782898733383x7zloip66t",
+    "agentId": "sr_dev",
+    "agentName": "David Dev",
+    "agentAvatar": "⚡",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[DEV] Implementação: cria um jogo da velha 5",
+    "at": "2026-07-01T09:38:53.383Z"
+  },
+  {
+    "id": "1782898733381xox4cvo46nj",
+    "agentId": "sr_ux",
+    "agentName": "Elsa Pixel",
+    "agentAvatar": "✨",
+    "action": "closed",
+    "ticketKey": "KAN-1971",
+    "ticketSummary": "[UX] Design: cria um jogo da velha 5",
+    "at": "2026-07-01T09:38:53.381Z"
+  },
+  {
+    "id": "1782898730349co7eusenlbf",
+    "agentId": "sr_ux",
+    "agentName": "Elsa Pixel",
+    "agentAvatar": "✨",
+    "action": "progressing",
+    "ticketKey": "KAN-1971",
+    "ticketSummary": "[UX] Design: cria um jogo da velha 5",
+    "at": "2026-07-01T09:38:50.349Z"
+  },
+  {
+    "id": "1782898728960a4vvc8pr37s",
+    "agentId": "sr_ux",
+    "agentName": "Elsa Pixel",
+    "agentAvatar": "✨",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[UX] Design: cria um jogo da velha 5",
+    "at": "2026-07-01T09:38:48.960Z"
+  },
+  {
+    "id": "178289872895932lnlar8wc1",
+    "agentId": "mgr_prod",
+    "agentName": "Sarah Backlog",
+    "agentAvatar": "📋",
+    "action": "closed",
+    "ticketKey": "KAN-1970",
+    "ticketSummary": "[PM] Planejamento: cria um jogo da velha 5",
+    "at": "2026-07-01T09:38:48.959Z"
+  },
+  {
+    "id": "1782898725239qya2irxjv69",
+    "agentId": "mgr_prod",
+    "agentName": "Sarah Backlog",
+    "agentAvatar": "📋",
+    "action": "progressing",
+    "ticketKey": "KAN-1970",
+    "ticketSummary": "[PM] Planejamento: cria um jogo da velha 5",
+    "at": "2026-07-01T09:38:45.239Z"
+  },
+  {
+    "id": "17828987238207lfbtojyiim",
+    "agentId": "mgr_prod",
+    "agentName": "Sarah Backlog",
+    "agentAvatar": "📋",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[PM] Planejamento: cria um jogo da velha 5",
+    "at": "2026-07-01T09:38:43.821Z"
+  },
+  {
     "id": "1782873137611dd9aawuys4a",
     "agentId": "coord_qa",
     "agentName": "Diana Test",
@@ -878,125 +998,5 @@
     "ticketKey": "...",
     "ticketSummary": "[DEV] Implementação: precisamos criar um jogo da memoria, e cada uma das cartas sao jogos, exemplo cobrinha, dama, velha e outros classicos... se uma pessoa achar o par, o adversario e ele joga aquele jogo, se ele for de par, mas se for jogo indivisual, o adversario deve jogar....",
     "at": "2026-06-30T23:53:50.639Z"
-  },
-  {
-    "id": "1782863630637j94heppg10n",
-    "agentId": "sr_ux",
-    "agentName": "Elsa Pixel",
-    "agentAvatar": "✨",
-    "action": "closed",
-    "ticketKey": "MOCK-UX-542",
-    "ticketSummary": "[UX] Design: precisamos criar um jogo da memoria, e cada uma das cartas sao jogos, exemplo cobrinha, dama, velha e outros classicos... se uma pessoa achar o par, o adversario e ele joga aquele jogo, se ele for de par, mas se for jogo indivisual, o adversario deve jogar....",
-    "at": "2026-06-30T23:53:50.637Z"
-  },
-  {
-    "id": "1782863629240smq1m6i5t8",
-    "agentId": "sr_ux",
-    "agentName": "Elsa Pixel",
-    "agentAvatar": "✨",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[UX] Design: precisamos criar um jogo da memoria, e cada uma das cartas sao jogos, exemplo cobrinha, dama, velha e outros classicos... se uma pessoa achar o par, o adversario e ele joga aquele jogo, se ele for de par, mas se for jogo indivisual, o adversario deve jogar....",
-    "at": "2026-06-30T23:53:49.240Z"
-  },
-  {
-    "id": "178286362923891typ83ppm",
-    "agentId": "mgr_prod",
-    "agentName": "Sarah Backlog",
-    "agentAvatar": "📋",
-    "action": "closed",
-    "ticketKey": "MOCK-PM-492",
-    "ticketSummary": "[PM] Planejamento: precisamos criar um jogo da memoria, e cada uma das cartas sao jogos, exemplo cobrinha, dama, velha e outros classicos... se uma pessoa achar o par, o adversario e ele joga aquele jogo, se ele for de par, mas se for jogo indivisual, o adversario deve jogar....",
-    "at": "2026-06-30T23:53:49.238Z"
-  },
-  {
-    "id": "178286362754377icuwwz1m8",
-    "agentId": "mgr_prod",
-    "agentName": "Sarah Backlog",
-    "agentAvatar": "📋",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[PM] Planejamento: precisamos criar um jogo da memoria, e cada uma das cartas sao jogos, exemplo cobrinha, dama, velha e outros classicos... se uma pessoa achar o par, o adversario e ele joga aquele jogo, se ele for de par, mas se for jogo indivisual, o adversario deve jogar....",
-    "at": "2026-06-30T23:53:47.544Z"
-  },
-  {
-    "id": "1782863178166qzerx61swu",
-    "agentId": "coord_qa",
-    "agentName": "Diana Test",
-    "agentAvatar": "🔍",
-    "action": "closed",
-    "ticketKey": "KAN-1935",
-    "ticketSummary": "[QA] Validação: crie um jogo da cobeinha classico, que joga sozinho e roda sozinho,\n",
-    "at": "2026-06-30T23:46:18.166Z"
-  },
-  {
-    "id": "1782863175824686cjkkpeuo",
-    "agentId": "coord_qa",
-    "agentName": "Diana Test",
-    "agentAvatar": "🔍",
-    "action": "progressing",
-    "ticketKey": "KAN-1935",
-    "ticketSummary": "[QA] Validação: crie um jogo da cobeinha classico, que joga sozinho e roda sozinho,\n",
-    "at": "2026-06-30T23:46:15.824Z"
-  },
-  {
-    "id": "1782863174596h4nw36uyap",
-    "agentId": "coord_qa",
-    "agentName": "Diana Test",
-    "agentAvatar": "🔍",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[QA] Validação: crie um jogo da cobeinha classico, que joga sozinho e roda sozinho,\n",
-    "at": "2026-06-30T23:46:14.596Z"
-  },
-  {
-    "id": "17828631745954bb7hhv1eyt",
-    "agentId": "sr_dev",
-    "agentName": "David Dev",
-    "agentAvatar": "⚡",
-    "action": "closed",
-    "ticketKey": "KAN-1934",
-    "ticketSummary": "[DEV] Implementação: crie um jogo da cobeinha classico, que joga sozinho e roda sozinho,\n",
-    "at": "2026-06-30T23:46:14.595Z"
-  },
-  {
-    "id": "17828631724444eca5nan4ze",
-    "agentId": "sr_dev",
-    "agentName": "David Dev",
-    "agentAvatar": "⚡",
-    "action": "progressing",
-    "ticketKey": "KAN-1934",
-    "ticketSummary": "[DEV] Implementação: crie um jogo da cobeinha classico, que joga sozinho e roda sozinho,\n",
-    "at": "2026-06-30T23:46:12.444Z"
-  },
-  {
-    "id": "1782863171408bfcz9pmw8mn",
-    "agentId": "sr_dev",
-    "agentName": "David Dev",
-    "agentAvatar": "⚡",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[DEV] Implementação: crie um jogo da cobeinha classico, que joga sozinho e roda sozinho,\n",
-    "at": "2026-06-30T23:46:11.408Z"
-  },
-  {
-    "id": "1782863171406s76db1qixx",
-    "agentId": "sr_ux",
-    "agentName": "Elsa Pixel",
-    "agentAvatar": "✨",
-    "action": "closed",
-    "ticketKey": "KAN-1933",
-    "ticketSummary": "[UX] Design: crie um jogo da cobeinha classico, que joga sozinho e roda sozinho,\n",
-    "at": "2026-06-30T23:46:11.406Z"
-  },
-  {
-    "id": "17828631689189ri2q66ry8t",
-    "agentId": "sr_ux",
-    "agentName": "Elsa Pixel",
-    "agentAvatar": "✨",
-    "action": "progressing",
-    "ticketKey": "KAN-1933",
-    "ticketSummary": "[UX] Design: crie um jogo da cobeinha classico, que joga sozinho e roda sozinho,\n",
-    "at": "2026-06-30T23:46:08.918Z"
   }
 ]

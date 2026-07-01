@@ -7,6 +7,7 @@ interface DebateLog {
   avatar: string;
   dilemma: string;
   opinion: string;
+  replica?: string;
 }
 
 interface GemmaConsoleProps {
@@ -297,9 +298,14 @@ export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selec
                   <strong style={{ fontSize: '0.9rem', color: 'var(--color-primary)' }}>{log.name}</strong>
                   <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{log.role}</span>
                 </div>
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-primary)', fontStyle: 'italic' }}>
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-primary)', fontStyle: 'italic', margin: 0 }}>
                   "{log.opinion}"
                 </p>
+                {log.replica && (
+                  <p style={{ fontSize: '0.85rem', color: 'var(--color-secondary)', fontStyle: 'italic', borderTop: '1px dashed var(--border-color)', paddingTop: '6px', marginTop: '6px', margin: '6px 0 0 0' }}>
+                    <strong>Réplica (Round 2):</strong> "{log.replica}"
+                  </p>
+                )}
                 <div style={{
                   fontSize: '0.75rem',
                   color: '#f59e0b',

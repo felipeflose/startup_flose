@@ -401,6 +401,168 @@ const logActivity = (agentId, agentName, agentAvatar, action, ticketKey, ticketS
   }
 };
 
+const DOMAIN_SPECIALISTS = {
+  game: [
+    {
+      id: 'spec_game_dev',
+      name: 'Arthur GameDev',
+      role: 'Desenvolvedor Core de Games',
+      avatar: '🎮',
+      level: 'Especialista',
+      status: 'Disponível',
+      advantage: 'Domina shaders, físicas de jogo, colisões complexas e WebGL/Canvas.',
+      disadvantage: 'Foca excessivamente em otimização de engine de jogo, ignorando regras de negócio.',
+      dilemma: 'Fidelidade de Mecânica vs. Prazo de Lançamento',
+      personality: 'Perfeccionista, fanático por taxa de quadros (FPS) e focado em engenharia de jogo.',
+      feedbacks: []
+    },
+    {
+      id: 'spec_game_designer',
+      name: 'Miyamoto Designer',
+      role: 'Game Designer Sênior',
+      avatar: '🕹️',
+      level: 'Especialista',
+      status: 'Disponível',
+      advantage: 'Mapeia loops de gameplay divertidos, balanceamento e engajamento do jogador.',
+      disadvantage: 'Propõe mecânicas complexas que extrapolam o cronograma de desenvolvimento.',
+      dilemma: 'Diversão do Gameplay vs. Simplicidade Técnica',
+      personality: 'Criativo, saudosista dos clássicos, focado em diversão e experiência do usuário.',
+      feedbacks: []
+    }
+  ],
+  data: [
+    {
+      id: 'spec_cloud_arch',
+      name: 'Clara Cloud',
+      role: 'Arquiteta de Nuvem (GCP/AWS)',
+      avatar: '☁️',
+      level: 'Especialista',
+      status: 'Disponível',
+      advantage: 'Cria topologias de network seguras e escalabilidade infinita com Kubernetes.',
+      disadvantage: 'Sua arquitetura tende a custar caro no início da operação.',
+      dilemma: 'Arquitetura Ideal Multi-Region vs. Orçamento de Startup',
+      personality: 'Focado em conformidade, infraestrutura como código (IaC) e segurança perimetral.',
+      feedbacks: []
+    },
+    {
+      id: 'spec_data_eng',
+      name: 'Dan Data',
+      role: 'Engenheiro de Dados Sênior',
+      avatar: '📊',
+      level: 'Especialista',
+      status: 'Disponível',
+      advantage: 'Estrutura pipelines de ETL robustos e modelagem de Data Lakes com zero perda.',
+      disadvantage: 'Pode atrasar o desenvolvimento exigindo esquemas relacionais rígidos.',
+      dilemma: 'Consistência Estrita de Dados vs. Velocidade de Ingestão',
+      personality: 'Metódico, obcecado por integridade referencial e velocidade de consulta SQL.',
+      feedbacks: []
+    }
+  ],
+  secops: [
+    {
+      id: 'spec_pentester',
+      name: 'Hacker Etico',
+      role: 'Analista de Segurança & Pentester',
+      avatar: '🛡️',
+      level: 'Especialista',
+      status: 'Disponível',
+      advantage: 'Encontra brechas críticas de injeção de código, XSS e vazamento de chaves.',
+      disadvantage: 'Costuma travar deploys de produção exigindo correções minuciosas.',
+      dilemma: 'Segurança Militar Absoluta vs. Velocidade de Release',
+      personality: 'Desconfiado, pragmático, focado em testes de intrusão e criptografia.',
+      feedbacks: []
+    }
+  ],
+  sap: [
+    {
+      id: 'spec_sap_consultant',
+      name: 'Silvio SAP',
+      role: 'Consultor Funcional SAP (MM/SD)',
+      avatar: '💼',
+      level: 'Especialista',
+      status: 'Disponível',
+      advantage: 'Conhece fluxos complexos de compras, faturamento e integrações B2B corporativas.',
+      disadvantage: 'Tende a complicar processos simples com burocracias de ERP tradicional.',
+      dilemma: 'Padrão Rigoroso do ERP vs. Agilidade Operacional',
+      personality: 'Corporativo, formal, metódico e focado em governança empresarial.',
+      feedbacks: []
+    }
+  ]
+};
+
+const hireSpecialistsIfNeeded = async (commandText) => {
+  const textLower = commandText.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  let domain = null;
+  
+  if (textLower.match(/gta|jogo|velha|game|tictactoe/)) {
+    domain = 'game';
+  } else if (textLower.match(/datalake|gcp|sqlserver|data|cloud/)) {
+    domain = 'data';
+  } else if (textLower.match(/seguranca|firewall|ports|cyber|criptografia/)) {
+    domain = 'secops';
+  } else if (textLower.match(/sap|mm|sd|crm|erp/)) {
+    domain = 'sap';
+  }
+
+  if (!domain) return [];
+
+  const candidates = DOMAIN_SPECIALISTS[domain];
+  const currentAgents = readAgents();
+  const newlyHired = [];
+
+  for (const candidate of candidates) {
+    if (!currentAgents.some(a => a.id === candidate.id)) {
+      currentAgents.push(candidate);
+      newlyHired.push(candidate);
+      console.log(`[RH] Contratando especialista dinamicamente: ${candidate.name} (${candidate.role})`);
+    }
+  }
+
+  if (newlyHired.length > 0) {
+    fs.writeFileSync(AGENTS_FILE, JSON.stringify(currentAgents, null, 2), 'utf8');
+
+    const epicMap = await getOrCreateEpics();
+    const hrEpicKey = epicMap['Gestão de Pessoas'];
+
+    for (const agent of newlyHired) {
+      logActivity('ceo', 'Felipe Flose', '💼', `Admitiu o especialista ${agent.name} (${agent.role}) para apoiar na tarefa: "${commandText}"`, '', '');
+
+      if (hrEpicKey && !hrEpicKey.startsWith('MOCK')) {
+        try {
+          await axios.post(`${JIRA_HOST}/rest/api/3/issue`, {
+            fields: {
+              project: { key: 'KAN' },
+              summary: `[RH] Recrutamento: ${agent.name} (${agent.role})`,
+              description: {
+                type: 'doc',
+                version: 1,
+                content: [
+                  {
+                    type: 'paragraph',
+                    content: [
+                      {
+                        text: `Especialista contratado sob demanda para participar da tomada de decisão e desenvolvimento da tarefa: "${commandText}".\n\nDilema Profissional: ${agent.dilemma}`,
+                        type: 'text'
+                      }
+                    ]
+                  }
+                ]
+              },
+              parent: { key: hrEpicKey },
+              issuetype: { name: 'Task' }
+            }
+          }, { headers: getJiraAuthHeader() });
+          console.log(`Jira recruitment task created for ${agent.name}`);
+        } catch (jiraErr) {
+          console.error(`Failed to create Jira recruitment task for ${agent.name}:`, jiraErr.message);
+        }
+      }
+    }
+  }
+
+  return candidates.map(c => c.id);
+};
+
 const setAgentStatus = (agentId, status, currentTask = null) => {
   try {
     const agents = readAgents();
@@ -657,7 +819,7 @@ app.get('/api/activity', (req, res) => {
 const callLocalGemma = async (systemPrompt, userPrompt) => {
   try {
     const response = await axios.post('http://localhost:11434/api/chat', {
-      model: 'gemma4:latest',
+      model: 'gemma4-fast:latest',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
@@ -669,10 +831,10 @@ const callLocalGemma = async (systemPrompt, userPrompt) => {
     });
     return response.data?.message?.content || '';
   } catch (error) {
-    console.error('Error calling local Gemma:', error.message);
+    console.error('Error calling local gemma4-fast, falling back:', error.message);
     try {
       const response = await axios.post('http://localhost:11434/api/chat', {
-        model: 'gemma4-fast:latest',
+        model: 'gemma4:latest',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
@@ -699,6 +861,133 @@ const generateAgentOpinion = async (agent, summary) => {
 
   // Fallback if model fails
   return `Como ${agent.role}, avaliei "${cleanSummary}". Meu dilema é ${agent.dilemma} e minha vantagem é ${agent.advantage}. Acredito que devemos agir com cautela operacional.`;
+};
+
+const generateAgentCritique = async (agent, summary, previousOpinions) => {
+  const cleanSummary = summary.trim();
+  const systemPrompt = `Você é ${agent.name}, com cargo de ${agent.role} (nível ${agent.level}) na Flose Startup.
+Seu dilema profissional: "${agent.dilemma}".
+Sua personalidade: "${agent.personality}".
+Você está no Round 2 do debate da diretoria sobre o pedido: "${cleanSummary}".
+Leia as opiniões iniciais formuladas por seus colegas no Round 1. Formule uma réplica em primeira pessoa do singular de forma construtiva ou crítica, concordando ou discordando de algum colega. Cite o nome dele.
+Responda diretamente como o personagem, curto (máximo 3 frases), sem introduções ou explicações adicionais.`;
+
+  const userPrompt = `Opiniões do Round 1:\n` + 
+    previousOpinions.map(o => `- ${o.name} (${o.role}): "${o.opinion}"`).join('\n') + 
+    `\n\nSua réplica como ${agent.name}:`;
+
+  const critique = await callLocalGemma(systemPrompt, userPrompt);
+  if (critique) {
+    return critique.trim().replace(/^"(.*)"$/, '$1');
+  }
+  return `Concordo com os pontos levantados pelos colegas de produto e engenharia, mas precisamos equilibrar com o meu dilema de ${agent.dilemma}.`;
+};
+
+const evaluateSprintPerformanceAndRH = async (decisionEntry, activeAgents) => {
+  const sysHrPrompt = `Você é Felipe Flose (CEO) e Sarah Backlog (PM) na Flose Startup.
+Você deve avaliar o desempenho profissional de cada funcionário que participou do debate técnico e entrega.
+Analise a decisão tomada e as opiniões/réplicas enviadas pelos agentes.
+Gere um JSON contendo avaliações para os participantes.
+Estrutura do JSON a ser retornado:
+[
+  {
+    "agentId": "id_do_agente",
+    "type": "elogio" ou "advertencia",
+    "text": "Texto explicativo curto e profissional em português de feedback ou advertência...",
+    "impact": "Foco Técnico" ou "Melhoria de Comunicação" ou "Atenção a Prazos"
+  }
+]
+IMPORTANTE: Retorne unicamente o JSON bruto, sem crases markdown ou qualquer texto explicativo fora do JSON.`;
+
+  const userHrPrompt = `Tarefa da Sprint: "${decisionEntry.issueSummary}"
+Decisão de Consenso: "${decisionEntry.decision}"
+Arquivo Gerado: "${decisionEntry.generatedFile}"
+Participantes e Debates:\n` +
+    decisionEntry.logs.map(l => `- ${l.name} (${l.role}):\n  Opinião: "${l.opinion}"\n  Réplica: "${l.replica}"`).join('\n') +
+    `\n\nJSON de Avaliação de RH:`;
+
+  let hrDataRaw = await callLocalGemma(sysHrPrompt, userHrPrompt);
+  let feedbacks = [];
+
+  if (hrDataRaw) {
+    try {
+      const cleaned = hrDataRaw.replace(/^```[a-zA-Z]*\n/, '').replace(/\n```$/, '').trim();
+      feedbacks = JSON.parse(cleaned);
+    } catch (parseErr) {
+      console.error('Failed to parse HR feedback JSON:', parseErr.message, 'Raw content was:', hrDataRaw);
+    }
+  }
+
+  if (!Array.isArray(feedbacks) || feedbacks.length === 0) {
+    feedbacks = [
+      {
+        agentId: decisionEntry.executorName ? 'sr_dev' : 'mgr_prod',
+        type: 'elogio',
+        text: 'Demonstrou grande flexibilidade operacional para equilibrar os prazos agressivos da Sprint com a qualidade da entrega.',
+        impact: 'Foco Técnico'
+      }
+    ];
+  }
+
+  const currentAgents = readAgents();
+  const epicMap = await getOrCreateEpics();
+  const hrEpicKey = epicMap['Gestão de Pessoas'];
+
+  for (const feed of feedbacks) {
+    const agent = currentAgents.find(a => a.id === feed.agentId);
+    if (agent) {
+      if (!agent.feedbacks) agent.feedbacks = [];
+      const newFeedEntry = {
+        id: Date.now().toString() + Math.random().toString(36).substr(2, 4),
+        timestamp: new Date().toISOString(),
+        type: feed.type,
+        text: feed.text,
+        impact: feed.impact,
+        sprintTicket: decisionEntry.issueKey
+      };
+      agent.feedbacks.unshift(newFeedEntry);
+      
+      console.log(`[RH] Novo feedback para ${agent.name}: [${feed.type.toUpperCase()}] ${feed.text}`);
+
+      const symbol = feed.type === 'elogio' ? '⭐ Elogio' : '⚠️ Advertência';
+      logActivity('ceo', 'Felipe Flose', '💼', `RH registrou: ${symbol} para ${agent.name} (${agent.role}) - "${feed.text}"`, decisionEntry.issueKey || '', decisionEntry.issueSummary);
+
+      if (hrEpicKey && !hrEpicKey.startsWith('MOCK')) {
+        try {
+          const summaryText = `[RH] ${feed.type === 'elogio' ? 'Elogio' : 'Feedback de Ajuste'}: ${agent.name}`;
+          await axios.post(`${JIRA_HOST}/rest/api/3/issue`, {
+            fields: {
+              project: { key: 'KAN' },
+              summary: summaryText,
+              description: {
+                type: 'doc',
+                version: 1,
+                content: [
+                  {
+                    type: 'paragraph',
+                    content: [
+                      {
+                        text: `Funcionário: ${agent.name} (${agent.role})\nTipo: ${feed.type.toUpperCase()}\n\nDetalhes do Feedback: ${feed.text}\nImpacto: ${feed.impact}\nSprint associada: ${decisionEntry.issueKey || 'Custom Request'}`,
+                        type: 'text'
+                      }
+                    ]
+                  }
+                ]
+              },
+              parent: { key: hrEpicKey },
+              issuetype: { name: 'Sub-task' }
+            }
+          }, { headers: getJiraAuthHeader() });
+          console.log(`Jira HR feedback ticket created for ${agent.name}`);
+        } catch (jiraErr) {
+          console.error(`Failed to create Jira HR feedback ticket for ${agent.name}:`, jiraErr.message);
+        }
+      }
+    }
+  }
+
+  saveAgents(currentAgents);
+  return feedbacks;
 };
 
 const createRealGitHubPR = async (branchName, title, description) => {
@@ -899,34 +1188,63 @@ const executeDebateSimulation = async ({ issueKey, issueSummary, issueDescriptio
   // GitHub Mock Issue/PR URLs
   const githubIssueUrl = `https://github.com/felipeflose/startup_flose/issues/${finalIssueKey.replace(/[^\d]/g, '') || Math.floor(1 + Math.random()*100)}`;
 
-  const activeAgents = readAgents().filter(a => selectedAgentIds.includes(a.id) && !a.fired);
+  const hiredSpecialistIds = await hireSpecialistsIfNeeded(finalIssueSummary);
+  const updatedAgentIds = [...new Set([...selectedAgentIds, ...hiredSpecialistIds])];
+  const activeAgents = readAgents().filter(a => updatedAgentIds.includes(a.id) && !a.fired);
   if (activeAgents.length === 0) {
     throw new Error('Nenhum agente selecionado para o debate.');
   }
 
   // Simulate Agent responses based on Gemma 4 instructions
-  // Gemma 4 engine simulation structure:
-  const logs = [];
+  const round1Opinions = [];
   let debateSummary = `🤖 **Gemma 4 Startup Debate Engine**\n\nDiscussão de decisão para o Ticket: [${finalIssueKey}] - ${finalIssueSummary}\n\n`;
+  debateSummary += `### 💬 Round 1: Posicionamentos & Dilemas Iniciais\n\n`;
 
   for (const agent of activeAgents) {
-    let responseText = await generateAgentOpinion(agent, finalIssueSummary);
+    let opinionText = await generateAgentOpinion(agent, finalIssueSummary);
+    round1Opinions.push({
+      agentId: agent.id,
+      name: agent.name,
+      role: agent.role,
+      avatar: agent.avatar,
+      opinion: opinionText
+    });
+    debateSummary += `🔹 **${agent.name} (${agent.role})**:\n> "${opinionText}"\n> *Dilema considerado: ${agent.dilemma}*\n\n`;
+  }
 
+  const round2Critiques = [];
+  debateSummary += `\n### 🔄 Round 2: Réplicas, Críticas & Ideias Indo e Voltando\n\n`;
+
+  for (const agent of activeAgents) {
+    let critiqueText = await generateAgentCritique(agent, finalIssueSummary, round1Opinions);
+    round2Critiques.push({
+      agentId: agent.id,
+      name: agent.name,
+      role: agent.role,
+      avatar: agent.avatar,
+      opinion: critiqueText
+    });
+    debateSummary += `🔸 **${agent.name} (${agent.role})**:\n> "${critiqueText}"\n\n`;
+  }
+
+  const logs = [];
+  for (const agent of activeAgents) {
+    const r1 = round1Opinions.find(o => o.agentId === agent.id);
+    const r2 = round2Critiques.find(o => o.agentId === agent.id);
     logs.push({
       agentId: agent.id,
       name: agent.name,
       role: agent.role,
       avatar: agent.avatar,
       dilemma: agent.dilemma,
-      opinion: responseText
+      opinion: r1 ? r1.opinion : '',
+      replica: r2 ? r2.opinion : ''
     });
-
-    debateSummary += `🔹 **${agent.name} (${agent.role})**:\n> "${responseText}"\n> *Dilema considerado: ${agent.dilemma}*\n\n`;
   }
 
   // Synthesize the resolution (Gemma 4 decision model)
-  const hasCeo = selectedAgentIds.includes('ceo');
-  const hasCto = selectedAgentIds.includes('cto');
+  const hasCeo = updatedAgentIds.includes('ceo');
+  const hasCto = updatedAgentIds.includes('cto');
   
   let decision = '';
   if (hasCeo && hasCto) {
@@ -1113,6 +1431,10 @@ Arquivo: \`${fileRelativePath}\``;
     sprintTickets: sprintTickets,
     prMerged: !!prNumber
   };
+
+  const hrFeedbacks = await evaluateSprintPerformanceAndRH(decisionEntry, activeAgents);
+  decisionEntry.feedbacks = hrFeedbacks;
+
   if (finalIssueKey && !finalIssueKey.startsWith('MOCK')) {
     await transitionJiraIssue(finalIssueKey, 'Done');
   }
