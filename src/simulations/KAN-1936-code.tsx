@@ -1,236 +1,213 @@
 import React, { useState, useCallback, useMemo } from 'react';
 
-// =================================================================
-// KAN-1936: The 'Simple' Game (Resource Tracker Simulator)
-// David Dev - Delivery to CEO (Minimum Viable Product)
-// Technical Debt Warning: CTO Review Required (Sprint N+1)
-// =================================================================
+// --- Interfaces e Tipagem Complexa (CTO loves this) ---
 
-type GameState = {
-    coreResource: number;
-    secondaryResource: number;
-    energy: number;
-    level: number;
-};
+interface GameState {
+  targetNumber: number;
+  maxAttempts: number;
+  currentAttempts: number;
+  history: {
+    guess: number;
+    isCorrect: boolean;
+    feedback: 'low' | 'high' | 'correct';
+  }[];
+  status: 'playing' | 'won' | 'lost' | 'initial';
+}
 
-const initialGameState: GameState = {
-    coreResource: 0,
-    secondaryResource: 0,
-    energy: 10,
-    level: 1,
-};
+interface GameProps {
+  initialState: GameState;
+  onReset: (newState: GameState) => void;
+}
 
-const GameEngine: React.FC = () => {
-    // DEBT: State management is monolithic. Should be split into a dedicated context/reducer.
-    const [state, setState] = useState<GameState>(initialGameState);
-    const [message, setMessage] = useState<string>("");
+// --- Hook de Lógica de Jogo (Onde a complexidade mora) ---
 
-    // Calculates the effective resource gain based on current level and secondary resource.
-    // DEBT: This calculation logic is tightly coupled with the component state and is brittle.
-    const calculateGain = useCallback((currentLevel: number, secondary: number): number => {
-        // Magic numbers abound!
-        return Math.floor(2 * currentLevel + (secondary / 5));
-    }, []);
+const useGameLogic = () => {
+  const [gameState, setGameState] = useState<GameState>(() => ({
+    targetNumber: Math.floor(Math.random() * 100) + 1,
+    maxAttempts: 10,
+    currentAttempts: 0,
+    history: [],
+    status: 'initial',
+  }));
 
-    // --- Action Handlers ---
+  // DEBT NOTE: Esta função deveria ser um Context Provider global para evitar prop drilling.
+  // Por enquanto, está acoplada ao componente pai.
+  const resetGame = useCallback(() => {
+    setGameState(s => ({
+      targetNumber: Math.floor(Math.random() * 100) + 1,
+      maxAttempts: 10,
+      currentAttempts: 0,
+      history: [],
+      status: 'playing',
+    }));
+  }, []);
 
-    const handleCoreClick = useCallback(() => {
-        if (state.energy <= 0) {
-            setMessage("Sem energia! Descanso necessário.");
-            return;
-        }
-
-        // 1. Consume energy
-        const newEnergy = Math.max(0, state.energy - 1);
-
-        // 2. Calculate gain (The complex, poorly encapsulated part)
-        const gain = calculateGain(state.level, state.secondaryResource);
-
-        // 3. Update state
-        setState(prev => ({
-            ...prev,
-            coreResource: prev.coreResource + gain,
-            energy: newEnergy,
-        }));
-        setMessage(`Obtido ${gain} de Recurso Principal.`);
-
-    }, [state.energy, state.level, state.secondaryResource, calculateGain]);
-
-    const handleEnergyRegen = useCallback(() => {
-        // DEBT: Regeneration rate is hardcoded and ignores potential future global modifiers.
-        const regenAmount = 3;
-        const newEnergy = Math.min(20, state.energy + regenAmount);
-
-        setState(prev => ({
-            ...prev,
-            energy: newEnergy,
-        }));
-        setMessage("Energia regenerada.");
-    }, [state.energy]);
-
-    const handleLevelUpAttempt = useCallback(() => {
-        // DEBT: Leveling logic is poorly separated. It affects multiple state variables simultaneously.
-        if (state.coreResource < 50) {
-            setMessage("Recurso insuficiente para avançar de nível.");
-            return;
-        }
-
-        const newLevel = state.level + 1;
-        const cost = 50 * newLevel;
-
-        if (state.coreResource >= cost) {
-            setState(prev => ({
-                ...prev,
-                coreResource: prev.coreResource - cost,
-                level: newLevel,
-            }));
-            setMessage(`Nível avançado para ${newLevel}! Próximo custo: ${50 * newLevel}.`);
-        } else {
-            setMessage(`Não há recursos suficientes. Custo: ${cost}.`);
-        }
-    }, [state.coreResource, state.level]);
-
-    // Use useMemo to calculate the next level cost and display it cleanly
-    const nextLevelCost = useMemo(() => 50 * (state.level + 1), [state.level]);
-
-    return (
-        <div style={styles.container}>
-            <h1 style={styles.header}>KAN-1936: O Motor de Jogo Híbrido</h1>
-            <p style={styles.debtNotice}>
-                ⚠️ **DEBT WARNING (CTO):** A lógica de estado está acoplada. Refatorar para useReducer/Context API é mandatório na próxima sprint.
-            </p>
-
-            <div style={styles.statsContainer}>
-                <div style={styles.statBox}>
-                    <h3>Recurso Principal</h3>
-                    <p style={styles.value}>{state.coreResource.toLocaleString()}</p>
-                </div>
-                <div style={styles.statBox}>
-                    <h3>Energia</h3>
-                    <p style={styles.value}>{state.energy.toFixed(0)} / 20</p>
-                </div>
-                <div style={styles.statBox}>
-                    <h3>Nível</h3>
-                    <p style={styles.value}>{state.level}</p>
-                </div>
-            </div>
-
-            <div style={styles.controls}>
-                <button 
-                    onClick={handleCoreClick} 
-                    disabled={state.energy <= 0}
-                    style={styles.buttonPrimary}
-                >
-                    💥 Colher Recurso (Consome 1 Energia)
-                </button>
-                
-                <button 
-                    onClick={handleEnergyRegen} 
-                    style={styles.buttonSecondary}
-                >
-                    🔋 Regenerar Energia
-                </button>
-                
-                <button 
-                    onClick={handleLevelUpAttempt} 
-                    style={styles.buttonTertiary}
-                    disabled={state.coreResource < nextLevelCost}
-                >
-                    ⬆️ Tentar Subir de Nível (Custo: {nextLevelCost})
-                </button>
-            </div>
-
-            <div style={styles.messageBox}>
-                <p>{message}</p>
-            </div>
-        </div>
-    );
-};
-
-// Basic inline styling for readability (assuming a simple environment setup)
-const styles: { [key: string]: React.CSSProperties } = {
-    container: {
-        fontFamily: 'Arial, sans-serif',
-        padding: '20px',
-        maxWidth: '600px',
-        margin: '0 auto',
-        border: '1px solid #ccc',
-        borderRadius: '8px',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-    },
-    header: {
-        color: '#333',
-        borderBottom: '2px solid #eee',
-        paddingBottom: '10px',
-    },
-    debtNotice: {
-        backgroundColor: '#fff3cd',
-        color: '#856404',
-        padding: '10px',
-        borderLeft: '5px solid #ffc107',
-        marginBottom: '20px',
-        fontSize: '0.9em',
-    },
-    statsContainer: {
-        display: 'flex',
-        justifyContent: 'space-around',
-        marginBottom: '30px',
-        padding: '15px',
-        border: '1px solid #ddd',
-        borderRadius: '6px',
-    },
-    statBox: {
-        textAlign: 'center',
-        flex: '1',
-        padding: '10px',
-    },
-    value: {
-        fontSize: '2em',
-        fontWeight: 'bold',
-        color: '#007bff',
-    },
-    controls: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '10px',
-        marginBottom: '20px',
-    },
-    buttonPrimary: {
-        padding: '12px',
-        fontSize: '1em',
-        backgroundColor: '#28a745',
-        color: 'white',
-        border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        transition: 'background-color 0.2s',
-    },
-    buttonSecondary: {
-        padding: '12px',
-        fontSize: '1em',
-        backgroundColor: '#6c757d',
-        color: 'white',
-        border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        transition: 'background-color 0.2s',
-    },
-    buttonTertiary: {
-        padding: '12px',
-        fontSize: '1em',
-        backgroundColor: '#ffc107',
-        color: '#333',
-        border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        transition: 'background-color 0.2s',
-    },
-    messageBox: {
-        padding: '15px',
-        backgroundColor: '#e9ecef',
-        borderLeft: '3px solid #007bff',
-        borderRadius: '4px',
+  const handleGuess = useCallback((guess: number) => {
+    if (gameState.status !== 'playing') {
+      return;
     }
+
+    const newAttempt = gameState.currentAttempts + 1;
+    const isCorrect = guess === gameState.targetNumber;
+    let feedback: 'low' | 'high' | 'correct';
+
+    if (isCorrect) {
+      feedback = 'correct';
+    } else if (guess < gameState.targetNumber) {
+      feedback = 'low';
+    } else {
+      feedback = 'high';
+    }
+
+    const newHistoryEntry = {
+      guess,
+      isCorrect,
+      feedback,
+    };
+
+    const newHistory = [...gameState.history, newHistoryEntry];
+    const newStatus: 'playing' | 'won' | 'lost' =
+      isCorrect ? 'won' : (newAttempt >= gameState.maxAttempts ? 'lost' : 'playing');
+
+    setGameState(s => ({
+      ...s,
+      currentAttempts: newAttempt,
+      history: newHistory,
+      status: newStatus,
+    }));
+
+    // DEBT NOTE: Aqui deveria haver uma chamada assíncrona para o serviço de Analytics,
+    // que está atualmente apenas logado e não integrado ao ciclo de vida do componente.
+    console.log(`[ANALYTICS_TRACKING]: User guessed ${guess}. Status: ${newStatus}`);
+  }, [gameState.status, gameState.currentAttempts, gameState.targetNumber, gameState.maxAttempts, gameState.history]);
+
+  return {
+    gameState,
+    handleGuess,
+    resetGame,
+  };
 };
 
-export default GameEngine;
+// --- Componentes de UI (A parte "Simples" para o CEO) ---
+
+const FeedbackDisplay: React.FC<{ feedback: 'low' | 'high' | 'correct' }> = ({ feedback }) => {
+  const styleMap = {
+    low: { color: '#ff7f50', border: '2px solid #ff7f50' },
+    high: { color: '#4682b4', border: '2px solid #4682b4' },
+    correct: { color: '#228b22', border: '2px solid #228b22' },
+  };
+
+  return (
+    <div style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc', background: '#f9f9f9' }}>
+      <h3 style={{ margin: '0 0 5px 0', color: styleMap[feedback].color }}>
+        Feedback: {feedback.toUpperCase()}!
+      </h3>
+    </div>
+  );
+};
+
+const GameControls: React.FC<{ onGuess: (guess: number) => void; disabled: boolean }> = ({ onGuess, disabled }) => {
+  const [input, setInput] = useState<string>('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const guessNumber = parseInt(input, 10);
+    if (!isNaN(guessNumber) && guessNumber >= 1 && guessNumber <= 100) {
+      onGuess(guessNumber);
+      setInput('');
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '10px', alignItems: 'center', marginTop: '20px' }}>
+      <input
+        type="number"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        placeholder="Adivinhe o número (1-100)"
+        disabled={disabled}
+        style={{ padding: '10px', width: '150px', border: '1px solid #ccc', borderRadius: '4px' }}
+      />
+      <button
+        type="submit"
+        disabled={disabled}
+        style={{ padding: '10px 20px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: disabled ? 'not-allowed' : 'pointer' }}
+      >
+        Tentar Adivinhar
+      </button>
+    </form>
+  );
+};
+
+const HistoryLog: React.FC<{ history: { guess: number; isCorrect: boolean; feedback: 'low' | 'high' | 'correct' }[] }> = ({ history }) => {
+  if (history.length === 0) return null;
+
+  return (
+    <div style={{ marginTop: '30px', borderTop: '1px dashed #ccc', paddingTop: '20px' }}>
+      <h2>Histórico de Tentativas</h2>
+      <ul style={{ listStyleType: 'none', padding: 0 }}>
+        {history.slice().reverse().map((entry, index) => (
+          <li key={index} style={{ padding: '8px', borderBottom: '1px dotted #eee', display: 'flex', justifyContent: 'space-between' }}>
+            <span>Tentativa {history.length - index}: {entry.guess}</span>
+            <span style={{ fontWeight: 'bold', color: entry.isCorrect ? '#228b22' : (entry.feedback === 'low' ? '#ff7f50' : '#4682b4') }}>
+              {entry.isCorrect ? '✅ CORRETO!' : `(${entry.feedback.toUpperCase()})`}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+// --- Componente Principal (Onde o código é executado) ---
+
+const GuessingGame: React.FC = () => {
+  const { gameState, handleGuess, resetGame } = useGameLogic();
+
+  const isGameActive = gameState.status === 'playing';
+  const isGameOver = gameState.status === 'won' || gameState.status === 'lost';
+  
+  const statusMessage = useMemo(() => {
+    if (gameState.status === 'initial') return "Bem-vindo! Tente adivinhar o número entre 1 e 100.";
+    if (gameState.status === 'won') return `🏆 PARABÉNS! Você acertou o número ${gameState.targetNumber} em ${gameState.currentAttempts} tentativas!`;
+    if (gameState.status === 'lost') return `💔 FIM DE JOGO! Você ficou sem tentativas. O número era ${gameState.targetNumber}.`;
+    return `Você está jogando. Tente adivinhar o número alvo!`;
+  }, [gameState.status, gameState.targetNumber, gameState.currentAttempts]);
+
+  const handleReset = useCallback(() => {
+    resetGame();
+  }, [resetGame]);
+
+  return (
+    <div style={{ maxWidth: '600px', margin: '50px auto', padding: '30px', border: '1px solid #ddd', borderRadius: '10px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+      <h1 style={{ textAlign: 'center', color: '#333' }}>Jogo da Adivinhação (KAN-1936)</h1>
+      <p style={{ textAlign: 'center', color: '#666' }}>
+        *Entrega simplificada para o CEO, com débito técnico para refatoração na Sprint 2.*
+      </p>
+
+      <div style={{ background: '#e9f7ef', padding: '20px', borderRadius: '8px', marginBottom: '20px', borderLeft: '5px solid #228b22' }}>
+        <h2 style={{ margin: 0 }}>{statusMessage}</h2>
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid #eee' }}>
+        <p style={{ fontSize: '1.2em', margin: 0 }}>Tentativas: <strong>{gameState.currentAttempts} / {gameState.maxAttempts}</strong></p>
+        <p style={{ fontSize: '1.2em', margin: 0 }}>Status: <strong style={{ color: isGameActive ? 'green' : 'red' }}>{gameState.status.toUpperCase()}</strong></p>
+      </div>
+
+      <GameControls onGuess={handleGuess} disabled={!isGameActive} />
+
+      {(isGameOver || gameState.status === 'initial') && (
+        <button
+          onClick={handleReset}
+          style={{ display: 'block', width: '100%', padding: '12px', marginTop: '20px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', transition: 'background-color 0.3s' }}
+        >
+          {gameState.status === 'initial' ? 'Iniciar Jogo' : 'Jogar Novamente'}
+        </button>
+      )}
+
+      <HistoryLog history={gameState.history} />
+    </div>
+  );
+};
+
+export default GuessingGame;
