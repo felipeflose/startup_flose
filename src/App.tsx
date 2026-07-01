@@ -18,6 +18,8 @@ function App() {
   const [dashboardMetrics, setDashboardMetrics] = useState({ users: 12490, conversion: 3.42, load: 24 });
   const [scanActive, setScanActive] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
+  const [gameBoard, setGameBoard] = useState<(string | null)[]>(Array(9).fill(null));
+  const [gameXNext, setGameXNext] = useState(true);
 
   const fetchDecisions = () => {
     fetch('http://localhost:5001/api/decisions')
@@ -641,6 +643,8 @@ function App() {
                     screenType = 'dashboard';
                   } else if (textLower.includes('seguranca') || textLower.includes('secops') || textLower.includes('cyber') || textLower.includes('proteg') || textLower.includes('protect')) {
                     screenType = 'secops';
+                  } else if (textLower.includes('jogo') || textLower.includes('velha') || textLower.includes('game') || textLower.includes('tictactoe') || textLower.includes('gta')) {
+                    screenType = 'game';
                   }
 
                   return (
@@ -925,6 +929,87 @@ function App() {
                                 <div style={{ color: '#f59e0b' }}>&gt; Autor: {currentDec.executorName || 'David Dev'} ({currentDec.executorRole})</div>
                                 <div style={{ color: '#fff' }}>&gt; Status: Sucesso. Alterações commitadas no Git.</div>
                               </div>
+                            </div>
+                          )}
+
+                          {/* 5. Game Screen Staging Visualizer */}
+                          {screenType === 'game' && (
+                            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center' }}>
+                              <h4 style={{ margin: 0, fontSize: '1.1rem', color: '#fff', fontWeight: 700 }}>Staging Demo: Jogo da Velha</h4>
+                              <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Instância interativa do componente React gerado autonomamente.</p>
+                              
+                              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', width: '260px', height: '260px' }}>
+                                {gameBoard.map((val, idx) => (
+                                  <button
+                                    key={idx}
+                                    onClick={() => {
+                                      const checkWin = (b: (string | null)[]) => {
+                                        const lines = [
+                                          [0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]
+                                        ];
+                                        return lines.some(l => b[l[0]] && b[l[0]] === b[l[1]] && b[l[0]] === b[l[2]]);
+                                      };
+                                      if (val || checkWin(gameBoard)) return;
+                                      
+                                      const nextB = [...gameBoard];
+                                      nextB[idx] = gameXNext ? 'X' : 'O';
+                                      setGameBoard(nextB);
+                                      setGameXNext(!gameXNext);
+                                    }}
+                                    style={{
+                                      background: 'rgba(255,255,255,0.04)',
+                                      border: '1px solid var(--border-color)',
+                                      borderRadius: '8px',
+                                      fontSize: '2rem',
+                                      color: val === 'X' ? 'var(--color-primary)' : 'var(--color-secondary)',
+                                      fontWeight: 'bold',
+                                      cursor: 'pointer',
+                                      outline: 'none',
+                                      transition: 'all 0.2s ease'
+                                    }}
+                                  >
+                                    {val}
+                                  </button>
+                                ))}
+                              </div>
+
+                              <div style={{ fontSize: '0.9rem', color: '#34d399', fontWeight: 600 }}>
+                                {(() => {
+                                  const checkWin = (b: (string | null)[]) => {
+                                    const lines = [
+                                      [0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]
+                                    ];
+                                    for (const l of lines) {
+                                      if (b[l[0]] && b[l[0]] === b[l[1]] && b[l[0]] === b[l[2]]) return b[l[0]];
+                                    }
+                                    return null;
+                                  };
+                                  const winner = checkWin(gameBoard);
+                                  if (winner) return `🏆 Vencedor: ${winner}!`;
+                                  if (gameBoard.every(v => v !== null)) return '🤝 Empate!';
+                                  return `Vez de: ${gameXNext ? 'X' : 'O'}`;
+                                })()}
+                              </div>
+
+                              <button
+                                onClick={() => {
+                                  setGameBoard(Array(9).fill(null));
+                                  setGameXNext(true);
+                                }}
+                                style={{
+                                  padding: '8px 16px',
+                                  borderRadius: '6px',
+                                  border: 'none',
+                                  background: 'var(--color-primary)',
+                                  color: '#fff',
+                                  fontSize: '0.8rem',
+                                  fontWeight: 'bold',
+                                  cursor: 'pointer',
+                                  marginTop: '4px'
+                                }}
+                              >
+                                🔄 Reiniciar Partida
+                              </button>
                             </div>
                           )}
 

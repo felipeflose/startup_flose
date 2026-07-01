@@ -83,8 +83,8 @@
     "schedule": "09:00 - 18:00",
     "feedbacks": [],
     "currentTask": null,
-    "lastActive": "2026-06-30T23:18:40.504Z",
-    "totalTasksCompleted": 4
+    "lastActive": "2026-06-30T23:53:49.240Z",
+    "totalTasksCompleted": 8
   },
   {
     "id": "coord_scrum",
@@ -114,8 +114,8 @@
     "schedule": "09:00 - 18:00",
     "feedbacks": [],
     "currentTask": null,
-    "lastActive": "2026-06-30T23:18:51.444Z",
-    "totalTasksCompleted": 4
+    "lastActive": "2026-06-30T23:53:53.140Z",
+    "totalTasksCompleted": 8
   },
   {
     "id": "sr_dev",
@@ -131,8 +131,8 @@
     "schedule": "09:00 - 18:00",
     "feedbacks": [],
     "currentTask": null,
-    "lastActive": "2026-06-30T23:18:48.122Z",
-    "totalTasksCompleted": 4
+    "lastActive": "2026-06-30T23:53:51.619Z",
+    "totalTasksCompleted": 8
   },
   {
     "id": "sr_ux",
@@ -148,7 +148,7 @@
     "schedule": "09:00 - 18:00",
     "feedbacks": [],
     "currentTask": null,
-    "lastActive": "2026-06-30T23:18:44.603Z",
-    "totalTasksCompleted": 4
+    "lastActive": "2026-06-30T23:53:50.638Z",
+    "totalTasksCompleted": 8
   }
 ]
