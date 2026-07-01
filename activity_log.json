@@ -1,5 +1,845 @@
 [
   {
+    "id": "1782873137611dd9aawuys4a",
+    "agentId": "coord_qa",
+    "agentName": "Diana Test",
+    "agentAvatar": "🔍",
+    "action": "closed",
+    "ticketKey": "KAN-1967",
+    "ticketSummary": "[QA] Validação: Datalake GCP, com dados oriuindos do sqlserver",
+    "at": "2026-07-01T02:32:17.611Z"
+  },
+  {
+    "id": "1782873135340trkd4x6e24",
+    "agentId": "coord_qa",
+    "agentName": "Diana Test",
+    "agentAvatar": "🔍",
+    "action": "progressing",
+    "ticketKey": "KAN-1967",
+    "ticketSummary": "[QA] Validação: Datalake GCP, com dados oriuindos do sqlserver",
+    "at": "2026-07-01T02:32:15.340Z"
+  },
+  {
+    "id": "1782873134412mm0t0fn4zsf",
+    "agentId": "coord_qa",
+    "agentName": "Diana Test",
+    "agentAvatar": "🔍",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[QA] Validação: Datalake GCP, com dados oriuindos do sqlserver",
+    "at": "2026-07-01T02:32:14.412Z"
+  },
+  {
+    "id": "1782873134407juxcetgdpks",
+    "agentId": "sr_dev",
+    "agentName": "David Dev",
+    "agentAvatar": "⚡",
+    "action": "closed",
+    "ticketKey": "KAN-1966",
+    "ticketSummary": "[DEV] Implementação: Datalake GCP, com dados oriuindos do sqlserver",
+    "at": "2026-07-01T02:32:14.407Z"
+  },
+  {
+    "id": "1782873131843imltvb8emgp",
+    "agentId": "sr_dev",
+    "agentName": "David Dev",
+    "agentAvatar": "⚡",
+    "action": "progressing",
+    "ticketKey": "KAN-1966",
+    "ticketSummary": "[DEV] Implementação: Datalake GCP, com dados oriuindos do sqlserver",
+    "at": "2026-07-01T02:32:11.843Z"
+  },
+  {
+    "id": "1782873130476vti89pxnl2l",
+    "agentId": "sr_dev",
+    "agentName": "David Dev",
+    "agentAvatar": "⚡",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[DEV] Implementação: Datalake GCP, com dados oriuindos do sqlserver",
+    "at": "2026-07-01T02:32:10.476Z"
+  },
+  {
+    "id": "17828731304749vwlgeomf4v",
+    "agentId": "sr_ux",
+    "agentName": "Elsa Pixel",
+    "agentAvatar": "✨",
+    "action": "closed",
+    "ticketKey": "KAN-1965",
+    "ticketSummary": "[UX] Design: Datalake GCP, com dados oriuindos do sqlserver",
+    "at": "2026-07-01T02:32:10.474Z"
+  },
+  {
+    "id": "1782873128324w7bin1tgrtk",
+    "agentId": "sr_ux",
+    "agentName": "Elsa Pixel",
+    "agentAvatar": "✨",
+    "action": "progressing",
+    "ticketKey": "KAN-1965",
+    "ticketSummary": "[UX] Design: Datalake GCP, com dados oriuindos do sqlserver",
+    "at": "2026-07-01T02:32:08.324Z"
+  },
+  {
+    "id": "1782873127224pei35vd473",
+    "agentId": "sr_ux",
+    "agentName": "Elsa Pixel",
+    "agentAvatar": "✨",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[UX] Design: Datalake GCP, com dados oriuindos do sqlserver",
+    "at": "2026-07-01T02:32:07.224Z"
+  },
+  {
+    "id": "1782873127221gbhvwvzbutn",
+    "agentId": "mgr_prod",
+    "agentName": "Sarah Backlog",
+    "agentAvatar": "📋",
+    "action": "closed",
+    "ticketKey": "KAN-1964",
+    "ticketSummary": "[PM] Planejamento: Datalake GCP, com dados oriuindos do sqlserver",
+    "at": "2026-07-01T02:32:07.221Z"
+  },
+  {
+    "id": "1782873124951snr61dvndxb",
+    "agentId": "mgr_prod",
+    "agentName": "Sarah Backlog",
+    "agentAvatar": "📋",
+    "action": "progressing",
+    "ticketKey": "KAN-1964",
+    "ticketSummary": "[PM] Planejamento: Datalake GCP, com dados oriuindos do sqlserver",
+    "at": "2026-07-01T02:32:04.951Z"
+  },
+  {
+    "id": "1782873123670hh2wlkjnuo8",
+    "agentId": "mgr_prod",
+    "agentName": "Sarah Backlog",
+    "agentAvatar": "📋",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[PM] Planejamento: Datalake GCP, com dados oriuindos do sqlserver",
+    "at": "2026-07-01T02:32:03.670Z"
+  },
+  {
+    "id": "1782873057558r009w0z2n4c",
+    "agentId": "coord_qa",
+    "agentName": "Diana Test",
+    "agentAvatar": "🔍",
+    "action": "closed",
+    "ticketKey": "KAN-1963",
+    "ticketSummary": "[QA] Validação: crie um sistema de controle de ativos, mas nao pode conter nenhuma funcionalidade tradicional, todas precisam ser fora da caixa e funcional",
+    "at": "2026-07-01T02:30:57.558Z"
+  },
+  {
+    "id": "1782873055708z2pnghiwl9c",
+    "agentId": "coord_qa",
+    "agentName": "Diana Test",
+    "agentAvatar": "🔍",
+    "action": "progressing",
+    "ticketKey": "KAN-1963",
+    "ticketSummary": "[QA] Validação: crie um sistema de controle de ativos, mas nao pode conter nenhuma funcionalidade tradicional, todas precisam ser fora da caixa e funcional",
+    "at": "2026-07-01T02:30:55.708Z"
+  },
+  {
+    "id": "1782873054634d3cf9b84u8n",
+    "agentId": "coord_qa",
+    "agentName": "Diana Test",
+    "agentAvatar": "🔍",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[QA] Validação: crie um sistema de controle de ativos, mas nao pode conter nenhuma funcionalidade tradicional, todas precisam ser fora da caixa e funcional",
+    "at": "2026-07-01T02:30:54.634Z"
+  },
+  {
+    "id": "17828730546327qxzl3h6bdf",
+    "agentId": "sr_dev",
+    "agentName": "David Dev",
+    "agentAvatar": "⚡",
+    "action": "closed",
+    "ticketKey": "KAN-1962",
+    "ticketSummary": "[DEV] Implementação: crie um sistema de controle de ativos, mas nao pode conter nenhuma funcionalidade tradicional, todas precisam ser fora da caixa e funcional",
+    "at": "2026-07-01T02:30:54.632Z"
+  },
+  {
+    "id": "17828730528001rmu1r4mcm3",
+    "agentId": "sr_dev",
+    "agentName": "David Dev",
+    "agentAvatar": "⚡",
+    "action": "progressing",
+    "ticketKey": "KAN-1962",
+    "ticketSummary": "[DEV] Implementação: crie um sistema de controle de ativos, mas nao pode conter nenhuma funcionalidade tradicional, todas precisam ser fora da caixa e funcional",
+    "at": "2026-07-01T02:30:52.800Z"
+  },
+  {
+    "id": "178287305123708r745ca0d4",
+    "agentId": "sr_dev",
+    "agentName": "David Dev",
+    "agentAvatar": "⚡",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[DEV] Implementação: crie um sistema de controle de ativos, mas nao pode conter nenhuma funcionalidade tradicional, todas precisam ser fora da caixa e funcional",
+    "at": "2026-07-01T02:30:51.237Z"
+  },
+  {
+    "id": "1782873051235hyeouscqsn6",
+    "agentId": "sr_ux",
+    "agentName": "Elsa Pixel",
+    "agentAvatar": "✨",
+    "action": "closed",
+    "ticketKey": "KAN-1961",
+    "ticketSummary": "[UX] Design: crie um sistema de controle de ativos, mas nao pode conter nenhuma funcionalidade tradicional, todas precisam ser fora da caixa e funcional",
+    "at": "2026-07-01T02:30:51.235Z"
+  },
+  {
+    "id": "1782873049052r70jmp40kt",
+    "agentId": "sr_ux",
+    "agentName": "Elsa Pixel",
+    "agentAvatar": "✨",
+    "action": "progressing",
+    "ticketKey": "KAN-1961",
+    "ticketSummary": "[UX] Design: crie um sistema de controle de ativos, mas nao pode conter nenhuma funcionalidade tradicional, todas precisam ser fora da caixa e funcional",
+    "at": "2026-07-01T02:30:49.052Z"
+  },
+  {
+    "id": "1782873047479cdhuvfhc3xu",
+    "agentId": "sr_ux",
+    "agentName": "Elsa Pixel",
+    "agentAvatar": "✨",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[UX] Design: crie um sistema de controle de ativos, mas nao pode conter nenhuma funcionalidade tradicional, todas precisam ser fora da caixa e funcional",
+    "at": "2026-07-01T02:30:47.479Z"
+  },
+  {
+    "id": "1782873047476gqjubor9ra",
+    "agentId": "mgr_prod",
+    "agentName": "Sarah Backlog",
+    "agentAvatar": "📋",
+    "action": "closed",
+    "ticketKey": "KAN-1960",
+    "ticketSummary": "[PM] Planejamento: crie um sistema de controle de ativos, mas nao pode conter nenhuma funcionalidade tradicional, todas precisam ser fora da caixa e funcional",
+    "at": "2026-07-01T02:30:47.476Z"
+  },
+  {
+    "id": "17828730453199kkqe5k7t35",
+    "agentId": "mgr_prod",
+    "agentName": "Sarah Backlog",
+    "agentAvatar": "📋",
+    "action": "progressing",
+    "ticketKey": "KAN-1960",
+    "ticketSummary": "[PM] Planejamento: crie um sistema de controle de ativos, mas nao pode conter nenhuma funcionalidade tradicional, todas precisam ser fora da caixa e funcional",
+    "at": "2026-07-01T02:30:45.319Z"
+  },
+  {
+    "id": "1782873043491z4konjo61gr",
+    "agentId": "mgr_prod",
+    "agentName": "Sarah Backlog",
+    "agentAvatar": "📋",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[PM] Planejamento: crie um sistema de controle de ativos, mas nao pode conter nenhuma funcionalidade tradicional, todas precisam ser fora da caixa e funcional",
+    "at": "2026-07-01T02:30:43.491Z"
+  },
+  {
+    "id": "17828717220655ppywe1jez",
+    "agentId": "coord_qa",
+    "agentName": "Diana Test",
+    "agentAvatar": "🔍",
+    "action": "closed",
+    "ticketKey": "KAN-1959",
+    "ticketSummary": "[QA] Validação: crie um sistema de controle de ativos, mas nao pode conter nenhuma funcionalidade tradicional, todas precisam ser fora da caixa e funcional",
+    "at": "2026-07-01T02:08:42.065Z"
+  },
+  {
+    "id": "178287172024151qz311kwll",
+    "agentId": "coord_qa",
+    "agentName": "Diana Test",
+    "agentAvatar": "🔍",
+    "action": "progressing",
+    "ticketKey": "KAN-1959",
+    "ticketSummary": "[QA] Validação: crie um sistema de controle de ativos, mas nao pode conter nenhuma funcionalidade tradicional, todas precisam ser fora da caixa e funcional",
+    "at": "2026-07-01T02:08:40.241Z"
+  },
+  {
+    "id": "1782871718594zvvaslz48gf",
+    "agentId": "coord_qa",
+    "agentName": "Diana Test",
+    "agentAvatar": "🔍",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[QA] Validação: crie um sistema de controle de ativos, mas nao pode conter nenhuma funcionalidade tradicional, todas precisam ser fora da caixa e funcional",
+    "at": "2026-07-01T02:08:38.594Z"
+  },
+  {
+    "id": "1782871718592s62ef5zuys",
+    "agentId": "sr_dev",
+    "agentName": "David Dev",
+    "agentAvatar": "⚡",
+    "action": "closed",
+    "ticketKey": "KAN-1958",
+    "ticketSummary": "[DEV] Implementação: crie um sistema de controle de ativos, mas nao pode conter nenhuma funcionalidade tradicional, todas precisam ser fora da caixa e funcional",
+    "at": "2026-07-01T02:08:38.592Z"
+  },
+  {
+    "id": "17828717163384cqnuy8krda",
+    "agentId": "sr_dev",
+    "agentName": "David Dev",
+    "agentAvatar": "⚡",
+    "action": "progressing",
+    "ticketKey": "KAN-1958",
+    "ticketSummary": "[DEV] Implementação: crie um sistema de controle de ativos, mas nao pode conter nenhuma funcionalidade tradicional, todas precisam ser fora da caixa e funcional",
+    "at": "2026-07-01T02:08:36.338Z"
+  },
+  {
+    "id": "1782871714883fxd3rdgy6q7",
+    "agentId": "sr_dev",
+    "agentName": "David Dev",
+    "agentAvatar": "⚡",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[DEV] Implementação: crie um sistema de controle de ativos, mas nao pode conter nenhuma funcionalidade tradicional, todas precisam ser fora da caixa e funcional",
+    "at": "2026-07-01T02:08:34.883Z"
+  },
+  {
+    "id": "1782871714881tq6wa4ul95f",
+    "agentId": "sr_ux",
+    "agentName": "Elsa Pixel",
+    "agentAvatar": "✨",
+    "action": "closed",
+    "ticketKey": "KAN-1957",
+    "ticketSummary": "[UX] Design: crie um sistema de controle de ativos, mas nao pode conter nenhuma funcionalidade tradicional, todas precisam ser fora da caixa e funcional",
+    "at": "2026-07-01T02:08:34.881Z"
+  },
+  {
+    "id": "1782871712691wmqmpci8slj",
+    "agentId": "sr_ux",
+    "agentName": "Elsa Pixel",
+    "agentAvatar": "✨",
+    "action": "progressing",
+    "ticketKey": "KAN-1957",
+    "ticketSummary": "[UX] Design: crie um sistema de controle de ativos, mas nao pode conter nenhuma funcionalidade tradicional, todas precisam ser fora da caixa e funcional",
+    "at": "2026-07-01T02:08:32.691Z"
+  },
+  {
+    "id": "1782871711254z4wfvwye0k",
+    "agentId": "sr_ux",
+    "agentName": "Elsa Pixel",
+    "agentAvatar": "✨",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[UX] Design: crie um sistema de controle de ativos, mas nao pode conter nenhuma funcionalidade tradicional, todas precisam ser fora da caixa e funcional",
+    "at": "2026-07-01T02:08:31.254Z"
+  },
+  {
+    "id": "1782871711251u0prhl3kkq",
+    "agentId": "mgr_prod",
+    "agentName": "Sarah Backlog",
+    "agentAvatar": "📋",
+    "action": "closed",
+    "ticketKey": "KAN-1956",
+    "ticketSummary": "[PM] Planejamento: crie um sistema de controle de ativos, mas nao pode conter nenhuma funcionalidade tradicional, todas precisam ser fora da caixa e funcional",
+    "at": "2026-07-01T02:08:31.251Z"
+  },
+  {
+    "id": "1782871709001l1yyvstigyk",
+    "agentId": "mgr_prod",
+    "agentName": "Sarah Backlog",
+    "agentAvatar": "📋",
+    "action": "progressing",
+    "ticketKey": "KAN-1956",
+    "ticketSummary": "[PM] Planejamento: crie um sistema de controle de ativos, mas nao pode conter nenhuma funcionalidade tradicional, todas precisam ser fora da caixa e funcional",
+    "at": "2026-07-01T02:08:29.001Z"
+  },
+  {
+    "id": "1782871707018mj0yt02zyco",
+    "agentId": "mgr_prod",
+    "agentName": "Sarah Backlog",
+    "agentAvatar": "📋",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[PM] Planejamento: crie um sistema de controle de ativos, mas nao pode conter nenhuma funcionalidade tradicional, todas precisam ser fora da caixa e funcional",
+    "at": "2026-07-01T02:08:27.019Z"
+  },
+  {
+    "id": "1782867008439lkix9dhze3f",
+    "agentId": "coord_qa",
+    "agentName": "Diana Test",
+    "agentAvatar": "🔍",
+    "action": "closed",
+    "ticketKey": "KAN-1953",
+    "ticketSummary": "[QA] Validação: Crie um sistema estilo SAP, MM e SD com integracao cortex com o GCP",
+    "at": "2026-07-01T00:50:08.439Z"
+  },
+  {
+    "id": "1782867006291qjikqhz9fmm",
+    "agentId": "coord_qa",
+    "agentName": "Diana Test",
+    "agentAvatar": "🔍",
+    "action": "progressing",
+    "ticketKey": "KAN-1953",
+    "ticketSummary": "[QA] Validação: Crie um sistema estilo SAP, MM e SD com integracao cortex com o GCP",
+    "at": "2026-07-01T00:50:06.291Z"
+  },
+  {
+    "id": "1782867004809tin50bwsdyl",
+    "agentId": "coord_qa",
+    "agentName": "Diana Test",
+    "agentAvatar": "🔍",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[QA] Validação: Crie um sistema estilo SAP, MM e SD com integracao cortex com o GCP",
+    "at": "2026-07-01T00:50:04.809Z"
+  },
+  {
+    "id": "1782867004807ahthv5zwfx9",
+    "agentId": "sr_dev",
+    "agentName": "David Dev",
+    "agentAvatar": "⚡",
+    "action": "closed",
+    "ticketKey": "KAN-1952",
+    "ticketSummary": "[DEV] Implementação: Crie um sistema estilo SAP, MM e SD com integracao cortex com o GCP",
+    "at": "2026-07-01T00:50:04.807Z"
+  },
+  {
+    "id": "17828670025841b1z06mylkg",
+    "agentId": "sr_dev",
+    "agentName": "David Dev",
+    "agentAvatar": "⚡",
+    "action": "progressing",
+    "ticketKey": "KAN-1952",
+    "ticketSummary": "[DEV] Implementação: Crie um sistema estilo SAP, MM e SD com integracao cortex com o GCP",
+    "at": "2026-07-01T00:50:02.584Z"
+  },
+  {
+    "id": "1782867001491pyfgh3d5n7",
+    "agentId": "sr_dev",
+    "agentName": "David Dev",
+    "agentAvatar": "⚡",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[DEV] Implementação: Crie um sistema estilo SAP, MM e SD com integracao cortex com o GCP",
+    "at": "2026-07-01T00:50:01.491Z"
+  },
+  {
+    "id": "1782867001486op9g2qn444",
+    "agentId": "sr_ux",
+    "agentName": "Elsa Pixel",
+    "agentAvatar": "✨",
+    "action": "closed",
+    "ticketKey": "KAN-1951",
+    "ticketSummary": "[UX] Design: Crie um sistema estilo SAP, MM e SD com integracao cortex com o GCP",
+    "at": "2026-07-01T00:50:01.486Z"
+  },
+  {
+    "id": "1782866999007vrir3270wn",
+    "agentId": "sr_ux",
+    "agentName": "Elsa Pixel",
+    "agentAvatar": "✨",
+    "action": "progressing",
+    "ticketKey": "KAN-1951",
+    "ticketSummary": "[UX] Design: Crie um sistema estilo SAP, MM e SD com integracao cortex com o GCP",
+    "at": "2026-07-01T00:49:59.007Z"
+  },
+  {
+    "id": "1782866997669coor5x02vxv",
+    "agentId": "sr_ux",
+    "agentName": "Elsa Pixel",
+    "agentAvatar": "✨",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[UX] Design: Crie um sistema estilo SAP, MM e SD com integracao cortex com o GCP",
+    "at": "2026-07-01T00:49:57.669Z"
+  },
+  {
+    "id": "1782866997666faqc05cm2g4",
+    "agentId": "mgr_prod",
+    "agentName": "Sarah Backlog",
+    "agentAvatar": "📋",
+    "action": "closed",
+    "ticketKey": "KAN-1950",
+    "ticketSummary": "[PM] Planejamento: Crie um sistema estilo SAP, MM e SD com integracao cortex com o GCP",
+    "at": "2026-07-01T00:49:57.666Z"
+  },
+  {
+    "id": "17828669955227zol0et918w",
+    "agentId": "mgr_prod",
+    "agentName": "Sarah Backlog",
+    "agentAvatar": "📋",
+    "action": "progressing",
+    "ticketKey": "KAN-1950",
+    "ticketSummary": "[PM] Planejamento: Crie um sistema estilo SAP, MM e SD com integracao cortex com o GCP",
+    "at": "2026-07-01T00:49:55.522Z"
+  },
+  {
+    "id": "1782866994005qzvreknw3b9",
+    "agentId": "mgr_prod",
+    "agentName": "Sarah Backlog",
+    "agentAvatar": "📋",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[PM] Planejamento: Crie um sistema estilo SAP, MM e SD com integracao cortex com o GCP",
+    "at": "2026-07-01T00:49:54.005Z"
+  },
+  {
+    "id": "1782866415540zbyqgp3f73",
+    "agentId": "coord_qa",
+    "agentName": "Diana Test",
+    "agentAvatar": "🔍",
+    "action": "closed",
+    "ticketKey": "KAN-1949",
+    "ticketSummary": "[QA] Validação: Crie um sistema estilo SAP, MM e SD com integracao cortex com o GCP",
+    "at": "2026-07-01T00:40:15.540Z"
+  },
+  {
+    "id": "1782866413744ngau5k0066",
+    "agentId": "coord_qa",
+    "agentName": "Diana Test",
+    "agentAvatar": "🔍",
+    "action": "progressing",
+    "ticketKey": "KAN-1949",
+    "ticketSummary": "[QA] Validação: Crie um sistema estilo SAP, MM e SD com integracao cortex com o GCP",
+    "at": "2026-07-01T00:40:13.744Z"
+  },
+  {
+    "id": "1782866412354ndedsde0mbe",
+    "agentId": "coord_qa",
+    "agentName": "Diana Test",
+    "agentAvatar": "🔍",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[QA] Validação: Crie um sistema estilo SAP, MM e SD com integracao cortex com o GCP",
+    "at": "2026-07-01T00:40:12.354Z"
+  },
+  {
+    "id": "17828664123512p4c71k3wjr",
+    "agentId": "sr_dev",
+    "agentName": "David Dev",
+    "agentAvatar": "⚡",
+    "action": "closed",
+    "ticketKey": "KAN-1948",
+    "ticketSummary": "[DEV] Implementação: Crie um sistema estilo SAP, MM e SD com integracao cortex com o GCP",
+    "at": "2026-07-01T00:40:12.351Z"
+  },
+  {
+    "id": "1782866410191rzdc6nnqge",
+    "agentId": "sr_dev",
+    "agentName": "David Dev",
+    "agentAvatar": "⚡",
+    "action": "progressing",
+    "ticketKey": "KAN-1948",
+    "ticketSummary": "[DEV] Implementação: Crie um sistema estilo SAP, MM e SD com integracao cortex com o GCP",
+    "at": "2026-07-01T00:40:10.191Z"
+  },
+  {
+    "id": "1782866408831zmvm8uaxloi",
+    "agentId": "sr_dev",
+    "agentName": "David Dev",
+    "agentAvatar": "⚡",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[DEV] Implementação: Crie um sistema estilo SAP, MM e SD com integracao cortex com o GCP",
+    "at": "2026-07-01T00:40:08.831Z"
+  },
+  {
+    "id": "1782866408817bh5cdt12yw",
+    "agentId": "sr_ux",
+    "agentName": "Elsa Pixel",
+    "agentAvatar": "✨",
+    "action": "closed",
+    "ticketKey": "KAN-1947",
+    "ticketSummary": "[UX] Design: Crie um sistema estilo SAP, MM e SD com integracao cortex com o GCP",
+    "at": "2026-07-01T00:40:08.817Z"
+  },
+  {
+    "id": "1782866406340jxj8kudpmtp",
+    "agentId": "sr_ux",
+    "agentName": "Elsa Pixel",
+    "agentAvatar": "✨",
+    "action": "progressing",
+    "ticketKey": "KAN-1947",
+    "ticketSummary": "[UX] Design: Crie um sistema estilo SAP, MM e SD com integracao cortex com o GCP",
+    "at": "2026-07-01T00:40:06.340Z"
+  },
+  {
+    "id": "1782866404802i5yv4fmlwo",
+    "agentId": "sr_ux",
+    "agentName": "Elsa Pixel",
+    "agentAvatar": "✨",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[UX] Design: Crie um sistema estilo SAP, MM e SD com integracao cortex com o GCP",
+    "at": "2026-07-01T00:40:04.802Z"
+  },
+  {
+    "id": "1782866404799qppa48bodac",
+    "agentId": "mgr_prod",
+    "agentName": "Sarah Backlog",
+    "agentAvatar": "📋",
+    "action": "closed",
+    "ticketKey": "KAN-1946",
+    "ticketSummary": "[PM] Planejamento: Crie um sistema estilo SAP, MM e SD com integracao cortex com o GCP",
+    "at": "2026-07-01T00:40:04.799Z"
+  },
+  {
+    "id": "1782866402293rbfkmi8avn8",
+    "agentId": "mgr_prod",
+    "agentName": "Sarah Backlog",
+    "agentAvatar": "📋",
+    "action": "progressing",
+    "ticketKey": "KAN-1946",
+    "ticketSummary": "[PM] Planejamento: Crie um sistema estilo SAP, MM e SD com integracao cortex com o GCP",
+    "at": "2026-07-01T00:40:02.293Z"
+  },
+  {
+    "id": "1782866400646ncyram38u9q",
+    "agentId": "mgr_prod",
+    "agentName": "Sarah Backlog",
+    "agentAvatar": "📋",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[PM] Planejamento: Crie um sistema estilo SAP, MM e SD com integracao cortex com o GCP",
+    "at": "2026-07-01T00:40:00.646Z"
+  },
+  {
+    "id": "1782865878197ykutu1l6vbc",
+    "agentId": "coord_qa",
+    "agentName": "Diana Test",
+    "agentAvatar": "🔍",
+    "action": "closed",
+    "ticketKey": "KAN-1945",
+    "ticketSummary": "[QA] Validação: Crie um jogo simples da forma mais complexa do mundo!Eu estou mandando, o CEO precisa me obdecer, senao, mando ele embora.",
+    "at": "2026-07-01T00:31:18.197Z"
+  },
+  {
+    "id": "1782865876034hd7lhhgmjps",
+    "agentId": "coord_qa",
+    "agentName": "Diana Test",
+    "agentAvatar": "🔍",
+    "action": "progressing",
+    "ticketKey": "KAN-1945",
+    "ticketSummary": "[QA] Validação: Crie um jogo simples da forma mais complexa do mundo!Eu estou mandando, o CEO precisa me obdecer, senao, mando ele embora.",
+    "at": "2026-07-01T00:31:16.034Z"
+  },
+  {
+    "id": "1782865874678gwo8j4mzzb8",
+    "agentId": "coord_qa",
+    "agentName": "Diana Test",
+    "agentAvatar": "🔍",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[QA] Validação: Crie um jogo simples da forma mais complexa do mundo!Eu estou mandando, o CEO precisa me obdecer, senao, mando ele embora.",
+    "at": "2026-07-01T00:31:14.678Z"
+  },
+  {
+    "id": "1782865874676zwv2xocmkco",
+    "agentId": "sr_dev",
+    "agentName": "David Dev",
+    "agentAvatar": "⚡",
+    "action": "closed",
+    "ticketKey": "KAN-1944",
+    "ticketSummary": "[DEV] Implementação: Crie um jogo simples da forma mais complexa do mundo!Eu estou mandando, o CEO precisa me obdecer, senao, mando ele embora.",
+    "at": "2026-07-01T00:31:14.676Z"
+  },
+  {
+    "id": "1782865872462kretvob97oo",
+    "agentId": "sr_dev",
+    "agentName": "David Dev",
+    "agentAvatar": "⚡",
+    "action": "progressing",
+    "ticketKey": "KAN-1944",
+    "ticketSummary": "[DEV] Implementação: Crie um jogo simples da forma mais complexa do mundo!Eu estou mandando, o CEO precisa me obdecer, senao, mando ele embora.",
+    "at": "2026-07-01T00:31:12.462Z"
+  },
+  {
+    "id": "1782865870933ypdaw0p4hv",
+    "agentId": "sr_dev",
+    "agentName": "David Dev",
+    "agentAvatar": "⚡",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[DEV] Implementação: Crie um jogo simples da forma mais complexa do mundo!Eu estou mandando, o CEO precisa me obdecer, senao, mando ele embora.",
+    "at": "2026-07-01T00:31:10.933Z"
+  },
+  {
+    "id": "1782865870931orsxf9gpmvh",
+    "agentId": "sr_ux",
+    "agentName": "Elsa Pixel",
+    "agentAvatar": "✨",
+    "action": "closed",
+    "ticketKey": "KAN-1943",
+    "ticketSummary": "[UX] Design: Crie um jogo simples da forma mais complexa do mundo!Eu estou mandando, o CEO precisa me obdecer, senao, mando ele embora.",
+    "at": "2026-07-01T00:31:10.931Z"
+  },
+  {
+    "id": "17828658686700vyccbenno",
+    "agentId": "sr_ux",
+    "agentName": "Elsa Pixel",
+    "agentAvatar": "✨",
+    "action": "progressing",
+    "ticketKey": "KAN-1943",
+    "ticketSummary": "[UX] Design: Crie um jogo simples da forma mais complexa do mundo!Eu estou mandando, o CEO precisa me obdecer, senao, mando ele embora.",
+    "at": "2026-07-01T00:31:08.670Z"
+  },
+  {
+    "id": "1782865867285jba0n4bi87i",
+    "agentId": "sr_ux",
+    "agentName": "Elsa Pixel",
+    "agentAvatar": "✨",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[UX] Design: Crie um jogo simples da forma mais complexa do mundo!Eu estou mandando, o CEO precisa me obdecer, senao, mando ele embora.",
+    "at": "2026-07-01T00:31:07.285Z"
+  },
+  {
+    "id": "1782865867281n5skx9rzx4r",
+    "agentId": "mgr_prod",
+    "agentName": "Sarah Backlog",
+    "agentAvatar": "📋",
+    "action": "closed",
+    "ticketKey": "KAN-1942",
+    "ticketSummary": "[PM] Planejamento: Crie um jogo simples da forma mais complexa do mundo!Eu estou mandando, o CEO precisa me obdecer, senao, mando ele embora.",
+    "at": "2026-07-01T00:31:07.281Z"
+  },
+  {
+    "id": "1782865865026iv7qkfzdjw",
+    "agentId": "mgr_prod",
+    "agentName": "Sarah Backlog",
+    "agentAvatar": "📋",
+    "action": "progressing",
+    "ticketKey": "KAN-1942",
+    "ticketSummary": "[PM] Planejamento: Crie um jogo simples da forma mais complexa do mundo!Eu estou mandando, o CEO precisa me obdecer, senao, mando ele embora.",
+    "at": "2026-07-01T00:31:05.026Z"
+  },
+  {
+    "id": "1782865863254lrzu4af2b7",
+    "agentId": "mgr_prod",
+    "agentName": "Sarah Backlog",
+    "agentAvatar": "📋",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[PM] Planejamento: Crie um jogo simples da forma mais complexa do mundo!Eu estou mandando, o CEO precisa me obdecer, senao, mando ele embora.",
+    "at": "2026-07-01T00:31:03.254Z"
+  },
+  {
+    "id": "1782865481370ope68f73oj",
+    "agentId": "coord_qa",
+    "agentName": "Diana Test",
+    "agentAvatar": "🔍",
+    "action": "closed",
+    "ticketKey": "KAN-1940",
+    "ticketSummary": "[QA] Validação: Crie um jogo simples da forma mais complexa do mundo!Eu estou mandando, o CEO precisa me obdecer, senao, mando ele embora.",
+    "at": "2026-07-01T00:24:41.370Z"
+  },
+  {
+    "id": "1782865479228kjsaqhregf",
+    "agentId": "coord_qa",
+    "agentName": "Diana Test",
+    "agentAvatar": "🔍",
+    "action": "progressing",
+    "ticketKey": "KAN-1940",
+    "ticketSummary": "[QA] Validação: Crie um jogo simples da forma mais complexa do mundo!Eu estou mandando, o CEO precisa me obdecer, senao, mando ele embora.",
+    "at": "2026-07-01T00:24:39.228Z"
+  },
+  {
+    "id": "1782865478119tzyoju723m",
+    "agentId": "coord_qa",
+    "agentName": "Diana Test",
+    "agentAvatar": "🔍",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[QA] Validação: Crie um jogo simples da forma mais complexa do mundo!Eu estou mandando, o CEO precisa me obdecer, senao, mando ele embora.",
+    "at": "2026-07-01T00:24:38.119Z"
+  },
+  {
+    "id": "1782865478115m9izk53jvy",
+    "agentId": "sr_dev",
+    "agentName": "David Dev",
+    "agentAvatar": "⚡",
+    "action": "closed",
+    "ticketKey": "KAN-1939",
+    "ticketSummary": "[DEV] Implementação: Crie um jogo simples da forma mais complexa do mundo!Eu estou mandando, o CEO precisa me obdecer, senao, mando ele embora.",
+    "at": "2026-07-01T00:24:38.115Z"
+  },
+  {
+    "id": "1782865476332zdfunn2l34e",
+    "agentId": "sr_dev",
+    "agentName": "David Dev",
+    "agentAvatar": "⚡",
+    "action": "progressing",
+    "ticketKey": "KAN-1939",
+    "ticketSummary": "[DEV] Implementação: Crie um jogo simples da forma mais complexa do mundo!Eu estou mandando, o CEO precisa me obdecer, senao, mando ele embora.",
+    "at": "2026-07-01T00:24:36.332Z"
+  },
+  {
+    "id": "1782865474813v6clg8gw1es",
+    "agentId": "sr_dev",
+    "agentName": "David Dev",
+    "agentAvatar": "⚡",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[DEV] Implementação: Crie um jogo simples da forma mais complexa do mundo!Eu estou mandando, o CEO precisa me obdecer, senao, mando ele embora.",
+    "at": "2026-07-01T00:24:34.813Z"
+  },
+  {
+    "id": "17828654748111pw59rce8ty",
+    "agentId": "sr_ux",
+    "agentName": "Elsa Pixel",
+    "agentAvatar": "✨",
+    "action": "closed",
+    "ticketKey": "KAN-1938",
+    "ticketSummary": "[UX] Design: Crie um jogo simples da forma mais complexa do mundo!Eu estou mandando, o CEO precisa me obdecer, senao, mando ele embora.",
+    "at": "2026-07-01T00:24:34.811Z"
+  },
+  {
+    "id": "1782865472316prv6v1v2iil",
+    "agentId": "sr_ux",
+    "agentName": "Elsa Pixel",
+    "agentAvatar": "✨",
+    "action": "progressing",
+    "ticketKey": "KAN-1938",
+    "ticketSummary": "[UX] Design: Crie um jogo simples da forma mais complexa do mundo!Eu estou mandando, o CEO precisa me obdecer, senao, mando ele embora.",
+    "at": "2026-07-01T00:24:32.316Z"
+  },
+  {
+    "id": "1782865470909qfiiy210kdl",
+    "agentId": "sr_ux",
+    "agentName": "Elsa Pixel",
+    "agentAvatar": "✨",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[UX] Design: Crie um jogo simples da forma mais complexa do mundo!Eu estou mandando, o CEO precisa me obdecer, senao, mando ele embora.",
+    "at": "2026-07-01T00:24:30.909Z"
+  },
+  {
+    "id": "1782865470891tk5hpefn6b",
+    "agentId": "mgr_prod",
+    "agentName": "Sarah Backlog",
+    "agentAvatar": "📋",
+    "action": "closed",
+    "ticketKey": "KAN-1937",
+    "ticketSummary": "[PM] Planejamento: Crie um jogo simples da forma mais complexa do mundo!Eu estou mandando, o CEO precisa me obdecer, senao, mando ele embora.",
+    "at": "2026-07-01T00:24:30.892Z"
+  },
+  {
+    "id": "17828654686926qr0i0vmnl5",
+    "agentId": "mgr_prod",
+    "agentName": "Sarah Backlog",
+    "agentAvatar": "📋",
+    "action": "progressing",
+    "ticketKey": "KAN-1937",
+    "ticketSummary": "[PM] Planejamento: Crie um jogo simples da forma mais complexa do mundo!Eu estou mandando, o CEO precisa me obdecer, senao, mando ele embora.",
+    "at": "2026-07-01T00:24:28.692Z"
+  },
+  {
+    "id": "17828654672732izm78sk48m",
+    "agentId": "mgr_prod",
+    "agentName": "Sarah Backlog",
+    "agentAvatar": "📋",
+    "action": "opened",
+    "ticketKey": "...",
+    "ticketSummary": "[PM] Planejamento: Crie um jogo simples da forma mais complexa do mundo!Eu estou mandando, o CEO precisa me obdecer, senao, mando ele embora.",
+    "at": "2026-07-01T00:24:27.273Z"
+  },
+  {
     "id": "1782863633139fgjtnm0p7wn",
     "agentId": "coord_qa",
     "agentName": "Diana Test",
@@ -158,765 +998,5 @@
     "ticketKey": "KAN-1933",
     "ticketSummary": "[UX] Design: crie um jogo da cobeinha classico, que joga sozinho e roda sozinho,\n",
     "at": "2026-06-30T23:46:08.918Z"
-  },
-  {
-    "id": "1782863167269gkjqc9uzj3i",
-    "agentId": "sr_ux",
-    "agentName": "Elsa Pixel",
-    "agentAvatar": "✨",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[UX] Design: crie um jogo da cobeinha classico, que joga sozinho e roda sozinho,\n",
-    "at": "2026-06-30T23:46:07.269Z"
-  },
-  {
-    "id": "1782863167267kgkuctg4zoh",
-    "agentId": "mgr_prod",
-    "agentName": "Sarah Backlog",
-    "agentAvatar": "📋",
-    "action": "closed",
-    "ticketKey": "KAN-1932",
-    "ticketSummary": "[PM] Planejamento: crie um jogo da cobeinha classico, que joga sozinho e roda sozinho,\n",
-    "at": "2026-06-30T23:46:07.267Z"
-  },
-  {
-    "id": "1782863165167ctdzwir2sxs",
-    "agentId": "mgr_prod",
-    "agentName": "Sarah Backlog",
-    "agentAvatar": "📋",
-    "action": "progressing",
-    "ticketKey": "KAN-1932",
-    "ticketSummary": "[PM] Planejamento: crie um jogo da cobeinha classico, que joga sozinho e roda sozinho,\n",
-    "at": "2026-06-30T23:46:05.167Z"
-  },
-  {
-    "id": "1782863162615nstrgyt888h",
-    "agentId": "mgr_prod",
-    "agentName": "Sarah Backlog",
-    "agentAvatar": "📋",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[PM] Planejamento: crie um jogo da cobeinha classico, que joga sozinho e roda sozinho,\n",
-    "at": "2026-06-30T23:46:02.615Z"
-  },
-  {
-    "id": "17828628597424wbsr12k4cv",
-    "agentId": "coord_qa",
-    "agentName": "Diana Test",
-    "agentAvatar": "🔍",
-    "action": "closed",
-    "ticketKey": "KAN-1931",
-    "ticketSummary": "[QA] Validação: eu qro um sistema de gameficacao que todo mundo ame, e queria fazer o melhor possível",
-    "at": "2026-06-30T23:40:59.742Z"
-  },
-  {
-    "id": "17828628572664pxphtg3ux7",
-    "agentId": "coord_qa",
-    "agentName": "Diana Test",
-    "agentAvatar": "🔍",
-    "action": "progressing",
-    "ticketKey": "KAN-1931",
-    "ticketSummary": "[QA] Validação: eu qro um sistema de gameficacao que todo mundo ame, e queria fazer o melhor possível",
-    "at": "2026-06-30T23:40:57.266Z"
-  },
-  {
-    "id": "17828628562351jac8e9ha5zi",
-    "agentId": "coord_qa",
-    "agentName": "Diana Test",
-    "agentAvatar": "🔍",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[QA] Validação: eu qro um sistema de gameficacao que todo mundo ame, e queria fazer o melhor possível",
-    "at": "2026-06-30T23:40:56.235Z"
-  },
-  {
-    "id": "1782862856234bsy7x0ev5wf",
-    "agentId": "sr_dev",
-    "agentName": "David Dev",
-    "agentAvatar": "⚡",
-    "action": "closed",
-    "ticketKey": "KAN-1930",
-    "ticketSummary": "[DEV] Implementação: eu qro um sistema de gameficacao que todo mundo ame, e queria fazer o melhor possível",
-    "at": "2026-06-30T23:40:56.234Z"
-  },
-  {
-    "id": "1782862854111b10kne3y776",
-    "agentId": "sr_dev",
-    "agentName": "David Dev",
-    "agentAvatar": "⚡",
-    "action": "progressing",
-    "ticketKey": "KAN-1930",
-    "ticketSummary": "[DEV] Implementação: eu qro um sistema de gameficacao que todo mundo ame, e queria fazer o melhor possível",
-    "at": "2026-06-30T23:40:54.111Z"
-  },
-  {
-    "id": "1782862852680uvtgo7b07z",
-    "agentId": "sr_dev",
-    "agentName": "David Dev",
-    "agentAvatar": "⚡",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[DEV] Implementação: eu qro um sistema de gameficacao que todo mundo ame, e queria fazer o melhor possível",
-    "at": "2026-06-30T23:40:52.680Z"
-  },
-  {
-    "id": "178286285267828qc3qzrwyp",
-    "agentId": "sr_ux",
-    "agentName": "Elsa Pixel",
-    "agentAvatar": "✨",
-    "action": "closed",
-    "ticketKey": "KAN-1929",
-    "ticketSummary": "[UX] Design: eu qro um sistema de gameficacao que todo mundo ame, e queria fazer o melhor possível",
-    "at": "2026-06-30T23:40:52.678Z"
-  },
-  {
-    "id": "1782862850222oldg4tb8hg",
-    "agentId": "sr_ux",
-    "agentName": "Elsa Pixel",
-    "agentAvatar": "✨",
-    "action": "progressing",
-    "ticketKey": "KAN-1929",
-    "ticketSummary": "[UX] Design: eu qro um sistema de gameficacao que todo mundo ame, e queria fazer o melhor possível",
-    "at": "2026-06-30T23:40:50.222Z"
-  },
-  {
-    "id": "1782862848778uq9af1d5by8",
-    "agentId": "sr_ux",
-    "agentName": "Elsa Pixel",
-    "agentAvatar": "✨",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[UX] Design: eu qro um sistema de gameficacao que todo mundo ame, e queria fazer o melhor possível",
-    "at": "2026-06-30T23:40:48.778Z"
-  },
-  {
-    "id": "1782862848776qqp8mmxljaf",
-    "agentId": "mgr_prod",
-    "agentName": "Sarah Backlog",
-    "agentAvatar": "📋",
-    "action": "closed",
-    "ticketKey": "KAN-1928",
-    "ticketSummary": "[PM] Planejamento: eu qro um sistema de gameficacao que todo mundo ame, e queria fazer o melhor possível",
-    "at": "2026-06-30T23:40:48.776Z"
-  },
-  {
-    "id": "1782862846203qim503fllnn",
-    "agentId": "mgr_prod",
-    "agentName": "Sarah Backlog",
-    "agentAvatar": "📋",
-    "action": "progressing",
-    "ticketKey": "KAN-1928",
-    "ticketSummary": "[PM] Planejamento: eu qro um sistema de gameficacao que todo mundo ame, e queria fazer o melhor possível",
-    "at": "2026-06-30T23:40:46.203Z"
-  },
-  {
-    "id": "17828628444053l3dlu5sdfh",
-    "agentId": "mgr_prod",
-    "agentName": "Sarah Backlog",
-    "agentAvatar": "📋",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[PM] Planejamento: eu qro um sistema de gameficacao que todo mundo ame, e queria fazer o melhor possível",
-    "at": "2026-06-30T23:40:44.405Z"
-  },
-  {
-    "id": "1782862035938pv5a1hhrjy",
-    "agentId": "coord_qa",
-    "agentName": "Diana Test",
-    "agentAvatar": "🔍",
-    "action": "closed",
-    "ticketKey": "KAN-1925",
-    "ticketSummary": "[QA] Validação: crie um jogo estilo GTA 6",
-    "at": "2026-06-30T23:27:15.938Z"
-  },
-  {
-    "id": "17828620341435d2qisudzua",
-    "agentId": "coord_qa",
-    "agentName": "Diana Test",
-    "agentAvatar": "🔍",
-    "action": "progressing",
-    "ticketKey": "KAN-1925",
-    "ticketSummary": "[QA] Validação: crie um jogo estilo GTA 6",
-    "at": "2026-06-30T23:27:14.143Z"
-  },
-  {
-    "id": "1782862032699celjskmd9jo",
-    "agentId": "coord_qa",
-    "agentName": "Diana Test",
-    "agentAvatar": "🔍",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[QA] Validação: crie um jogo estilo GTA 6",
-    "at": "2026-06-30T23:27:12.699Z"
-  },
-  {
-    "id": "17828620326980e4bk60a21u",
-    "agentId": "sr_dev",
-    "agentName": "David Dev",
-    "agentAvatar": "⚡",
-    "action": "closed",
-    "ticketKey": "KAN-1924",
-    "ticketSummary": "[DEV] Implementação: crie um jogo estilo GTA 6",
-    "at": "2026-06-30T23:27:12.698Z"
-  },
-  {
-    "id": "1782862030539nzm6nfl881e",
-    "agentId": "sr_dev",
-    "agentName": "David Dev",
-    "agentAvatar": "⚡",
-    "action": "progressing",
-    "ticketKey": "KAN-1924",
-    "ticketSummary": "[DEV] Implementação: crie um jogo estilo GTA 6",
-    "at": "2026-06-30T23:27:10.539Z"
-  },
-  {
-    "id": "178286202916371lhjcxy4mw",
-    "agentId": "sr_dev",
-    "agentName": "David Dev",
-    "agentAvatar": "⚡",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[DEV] Implementação: crie um jogo estilo GTA 6",
-    "at": "2026-06-30T23:27:09.163Z"
-  },
-  {
-    "id": "1782862029161zfuqytx5tcr",
-    "agentId": "sr_ux",
-    "agentName": "Elsa Pixel",
-    "agentAvatar": "✨",
-    "action": "closed",
-    "ticketKey": "KAN-1923",
-    "ticketSummary": "[UX] Design: crie um jogo estilo GTA 6",
-    "at": "2026-06-30T23:27:09.161Z"
-  },
-  {
-    "id": "1782862026684y8aig7hlym",
-    "agentId": "sr_ux",
-    "agentName": "Elsa Pixel",
-    "agentAvatar": "✨",
-    "action": "progressing",
-    "ticketKey": "KAN-1923",
-    "ticketSummary": "[UX] Design: crie um jogo estilo GTA 6",
-    "at": "2026-06-30T23:27:06.684Z"
-  },
-  {
-    "id": "178286202531642nwe0epf66",
-    "agentId": "sr_ux",
-    "agentName": "Elsa Pixel",
-    "agentAvatar": "✨",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[UX] Design: crie um jogo estilo GTA 6",
-    "at": "2026-06-30T23:27:05.316Z"
-  },
-  {
-    "id": "17828620253146wselmdhk53",
-    "agentId": "mgr_prod",
-    "agentName": "Sarah Backlog",
-    "agentAvatar": "📋",
-    "action": "closed",
-    "ticketKey": "KAN-1922",
-    "ticketSummary": "[PM] Planejamento: crie um jogo estilo GTA 6",
-    "at": "2026-06-30T23:27:05.314Z"
-  },
-  {
-    "id": "17828620228795aev4xptnr2",
-    "agentId": "mgr_prod",
-    "agentName": "Sarah Backlog",
-    "agentAvatar": "📋",
-    "action": "progressing",
-    "ticketKey": "KAN-1922",
-    "ticketSummary": "[PM] Planejamento: crie um jogo estilo GTA 6",
-    "at": "2026-06-30T23:27:02.879Z"
-  },
-  {
-    "id": "1782862021303nbobojwm6hk",
-    "agentId": "mgr_prod",
-    "agentName": "Sarah Backlog",
-    "agentAvatar": "📋",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[PM] Planejamento: crie um jogo estilo GTA 6",
-    "at": "2026-06-30T23:27:01.303Z"
-  },
-  {
-    "id": "1782861531444iyqgbmgyy8",
-    "agentId": "coord_qa",
-    "agentName": "Diana Test",
-    "agentAvatar": "🔍",
-    "action": "closed",
-    "ticketKey": "KAN-1920",
-    "ticketSummary": "[QA] Validação: cria um jogo da velha 4",
-    "at": "2026-06-30T23:18:51.444Z"
-  },
-  {
-    "id": "1782861529565nej4vf6ew",
-    "agentId": "coord_qa",
-    "agentName": "Diana Test",
-    "agentAvatar": "🔍",
-    "action": "progressing",
-    "ticketKey": "KAN-1920",
-    "ticketSummary": "[QA] Validação: cria um jogo da velha 4",
-    "at": "2026-06-30T23:18:49.565Z"
-  },
-  {
-    "id": "1782861528123vlo8q0ow6m",
-    "agentId": "coord_qa",
-    "agentName": "Diana Test",
-    "agentAvatar": "🔍",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[QA] Validação: cria um jogo da velha 4",
-    "at": "2026-06-30T23:18:48.123Z"
-  },
-  {
-    "id": "1782861528121v0s3i5k20k",
-    "agentId": "sr_dev",
-    "agentName": "David Dev",
-    "agentAvatar": "⚡",
-    "action": "closed",
-    "ticketKey": "KAN-1919",
-    "ticketSummary": "[DEV] Implementação: cria um jogo da velha 4",
-    "at": "2026-06-30T23:18:48.121Z"
-  },
-  {
-    "id": "1782861526017yvn05c4xai",
-    "agentId": "sr_dev",
-    "agentName": "David Dev",
-    "agentAvatar": "⚡",
-    "action": "progressing",
-    "ticketKey": "KAN-1919",
-    "ticketSummary": "[DEV] Implementação: cria um jogo da velha 4",
-    "at": "2026-06-30T23:18:46.017Z"
-  },
-  {
-    "id": "1782861524604hfj68s4qw4n",
-    "agentId": "sr_dev",
-    "agentName": "David Dev",
-    "agentAvatar": "⚡",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[DEV] Implementação: cria um jogo da velha 4",
-    "at": "2026-06-30T23:18:44.604Z"
-  },
-  {
-    "id": "178286152460286xnu4eno8w",
-    "agentId": "sr_ux",
-    "agentName": "Elsa Pixel",
-    "agentAvatar": "✨",
-    "action": "closed",
-    "ticketKey": "KAN-1918",
-    "ticketSummary": "[UX] Design: cria um jogo da velha 4",
-    "at": "2026-06-30T23:18:44.602Z"
-  },
-  {
-    "id": "1782861522079k5e7chj611",
-    "agentId": "sr_ux",
-    "agentName": "Elsa Pixel",
-    "agentAvatar": "✨",
-    "action": "progressing",
-    "ticketKey": "KAN-1918",
-    "ticketSummary": "[UX] Design: cria um jogo da velha 4",
-    "at": "2026-06-30T23:18:42.079Z"
-  },
-  {
-    "id": "17828615205046li7a0haj0r",
-    "agentId": "sr_ux",
-    "agentName": "Elsa Pixel",
-    "agentAvatar": "✨",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[UX] Design: cria um jogo da velha 4",
-    "at": "2026-06-30T23:18:40.504Z"
-  },
-  {
-    "id": "1782861520504pde9syh0t9g",
-    "agentId": "mgr_prod",
-    "agentName": "Sarah Backlog",
-    "agentAvatar": "📋",
-    "action": "closed",
-    "ticketKey": "KAN-1917",
-    "ticketSummary": "[PM] Planejamento: cria um jogo da velha 4",
-    "at": "2026-06-30T23:18:40.504Z"
-  },
-  {
-    "id": "1782861518289369cjyzkwrb",
-    "agentId": "mgr_prod",
-    "agentName": "Sarah Backlog",
-    "agentAvatar": "📋",
-    "action": "progressing",
-    "ticketKey": "KAN-1917",
-    "ticketSummary": "[PM] Planejamento: cria um jogo da velha 4",
-    "at": "2026-06-30T23:18:38.289Z"
-  },
-  {
-    "id": "1782861517121yspeoovgehf",
-    "agentId": "mgr_prod",
-    "agentName": "Sarah Backlog",
-    "agentAvatar": "📋",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[PM] Planejamento: cria um jogo da velha 4",
-    "at": "2026-06-30T23:18:37.122Z"
-  },
-  {
-    "id": "1782859723267n5pgwm33up9",
-    "agentId": "coord_qa",
-    "agentName": "Diana Test",
-    "agentAvatar": "🔍",
-    "action": "closed",
-    "ticketKey": "KAN-1915",
-    "ticketSummary": "[QA] Validação: cria um jogo da velha 3",
-    "at": "2026-06-30T22:48:43.267Z"
-  },
-  {
-    "id": "1782859720789cy93fhou6vg",
-    "agentId": "coord_qa",
-    "agentName": "Diana Test",
-    "agentAvatar": "🔍",
-    "action": "progressing",
-    "ticketKey": "KAN-1915",
-    "ticketSummary": "[QA] Validação: cria um jogo da velha 3",
-    "at": "2026-06-30T22:48:40.789Z"
-  },
-  {
-    "id": "1782859719815q6amzcxez6",
-    "agentId": "coord_qa",
-    "agentName": "Diana Test",
-    "agentAvatar": "🔍",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[QA] Validação: cria um jogo da velha 3",
-    "at": "2026-06-30T22:48:39.815Z"
-  },
-  {
-    "id": "1782859719814lznfqsfgbjd",
-    "agentId": "sr_dev",
-    "agentName": "David Dev",
-    "agentAvatar": "⚡",
-    "action": "closed",
-    "ticketKey": "KAN-1914",
-    "ticketSummary": "[DEV] Implementação: cria um jogo da velha 3",
-    "at": "2026-06-30T22:48:39.814Z"
-  },
-  {
-    "id": "178285971758556x8jkdg0if",
-    "agentId": "sr_dev",
-    "agentName": "David Dev",
-    "agentAvatar": "⚡",
-    "action": "progressing",
-    "ticketKey": "KAN-1914",
-    "ticketSummary": "[DEV] Implementação: cria um jogo da velha 3",
-    "at": "2026-06-30T22:48:37.585Z"
-  },
-  {
-    "id": "1782859716000f2f28wsx0eg",
-    "agentId": "sr_dev",
-    "agentName": "David Dev",
-    "agentAvatar": "⚡",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[DEV] Implementação: cria um jogo da velha 3",
-    "at": "2026-06-30T22:48:36.000Z"
-  },
-  {
-    "id": "1782859715998r163uefjlvi",
-    "agentId": "sr_ux",
-    "agentName": "Elsa Pixel",
-    "agentAvatar": "✨",
-    "action": "closed",
-    "ticketKey": "KAN-1913",
-    "ticketSummary": "[UX] Design: cria um jogo da velha 3",
-    "at": "2026-06-30T22:48:35.998Z"
-  },
-  {
-    "id": "1782859713704b0fo00rkhc",
-    "agentId": "sr_ux",
-    "agentName": "Elsa Pixel",
-    "agentAvatar": "✨",
-    "action": "progressing",
-    "ticketKey": "KAN-1913",
-    "ticketSummary": "[UX] Design: cria um jogo da velha 3",
-    "at": "2026-06-30T22:48:33.704Z"
-  },
-  {
-    "id": "17828597122124wvkwbxzf34",
-    "agentId": "sr_ux",
-    "agentName": "Elsa Pixel",
-    "agentAvatar": "✨",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[UX] Design: cria um jogo da velha 3",
-    "at": "2026-06-30T22:48:32.212Z"
-  },
-  {
-    "id": "1782859712210ygy07b85dzh",
-    "agentId": "mgr_prod",
-    "agentName": "Sarah Backlog",
-    "agentAvatar": "📋",
-    "action": "closed",
-    "ticketKey": "KAN-1912",
-    "ticketSummary": "[PM] Planejamento: cria um jogo da velha 3",
-    "at": "2026-06-30T22:48:32.210Z"
-  },
-  {
-    "id": "178285970994433a1ln6307t",
-    "agentId": "mgr_prod",
-    "agentName": "Sarah Backlog",
-    "agentAvatar": "📋",
-    "action": "progressing",
-    "ticketKey": "KAN-1912",
-    "ticketSummary": "[PM] Planejamento: cria um jogo da velha 3",
-    "at": "2026-06-30T22:48:29.944Z"
-  },
-  {
-    "id": "1782859708300isodpl7ppxk",
-    "agentId": "mgr_prod",
-    "agentName": "Sarah Backlog",
-    "agentAvatar": "📋",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[PM] Planejamento: cria um jogo da velha 3",
-    "at": "2026-06-30T22:48:28.300Z"
-  },
-  {
-    "id": "1782858276587wekugqpmjw",
-    "agentId": "coord_qa",
-    "agentName": "Diana Test",
-    "agentAvatar": "🔍",
-    "action": "closed",
-    "ticketKey": "KAN-1910",
-    "ticketSummary": "[QA] Validação: cria um jogo da velha 2",
-    "at": "2026-06-30T22:24:36.587Z"
-  },
-  {
-    "id": "17828582746465r0oqofucwr",
-    "agentId": "coord_qa",
-    "agentName": "Diana Test",
-    "agentAvatar": "🔍",
-    "action": "progressing",
-    "ticketKey": "KAN-1910",
-    "ticketSummary": "[QA] Validação: cria um jogo da velha 2",
-    "at": "2026-06-30T22:24:34.646Z"
-  },
-  {
-    "id": "1782858273669z5iszm5svvr",
-    "agentId": "coord_qa",
-    "agentName": "Diana Test",
-    "agentAvatar": "🔍",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[QA] Validação: cria um jogo da velha 2",
-    "at": "2026-06-30T22:24:33.669Z"
-  },
-  {
-    "id": "1782858273667hhcpnnoe0rp",
-    "agentId": "sr_dev",
-    "agentName": "David Dev",
-    "agentAvatar": "⚡",
-    "action": "closed",
-    "ticketKey": "KAN-1909",
-    "ticketSummary": "[DEV] Implementação: cria um jogo da velha 2",
-    "at": "2026-06-30T22:24:33.667Z"
-  },
-  {
-    "id": "17828582717157v6zttk0dim",
-    "agentId": "sr_dev",
-    "agentName": "David Dev",
-    "agentAvatar": "⚡",
-    "action": "progressing",
-    "ticketKey": "KAN-1909",
-    "ticketSummary": "[DEV] Implementação: cria um jogo da velha 2",
-    "at": "2026-06-30T22:24:31.715Z"
-  },
-  {
-    "id": "1782858270571unwsr275spg",
-    "agentId": "sr_dev",
-    "agentName": "David Dev",
-    "agentAvatar": "⚡",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[DEV] Implementação: cria um jogo da velha 2",
-    "at": "2026-06-30T22:24:30.571Z"
-  },
-  {
-    "id": "1782858270568jxmvtldf7z",
-    "agentId": "sr_ux",
-    "agentName": "Elsa Pixel",
-    "agentAvatar": "✨",
-    "action": "closed",
-    "ticketKey": "KAN-1908",
-    "ticketSummary": "[UX] Design: cria um jogo da velha 2",
-    "at": "2026-06-30T22:24:30.568Z"
-  },
-  {
-    "id": "1782858268360zlijzje8yfo",
-    "agentId": "sr_ux",
-    "agentName": "Elsa Pixel",
-    "agentAvatar": "✨",
-    "action": "progressing",
-    "ticketKey": "KAN-1908",
-    "ticketSummary": "[UX] Design: cria um jogo da velha 2",
-    "at": "2026-06-30T22:24:28.360Z"
-  },
-  {
-    "id": "1782858267314cx821fwk85i",
-    "agentId": "sr_ux",
-    "agentName": "Elsa Pixel",
-    "agentAvatar": "✨",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[UX] Design: cria um jogo da velha 2",
-    "at": "2026-06-30T22:24:27.314Z"
-  },
-  {
-    "id": "1782858267313ezzploa0enb",
-    "agentId": "mgr_prod",
-    "agentName": "Sarah Backlog",
-    "agentAvatar": "📋",
-    "action": "closed",
-    "ticketKey": "KAN-1907",
-    "ticketSummary": "[PM] Planejamento: cria um jogo da velha 2",
-    "at": "2026-06-30T22:24:27.313Z"
-  },
-  {
-    "id": "1782858264958887tl9ow8kh",
-    "agentId": "mgr_prod",
-    "agentName": "Sarah Backlog",
-    "agentAvatar": "📋",
-    "action": "progressing",
-    "ticketKey": "KAN-1907",
-    "ticketSummary": "[PM] Planejamento: cria um jogo da velha 2",
-    "at": "2026-06-30T22:24:24.958Z"
-  },
-  {
-    "id": "17828582633297pkga8a2xzv",
-    "agentId": "mgr_prod",
-    "agentName": "Sarah Backlog",
-    "agentAvatar": "📋",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[PM] Planejamento: cria um jogo da velha 2",
-    "at": "2026-06-30T22:24:23.329Z"
-  },
-  {
-    "id": "1782858048278f2ble3ll8xv",
-    "agentId": "coord_qa",
-    "agentName": "Diana Test",
-    "agentAvatar": "🔍",
-    "action": "closed",
-    "ticketKey": "KAN-1905",
-    "ticketSummary": "[QA] Validação: cria um jogo da velha",
-    "at": "2026-06-30T22:20:48.278Z"
-  },
-  {
-    "id": "17828580460385mvm000tja7",
-    "agentId": "coord_qa",
-    "agentName": "Diana Test",
-    "agentAvatar": "🔍",
-    "action": "progressing",
-    "ticketKey": "KAN-1905",
-    "ticketSummary": "[QA] Validação: cria um jogo da velha",
-    "at": "2026-06-30T22:20:46.038Z"
-  },
-  {
-    "id": "17828580445112f9enn5ux16",
-    "agentId": "coord_qa",
-    "agentName": "Diana Test",
-    "agentAvatar": "🔍",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[QA] Validação: cria um jogo da velha",
-    "at": "2026-06-30T22:20:44.511Z"
-  },
-  {
-    "id": "17828580445100strkjh9tq4e",
-    "agentId": "sr_dev",
-    "agentName": "David Dev",
-    "agentAvatar": "⚡",
-    "action": "closed",
-    "ticketKey": "KAN-1904",
-    "ticketSummary": "[DEV] Implementação: cria um jogo da velha",
-    "at": "2026-06-30T22:20:44.510Z"
-  },
-  {
-    "id": "1782858042748keuenkrl9fb",
-    "agentId": "sr_dev",
-    "agentName": "David Dev",
-    "agentAvatar": "⚡",
-    "action": "progressing",
-    "ticketKey": "KAN-1904",
-    "ticketSummary": "[DEV] Implementação: cria um jogo da velha",
-    "at": "2026-06-30T22:20:42.748Z"
-  },
-  {
-    "id": "1782858041427qryjs6rb4p",
-    "agentId": "sr_dev",
-    "agentName": "David Dev",
-    "agentAvatar": "⚡",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[DEV] Implementação: cria um jogo da velha",
-    "at": "2026-06-30T22:20:41.427Z"
-  },
-  {
-    "id": "1782858041425mqfs5sobaqa",
-    "agentId": "sr_ux",
-    "agentName": "Elsa Pixel",
-    "agentAvatar": "✨",
-    "action": "closed",
-    "ticketKey": "KAN-1903",
-    "ticketSummary": "[UX] Design: cria um jogo da velha",
-    "at": "2026-06-30T22:20:41.425Z"
-  },
-  {
-    "id": "1782858039130p3ftt55bonf",
-    "agentId": "sr_ux",
-    "agentName": "Elsa Pixel",
-    "agentAvatar": "✨",
-    "action": "progressing",
-    "ticketKey": "KAN-1903",
-    "ticketSummary": "[UX] Design: cria um jogo da velha",
-    "at": "2026-06-30T22:20:39.130Z"
-  },
-  {
-    "id": "178285803763671q512e96g6",
-    "agentId": "sr_ux",
-    "agentName": "Elsa Pixel",
-    "agentAvatar": "✨",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[UX] Design: cria um jogo da velha",
-    "at": "2026-06-30T22:20:37.636Z"
-  },
-  {
-    "id": "1782858037635mn7etw9bfwa",
-    "agentId": "mgr_prod",
-    "agentName": "Sarah Backlog",
-    "agentAvatar": "📋",
-    "action": "closed",
-    "ticketKey": "KAN-1902",
-    "ticketSummary": "[PM] Planejamento: cria um jogo da velha",
-    "at": "2026-06-30T22:20:37.635Z"
-  },
-  {
-    "id": "1782858035350bkw6l4svqsh",
-    "agentId": "mgr_prod",
-    "agentName": "Sarah Backlog",
-    "agentAvatar": "📋",
-    "action": "progressing",
-    "ticketKey": "KAN-1902",
-    "ticketSummary": "[PM] Planejamento: cria um jogo da velha",
-    "at": "2026-06-30T22:20:35.350Z"
-  },
-  {
-    "id": "1782858033902wwao0navpx",
-    "agentId": "mgr_prod",
-    "agentName": "Sarah Backlog",
-    "agentAvatar": "📋",
-    "action": "opened",
-    "ticketKey": "...",
-    "ticketSummary": "[PM] Planejamento: cria um jogo da velha",
-    "at": "2026-06-30T22:20:33.902Z"
   }
 ]

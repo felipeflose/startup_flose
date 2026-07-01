@@ -19,6 +19,19 @@ const slugify = (text) => {
     .replace(/-+$/, '');
 };
 
+const slugifySummaryShort = (text) => {
+  const clean = text
+    .toString()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^\w\s\-]+/g, '')
+    .trim();
+  const words = clean.split(/[\s\-]+/).filter(w => w.length > 2);
+  const chosen = words.length > 0 ? words.slice(0, 3) : clean.split(/[\s\-]+/).slice(0, 3);
+  return chosen.join('-');
+};
+
 const createGitBranch = (branchName) => {
   return new Promise((resolve) => {
     exec(`git checkout -b ${branchName}`, (error, stdout, stderr) => {
@@ -474,10 +487,21 @@ const transitionJiraIssue = async (issueKey, targetStatusName) => {
       headers: getJiraAuthHeader()
     });
     const transitions = res.data?.transitions || [];
-    const match = transitions.find(t => 
-      t.name.toLowerCase().includes(targetStatusName.toLowerCase()) || 
-      (t.to && t.to.name.toLowerCase().includes(targetStatusName.toLowerCase()))
-    );
+    const match = transitions.find(t => {
+      const name = t.name.toLowerCase();
+      const toName = (t.to && t.to.name.toLowerCase()) || '';
+      
+      if (targetStatusName.toLowerCase() === 'in progress') {
+        return name.includes('progress') || name.includes('progresso') || name.includes('andamento') || name.includes('iniciar') || name.includes('start') || name.includes('doing') || name.includes('desenvolver') || name.includes('desenvolvimento') ||
+               toName.includes('progress') || toName.includes('progresso') || toName.includes('andamento') || toName.includes('doing') || toName.includes('desenvolvimento');
+      }
+      if (targetStatusName.toLowerCase() === 'done') {
+        return name.includes('done') || name.includes('concluid') || name.includes('concluir') || name.includes('fechad') || name.includes('fechar') || name.includes('resolv') || name.includes('pronto') || name.includes('ready') || name.includes('finish') || name.includes('finaliz') ||
+               toName.includes('done') || toName.includes('concluid') || toName.includes('fechad') || toName.includes('resolv') || toName.includes('pronto') || toName.includes('finaliz');
+      }
+      
+      return name.includes(targetStatusName.toLowerCase()) || toName.includes(targetStatusName.toLowerCase());
+    });
 
     if (match) {
       await axios.post(
@@ -865,8 +889,12 @@ const executeDebateSimulation = async ({ issueKey, issueSummary, issueDescriptio
   }
 
   // Git branch name & creation
-  const gitBranchName = `feature/${finalIssueKey}-${slugify(finalIssueSummary)}`;
+  const gitBranchName = `feature/${finalIssueKey}-${slugifySummaryShort(finalIssueSummary)}`;
   const branchCreated = await createGitBranch(gitBranchName);
+
+  if (finalIssueKey && !finalIssueKey.startsWith('MOCK')) {
+    await transitionJiraIssue(finalIssueKey, 'In Progress');
+  }
   
   // GitHub Mock Issue/PR URLs
   const githubIssueUrl = `https://github.com/felipeflose/startup_flose/issues/${finalIssueKey.replace(/[^\d]/g, '') || Math.floor(1 + Math.random()*100)}`;
@@ -1085,6 +1113,10 @@ Arquivo: \`${fileRelativePath}\``;
     sprintTickets: sprintTickets,
     prMerged: !!prNumber
   };
+  if (finalIssueKey && !finalIssueKey.startsWith('MOCK')) {
+    await transitionJiraIssue(finalIssueKey, 'Done');
+  }
+
   saveDecision(decisionEntry);
   try {
     await new Promise((resolve) => {
