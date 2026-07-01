@@ -49,7 +49,19 @@ function App() {
 
     fetchDecisions();
     fetchAgents();
+
+    const polling = setInterval(() => {
+      fetchDecisions();
+      fetchAgents();
+    }, 4000);
+
+    return () => clearInterval(polling);
   }, []);
+
+  useEffect(() => {
+    setGameBoard(Array(9).fill(null));
+    setGameXNext(true);
+  }, [selectedScreenKey]);
 
   const handleSelectAgentToggle = (id: string) => {
     setSelectedAgentIds(prev => 

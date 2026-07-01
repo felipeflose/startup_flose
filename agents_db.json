@@ -22,7 +22,7 @@
     "advantage": "Profundo conhecimento técnico em arquitetura distribuída e IA.",
     "disadvantage": "Tendência a superdimensionar soluções de infraestrutura simples.",
     "dilemma": "Refatoração da Dívida Técnica vs. Lançamento Rápido de Novidades.",
-    "personality": "Pragmático, analítico, defensor ferrenho de código limpo e escalabilidade.",
+    "personality": "Sempre melhora a ideia do CEO, Pragmático, analítico, defensor ferrenho de código limpo e escalabilidade.",
     "status": "Disponível",
     "schedule": "09:00 - 18:00",
     "feedbacks": []
@@ -83,8 +83,8 @@
     "schedule": "09:00 - 18:00",
     "feedbacks": [],
     "currentTask": null,
-    "lastActive": "2026-06-30T23:53:49.240Z",
-    "totalTasksCompleted": 8
+    "lastActive": "2026-07-01T02:32:07.223Z",
+    "totalTasksCompleted": 15
   },
   {
     "id": "coord_scrum",
@@ -114,8 +114,8 @@
     "schedule": "09:00 - 18:00",
     "feedbacks": [],
     "currentTask": null,
-    "lastActive": "2026-06-30T23:53:53.140Z",
-    "totalTasksCompleted": 8
+    "lastActive": "2026-07-01T02:32:17.612Z",
+    "totalTasksCompleted": 15
   },
   {
     "id": "sr_dev",
@@ -131,8 +131,8 @@
     "schedule": "09:00 - 18:00",
     "feedbacks": [],
     "currentTask": null,
-    "lastActive": "2026-06-30T23:53:51.619Z",
-    "totalTasksCompleted": 8
+    "lastActive": "2026-07-01T02:32:14.409Z",
+    "totalTasksCompleted": 15
   },
   {
     "id": "sr_ux",
@@ -148,7 +148,7 @@
     "schedule": "09:00 - 18:00",
     "feedbacks": [],
     "currentTask": null,
-    "lastActive": "2026-06-30T23:53:50.638Z",
-    "totalTasksCompleted": 8
+    "lastActive": "2026-07-01T02:32:10.475Z",
+    "totalTasksCompleted": 15
   }
 ]
