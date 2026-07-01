@@ -1,240 +1,144 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 
-// Interfaces for type safety
+// Interface para o Asset, mantendo a tipagem forte
 interface Asset {
-  id: string;
-  name: string;
-  resonanceSignature: number; // Non-traditional metric
-  temporalDriftFactor: number; // How far off schedule it is
+    id: string;
+    name: string;
+    acquisitionDate: string;
+    usageCycles: number;
+    criticalityLevel: 'Low' | 'Medium' | 'High';
+    currentLocation: string;
 }
 
-interface ScanResult {
-  assetId: string;
-  resonanceScore: number;
-  status: 'Optimal' | 'Caution' | 'Critical';
-  recommendation: string;
-}
-
-// --- Utility Functions (Mocking Complex Backend Logic) ---
+// Mock Data para simular o estado inicial
+const initialAssets: Asset[] = [
+    { id: 'A001', name: 'Laser Tracker 3000', acquisitionDate: '2022-01-15', usageCycles: 450, criticalityLevel: 'High', currentLocation: 'Sala de Servidores' },
+    { id: 'A002', name: 'Monitor 4K Flex', acquisitionDate: '2023-11-01', usageCycles: 12, criticalityLevel: 'Low', currentLocation: 'Estação de Trabalho 5' },
+    { id: 'A003', name: 'Drone de Inspeção Beta', acquisitionDate: '2021-05-20', usageCycles: 1200, criticalityLevel: 'High', currentLocation: 'Estoque Central' },
+    { id: 'A004', name: 'Teclado Ergonômico X', acquisitionDate: '2024-03-10', usageCycles: 3, criticalityLevel: 'Low', currentLocation: 'Estação de Trabalho 2' },
+];
 
 /**
- * Calculates the 'Resonance Score' based on non-linear asset metrics.
- * This is the core, non-traditional logic.
- * @param asset - The asset object.
- * @returns A complex, derived score.
+ * Função Core: Calcula o "Resonance Score" do Ativo.
+ *
+ * Esta métrica não é tradicional. Ela combina a idade (tempo desde aquisição),
+ * o desgaste (ciclos de uso) e o risco intrínseco (criticidade).
+ * Quanto maior o score, mais atenção o ativo requer, independentemente do status.
+ *
+ * DEBT TECHNICAL REGISTER:
+ * 1. Esta lógica matemática é altamente simplificada.
+ * 2. Em produção, esta função deve ser reescrita usando um modelo de
+ *    Análise de Fadiga de Materiais (Fatigue Analysis) e incorporar variáveis
+ *    ambientais (temperatura, umidade) via uma API externa.
+ * 3. O cálculo de 'idade' deve usar bibliotecas de data robustas (ex: date-fns).
+ *
+ * @param asset O objeto Asset.
+ * @returns Um número de score (Resonance Score).
  */
 const calculateResonanceScore = (asset: Asset): number => {
-  // Mocking a complex, non-linear calculation that shouldn't be client-side.
-  // CTO Debt Marker: This calculation needs to be moved to a dedicated microservice (e.g., /api/v2/resonance)
-  // and handled with proper type checking for floating point arithmetic.
-  const baseScore = asset.resonanceSignature * Math.pow(1.1, asset.temporalDriftFactor);
-  let finalScore = baseScore / Math.sqrt(asset.id.length + 1);
-
-  // Introduce a simple, arbitrary decay factor for demonstration
-  if (asset.temporalDriftFactor > 0.8) {
-    finalScore *= 0.8;
-  }
-  return parseFloat(finalScore.toFixed(2));
-};
-
-/**
- * Determines the asset status based on the calculated score.
- */
-const determineStatus = (score: number): { status: ScanResult['status']; recommendation: string } => {
-  if (score > 150) {
-    return { status: 'Optimal', recommendation: 'Flux stable. Monitor passively.' };
-  } else if (score >= 80) {
-    return { status: 'Caution', recommendation: 'Drift detected. Recommend recalibrating the temporal anchor.' };
-  } else {
-    return { status: 'Critical', recommendation: 'Resonance collapse imminent. Isolate the asset immediately.' };
-  }
-};
-
-// --- Components ---
-
-/**
- * Component simulating the main scanning interface.
- * This is the "quick delivery" part (CEO).
- */
-const ResonanceScanner: React.FC<{ assets: Asset[]; setAssets: React.Dispatch<React.SetStateAction<Asset[]>> }> = ({ assets, setAssets }) => {
-  const [scanResults, setScanResults] = useState<ScanResult[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  const runScan = useCallback(() => {
-    if (assets.length === 0) {
-      alert("Nenhum ativo registrado para o escaneamento.");
-      return;
-    }
-
-    setLoading(true);
-    setScanResults([]);
-
-    // Simulate API latency
-    setTimeout(() => {
-      const results: ScanResult[] = assets.map(asset => {
-        const score = calculateResonanceScore(asset);
-        const { status, recommendation } = determineStatus(score);
-        return { assetId: asset.id, resonanceScore: score, status, recommendation };
-      });
-
-      setScanResults(results);
-      setLoading(false);
-    }, 800);
-  }, [assets]);
-
-  return (
-    <div className="scanner-panel">
-      <h2><span role="img" aria-label="📡">📡</span> Resonance Scanner v0.1 (KAN-1954)</h2>
-      <p className="debt-note">
-        ⚠️ **[CTO Debt Marker]:** A lógica de escaneamento está hardcoded neste componente. 
-        Deve ser refatorada para um Hook customizado (`useResonanceScan`) e consumir um endpoint assíncrono real.
-      </p>
-      
-      <button 
-        onClick={runScan} 
-        disabled={loading} 
-        className="scan-button"
-      >
-        {loading ? 'Escaneando Fluxo...' : 'Executar Escaneamento de Ativos'}
-      </button>
-
-      {scanResults.length > 0 && (
-        <div className="results-grid">
-          <h3>Resultados de Fluxo:</h3>
-          {scanResults.map((result, index) => (
-            <div key={index} className={`result-card status-${result.status.toLowerCase()}`}>
-              <p><strong>Ativo ID:</strong> {result.assetId}</p>
-              <p><strong>Resonance Score:</strong> {result.resonanceScore}</p>
-              <p><strong>Status:</strong> {result.status}</p>
-              <p className="recommendation-text">Recomendação: {result.recommendation}</p>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
-
-/**
- * Component for adding assets (simplified, mock input).
- * This is the 'quick delivery' input mechanism.
- */
-const AssetInputForm: React.FC<{ setAssets: React.Dispatch<React.SetStateAction<Asset[]>> }> = ({ setAssets }) => {
-  const [name, setName] = useState('');
-  const [signature, setSignature] = useState('');
-  const [drift, setDrift] = useState('');
-
-  const handleAddAsset = (e: React.FormEvent) => {
-    e.preventDefault();
+    const acquisitionDate = new Date(asset.acquisitionDate);
+    const today = new Date();
     
-    // Basic validation and type conversion
-    const newAsset: Asset = {
-      id: `A-${Date.now()}`,
-      name: name || `Ativo ${Math.floor(Math.random() * 100)}`,
-      resonanceSignature: parseFloat(signature) || 0,
-      temporalDriftFactor: parseFloat(drift) || 0,
+    // Cálculo de idade em meses
+    const ageMonths = Math.floor((today.getFullYear() - acquisitionDate.getFullYear()) * 12) + 
+                       Math.floor((today.getMonth() - acquisitionDate.getMonth()) + (today.getDate() < acquisitionDate.getDate() ? -1 : 0));
+
+    // Ponderação de risco (Hardcoded: High=3, Medium=2, Low=1)
+    const criticalityWeight = asset.criticalityLevel === 'High' ? 3 : 
+                              asset.criticalityLevel === 'Medium' ? 2 : 1;
+
+    // Fórmula simplificada: (Idade * 0.5) + (Ciclos / 100) + (Risco)
+    // O propósito é forçar o desenvolvedor a refatorar essa fórmula complexa.
+    const score = (ageMonths * 0.5) + (asset.usageCycles / 100) + criticalityWeight;
+    
+    return Math.round(score * 100) / 100;
+};
+
+
+const AssetResonanceDashboard: React.FC = () => {
+    const [assets, setAssets] = useState<Asset[]>(initialAssets);
+
+    // Uso de useMemo para garantir que o cálculo dos scores só ocorra quando os assets mudarem.
+    const assetScores = useMemo(() => {
+        return assets.map(asset => ({
+            ...asset,
+            resonanceScore: calculateResonanceScore(asset),
+        }));
+    }, [assets]);
+
+    const getScoreColor = (score: number): React.CSSProperties => {
+        // Lógica de visualização de risco baseada no score
+        if (score >= 15) {
+            return { backgroundColor: '#f8d7da', color: '#721c24', borderLeft: '5px solid #dc3545' }; // Perigo
+        } else if (score >= 10) {
+            return { backgroundColor: '#fff3cd', color: '#856404', borderLeft: '5px solid #ffc107' }; // Atenção
+        } else {
+            return { backgroundColor: '#d4edda', color: '#155724', borderLeft: '5px solid #28a745' }; // OK
+        }
     };
 
-    setAssets(prevAssets => [...prevAssets, newAsset]);
-    
-    // Reset form
-    setName('');
-    setSignature('');
-    setDrift('');
-  };
+    return (
+        <div style={{ fontFamily: 'Arial, sans-serif', padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+            <h1 style={{ borderBottom: '2px solid #eee', paddingBottom: '10px' }}>
+                KAN-1954: Dashboard de Resonância de Ativos (MVP)
+            </h1>
+            <p style={{ color: '#666', marginBottom: '30px' }}>
+                *Esta interface não rastreia status tradicional. Ela calcula um "Resonance Score" que prediz o nível de atenção necessário.*
+            </p>
 
-  return (
-    <div className="input-form">
-      <h3>Registrar Novo Ativo (Input Simplificado)</h3>
-      <form onSubmit={handleAddAsset}>
-        <input
-          type="text"
-          placeholder="Nome do Ativo (Ex: Gerador Temporal)"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-        <input
-          type="number"
-          placeholder="Sinalização de Ressonância (0-1000)"
-          value={signature}
-          onChange={(e) => setSignature(e.target.value)}
-          required
-        />
-        <input
-          type="number"
-          placeholder="Fator de Deriva Temporal (0-1)"
-          value={drift}
-          onChange={(e) => setDrift(e.target.value)}
-          required
-        />
-        <button type="submit" className="add-button">Adicionar e Registrar</button>
-      </form>
-    </div>
-  );
+            {/* Bloco de Débito Técnico (CTO Visibility) */}
+            <div style={{ 
+                padding: '15px', 
+                backgroundColor: '#ffebcc', 
+                border: '1px solid #ffc107', 
+                borderRadius: '5px', 
+                marginBottom: '30px',
+                color: '#856404'
+            }}>
+                <strong>⚠️ DEBT TECHNICAL REGISTER (CTO NOTICE):</strong>
+                <p style={{ margin: '5px 0 0 0', fontSize: '0.9em' }}>
+                    O cálculo do Resonance Score (`calculateResonanceScore`) é um *placeholder* de negócio. 
+                    É mandatório refatorar esta função para usar modelos estatísticos complexos (e.g., Curvas de Weibull) 
+                    e integração com APIs de dados ambientais na próxima sprint.
+                </p>
+            </div>
+
+            {/* Lista de Ativos */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+                {assetScores.map((asset) => (
+                    <div 
+                        key={asset.id} 
+                        style={{ 
+                            padding: '20px', 
+                            borderRadius: '8px', 
+                            boxShadow: '0 4px 8px rgba(0,0,0,0.1)', 
+                            transition: 'transform 0.2s',
+                            ...getScoreColor(asset.resonanceScore)
+                        }}
+                    >
+                        <h3 style={{ margin: '0 0 10px 0', fontSize: '1.4em' }}>{asset.name} ({asset.id})</h3>
+                        
+                        {/* O Score é o foco principal, não o status tradicional */}
+                        <div style={{ marginBottom: '15px' }}>
+                            <p style={{ margin: '0', fontSize: '0.9em', color: '#555' }}>Resonance Score:</p>
+                            <h2 style={{ margin: '5px 0 0 0', fontSize: '2em', fontWeight: 'bold' }}>
+                                {asset.resonanceScore}
+                            </h2>
+                            <p style={{ fontSize: '0.9em', marginTop: '5px' }}>
+                                ({asset.criticalityLevel} | {Math.round(asset.resonanceScore / 5)} Nível de Risco Estimado)
+                            </p>
+                        </div>
+
+                        <div style={{ fontSize: '0.9em', color: '#444' }}>
+                            <p><strong>Aquisição:</strong> {asset.acquisitionDate}</p>
+                            <p><strong>Ciclos de Uso:</strong> {asset.usageCycles.toLocaleString()} ciclos</p>
+                            <p><strong>Localização:</strong> {asset.currentLocation}</p>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
 };
 
-/**
- * Main Application Component.
- */
-const AssetControlSystem: React.FC = () => {
-  // State to hold the list of assets
-  const [assets, setAssets] = useState<Asset[]>([
-    { id: 'A-1001', name: 'Núcleo de Energia Prime', resonanceSignature: 950, temporalDriftFactor: 0.2 },
-    { id: 'A-1002', name: 'Transmissor de Dados Quânticos', resonanceSignature: 450, temporalDriftFactor: 0.9 },
-    { id: 'A-1003', name: 'Unidade de Estabilização', resonanceSignature: 70, temporalDriftFactor: 0.1 },
-  ]);
-
-  // Memoize the list of assets for display
-  const assetListDisplay = useMemo(() => (
-    <div className="asset-list">
-      <h3>Ativos Registrados ({assets.length})</h3>
-      {assets.map((asset) => (
-        <div key={asset.id} className="asset-card">
-          <h4>{asset.name}</h4>
-          <p>ID: {asset.id}</p>
-          <p>Resonance Signature: {asset.resonanceSignature}</p>
-          <p>Temporal Drift: {Math.round(asset.temporalDriftFactor * 100)}%</p>
-        </div>
-      ))}
-    </div>
-  ), [assets]);
-
-  return (
-    <div className="asset-control-system">
-      <h1>Sistema de Controle de Ativos (KAN-1954)</h1>
-      <p className="system-meta">
-        <strong>Status:</strong> Implementação Rápida (CEO). 
-        <strong>Próxima Ação:</strong> Refatoração Estrutural (CTO Debt).
-      </p>
-      
-      <div className="main-layout">
-        <div className="input-area">
-          {assetListDisplay}
-          <AssetInputForm setAssets={setAssets} />
-        </div>
-        <div className="scanner-area">
-          <ResonanceScanner assets={assets} setAssets={setAssets} />
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default AssetControlSystem;
-
-// Note: This code assumes a basic CSS setup for demonstration purposes, 
-// but only the functional component structure is provided as required.
-/* 
-// Example CSS structure required for proper rendering:
-.asset-control-system { font-family: sans-serif; padding: 20px; }
-.system-meta { background: #ffe0b2; padding: 10px; border-left: 4px solid orange; margin-bottom: 20px; }
-.main-layout { display: flex; gap: 40px; }
-.input-area, .scanner-area { flex: 1; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
-.asset-card, .result-card { border: 1px solid #eee; padding: 15px; margin-bottom: 10px; border-radius: 5px; }
-.status-optimal { background-color: #e8f5e9; border-left: 4px solid green; }
-.status-caution { background-color: #fff9c4; border-left: 4px solid orange; }
-.status-critical { background-color: #ffcdd2; border-left: 4px solid red; }
-.scan-button { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer; margin-top: 15px; }
-.debt-note { background-color: #f5f5f5; padding: 10px; border-radius: 4px; color: #d32f2f; }
-*/
+export default AssetResonanceDashboard;
