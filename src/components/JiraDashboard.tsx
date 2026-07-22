@@ -170,6 +170,83 @@ export const JiraDashboard: React.FC<JiraDashboardProps> = ({ onSelectIssue, sel
                 <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
                   {desc}
                 </p>
+                <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }} onClick={e => e.stopPropagation()}>
+                  {issue.fields.status.name !== 'Em andamento' && issue.fields.status.name !== 'In Progress' && (
+                    <button
+                      onClick={async () => {
+                        try {
+                          const res = await fetch(`http://localhost:5001/api/jira/issue/${issue.key}/transition`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ statusName: 'In Progress' })
+                          });
+                          if (res.ok) fetchIssues();
+                        } catch (e) { console.error(e); }
+                      }}
+                      style={{
+                        padding: '4px 8px',
+                        fontSize: '0.7rem',
+                        borderRadius: '4px',
+                        background: 'rgba(59, 130, 246, 0.2)',
+                        border: '1px solid #3b82f6',
+                        color: '#60a5fa',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      ▶ Iniciar
+                    </button>
+                  )}
+                  {issue.fields.status.name !== 'Concluído' && issue.fields.status.name !== 'Done' && (
+                    <button
+                      onClick={async () => {
+                        try {
+                          const res = await fetch(`http://localhost:5001/api/jira/issue/${issue.key}/transition`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ statusName: 'Done' })
+                          });
+                          if (res.ok) fetchIssues();
+                        } catch (e) { console.error(e); }
+                      }}
+                      style={{
+                        padding: '4px 8px',
+                        fontSize: '0.7rem',
+                        borderRadius: '4px',
+                        background: 'rgba(52, 211, 153, 0.2)',
+                        border: '1px solid #34d399',
+                        color: '#34d399',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      ✔ Concluir
+                    </button>
+                  )}
+                  {(issue.fields.status.name === 'Concluído' || issue.fields.status.name === 'Done' || issue.fields.status.name === 'Em andamento' || issue.fields.status.name === 'In Progress') && (
+                    <button
+                      onClick={async () => {
+                        try {
+                          const res = await fetch(`http://localhost:5001/api/jira/issue/${issue.key}/transition`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ statusName: 'To Do' })
+                          });
+                          if (res.ok) fetchIssues();
+                        } catch (e) { console.error(e); }
+                      }}
+                      style={{
+                        padding: '4px 8px',
+                        fontSize: '0.7rem',
+                        borderRadius: '4px',
+                        background: 'rgba(239, 68, 68, 0.2)',
+                        border: '1px solid #ef4444',
+                        color: '#f87171',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      ↩ Reiniciar
+                    </button>
+                  )}
+                </div>
               </div>
             );
           })}

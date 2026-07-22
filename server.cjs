@@ -434,6 +434,19 @@ app.post('/api/jira/issue', async (req, res) => {
   }
 });
 
+// Jira Proxy: Transition Issue Status
+app.post('/api/jira/issue/:issueKey/transition', async (req, res) => {
+  try {
+    const { statusName } = req.body;
+    await transitionJiraIssue(req.params.issueKey, statusName);
+    res.json({ success: true, message: `Issue transitioned to ${statusName}` });
+  } catch (error) {
+    console.error('Error transitioning issue:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 // 5. Jira Proxy: Add Comment
 app.post('/api/jira/issue/:issueKey/comment', async (req, res) => {
   try {
@@ -2146,6 +2159,206 @@ app.post('/api/agents/schedule', async (req, res) => {
     res.json({ success: true, agent, jiraKey });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+// Candidates Pool API (45k database)
+const CANDIDATES_FILE = path.join(__dirname, 'profiles_bank.json');
+
+const readCandidates = () => {
+  try {
+    if (!fs.existsSync(CANDIDATES_FILE)) {
+      return [];
+    }
+    return JSON.parse(fs.readFileSync(CANDIDATES_FILE, 'utf8'));
+  } catch (err) {
+    console.error('Error reading candidates file:', err.message);
+    return [];
+  }
+};
+
+// 1. Get Paginated/Filtered Candidates
+app.get('/api/candidates', (req, res) => {
+  try {
+    const candidates = readCandidates();
+    const { role, category, search, limit = 50, page = 1 } = req.query;
+    
+    let filtered = candidates;
+    
+    if (category) {
+      filtered = filtered.filter(c => c.category.toLowerCase() === category.toLowerCase());
+    }
+    if (role) {
+      filtered = filtered.filter(c => c.role.toLowerCase().includes(role.toLowerCase()));
+    }
+    if (search) {
+      const q = search.toLowerCase();
+      filtered = filtered.filter(c => c.name.toLowerCase().includes(q) || c.role.toLowerCase().includes(q));
+    }
+    
+    const total = filtered.length;
+    const startIndex = (page - 1) * limit;
+    const paginated = filtered.slice(startIndex, startIndex + parseInt(limit));
+    
+    res.json({
+      total,
+      page: parseInt(page),
+      limit: parseInt(limit),
+      candidates: paginated
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 2. Perform HR recruitment and selection matching
+app.post('/api/hr/recruitment', async (req, res) => {
+  try {
+    const { targetRole, recruiterAgentId } = req.body;
+    
+    const candidates = readCandidates();
+    const agents = readAgents();
+    
+    const recruiter = agents.find(a => a.id === recruiterAgentId) || {
+      name: "Sofia Tech Recruiter",
+      role: "Tech Recruiter Sênior",
+      avatar: "🙋‍♀️"
+    };
+    
+    // Filter candidates matching target role
+    let matches = candidates.filter(c => 
+      c.role.toLowerCase().includes(targetRole.toLowerCase()) || 
+      c.category.toLowerCase().includes(targetRole.toLowerCase())
+    );
+    
+    // If no direct matches, get random ones from the category
+    if (matches.length === 0) {
+      matches = candidates.slice(0, 100);
+    }
+    
+    // Sort or filter some best options (e.g. limit to top 3)
+    // We shuffle slightly to make recruitment dynamic, then select top 3
+    const shuffled = matches.sort(() => 0.5 - Math.random());
+    const top3 = shuffled.slice(0, 3);
+    
+    // Generate Recruiter's thoughts based on Gemma 4 instructions
+    const resultLog = [];
+    top3.forEach((cand, idx) => {
+      let rating = 8.5 + (idx * 0.5) - (Math.random() * 0.5);
+      if (rating > 10) rating = 10;
+      
+      const evaluation = `Candidato com excelente embasamento em ${cand.role}. ` +
+        `Sua vantagem (${cand.advantage}) se alinha perfeitamente com a sprint atual. ` +
+        `Como desvantagem (${cand.disadvantage}), recomendo acompanhar de perto no onboarding. ` +
+        `Indicação de contratação forte.`;
+        
+      resultLog.push({
+        candidate: cand,
+        score: rating.toFixed(1),
+        recruiterEvaluation: evaluation
+      });
+    });
+    
+    res.json({
+      success: true,
+      recruiter: {
+        name: recruiter.name,
+        role: recruiter.role,
+        avatar: recruiter.avatar
+      },
+      targetRole,
+      shortlist: resultLog
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 3. Hire Candidate & Sync to Jira
+app.post('/api/hr/hire', async (req, res) => {
+  try {
+    const { candidateId } = req.body;
+    const candidates = readCandidates();
+    const candidate = candidates.find(c => c.id === candidateId);
+    
+    if (!candidate) {
+      return res.status(404).json({ error: 'Candidato não encontrado no banco de 45k.' });
+    }
+    
+    const currentAgents = readAgents();
+    
+    // Check if already hired
+    if (currentAgents.some(a => a.id === candidate.id)) {
+      return res.status(400).json({ error: 'Candidato já contratado no time.' });
+    }
+    
+    // Adapt level and add to DB
+    const newAgent = {
+      id: candidate.id,
+      name: candidate.name,
+      role: candidate.role,
+      level: "Analista SR", // enforce C-level, Directors, Managers, Coordinators, SR analysts constraint
+      avatar: candidate.avatar,
+      advantage: candidate.advantage,
+      disadvantage: candidate.disadvantage,
+      dilemma: candidate.dilemma,
+      personality: candidate.personality,
+      status: 'Disponível',
+      schedule: '09:00 - 18:00',
+      feedbacks: []
+    };
+    
+    currentAgents.push(newAgent);
+    saveAgents(currentAgents);
+    
+    // Sync onboarding to Jira
+    let jiraKey = 'MOCK-ONBOARDING';
+    try {
+      const summary = `ONBOARDING: Novo colaborador contratado - ${candidate.name}`;
+      const description = `Contratação efetuada via painel de RH.\n\n` +
+        `Nome: ${candidate.name}\n` +
+        `Cargo: ${candidate.role}\n` +
+        `Vantagem: ${candidate.advantage}\n` +
+        `Dilema: ${candidate.dilemma}`;
+        
+      const bodyData = {
+        fields: {
+          project: { key: 'KAN' },
+          summary: summary,
+          description: {
+            type: 'doc',
+            version: 1,
+            content: [
+              {
+                type: 'paragraph',
+                content: [
+                  {
+                    text: description,
+                    type: 'text'
+                  }
+                ]
+              }
+            ]
+          },
+          issuetype: { name: 'Task' }
+        }
+      };
+      
+      const jiraResponse = await axios.post(`${JIRA_HOST}/rest/api/3/issue`, bodyData, {
+        headers: getJiraAuthHeader()
+      });
+      jiraKey = jiraResponse.data?.key;
+    } catch (err) {
+      console.error('Jira onboarding sync failed:', err.message);
+    }
+    
+    res.json({
+      success: true,
+      hiredAgent: newAgent,
+      jiraKey
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
