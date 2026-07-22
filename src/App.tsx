@@ -7,6 +7,7 @@ import { GemmaConsole } from './components/GemmaConsole';
 import { Briefcase, Cpu, FileText, Layers, Terminal, History, Users, Monitor, Home } from 'lucide-react';
 import { CompanyPulse } from './components/CompanyPulse';
 import { EmployeeRanking } from './components/EmployeeRanking';
+import { CardCreator } from './components/CardCreator';
 
 function App() {
   const [agents, setAgents] = useState<Agent[]>([]);
@@ -152,7 +153,8 @@ function App() {
   };
 
   return (
-    <div className="app-container">
+    <>
+      <div className="app-container">
       {/* Sidebar Navigation */}
       <aside className="sidebar">
         <div className="logo-container">
@@ -1905,6 +1907,8 @@ function App() {
         )}
       </main>
     </div>
+    <CardCreator onCreated={() => {}} />
+    </>
   );
 }
 
