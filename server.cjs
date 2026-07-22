@@ -488,16 +488,44 @@ app.get('/api/jira/issues', async (req, res) => {
       })();
     }
 
+    let assignmentsChanged = false;
     issues.forEach(issue => {
-      // First check if already resolved/executed
       const dec = decisions.find(d => d.issueKey === issue.key);
       if (dec && dec.executorName) {
         issue.executorName = dec.executorName;
       } else if (assignments[issue.key]) {
-        // Fallback to assigned responsible person for new tasks
         issue.executorName = assignments[issue.key];
+      } else {
+        // Resolve on the fly based on summary/description keywords
+        const summaryText = (issue.fields.summary || '').toLowerCase();
+        let assignedAgentName = 'David Dev';
+        if (summaryText.includes('designer') || summaryText.includes('design') || summaryText.includes('ux') || summaryText.includes('ui') || summaryText.includes('layout') || summaryText.includes('pixel') || summaryText.includes('contraste') || summaryText.includes('skeleton')) {
+          assignedAgentName = 'Elsa Pixel';
+        } else if (summaryText.includes('python') || summaryText.includes('backend') || summaryText.includes('monolito')) {
+          assignedAgentName = 'Mariana Python';
+        } else if (summaryText.includes('qa') || summaryText.includes('test') || summaryText.includes('valida') || summaryText.includes('bug') || summaryText.includes('intrusao')) {
+          assignedAgentName = 'Juliana QA Sênior';
+        } else if (summaryText.includes('cloud') || summaryText.includes('devops') || summaryText.includes('kubernetes') || summaryText.includes('docker') || summaryText.includes('ci/cd') || summaryText.includes('logrotate')) {
+          assignedAgentName = 'Lucas Cloud';
+        } else if (summaryText.includes('seguranca') || summaryText.includes('secops') || summaryText.includes('vulnerabilidade')) {
+          assignedAgentName = 'Carla SecOps';
+        } else if (summaryText.includes('banco') || summaryText.includes('sql') || summaryText.includes('dba') || summaryText.includes('query') || summaryText.includes('sqlite') || summaryText.includes('pool')) {
+          assignedAgentName = 'Davi DBA';
+        } else if (summaryText.includes('documentacao') || summaryText.includes('tech writer') || summaryText.includes('manual') || summaryText.includes('especificacao') || summaryText.includes('obsidian')) {
+          assignedAgentName = 'Sofia Tech Writer';
+        }
+
+        issue.executorName = assignedAgentName;
+        assignments[issue.key] = assignedAgentName;
+        assignmentsChanged = true;
       }
     });
+
+    if (assignmentsChanged) {
+      try {
+        fs.writeFileSync(assignmentsFile, JSON.stringify(assignments, null, 2), 'utf8');
+      } catch (e) {}
+    }
 
     res.json(response.data);
   } catch (error) {
