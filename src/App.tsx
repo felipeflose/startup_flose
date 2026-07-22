@@ -6,6 +6,8 @@ import { JiraDashboard } from './components/JiraDashboard';
 import { GemmaConsole } from './components/GemmaConsole';
 import { Briefcase, Cpu, FileText, Layers, Terminal, History, Users, Monitor, Home } from 'lucide-react';
 import { CompanyPulse } from './components/CompanyPulse';
+import { EmployeeRanking } from './components/EmployeeRanking';
+import { CardCreator } from './components/CardCreator';
 
 function App() {
   const [agents, setAgents] = useState<Agent[]>([]);
@@ -19,7 +21,7 @@ function App() {
   const [hrSearching, setHrSearching] = useState<boolean>(false);
   const [selectedAgentIds, setSelectedAgentIds] = useState<string[]>([]);
   const [selectedIssue, setSelectedIssue] = useState<{ key: string; summary: string; description: string } | null>(null);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'backlog' | 'agents' | 'docs' | 'decisions' | 'rh' | 'screens' | 'office'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'backlog' | 'agents' | 'docs' | 'decisions' | 'rh' | 'screens' | 'office' | 'ranking'>('dashboard');
   const [decisions, setDecisions] = useState<any[]>([]);
   const [selectedScreenKey, setSelectedScreenKey] = useState<string>('');
   const [loginSuccess, setLoginSuccess] = useState(false);
@@ -151,7 +153,8 @@ function App() {
   };
 
   return (
-    <div className="app-container">
+    <>
+      <div className="app-container">
       {/* Sidebar Navigation */}
       <aside className="sidebar">
         <div className="logo-container">
@@ -329,6 +332,25 @@ function App() {
           >
             <FileText size={18} />
             Fundação & Docs
+          </button>
+          <button
+            onClick={() => setActiveTab('ranking')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              padding: '12px 16px',
+              borderRadius: 'var(--radius-sm)',
+              border: 'none',
+              background: activeTab === 'ranking' ? 'var(--bg-tertiary)' : 'transparent',
+              color: activeTab === 'ranking' ? '#fbbf24' : 'var(--text-secondary)',
+              cursor: 'pointer',
+              fontWeight: 600,
+              textAlign: 'left',
+              width: '100%'
+            }}
+          >
+            🏆 Ranking
           </button>
         </nav>
 
@@ -1877,8 +1899,16 @@ function App() {
             </p>
           </div>
         )}
+
+        {activeTab === 'ranking' && (
+          <div className="glass" style={{ padding: '32px' }}>
+            <EmployeeRanking />
+          </div>
+        )}
       </main>
     </div>
+    <CardCreator onCreated={() => {}} />
+    </>
   );
 }
 

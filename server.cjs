@@ -408,6 +408,153 @@ app.get('/api/agents', (req, res) => {
   res.json(readAgents().filter(a => !a.fired)); // Somente ativos
 });
 
+// RANKING: Funcionário do Minuto
+app.get('/api/rankings', async (req, res) => {
+  try {
+    const agents = readAgents().filter(a => !a.fired);
+
+    // Load data sources
+    const creatorsFile = path.join(__dirname, 'task_creators.json');
+    const assignmentsFile = path.join(__dirname, 'task_assignments.json');
+    const decisionsFile = path.join(__dirname, 'decisions_log.json');
+    const activityFile = path.join(__dirname, 'activity_log.json');
+
+    let creators = {};
+    let assignments = {};
+    let decisions = [];
+    let activities = [];
+
+    try { creators = JSON.parse(fs.readFileSync(creatorsFile, 'utf8')); } catch (e) {}
+    try { assignments = JSON.parse(fs.readFileSync(assignmentsFile, 'utf8')); } catch (e) {}
+    try { decisions = JSON.parse(fs.readFileSync(decisionsFile, 'utf8')); } catch (e) {}
+    try { activities = JSON.parse(fs.readFileSync(activityFile, 'utf8')); } catch (e) {}
+
+    // Alias map: fictional/short names → real agent names in DB
+    const ALIAS = {
+      'David Dev': 'Gabriel Augusto Silva',
+      'Mariana Python': 'Lucas Augusto Silva',
+      'Juliana QA Sênior': 'Diana Test',
+      'Juliana QA': 'Diana Test',
+      'Lucas Cloud': 'Lucas Cloud',
+      'Carla SecOps': 'Carla SecOps',
+      'Davi DBA': 'Davi DBA',
+      'Sofia Tech Writer': 'Sofia Tech Writer',
+      'Elsa Pixel': 'Elsa Pixel',
+      'Sarah Backlog (PM)': 'Felipe Flose',
+      'Sarah Backlog': 'Felipe Flose',
+      'Hugo Organizador (RH)': 'Hugo Organizador',
+      'Arthur de Flose (Diretor de Governança)': 'Arthur de Flose',
+      'Arthur de Flose (Governança)': 'Arthur de Flose',
+      'Felipe Flose (CEO)': 'Felipe Flose',
+    };
+
+    // Normalize name: strip role suffix, apply alias
+    const normalizeName = (raw) => {
+      const stripped = String(raw || '').split(' (')[0].trim();
+      return ALIAS[stripped] || ALIAS[raw] || stripped;
+    };
+
+    // Fuzzy match name to agent key in scoreMap
+    const findAgentKey = (scoreMap, rawName) => {
+      const n = normalizeName(rawName);
+      // Exact match
+      if (scoreMap[n]) return n;
+      // Partial match: agent key contains first word of n, or n contains first word of key
+      const nFirst = n.split(' ')[0].toLowerCase();
+      return Object.keys(scoreMap).find(k => {
+        const kFirst = k.split(' ')[0].toLowerCase();
+        return k.toLowerCase().includes(nFirst) || nFirst.includes(kFirst) || n.toLowerCase().includes(kFirst);
+      }) || null;
+    };
+
+    // Aggregate scores per agent
+    const scoreMap = {};
+    agents.forEach(a => {
+      scoreMap[a.name] = {
+        agentId: a.id,
+        name: a.name,
+        role: a.role,
+        avatar: a.avatar,
+        cardsCreated: 0,
+        cardsClosed: 0,
+        cardsExecuted: 0,
+        debatesWon: 0,
+        totalScore: 0,
+        prize: null,
+        penalty: null
+      };
+    });
+
+    // Cards created
+    Object.values(creators).forEach(name => {
+      const match = findAgentKey(scoreMap, name);
+      if (match) scoreMap[match].cardsCreated++;
+    });
+
+    // Cards executed/coded
+    Object.values(assignments).forEach(name => {
+      const match = findAgentKey(scoreMap, name);
+      if (match) scoreMap[match].cardsExecuted++;
+    });
+
+    // Cards closed (from decisions_log)
+    decisions.forEach(d => {
+      if (d.executorName) {
+        const match = findAgentKey(scoreMap, d.executorName);
+        if (match) scoreMap[match].cardsClosed++;
+      }
+    });
+
+    // Debates / activity log
+    activities.forEach(a => {
+      if (a.name) {
+        const match = findAgentKey(scoreMap, a.name);
+        if (match) scoreMap[match].debatesWon++;
+      }
+    });
+
+    // Compute total score (weighted)
+    Object.keys(scoreMap).forEach(name => {
+      const s = scoreMap[name];
+      s.totalScore = (s.cardsCreated * 10) + (s.cardsClosed * 25) + (s.cardsExecuted * 15) + (s.debatesWon * 5);
+    });
+
+    // Sort by total score
+    const ranked = Object.values(scoreMap)
+      .sort((a, b) => b.totalScore - a.totalScore)
+      .map((entry, idx) => ({ ...entry, rank: idx + 1 }));
+
+    // 🏆 Prize for 1st place
+    if (ranked.length > 0) {
+      ranked[0].prize = '🏆 Prêmio Funcionário do Minuto — Bônus de performance + destaque no painel!';
+      const agents2 = readAgents();
+      const topIdx = agents2.findIndex(a => a.id === ranked[0].agentId);
+      if (topIdx !== -1 && !agents2[topIdx].advantage?.includes('🏆')) {
+        agents2[topIdx].advantage = `🏆 [CAMPEÃO] ${agents2[topIdx].advantage || ''}`.trim();
+        saveAgents(agents2);
+      }
+    }
+
+    // 🎓 School for last place (only if they have 0 or very low score)
+    if (ranked.length > 1) {
+      const last = ranked[ranked.length - 1];
+      last.penalty = '🎓 Escola Obrigatória — Deve retornar com 100% de melhoria na descrição das atividades!';
+      const agents2 = readAgents();
+      const lastIdx = agents2.findIndex(a => a.id === last.agentId);
+      if (lastIdx !== -1 && !agents2[lastIdx].disadvantage?.includes('🎓')) {
+        agents2[lastIdx].disadvantage = `🎓 [EM TREINAMENTO] ${agents2[lastIdx].disadvantage || ''}`.trim();
+        saveAgents(agents2);
+        console.log(`[RANKING] ${last.name} enviado para escola por baixa performance.`);
+      }
+    }
+
+    res.json({ rankings: ranked, updatedAt: new Date().toISOString() });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 // 2. Jira Proxy: Get Projects
 app.get('/api/jira/projects', async (req, res) => {
   try {
@@ -488,15 +635,25 @@ app.get('/api/jira/issues', async (req, res) => {
       })();
     }
 
+    const creatorsFile = path.join(__dirname, 'task_creators.json');
+    let creators = {};
+    if (fs.existsSync(creatorsFile)) {
+      try {
+        creators = JSON.parse(fs.readFileSync(creatorsFile, 'utf8'));
+      } catch (e) {}
+    }
+
     let assignmentsChanged = false;
+    let creatorsChanged = false;
+
     issues.forEach(issue => {
+      // 1. Resolve Assignee / Executor
       const dec = decisions.find(d => d.issueKey === issue.key);
       if (dec && dec.executorName) {
         issue.executorName = dec.executorName;
       } else if (assignments[issue.key]) {
         issue.executorName = assignments[issue.key];
       } else {
-        // Resolve on the fly based on summary/description keywords
         const summaryText = (issue.fields.summary || '').toLowerCase();
         let assignedAgentName = 'David Dev';
         if (summaryText.includes('designer') || summaryText.includes('design') || summaryText.includes('ux') || summaryText.includes('ui') || summaryText.includes('layout') || summaryText.includes('pixel') || summaryText.includes('contraste') || summaryText.includes('skeleton')) {
@@ -519,11 +676,35 @@ app.get('/api/jira/issues', async (req, res) => {
         assignments[issue.key] = assignedAgentName;
         assignmentsChanged = true;
       }
+
+      // 2. Resolve Creator
+      if (creators[issue.key]) {
+        issue.creatorName = creators[issue.key];
+      } else {
+        const summaryText = (issue.fields.summary || '').toLowerCase();
+        let derivedCreator = 'Sarah Backlog (PM)';
+        if (summaryText.includes('onboarding') || summaryText.includes('contratacao') || summaryText.includes('contrat') || summaryText.includes('recrutamento') || summaryText.includes('admitiu')) {
+          derivedCreator = 'Hugo Organizador (RH)';
+        } else if (summaryText.includes('demissao') || summaryText.includes('desligar') || summaryText.includes('desligamento')) {
+          derivedCreator = 'Arthur de Flose (Diretor de Governança)';
+        } else if (summaryText.includes('feedback') || summaryText.includes('elogio') || summaryText.includes('advertencia')) {
+          derivedCreator = 'Hugo Organizador (RH)';
+        }
+        
+        issue.creatorName = derivedCreator;
+        creators[issue.key] = derivedCreator;
+        creatorsChanged = true;
+      }
     });
 
     if (assignmentsChanged) {
       try {
         fs.writeFileSync(assignmentsFile, JSON.stringify(assignments, null, 2), 'utf8');
+      } catch (e) {}
+    }
+    if (creatorsChanged) {
+      try {
+        fs.writeFileSync(creatorsFile, JSON.stringify(creators, null, 2), 'utf8');
       } catch (e) {}
     }
 
@@ -611,13 +792,23 @@ app.post('/api/jira/issue', async (req, res) => {
       const assignmentsFile = path.join(__dirname, 'task_assignments.json');
       let assignments = {};
       if (fs.existsSync(assignmentsFile)) {
-        try {
-          assignments = JSON.parse(fs.readFileSync(assignmentsFile, 'utf8'));
-        } catch (e) {}
+        try { assignments = JSON.parse(fs.readFileSync(assignmentsFile, 'utf8')); } catch (e) {}
       }
       assignments[jiraKey] = assignedAgentName;
       fs.writeFileSync(assignmentsFile, JSON.stringify(assignments, null, 2), 'utf8');
       console.log(`[GOVERNANÇA] Card ${jiraKey} atribuído a ${assignedAgentName}`);
+
+      // Persist creator name
+      const creatorsFile = path.join(__dirname, 'task_creators.json');
+      let creators = {};
+      if (fs.existsSync(creatorsFile)) {
+        try { creators = JSON.parse(fs.readFileSync(creatorsFile, 'utf8')); } catch (e) {}
+      }
+      // Resolve creator based on context
+      let creatorName = req.body.creatorName || 'Sarah Backlog (PM)';
+      creators[jiraKey] = creatorName;
+      fs.writeFileSync(creatorsFile, JSON.stringify(creators, null, 2), 'utf8');
+      console.log(`[GOVERNANÇA] Card ${jiraKey} criado por ${creatorName}`);
     }
 
     res.json(response.data);
