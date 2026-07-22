@@ -325,6 +325,40 @@ const DEFAULT_AGENTS = [
     "personality": "Voltado à automação de processos, lógico, pragmático e focado na integração contínua.",
     "status": "Disponível",
     "schedule": "09:00 - 18:00",
+    "area": "Qualidade, RH & Operações",
+    "desk": "Mesa QUAL-9",
+    "feedbacks": []
+  },
+  {
+    "id": "tech_lead_laura",
+    "name": "Laura Tech Lead",
+    "role": "Tech Lead de Engenharia & Qualidade",
+    "level": "Analista SR",
+    "avatar": "🎓",
+    "advantage": "Audita Pull Requests, detecta bad smells de código e faz revisões arquiteturais rigorosas.",
+    "disadvantage": "Muito severa com cobertura de testes unitários; aplica advertências imediatas por regressões.",
+    "dilemma": "Manter Padrão Técnico Impecável vs. Flexibilizar Processos em Sprints Rápidas.",
+    "personality": "Rigorosa, analítica, focada em qualidade estrita de código e direta.",
+    "status": "Disponível",
+    "schedule": "09:00 - 18:00",
+    "area": "Engenharia & TI",
+    "desk": "Mesa ENG-10",
+    "feedbacks": []
+  },
+  {
+    "id": "qa_lead_marcos",
+    "name": "Marcos QA Lead",
+    "role": "QA Lead de Integração & Estabilidade",
+    "level": "Analista SR",
+    "avatar": "🛡️",
+    "advantage": "Estrutura cenários de teste complexos, previne quebras em produção e audita bugs reportados.",
+    "disadvantage": "Pode barrar releases críticas se encontrar inconsistências de ambiente ou de layout secundárias.",
+    "dilemma": "Zero Bugs em Produção vs. Agilidade na Entrega Comercial.",
+    "personality": "Crítico, metódico, focado na prevenção de falhas e rigoroso.",
+    "status": "Disponível",
+    "schedule": "09:00 - 18:00",
+    "area": "Qualidade, RH & Operações",
+    "desk": "Mesa QUAL-10",
     "feedbacks": []
   }
 ];
@@ -1076,6 +1110,130 @@ Responda diretamente como o personagem, curto (máximo 3 frases), sem introduç�
   return `Concordo com os pontos levantados pelos colegas de produto e engenharia, mas precisamos equilibrar com o meu dilema de ${agent.dilemma}.`;
 };
 
+const performLeadAuditsAndFireRehire = async (currentAgents, decisionEntry) => {
+  try {
+    const candidatesFile = path.join(__dirname, 'profiles_bank.json');
+    if (!fs.existsSync(candidatesFile)) {
+      console.warn("Candidates bank file not found. Skipping auto-replacement.");
+      return;
+    }
+    const candidates = JSON.parse(fs.readFileSync(candidatesFile, 'utf8'));
+
+    for (let i = 0; i < currentAgents.length; i++) {
+      const agent = currentAgents[i];
+      if (agent.fired) continue;
+      
+      // Filter negative feedbacks
+      const warningsCount = (agent.feedbacks || []).filter(f => f.type === 'advertencia' || f.rating === 'negativo').length;
+      if (warningsCount >= 3) {
+        console.log(`[GOVERNANÇA] Demitindo ${agent.name} (${agent.role}) por atingir ${warningsCount} advertências.`);
+        agent.fired = true;
+        agent.status = 'Desligado';
+        
+        const fireMessage = `💼 Felipe Flose (CEO) demitiu ${agent.name} (${agent.role}) devido a reincidência de erros técnicos/operacionais (${warningsCount} advertências).`;
+        logActivity('ceo', 'Felipe Flose', '💼', fireMessage, decisionEntry.issueKey || '', decisionEntry.issueSummary);
+
+        // Create Jira ticket for fire
+        try {
+          const epicMap = await getOrCreateEpics();
+          const hrEpicKey = epicMap['Gestão de Pessoas'];
+          await axios.post(`${JIRA_HOST}/rest/api/3/issue`, {
+            fields: {
+              project: { key: 'KAN' },
+              summary: `DEMISSÃO POR DESEMPENHO: ${agent.name}`,
+              description: {
+                type: 'doc',
+                version: 1,
+                content: [
+                  {
+                    type: 'paragraph',
+                    content: [
+                      {
+                        text: `O colaborador ${agent.name} (${agent.role}) foi desligado da startup após acumular ${warningsCount} advertências graves de governança.\n\nEstação de trabalho desocupada: ${agent.desk || 'Mesa'}`,
+                        type: 'text'
+                      }
+                    ]
+                  }
+                ]
+              },
+              parent: hrEpicKey && !hrEpicKey.startsWith('MOCK') ? { key: hrEpicKey } : undefined,
+              issuetype: { name: 'Task' }
+            }
+          }, { headers: getJiraAuthHeader() });
+        } catch (err) {
+          console.error('Failed to log fire in Jira:', err.message);
+        }
+
+        // 4. Find replacement candidate
+        const targetRole = agent.role;
+        const matchedCandidates = candidates.filter(c => 
+          c.role.toLowerCase() === targetRole.toLowerCase() && 
+          !currentAgents.some(a => a.id === c.id)
+        );
+
+        const replacement = matchedCandidates[0] || candidates.find(c => c.role.toLowerCase().includes('sênior') && !currentAgents.some(a => a.id === c.id));
+        if (replacement) {
+          const newAgent = {
+            id: replacement.id,
+            name: replacement.name,
+            role: replacement.role,
+            level: "Analista SR",
+            avatar: replacement.avatar,
+            advantage: replacement.advantage,
+            disadvantage: replacement.disadvantage,
+            dilemma: replacement.dilemma,
+            personality: replacement.personality,
+            status: 'Disponível',
+            schedule: '09:00 - 18:00',
+            area: agent.area || "Engenharia & TI",
+            desk: agent.desk || "Mesa",
+            feedbacks: []
+          };
+          
+          currentAgents.push(newAgent);
+          console.log(`[GOVERNANÇA] Contratando substituto: ${newAgent.name} (${newAgent.role}) para a ${newAgent.desk}`);
+          
+          const hireMessage = `🤝 RH contratou o substituto ${newAgent.name} (${newAgent.role}) para ocupar a ${newAgent.desk} e corrigir as falhas anteriores de ${agent.name}.`;
+          logActivity('ceo', 'Felipe Flose', '💼', hireMessage, decisionEntry.issueKey || '', decisionEntry.issueSummary);
+
+          // Create Jira onboarding ticket
+          try {
+            const epicMap = await getOrCreateEpics();
+            const hrEpicKey = epicMap['Gestão de Pessoas'];
+            await axios.post(`${JIRA_HOST}/rest/api/3/issue`, {
+              fields: {
+                project: { key: 'KAN' },
+                summary: `ONBOARDING SUBST: Novo colaborador ${newAgent.name} para substituir ${agent.name}`,
+                description: {
+                  type: 'doc',
+                  version: 1,
+                  content: [
+                    {
+                      type: 'paragraph',
+                      content: [
+                        {
+                          text: `Contratação de reposição efetuada.\n\nSubstituto: ${newAgent.name}\nSubstituído: ${agent.name}\nCargo: ${newAgent.role}\nEstação de Trabalho: ${newAgent.desk}`,
+                          type: 'text'
+                        }
+                      ]
+                    }
+                  ]
+                },
+                parent: hrEpicKey && !hrEpicKey.startsWith('MOCK') ? { key: hrEpicKey } : undefined,
+                issuetype: { name: 'Task' }
+              }
+            }, { headers: getJiraAuthHeader() });
+          } catch (err) {
+            console.error('Failed to log hire onboarding in Jira:', err.message);
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.error("Error in performLeadAuditsAndFireRehire:", err.message);
+  }
+};
+
 const evaluateSprintPerformanceAndRH = async (decisionEntry, activeAgents) => {
   const sysHrPrompt = `Você é Felipe Flose (CEO) e Sarah Backlog (PM) na Flose Startup.
 Você deve avaliar o desempenho profissional de cada funcionário que participou do debate técnico e entrega.
@@ -1178,6 +1336,9 @@ Participantes e Debates:\n` +
       }
     }
   }
+
+  // Execute Lead Audits and Fire/Rehire loop
+  await performLeadAuditsAndFireRehire(currentAgents, decisionEntry);
 
   saveAgents(currentAgents);
   return feedbacks;
