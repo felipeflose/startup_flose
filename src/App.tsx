@@ -4,14 +4,22 @@ import { AgentCard } from './components/AgentCard';
 import { OrgChart } from './components/OrgChart';
 import { JiraDashboard } from './components/JiraDashboard';
 import { GemmaConsole } from './components/GemmaConsole';
-import { Briefcase, Cpu, FileText, Layers, Terminal, History, Users, Monitor } from 'lucide-react';
+import { Briefcase, Cpu, FileText, Layers, Terminal, History, Users, Monitor, Home } from 'lucide-react';
 import { CompanyPulse } from './components/CompanyPulse';
 
 function App() {
   const [agents, setAgents] = useState<Agent[]>([]);
+  const [candidatesList, setCandidatesList] = useState<any[]>([]);
+  const [candidatesSearch, setCandidatesSearch] = useState<string>('');
+  const [candidatesPage, setCandidatesPage] = useState<number>(1);
+  const [candidatesTotal, setCandidatesTotal] = useState<number>(0);
+  const [hrTargetRole, setHrTargetRole] = useState<string>('React Sênior');
+  const [hrRecruiterId, setHrRecruiterId] = useState<string>('coord_scrum');
+  const [hrShortlist, setHrShortlist] = useState<any[]>([]);
+  const [hrSearching, setHrSearching] = useState<boolean>(false);
   const [selectedAgentIds, setSelectedAgentIds] = useState<string[]>([]);
   const [selectedIssue, setSelectedIssue] = useState<{ key: string; summary: string; description: string } | null>(null);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'backlog' | 'agents' | 'docs' | 'decisions' | 'rh' | 'screens'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'backlog' | 'agents' | 'docs' | 'decisions' | 'rh' | 'screens' | 'office'>('dashboard');
   const [decisions, setDecisions] = useState<any[]>([]);
   const [selectedScreenKey, setSelectedScreenKey] = useState<string>('');
   const [loginSuccess, setLoginSuccess] = useState(false);
@@ -98,6 +106,16 @@ function App() {
 
     return () => clearInterval(polling);
   }, []);
+
+  useEffect(() => {
+    fetch(`http://localhost:5001/api/candidates?search=${candidatesSearch}&page=${candidatesPage}&limit=10`)
+      .then(res => res.json())
+      .then(data => {
+        setCandidatesList(data.candidates || []);
+        setCandidatesTotal(data.total || 0);
+      })
+      .catch(err => console.error('Erro ao buscar candidatos:', err));
+  }, [candidatesSearch, candidatesPage]);
 
   useEffect(() => {
     setGameBoard(Array(9).fill(null));
@@ -269,6 +287,27 @@ function App() {
           >
             <Users size={18} />
             RH & Gestão (Empresa)
+          </button>
+
+          <button
+            onClick={() => setActiveTab('office')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              padding: '12px 16px',
+              borderRadius: 'var(--radius-sm)',
+              border: 'none',
+              background: activeTab === 'office' ? 'var(--bg-tertiary)' : 'transparent',
+              color: activeTab === 'office' ? 'var(--color-primary)' : 'var(--text-secondary)',
+              cursor: 'pointer',
+              fontWeight: 600,
+              textAlign: 'left',
+              width: '100%'
+            }}
+          >
+            <Home size={18} />
+            Escritório & Áreas
           </button>
 
           <button
@@ -646,6 +685,372 @@ function App() {
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Seção Banco de Candidatos & IA Recrutamento */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '24px', marginTop: '32px', alignItems: 'start' }}>
+              
+              {/* IA Recrutamento & Seleção (Shortlist) */}
+              <div className="glass" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '1.5rem' }}>🎯</span>
+                  <h2 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Recrutamento Autônomo (Gemma 4 RH)</h2>
+                </div>
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '-8px' }}>
+                  Selecione um cargo alvo e o recrutador encarregado de buscar no banco de 45.000 perfis.
+                </p>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '8px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Cargo Alvo</label>
+                    <select
+                      value={hrTargetRole}
+                      onChange={e => setHrTargetRole(e.target.value)}
+                      style={{
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        background: 'var(--bg-secondary)',
+                        border: '1px solid var(--border-color)',
+                        color: '#fff',
+                        outline: 'none'
+                      }}
+                    >
+                      <option value="React Sênior">Frontend React Sênior</option>
+                      <option value="Node.js Sênior">Backend Node.js Sênior</option>
+                      <option value="DevOps Cloud Sênior">DevOps Cloud Sênior</option>
+                      <option value="Banco de Dados Sênior">Administrador de Banco (DBA)</option>
+                      <option value="IA & Machine Learning">Engenheiro de IA/ML</option>
+                      <option value="Garantia de Qualidade">Analista de QA Sênior</option>
+                      <option value="Product Owner Sênior">Product Owner (PO)</option>
+                      <option value="Recursos Humanos">Tech Recruiter Sênior</option>
+                    </select>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Recrutador Responsável</label>
+                    <select
+                      value={hrRecruiterId}
+                      onChange={e => setHrRecruiterId(e.target.value)}
+                      style={{
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        background: 'var(--bg-secondary)',
+                        border: '1px solid var(--border-color)',
+                        color: '#fff',
+                        outline: 'none'
+                      }}
+                    >
+                      {agents.filter(a => !a.fired).map(a => (
+                        <option key={a.id} value={a.id}>{a.name} ({a.role})</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <button
+                  onClick={async () => {
+                    setHrSearching(true);
+                    setHrShortlist([]);
+                    try {
+                      const res = await fetch('http://localhost:5001/api/hr/recruitment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ targetRole: hrTargetRole, recruiterAgentId: hrRecruiterId })
+                      });
+                      const data = await res.json();
+                      if (data.success) {
+                        setHrShortlist(data.shortlist);
+                      } else {
+                        alert(data.error);
+                      }
+                    } catch (e) {
+                      alert('Falha na triagem de candidatos.');
+                    } finally {
+                      setHrSearching(false);
+                    }
+                  }}
+                  disabled={hrSearching}
+                  className="bg-gradient"
+                  style={{
+                    padding: '10px 20px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    color: '#fff',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    marginTop: '8px',
+                    boxShadow: '0 0 15px hsla(var(--hue-primary), 90%, 65%, 0.2)'
+                  }}
+                >
+                  {hrSearching ? 'IA Escaneando 45.000 Perfis...' : 'Filtrar Candidatos com IA'}
+                </button>
+
+                {/* Shortlist Results */}
+                {hrShortlist.length > 0 && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px' }}>
+                    <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--color-secondary)' }}>🏆 Melhores Candidatos Recomendados:</h3>
+                    {hrShortlist.map((item, idx) => (
+                      <div key={idx} style={{
+                        background: 'var(--bg-secondary)',
+                        padding: '16px',
+                        borderRadius: '12px',
+                        border: '1px solid var(--border-color)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '8px'
+                      }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '1.5rem' }}>{item.candidate.avatar}</span>
+                            <div>
+                              <strong style={{ fontSize: '0.95rem' }}>{item.candidate.name}</strong>
+                              <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)' }}>{item.candidate.role}</p>
+                            </div>
+                          </div>
+                          <span style={{
+                            fontSize: '0.8rem',
+                            fontWeight: 700,
+                            padding: '3px 8px',
+                            borderRadius: '8px',
+                            background: 'rgba(52, 211, 153, 0.1)',
+                            color: '#34d399',
+                            border: '1px solid #34d399'
+                          }}>
+                            Score: {item.score}
+                          </span>
+                        </div>
+                        <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontStyle: 'italic', background: 'rgba(255,255,255,0.02)', padding: '8px', borderRadius: '6px' }}>
+                          💬 Evaluation: {item.recruiterEvaluation}
+                        </p>
+                        <button
+                          onClick={async () => {
+                            try {
+                              const res = await fetch('http://localhost:5001/api/hr/hire', {
+                                method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ candidateId: item.candidate.id })
+                              });
+                              const data = await res.json();
+                              if (data.success) {
+                                alert(`Contratado com sucesso! Ticket de Onboarding criado no Jira: ${data.jiraKey}`);
+                                // Refresh active agents
+                                fetch('http://localhost:5001/api/agents')
+                                  .then(r => r.json())
+                                  .then(a => setAgents(a));
+                              } else {
+                                alert(data.error);
+                              }
+                            } catch (e) {
+                              alert('Erro ao efetuar contratação.');
+                            }
+                          }}
+                          className="bg-gradient"
+                          style={{
+                            padding: '6px 12px',
+                            borderRadius: '6px',
+                            border: 'none',
+                            color: '#fff',
+                            fontWeight: 600,
+                            fontSize: '0.8rem',
+                            cursor: 'pointer',
+                            alignSelf: 'flex-end'
+                          }}
+                        >
+                          Admitir & Criar Onboarding Jira
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Busca e Listagem no Banco de 45 Mil Candidatos */}
+              <div className="glass" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h2 style={{ fontSize: '1.25rem', fontWeight: 600 }}>🗄️ Banco de Talentos (45k Perfis)</h2>
+                  <span style={{ fontSize: '0.75rem', background: 'hsla(var(--hue-primary), 15%, 25%, 0.5)', padding: '2px 8px', borderRadius: '10px', color: 'var(--text-muted)' }}>
+                    Total: {candidatesTotal.toLocaleString()}
+                  </span>
+                </div>
+                
+                <input
+                  type="text"
+                  placeholder="Pesquisar por nome ou cargo no banco..."
+                  value={candidatesSearch}
+                  onChange={e => {
+                    setCandidatesSearch(e.target.value);
+                    setCandidatesPage(1);
+                  }}
+                  style={{
+                    padding: '8px 12px',
+                    borderRadius: '8px',
+                    background: 'var(--bg-secondary)',
+                    border: '1px solid var(--border-color)',
+                    color: '#fff',
+                    outline: 'none',
+                    width: '100%'
+                  }}
+                />
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '430px', overflowY: 'auto' }}>
+                  {candidatesList.map(cand => (
+                    <div key={cand.id} style={{
+                      padding: '10px 14px',
+                      background: 'rgba(255,255,255,0.01)',
+                      borderRadius: '8px',
+                      border: '1px solid var(--border-color)',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <span style={{ fontSize: '1.5rem' }}>{cand.avatar}</span>
+                        <div>
+                          <strong style={{ fontSize: '0.85rem' }}>{cand.name}</strong>
+                          <p style={{ margin: 0, fontSize: '0.7rem', color: 'var(--text-muted)' }}>{cand.role}</p>
+                        </div>
+                      </div>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--color-secondary)' }}>
+                        R$ {cand.expectedSalary.toLocaleString()}/mês
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Pagination */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', borderTop: '1px solid var(--border-color)', paddingTop: '10px' }}>
+                  <button
+                    disabled={candidatesPage <= 1}
+                    onClick={() => setCandidatesPage(p => p - 1)}
+                    style={{
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      background: 'var(--bg-secondary)',
+                      border: '1px solid var(--border-color)',
+                      color: '#fff',
+                      cursor: 'pointer',
+                      fontSize: '0.75rem'
+                    }}
+                  >
+                    Anterior
+                  </button>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Página {candidatesPage}</span>
+                  <button
+                    disabled={candidatesPage * 10 >= candidatesTotal}
+                    onClick={() => setCandidatesPage(p => p + 1)}
+                    style={{
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      background: 'var(--bg-secondary)',
+                      border: '1px solid var(--border-color)',
+                      color: '#fff',
+                      cursor: 'pointer',
+                      fontSize: '0.75rem'
+                    }}
+                  >
+                    Próxima
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        )}
+        {activeTab === 'office' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div>
+              <h1 style={{ fontSize: '2.25rem', fontWeight: 800, textAlign: 'left' }}>
+                🏢 Mapa de <span className="text-gradient">Áreas & Estações de Trabalho</span>
+              </h1>
+              <p style={{ color: 'var(--text-secondary)', textAlign: 'left' }}>
+                Layout projetado pelo **Enzo Facilities** (Infraestrutura) e organizado pelo **Hugo Organizador** (RH/Estrutura) para acomodar todos os colaboradores da Flose Startup.
+              </p>
+            </div>
+
+            {/* Organizadores Info */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+              <div className="glass" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '16px', background: 'rgba(96, 165, 250, 0.1)', border: '1px solid #60a5fa' }}>
+                <span style={{ fontSize: '2.5rem' }}>📋</span>
+                <div style={{ textAlign: 'left' }}>
+                  <strong style={{ color: '#60a5fa', fontSize: '1rem' }}>Hugo Organizador (RH & Processos)</strong>
+                  <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                    Estruturou os colaboradores em 4 departamentos distintos para otimizar os fluxos de comunicação e debates.
+                  </p>
+                </div>
+              </div>
+              <div className="glass" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '16px', background: 'rgba(52, 211, 153, 0.1)', border: '1px solid #34d399' }}>
+                <span style={{ fontSize: '2.5rem' }}>🏗️</span>
+                <div style={{ textAlign: 'left' }}>
+                  <strong style={{ color: '#34d399', fontSize: '1rem' }}>Enzo Facilities (Engenharia Física)</strong>
+                  <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                    Alocou as mesas físicas e salas garantindo a ergonomia e sinergia de mesa (clean desk policy ativa).
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Department Grid Layout */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(480px, 1fr))', gap: '24px', marginTop: '12px' }}>
+              {[
+                { name: "Diretoria & C-Suite", color: "#ffd700", desc: "Sala executiva da presidência e diretoria." },
+                { name: "Engenharia & TI", color: "#3b82f6", desc: "Ilha de desenvolvimento backend, frontend e nuvem." },
+                { name: "Produto & Design", color: "#f59e0b", desc: "Espaço criativo para UI/UX e roadmap." },
+                { name: "Qualidade, RH & Operações", color: "#34d399", desc: "Área de testes, facilitação ágil e gestão de pessoas." }
+              ].map(dept => {
+                const deptAgents = agents.filter(a => !a.fired && (a.area === dept.name || (!a.area && dept.name === "Engenharia & TI")));
+                return (
+                  <div key={dept.name} className="glass" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left', minHeight: '380px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: `2px solid ${dept.color}`, paddingBottom: '8px' }}>
+                      <div>
+                        <h2 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>{dept.name}</h2>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{dept.desc}</span>
+                      </div>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 700, color: dept.color, background: `${dept.color}1A`, padding: '2px 8px', borderRadius: '12px' }}>
+                        {deptAgents.length} pessoas
+                      </span>
+                    </div>
+
+                    {/* Mesas list */}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', overflowY: 'auto', maxHeight: '350px' }}>
+                      {deptAgents.map(agent => (
+                        <div key={agent.id} style={{
+                          padding: '12px',
+                          background: 'var(--bg-secondary)',
+                          borderRadius: '8px',
+                          border: '1px solid var(--border-color)',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '6px',
+                          position: 'relative'
+                        }}>
+                          <span style={{
+                            position: 'absolute',
+                            top: '8px',
+                            right: '8px',
+                            fontSize: '0.65rem',
+                            fontWeight: 700,
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            background: 'rgba(255,255,255,0.03)',
+                            color: 'var(--color-secondary)',
+                            border: '1px solid var(--border-color)'
+                          }}>
+                            {agent.desk || 'Mesa'}
+                          </span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '1.5rem' }}>{agent.avatar}</span>
+                            <div style={{ overflow: 'hidden' }}>
+                              <strong style={{ fontSize: '0.85rem', color: 'var(--text-primary)', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'block' }}>{agent.name}</strong>
+                              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{agent.role}</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
