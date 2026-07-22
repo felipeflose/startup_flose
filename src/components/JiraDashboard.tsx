@@ -19,6 +19,7 @@ export interface JiraIssue {
       name: string;
     };
   };
+  executorName?: string;
 }
 
 interface JiraDashboardProps {
@@ -167,9 +168,14 @@ export const JiraDashboard: React.FC<JiraDashboardProps> = ({ onSelectIssue, sel
                   }}>{issue.fields.status.name}</span>
                 </div>
                 <h3 style={{ fontSize: '1rem', fontWeight: 600 }}>{issue.fields.summary}</h3>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', marginBottom: '4px' }}>
                   {desc}
                 </p>
+                {issue.executorName && (
+                  <div style={{ fontSize: '0.75rem', color: 'var(--color-secondary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', margin: '4px 0' }}>
+                    👤 Executado por: {issue.executorName}
+                  </div>
+                )}
                 <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }} onClick={e => e.stopPropagation()}>
                   {issue.fields.status.name !== 'Em andamento' && issue.fields.status.name !== 'In Progress' && (
                     <button

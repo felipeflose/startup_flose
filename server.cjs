@@ -360,6 +360,22 @@ const DEFAULT_AGENTS = [
     "area": "Qualidade, RH & Operações",
     "desk": "Mesa QUAL-10",
     "feedbacks": []
+  },
+  {
+    "id": "auditor_arthur",
+    "name": "Arthur Auditor",
+    "role": "Auditor de Conformidade Sênior",
+    "level": "Analista SR",
+    "avatar": "⚖️",
+    "advantage": "Identifica quebras de fluxos de processos, cards sem movimentação correta no Jira e descumprimento de prazos.",
+    "disadvantage": "Tende a focar exclusivamente em conformidades formais, punindo desvios ágeis justificados.",
+    "dilemma": "Rigidez nos Processos do Jira vs. Produtividade e Velocidade de Entrega.",
+    "personality": "Inflexível, detalhista, focado em compliance estrito de processos e punitivo.",
+    "status": "Disponível",
+    "schedule": "09:00 - 18:00",
+    "area": "Qualidade, RH & Operações",
+    "desk": "Mesa QUAL-11",
+    "feedbacks": []
   }
 ];
 
@@ -420,6 +436,23 @@ app.get('/api/jira/issues', async (req, res) => {
         fields: 'summary,description,status,issuetype'
       }
     });
+
+    const decisionsFile = path.join(__dirname, 'decisions_log.json');
+    let decisions = [];
+    if (fs.existsSync(decisionsFile)) {
+      try {
+        decisions = JSON.parse(fs.readFileSync(decisionsFile, 'utf8'));
+      } catch (e) {}
+    }
+
+    const issues = response.data?.issues || [];
+    issues.forEach(issue => {
+      const dec = decisions.find(d => d.issueKey === issue.key);
+      if (dec && dec.executorName) {
+        issue.executorName = dec.executorName;
+      }
+    });
+
     res.json(response.data);
   } catch (error) {
     console.error('Error fetching issues:', error.message);
@@ -1339,6 +1372,42 @@ Participantes e Debates:\n` +
 
   // Execute Lead Audits and Fire/Rehire loop
   await performLeadAuditsAndFireRehire(currentAgents, decisionEntry);
+
+  // Auditor Arthur Check: If card is completed but NOT in "Concluído/Done" status on Jira
+  try {
+    const issueKey = decisionEntry.issueKey;
+    if (issueKey && !issueKey.startsWith('MOCK')) {
+      const issueRes = await axios.get(`${JIRA_HOST}/rest/api/3/issue/${issueKey}`, {
+        headers: getJiraAuthHeader(),
+        params: { fields: 'status' }
+      });
+      const statusName = issueRes.data?.fields?.status?.name || '';
+      if (statusName !== 'Concluído' && statusName !== 'Done') {
+        console.warn(`[AUDITORIA] Alerta! O card ${issueKey} finalizou a simulação mas não está no status "Concluído/Done" (Status atual: "${statusName}"). Aplicando feedbacks negativos...`);
+        
+        const participants = activeAgents.map(a => a.id);
+        currentAgents.forEach(a => {
+          if (participants.includes(a.id) && a.id !== 'auditor_arthur') {
+            if (!a.feedbacks) a.feedbacks = [];
+            a.feedbacks.unshift({
+              id: Date.now().toString() + Math.random().toString(36).substr(2, 4),
+              timestamp: new Date().toISOString(),
+              type: 'advertencia',
+              text: `AUDITORIA (Arthur Auditor): Advertência coletiva por tarefa concluída na Sprint que falhou em transicionar ou permanecer como Concluído no Jira (${issueKey}).`,
+              impact: 'Atenção a Prazos',
+              sprintTicket: issueKey
+            });
+            console.log(`[AUDITORIA] Feedback negativo gravado para ${a.name}`);
+          }
+        });
+
+        // Log auditor activity
+        logActivity('auditor_arthur', 'Arthur Auditor', '⚖️', `Arthur Auditor puniu toda a equipe do debate ${issueKey} por falha de movimentação de esteira no Jira (Card ficou em "${statusName}").`, issueKey, decisionEntry.issueSummary);
+      }
+    }
+  } catch (auditErr) {
+    console.error('Error during Arthur Auditor compliance check:', auditErr.message);
+  }
 
   saveAgents(currentAgents);
   return feedbacks;
