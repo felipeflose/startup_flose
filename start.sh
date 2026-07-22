@@ -1,7 +1,7 @@
 #!/bin/bash
 cd /Users/felipeflose/Startup_Flose
 # Load environment variables if needed
-export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
 # Run backend in the background and log to backend.log
 npm run backend > backend.log 2>&1 &
