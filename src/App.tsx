@@ -6,6 +6,7 @@ import { JiraDashboard } from './components/JiraDashboard';
 import { GemmaConsole } from './components/GemmaConsole';
 import { Briefcase, Cpu, FileText, Layers, Terminal, History, Users, Monitor, Home } from 'lucide-react';
 import { CompanyPulse } from './components/CompanyPulse';
+import { EmployeeRanking } from './components/EmployeeRanking';
 
 function App() {
   const [agents, setAgents] = useState<Agent[]>([]);
@@ -19,7 +20,7 @@ function App() {
   const [hrSearching, setHrSearching] = useState<boolean>(false);
   const [selectedAgentIds, setSelectedAgentIds] = useState<string[]>([]);
   const [selectedIssue, setSelectedIssue] = useState<{ key: string; summary: string; description: string } | null>(null);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'backlog' | 'agents' | 'docs' | 'decisions' | 'rh' | 'screens' | 'office'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'backlog' | 'agents' | 'docs' | 'decisions' | 'rh' | 'screens' | 'office' | 'ranking'>('dashboard');
   const [decisions, setDecisions] = useState<any[]>([]);
   const [selectedScreenKey, setSelectedScreenKey] = useState<string>('');
   const [loginSuccess, setLoginSuccess] = useState(false);
@@ -329,6 +330,25 @@ function App() {
           >
             <FileText size={18} />
             Fundação & Docs
+          </button>
+          <button
+            onClick={() => setActiveTab('ranking')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              padding: '12px 16px',
+              borderRadius: 'var(--radius-sm)',
+              border: 'none',
+              background: activeTab === 'ranking' ? 'var(--bg-tertiary)' : 'transparent',
+              color: activeTab === 'ranking' ? '#fbbf24' : 'var(--text-secondary)',
+              cursor: 'pointer',
+              fontWeight: 600,
+              textAlign: 'left',
+              width: '100%'
+            }}
+          >
+            🏆 Ranking
           </button>
         </nav>
 
@@ -1875,6 +1895,12 @@ function App() {
             <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6', fontSize: '0.95rem' }}>
               As discussões e resoluções criadas pelas inteligências Gemma 4 são sincronizadas de volta com o Atlassian Jira na forma de comentários formais no ticket selecionado. Isso garante transparência e rastreabilidade total de auditoria da startup.
             </p>
+          </div>
+        )}
+
+        {activeTab === 'ranking' && (
+          <div className="glass" style={{ padding: '32px' }}>
+            <EmployeeRanking />
           </div>
         )}
       </main>

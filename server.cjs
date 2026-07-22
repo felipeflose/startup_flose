@@ -408,6 +408,119 @@ app.get('/api/agents', (req, res) => {
   res.json(readAgents().filter(a => !a.fired)); // Somente ativos
 });
 
+// RANKING: Funcionário do Minuto
+app.get('/api/rankings', async (req, res) => {
+  try {
+    const agents = readAgents().filter(a => !a.fired);
+
+    // Load data sources
+    const creatorsFile = path.join(__dirname, 'task_creators.json');
+    const assignmentsFile = path.join(__dirname, 'task_assignments.json');
+    const decisionsFile = path.join(__dirname, 'decisions_log.json');
+    const activityFile = path.join(__dirname, 'activity_log.json');
+
+    let creators = {};
+    let assignments = {};
+    let decisions = [];
+    let activities = [];
+
+    try { creators = JSON.parse(fs.readFileSync(creatorsFile, 'utf8')); } catch (e) {}
+    try { assignments = JSON.parse(fs.readFileSync(assignmentsFile, 'utf8')); } catch (e) {}
+    try { decisions = JSON.parse(fs.readFileSync(decisionsFile, 'utf8')); } catch (e) {}
+    try { activities = JSON.parse(fs.readFileSync(activityFile, 'utf8')); } catch (e) {}
+
+    // Aggregate scores per agent
+    const scoreMap = {};
+    agents.forEach(a => {
+      scoreMap[a.name] = {
+        agentId: a.id,
+        name: a.name,
+        role: a.role,
+        avatar: a.avatar,
+        cardsCreated: 0,
+        cardsClosed: 0,
+        cardsExecuted: 0,
+        debatesWon: 0,
+        totalScore: 0,
+        prize: null,
+        penalty: null
+      };
+    });
+
+    // Cards created
+    Object.values(creators).forEach(name => {
+      const n = String(name).split(' (')[0]; // strip role suffix
+      const match = Object.keys(scoreMap).find(k => k.includes(n) || n.includes(k.split(' ')[0]));
+      if (match) scoreMap[match].cardsCreated++;
+    });
+
+    // Cards executed/coded
+    Object.values(assignments).forEach(name => {
+      const n = String(name).split(' (')[0];
+      const match = Object.keys(scoreMap).find(k => k.includes(n) || n.includes(k.split(' ')[0]));
+      if (match) scoreMap[match].cardsExecuted++;
+    });
+
+    // Cards closed (from decisions_log)
+    decisions.forEach(d => {
+      if (d.executorName) {
+        const n = String(d.executorName).split(' (')[0];
+        const match = Object.keys(scoreMap).find(k => k.includes(n) || n.includes(k.split(' ')[0]));
+        if (match) scoreMap[match].cardsClosed++;
+      }
+    });
+
+    // Debates / activity
+    activities.forEach(a => {
+      if (a.name && scoreMap[a.name]) {
+        scoreMap[a.name].debatesWon++;
+      }
+    });
+
+    // Compute total score (weighted)
+    Object.keys(scoreMap).forEach(name => {
+      const s = scoreMap[name];
+      s.totalScore = (s.cardsCreated * 10) + (s.cardsClosed * 25) + (s.cardsExecuted * 15) + (s.debatesWon * 5);
+    });
+
+    // Sort by total score
+    const ranked = Object.values(scoreMap)
+      .sort((a, b) => b.totalScore - a.totalScore)
+      .map((entry, idx) => ({ ...entry, rank: idx + 1 }));
+
+    // 🏆 Prize for 1st place
+    if (ranked.length > 0) {
+      ranked[0].prize = '🏆 Prêmio Funcionário do Minuto — Bônus de performance + destaque no painel!';
+      // Update agent description with prize badge
+      const agents2 = readAgents();
+      const topIdx = agents2.findIndex(a => a.id === ranked[0].agentId);
+      if (topIdx !== -1 && !agents2[topIdx].advantage?.includes('🏆')) {
+        agents2[topIdx].advantage = `🏆 [CAMPEÃO] ${agents2[topIdx].advantage || ''}`.trim();
+        saveAgents(agents2);
+      }
+    }
+
+    // 🎓 School for last place
+    if (ranked.length > 1) {
+      const last = ranked[ranked.length - 1];
+      last.penalty = '🎓 Escola Obrigatória — Deve retornar com 100% de melhoria na descrição das atividades!';
+      // Update agent description with school mandate
+      const agents2 = readAgents();
+      const lastIdx = agents2.findIndex(a => a.id === last.agentId);
+      if (lastIdx !== -1 && !agents2[lastIdx].disadvantage?.includes('🎓')) {
+        agents2[lastIdx].disadvantage = `🎓 [EM TREINAMENTO] ${agents2[lastIdx].disadvantage || ''}`.trim();
+        saveAgents(agents2);
+        console.log(`[RANKING] ${last.name} enviado para escola por baixa performance.`);
+      }
+    }
+
+    res.json({ rankings: ranked, updatedAt: new Date().toISOString() });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 // 2. Jira Proxy: Get Projects
 app.get('/api/jira/projects', async (req, res) => {
   try {
