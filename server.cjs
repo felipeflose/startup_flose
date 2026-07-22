@@ -1512,6 +1512,58 @@ Participantes e Debates:\n` +
     console.error('Error during Arthur Auditor compliance check:', auditErr.message);
   }
 
+  // CEO Felipe Flose validation, lecturing and profile adjustment routine
+  try {
+    const sysCeoPrompt = `Você é Felipe Flose, o CEO carismático, visionário e impaciente da Flose Startup.
+Você deve analisar a Sprint entregue, a decisão de consenso e o debate entre os colaboradores.
+Seu objetivo é:
+1. Validar a qualidade geral e dar uma aula breve (coaching) para toda a equipe, criticando erros técnicos, discussões burocráticas ou gargalos de processos.
+2. Dar exemplos concretos usando os detalhes específicos deste card.
+3. Ajustar o perfil (propriedades "advantage" ou "personality") dos envolvidos que tiveram desempenho abaixo do esperado para que eles melhorem e se alinhem.
+Retorne unicamente um JSON bruto estruturado exatamente como:
+{
+  "lecture": "Sua aula motivacional/coaching contendo exemplos claros baseados no card da Sprint...",
+  "adjustments": [
+    {
+      "agentId": "id_do_agente",
+      "advantage": "Nova vantagem atualizada com maior foco em qualidade",
+      "personality": "Nova personalidade mais focada e disciplinada"
+    }
+  ]
+}
+IMPORTANTE: Retorne unicamente o JSON bruto, sem crases markdown ou textos explicativos fora do JSON.`;
+
+    const userCeoPrompt = `Card: "${decisionEntry.issueKey} - ${decisionEntry.issueSummary}"
+Consenso: "${decisionEntry.decision}"
+Arquivo Gerado: "${decisionEntry.generatedFile}"
+Participantes:\n` + decisionEntry.logs.map(l => `- ${l.name} (${l.role}): ${l.opinion}`).join('\n') + `\n\nAvaliação do CEO (JSON):`;
+
+    const rawCeoRes = await callLocalGemma(sysCeoPrompt, userCeoPrompt);
+    if (rawCeoRes) {
+      const cleanCeo = rawCeoRes.replace(/^```[a-zA-Z]*\n/, '').replace(/\n```$/, '').trim();
+      const ceoData = JSON.parse(cleanCeo);
+      if (ceoData.lecture) {
+        console.log(`[CEO PALESTRA] Felipe Flose: "${ceoData.lecture}"`);
+        logActivity('ceo', 'Felipe Flose', '💼', `AULA DO CEO sobre ${decisionEntry.issueKey}: "${ceoData.lecture}"`, decisionEntry.issueKey || '', decisionEntry.issueSummary);
+        
+        // Store the lecture in the decision log
+        decisionEntry.ceoLecture = ceoData.lecture;
+      }
+      if (Array.isArray(ceoData.adjustments)) {
+        ceoData.adjustments.forEach(adj => {
+          const target = currentAgents.find(a => a.id === adj.agentId);
+          if (target && !target.fired) {
+            if (adj.advantage) target.advantage = adj.advantage + " (Ajustado pelo CEO Felipe Flose)";
+            if (adj.personality) target.personality = adj.personality + " (Alinhado pelo CEO Felipe Flose)";
+            console.log(`[CEO AJUSTE] Perfil de ${target.name} ajustado pelo CEO.`);
+          }
+        });
+      }
+    }
+  } catch (ceoErr) {
+    console.error('Error during CEO coaching/adjustment validation:', ceoErr.message);
+  }
+
   saveAgents(currentAgents);
   return feedbacks;
 };
