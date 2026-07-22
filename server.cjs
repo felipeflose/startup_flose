@@ -1011,6 +1011,20 @@ const runAgentTasksSimulation = async (parentKey, summary, activeAgents) => {
       console.error(`Subtask error for ${agent.name}:`, err.message);
       // Subtasks may not be supported — fall back to Task
       try {
+        const epicMap = await getOrCreateEpics();
+        const summaryText = (role.title || '').toLowerCase();
+        let targetEpic = 'Infraestrutura & Tecnologia';
+        if (summaryText.includes('contrat') || summaryText.includes('colaborador') || summaryText.includes('demiss') || summaryText.includes('rh') || summaryText.includes('recrut')) {
+          targetEpic = 'Gestão de Pessoas';
+        } else if (summaryText.includes('sap') || summaryText.includes('faturam') || summaryText.includes('invoice') || summaryText.includes('financ')) {
+          targetEpic = 'Faturamento & Finanças';
+        } else if (summaryText.includes('jogo') || summaryText.includes('game') || summaryText.includes('velha')) {
+          targetEpic = 'Entretenimento & Games';
+        } else if (summaryText.includes('melhoria') || summaryText.includes('refator') || summaryText.includes('cache') || summaryText.includes('boundary') || summaryText.includes('rate limit')) {
+          targetEpic = 'Melhorias Internas';
+        }
+        const epicKey = epicMap[targetEpic];
+
         const taskBody = {
           fields: {
             project: { key: 'KAN' },
@@ -1019,7 +1033,7 @@ const runAgentTasksSimulation = async (parentKey, summary, activeAgents) => {
               type: 'doc', version: 1,
               content: [{ type: 'paragraph', content: [{ text: role.desc, type: 'text' }] }]
             },
-            parent: parentKey ? { key: parentKey } : undefined,
+            parent: epicKey ? { key: epicKey } : undefined,
             issuetype: { name: 'Task' }
           }
         };
@@ -2803,6 +2817,9 @@ app.post('/api/hr/hire', async (req, res) => {
         `Cargo: ${candidate.role}\n` +
         `Vantagem: ${candidate.advantage}\n` +
         `Dilema: ${candidate.dilemma}`;
+
+      const epicMap = await getOrCreateEpics();
+      const hrEpicKey = epicMap['Gestão de Pessoas'];
         
       const bodyData = {
         fields: {
@@ -2823,6 +2840,7 @@ app.post('/api/hr/hire', async (req, res) => {
               }
             ]
           },
+          parent: hrEpicKey && !hrEpicKey.startsWith('MOCK') ? { key: hrEpicKey } : undefined,
           issuetype: { name: 'Task' }
         }
       };
