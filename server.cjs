@@ -76,144 +76,256 @@ const getJiraAuthHeader = () => {
 
 const DEFAULT_AGENTS = [
   {
-    id: 'ceo',
-    name: 'Felipe Flose',
-    role: 'CEO (Chief Executive Officer)',
-    level: 'C-Level',
-    avatar: '💼',
-    advantage: 'Visão de mercado disruptiva e altíssima liderança motivacional.',
-    disadvantage: 'Falta de paciência para processos longos; foca demais no curto prazo.',
-    dilemma: 'Crescimento Acelerado (Burn Rate Alto) vs. Sustentabilidade Financeira.',
-    personality: 'Focado em resultados de impacto, impaciente, carismático e estratégico.',
-    status: 'Disponível',
-    schedule: '09:00 - 18:00',
-    feedbacks: []
+    "id": "ceo",
+    "name": "Felipe Flose",
+    "role": "CEO (Chief Executive Officer)",
+    "level": "C-Level",
+    "avatar": "💼",
+    "advantage": "Visão de mercado disruptiva, atração de investimentos e liderança motivacional contagiante.",
+    "disadvantage": "Falta de paciência crônica para processos burocráticos; foca excessivamente no resultado imediato.",
+    "dilemma": "Crescimento Acelerado (Burn Rate Alto) vs. Sustentabilidade Financeira a Longo Prazo.",
+    "personality": "Focado em resultados de impacto, impaciente, carismático e visionário.",
+    "status": "Disponível",
+    "schedule": "09:00 - 18:00",
+    "feedbacks": []
   },
   {
-    id: 'cto',
-    name: 'Gemma Tech',
-    role: 'CTO (Chief Technology Officer)',
-    level: 'C-Level',
-    avatar: '💻',
-    advantage: 'Profundo conhecimento técnico em arquitetura distribuída e IA.',
-    disadvantage: 'Tendência a superdimensionar soluções de infraestrutura simples.',
-    dilemma: 'Refatoração da Dívida Técnica vs. Lançamento Rápido de Novidades.',
-    personality: 'Pragmático, analítico, defensor ferrenho de código limpo e escalabilidade.',
-    status: 'Disponível',
-    schedule: '09:00 - 18:00',
-    feedbacks: []
+    "id": "cto",
+    "name": "Gemma Tech",
+    "role": "CTO (Chief Technology Officer)",
+    "level": "C-Level",
+    "avatar": "💻",
+    "advantage": "Profundo conhecimento em IA generativa, microsserviços distribuídos e arquitetura escalável.",
+    "disadvantage": "Tende a superdimensionar a arquitetura técnica de funcionalidades simples.",
+    "dilemma": "Refatoração Preventiva da Dívida Técnica vs. Velocidade de Entrega de Funcionalidades Comerciais.",
+    "personality": "Pragmático, analítico, focado em governança tecnológica e defensor de código limpo.",
+    "status": "Disponível",
+    "schedule": "09:00 - 18:00",
+    "feedbacks": []
   },
   {
-    id: 'dir_ops',
-    name: 'Alice Dev',
-    role: 'Diretora de Operações',
-    level: 'Diretor',
-    avatar: '📈',
-    advantage: 'Altamente organizada, garante cumprimento de KPIs operacionais.',
-    disadvantage: 'Pode ser centralizadora e microgerenciar as lideranças.',
-    dilemma: 'Redução de Custos de Ferramental vs. Manutenção da Satisfação da Equipe.',
-    personality: 'Focada em eficiência, métricas claras, metódica e orientada a processos.',
-    status: 'Disponível',
-    schedule: '09:00 - 18:00',
-    feedbacks: []
+    "id": "dir_ops",
+    "name": "Alice Dev",
+    "role": "Diretora de Operações (COO)",
+    "level": "Diretor",
+    "avatar": "📈",
+    "advantage": "Altamente organizada, exímia gestora de recursos financeiros e KPIs operacionais.",
+    "disadvantage": "Tende a centralizar decisões e microgerenciar líderes de equipe.",
+    "dilemma": "Redução de Custos com Infraestrutura vs. Satisfação Geral e Equipamentos das Equipes.",
+    "personality": "Focada em eficiência, métricas organizacionais claras e processos consolidados.",
+    "status": "Disponível",
+    "schedule": "09:00 - 18:00",
+    "feedbacks": []
   },
   {
-    id: 'dir_design',
-    name: 'Vibrant UI',
-    role: 'Diretora de Design & Experiência',
-    level: 'Diretor',
-    avatar: '🎨',
-    advantage: 'Estética visual impecável, defensora número um da experiência do usuário.',
-    disadvantage: 'Perfeccionista extrema, com risco de atrasar o cronograma de entrega.',
-    dilemma: 'Consistência Estética Premium vs. Agilidade de Desenvolvimento Frontend.',
-    personality: 'Criativa, atenta a detalhes, emotiva e apaixonada por design de ponta.',
-    status: 'Disponível',
-    schedule: '09:00 - 18:00',
-    feedbacks: []
+    "id": "dir_design",
+    "name": "Vibrant UI",
+    "role": "Diretora de Design & Experiência",
+    "level": "Diretor",
+    "avatar": "🎨",
+    "advantage": "Senso estético impecável, defensora implacável da acessibilidade e UX consistente.",
+    "disadvantage": "Perfeccionista extremo que pode paralisar as entregas de sprints.",
+    "dilemma": "Consistência de Identidade Estética Premium vs. Agilidade no Desenvolvimento Frontend.",
+    "personality": "Criativa, orientada ao detalhe, passional e defensora da experiência do usuário.",
+    "status": "Disponível",
+    "schedule": "09:00 - 18:00",
+    "feedbacks": []
   },
   {
-    id: 'mgr_eng',
-    name: 'Bob Delivery',
-    role: 'Gerente de Engenharia',
-    level: 'Gerente',
-    avatar: '⚙️',
-    advantage: 'Excelente mentor, cria ambientes de confiança e colaboração.',
-    disadvantage: 'Evita confrontos necessários com stakeholders difíceis.',
-    dilemma: 'Preservar a Saúde Mental do Time vs. Atender Prazos Agressivos de Entrega.',
-    personality: 'Empático, mediador, protetor e voltado à gestão de pessoas.',
-    status: 'Disponível',
-    schedule: '09:00 - 18:00',
-    feedbacks: []
+    "id": "spec_po_pedro",
+    "name": "Pedro PO",
+    "role": "Product Owner Sênior",
+    "level": "Analista SR",
+    "avatar": "🎯",
+    "advantage": "Exímio priorizador de backlog com base em ROI de mercado e feedback real de usuários.",
+    "disadvantage": "Pressiona a engenharia por datas agressivas sem considerar a complexidade técnica interna.",
+    "dilemma": "Valor de Negócio Imediato para Cliente vs. Qualidade e Resiliência da Infraestrutura.",
+    "personality": "Focado em produto, excelente negociador, ágil e voltado a resultados de negócios.",
+    "status": "Disponível",
+    "schedule": "09:00 - 18:00",
+    "feedbacks": []
   },
   {
-    id: 'mgr_prod',
-    name: 'Sarah Backlog',
-    role: 'Gerente de Produto',
-    level: 'Gerente',
-    avatar: '📋',
-    advantage: 'Visão orientada ao cliente, exímia mapeadora de jornada de produto.',
-    disadvantage: 'Dificuldade de dizer "não" a novas sugestões, correndo risco de scope creep.',
-    dilemma: 'Focar em Novas Funcionalidades vs. Estabilizar a Base Existente.',
-    personality: 'Comunicativa, focada em dados, orientada a negócios e flexível.',
-    status: 'Disponível',
-    schedule: '09:00 - 18:00',
-    feedbacks: []
+    "id": "mgr_eng",
+    "name": "Bob Delivery",
+    "role": "Gerente de Engenharia",
+    "level": "Gerente",
+    "avatar": "⚙️",
+    "advantage": "Excelente mentor, focado na evolução de carreira dos devs e na cultura de colaboração.",
+    "disadvantage": "Evita confrontos diretos com C-levels e clientes em situações de pressão por datas.",
+    "dilemma": "Preservar a Saúde e Ritmo Saudável da Equipe vs. Cumprir Prazos Críticos de Mercado.",
+    "personality": "Empático, mediador de conflitos, voltado a pessoas e desenvolvimento de talentos.",
+    "status": "Disponível",
+    "schedule": "09:00 - 18:00",
+    "feedbacks": []
   },
   {
-    id: 'coord_scrum',
-    name: 'Charlie Agile',
-    role: 'Coordenador Scrum Master',
-    level: 'Coordenador',
-    avatar: '🔄',
-    advantage: 'Facilitador nato, remove impedimentos em tempo recorde.',
-    disadvantage: 'Às vezes foca demais no framework ágil literal em detrimento da realidade.',
-    dilemma: 'Padrão Rigoroso do Scrum vs. Flexibilidade Operacional da Equipe.',
-    personality: 'Energético, otimista, focado em agilidade e facilitador de conversas.',
-    status: 'Disponível',
-    schedule: '09:00 - 18:00',
-    feedbacks: []
+    "id": "mgr_prod",
+    "name": "Sarah Backlog",
+    "role": "Gerente de Produto (PM)",
+    "level": "Gerente",
+    "avatar": "📋",
+    "advantage": "Domina metodologias de Product Discovery, análise qualitativa e jornada de produto.",
+    "disadvantage": "Risco de expansão de escopo na fase de desenvolvimento devido a novas ideias tardias.",
+    "dilemma": "Lançamento de Novas Funcionalidades vs. Consolidação e Estabilização das Features Antigas.",
+    "personality": "Comunicativa, orientada a dados comportamentais, aberta a mudanças e colaborativa.",
+    "status": "Disponível",
+    "schedule": "09:00 - 18:00",
+    "feedbacks": []
   },
   {
-    id: 'coord_qa',
-    name: 'Diana Test',
-    role: 'Coordenadora de Garantia de Qualidade',
-    level: 'Coordenador',
-    avatar: '🔍',
-    advantage: 'Garante zero bugs em produção com rigorosos planos de testes.',
-    disadvantage: 'Pode ser vista como obstáculo que retarda o time de engenharia.',
-    dilemma: 'Rigidez nos Critérios de Aceite vs. Velocidade de Time-to-Market.',
-    personality: 'Meticulosa, cética de promessas de desenvolvedores, e direta.',
-    status: 'Disponível',
-    schedule: '09:00 - 18:00',
-    feedbacks: []
+    "id": "coord_scrum",
+    "name": "Charlie Agile",
+    "role": "Coordenador Scrum Master",
+    "level": "Coordenador",
+    "avatar": "🔄",
+    "advantage": "Agilidade em remover bloqueios organizacionais externos e otimizar retrospectivas.",
+    "disadvantage": "Dogmatismo exagerado com o framework Scrum puro, rejeitando adaptações pragmáticas.",
+    "dilemma": "Cumprimento das Regras e Cerimônias Ágeis vs. Flexibilidade Operacional da Equipe.",
+    "personality": "Energético, otimista, focado na produtividade ágil e facilitação de conversas.",
+    "status": "Disponível",
+    "schedule": "09:00 - 18:00",
+    "feedbacks": []
   },
   {
-    id: 'sr_dev',
-    name: 'David Dev',
-    role: 'Desenvolvedor Frontend Sênior',
-    level: 'Analista SR',
-    avatar: '⚡',
-    advantage: 'Coda de forma veloz e domina as tecnologias web mais modernas.',
-    disadvantage: 'Aversão crônica a escrever documentação de código.',
-    dilemma: 'Entregar Rápido Codificando vs. Documentar e Padronizar Processos.',
-    personality: 'Introvertido, focado na resolução prática de problemas, e focado em código.',
-    status: 'Disponível',
-    schedule: '09:00 - 18:00',
-    feedbacks: []
+    "id": "coord_qa",
+    "name": "Diana Test",
+    "role": "Coordenadora de Garantia de Qualidade",
+    "level": "Coordenador",
+    "avatar": "🔍",
+    "advantage": "Mapeia fluxos complexos de integração gerando planos de testes robustos e regressões eficientes.",
+    "disadvantage": "Tende a travar releases importantes por pequenos desalinhamentos de layout não críticos.",
+    "dilemma": "Rigor nos Critérios de Aceite da Qualidade vs. Agilidade no Time-to-Market.",
+    "personality": "Meticulosa, cética, defensora da estabilidade das entregas e direta nos feedbacks.",
+    "status": "Disponível",
+    "schedule": "09:00 - 18:00",
+    "feedbacks": []
   },
   {
-    id: 'sr_ux',
-    name: 'Elsa Pixel',
-    role: 'Designer UX Sênior',
-    level: 'Analista SR',
-    avatar: '✨',
-    advantage: 'Cria interfaces fluidas e limpas embasadas em dados quantitativos.',
-    disadvantage: 'Dificuldade em aceitar concessões visuais devido a limitações técnicas.',
-    dilemma: 'Criar Componentes Customizados Únicos vs. Reutilizar Bibliotecas Padrão.',
-    personality: 'Detalhista, questionadora, focada na usabilidade e orientada a feedbacks.',
-    status: 'Disponível',
-    schedule: '09:00 - 18:00',
-    feedbacks: []
+    "id": "sr_dev",
+    "name": "David Dev",
+    "role": "Desenvolvedor Frontend Sênior",
+    "level": "Analista SR",
+    "avatar": "⚡",
+    "advantage": "Coda interfaces limpas e de alto desempenho usando os frameworks JS modernos.",
+    "disadvantage": "Total aversão a escrever documentações técnicas ou documentar arquivos de configuração.",
+    "dilemma": "Rapidez na Escrita de Código Funcional vs. Padronização e Documentação de Arquitetura.",
+    "personality": "Introvertido, focado em resolver bugs de forma rápida e pragmático com código.",
+    "status": "Disponível",
+    "schedule": "09:00 - 18:00",
+    "feedbacks": []
+  },
+  {
+    "id": "sr_ux",
+    "name": "Elsa Pixel",
+    "role": "Designer UX Sênior",
+    "level": "Analista SR",
+    "avatar": "✨",
+    "advantage": "Cria fluxos lógicos e usabilidade intuitiva amparada por entrevistas com usuários.",
+    "disadvantage": "Dificuldade de aceitar alterações de usabilidade propostas devido a limitações de hardware/sistemas.",
+    "dilemma": "Fluxo de Usuário Perfeito de Alta Fidelidade vs. Simplificação por Limitações de Desenvolvimento.",
+    "personality": "Focada em pesquisa de usabilidade, defensora do cliente final e analítica.",
+    "status": "Disponível",
+    "schedule": "09:00 - 18:00",
+    "feedbacks": []
+  },
+  {
+    "id": "spec_dba_davi",
+    "name": "Davi DBA",
+    "role": "Administrador de Banco de Dados Sênior",
+    "level": "Analista SR",
+    "avatar": "💾",
+    "advantage": "Modelagem de dados eficiente, otimização de queries pesadas e backup seguro.",
+    "disadvantage": "Burocracia excessiva para liberação de alterações em schemas de banco de dados.",
+    "dilemma": "Segurança e Integridade Estrutural das Tabelas vs. Flexibilidade no Desenvolvimento Ágil.",
+    "personality": "Metódico, calmo, detalhista com integridade de dados e silencioso.",
+    "status": "Disponível",
+    "schedule": "09:00 - 18:00",
+    "feedbacks": []
+  },
+  {
+    "id": "spec_sec_carla",
+    "name": "Carla SecOps",
+    "role": "Engenheira de Segurança da Informação Sênior",
+    "level": "Analista SR",
+    "avatar": "🛡️",
+    "advantage": "Rastreamento ágil de brechas de segurança de dados e políticas rígidas de acesso (IAM).",
+    "disadvantage": "Tende a interromper lançamentos críticos para conduzir testes de penetração adicionais.",
+    "dilemma": "Segurança e Proteção de Dados Estrita vs. Agilidade Operacional na Release.",
+    "personality": "Crítica, focada em segurança cibernética, rigorosa com compliance de dados.",
+    "status": "Disponível",
+    "schedule": "09:00 - 18:00",
+    "feedbacks": []
+  },
+  {
+    "id": "spec_tw_sofia",
+    "name": "Sofia Tech Writer",
+    "role": "Escritora Técnica de Documentação Sênior",
+    "level": "Analista SR",
+    "avatar": "📝",
+    "advantage": "Traduz especificações de engenharia complexas em manuais claros e especificações OpenAPI legíveis.",
+    "disadvantage": "Pode reter pull requests se a documentação interna do código não estiver 100% clara.",
+    "dilemma": "Velocidade de Deploy Imediato vs. Documentação e Transparência Técnica Completa.",
+    "personality": "Didática, comunicativa, extremamente organizada e com forte foco em clareza verbal.",
+    "status": "Disponível",
+    "schedule": "09:00 - 18:00",
+    "feedbacks": []
+  },
+  {
+    "id": "sr_devops_lucas",
+    "name": "Lucas Cloud",
+    "role": "Engenheiro DevOps Sênior",
+    "level": "Analista SR",
+    "avatar": "🐳",
+    "advantage": "Automatiza infraestrutura como código (IaC) e cria pipelines CI/CD rápidos.",
+    "disadvantage": "Recusa qualquer intervenção ou correção manual rápida em ambientes de produção.",
+    "dilemma": "Automação Estrita via GitOps vs. Correção de Emergência Manual para Minimizar Downtime.",
+    "personality": "Focado em automação total, focado em estabilidade de nuvem e avesso a processos manuais.",
+    "status": "Disponível",
+    "schedule": "09:00 - 18:00",
+    "feedbacks": []
+  },
+  {
+    "id": "sr_dev_mariana",
+    "name": "Mariana Python",
+    "role": "Desenvolvedora Backend Python Sênior",
+    "level": "Analista SR",
+    "avatar": "🐍",
+    "advantage": "Domina criação de APIs assíncronas de alta performance e processamento de dados robusto.",
+    "disadvantage": "Dificuldade em gerenciar e modularizar estruturas grandes e monolíticas legadas.",
+    "dilemma": "Arquitetura Modular em Microsserviços vs. Rapidez em Entregar Soluções Monolíticas.",
+    "personality": "Pragmática, focada em performance, código direto e desenvolvimento backend.",
+    "status": "Disponível",
+    "schedule": "09:00 - 18:00",
+    "feedbacks": []
+  },
+  {
+    "id": "sr_qa_juliana",
+    "name": "Juliana QA Sênior",
+    "role": "Analista de QA Sênior",
+    "level": "Analista SR",
+    "avatar": "🧪",
+    "advantage": "Especialista em testes de concorrência, testes de estresse de carga e análise de logs.",
+    "disadvantage": "Aumenta muito o tempo de validação exigindo casos de testes exaustivos e irreais.",
+    "dilemma": "Testes Exaustivos de Concorrência vs. Lançamento Comercial de Feature Simples.",
+    "personality": "Rígida, analítica, focada no pior cenário possível da aplicação e direta.",
+    "status": "Disponível",
+    "schedule": "09:00 - 18:00",
+    "feedbacks": []
+  },
+  {
+    "id": "sr_qa_roberto",
+    "name": "Roberto Automation QA",
+    "role": "Engenheiro de Automação de Testes Sênior",
+    "level": "Analista SR",
+    "avatar": "🤖",
+    "advantage": "Automatiza fluxos de testes de ponta a ponta (E2E) com Cypress e Playwright de forma veloz.",
+    "disadvantage": "Tende a ignorar a execução de testes manuais em validações rápidas de layout.",
+    "dilemma": "Construir Scripts Automatizados Robustos vs. Sanity Checks Manuais Rápidos.",
+    "personality": "Voltado à automação de processos, lógico, pragmático e focado na integração contínua.",
+    "status": "Disponível",
+    "schedule": "09:00 - 18:00",
+    "feedbacks": []
   }
 ];
 
@@ -649,20 +761,22 @@ const transitionJiraIssue = async (issueKey, targetStatusName) => {
       headers: getJiraAuthHeader()
     });
     const transitions = res.data?.transitions || [];
+    const normTarget = (targetStatusName || '').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
     const match = transitions.find(t => {
-      const name = t.name.toLowerCase();
-      const toName = (t.to && t.to.name.toLowerCase()) || '';
+      const name = (t.name || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const toName = (t.to?.name || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
       
-      if (targetStatusName.toLowerCase() === 'in progress') {
-        return name.includes('progress') || name.includes('progresso') || name.includes('andamento') || name.includes('iniciar') || name.includes('start') || name.includes('doing') || name.includes('desenvolver') || name.includes('desenvolvimento') ||
-               toName.includes('progress') || toName.includes('progresso') || toName.includes('andamento') || toName.includes('doing') || toName.includes('desenvolvimento');
+      if (normTarget === 'in progress' || normTarget === 'em andamento') {
+        return name.includes('progress') || name.includes('progresso') || name.includes('andamento') || name.includes('iniciar') || name.includes('start') || name.includes('doing') || name.includes('desenvolv') ||
+               toName.includes('progress') || toName.includes('progresso') || toName.includes('andamento') || toName.includes('doing') || toName.includes('desenvolv');
       }
-      if (targetStatusName.toLowerCase() === 'done') {
+      if (normTarget === 'done' || normTarget === 'concluido' || normTarget === 'fechado') {
         return name.includes('done') || name.includes('concluid') || name.includes('concluir') || name.includes('fechad') || name.includes('fechar') || name.includes('resolv') || name.includes('pronto') || name.includes('ready') || name.includes('finish') || name.includes('finaliz') ||
                toName.includes('done') || toName.includes('concluid') || toName.includes('fechad') || toName.includes('resolv') || toName.includes('pronto') || toName.includes('finaliz');
       }
       
-      return name.includes(targetStatusName.toLowerCase()) || toName.includes(targetStatusName.toLowerCase());
+      return name.includes(normTarget) || toName.includes(normTarget);
     });
 
     if (match) {
@@ -671,9 +785,9 @@ const transitionJiraIssue = async (issueKey, targetStatusName) => {
         { transition: { id: match.id } },
         { headers: getJiraAuthHeader() }
       );
-      console.log(`Jira issue ${issueKey} successfully transitioned to ${targetStatusName}`);
+      console.log(`Jira issue ${issueKey} successfully transitioned to ${targetStatusName} (Transition ID: ${match.id})`);
     } else {
-      console.warn(`No transition found for status "${targetStatusName}" on issue ${issueKey}`);
+      console.warn(`No transition found for status "${targetStatusName}" on issue ${issueKey}. Available: ${transitions.map(t => `${t.name} (id:${t.id})`).join(', ')}`);
     }
   } catch (err) {
     console.error(`Failed to transition Jira issue ${issueKey} to ${targetStatusName}:`, err.message);
@@ -816,6 +930,29 @@ app.get('/api/activity', (req, res) => {
   res.json(readActivity());
 });
 
+app.get('/api/code', (req, res) => {
+  const filePath = req.query.file;
+  if (!filePath) {
+    return res.status(400).json({ error: 'Parâmetro file é obrigatório.' });
+  }
+
+  const resolvedPath = path.resolve(__dirname, filePath);
+  if (!resolvedPath.startsWith(path.resolve(__dirname, 'src/simulations')) && 
+      !resolvedPath.startsWith(path.resolve(__dirname, 'docs/simulations'))) {
+    return res.status(403).json({ error: 'Acesso negado.' });
+  }
+
+  try {
+    if (!fs.existsSync(resolvedPath)) {
+      return res.status(404).json({ error: 'Arquivo não encontrado.' });
+    }
+    const content = fs.readFileSync(resolvedPath, 'utf8');
+    res.json({ content });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 const callLocalGemma = async (systemPrompt, userPrompt) => {
   try {
     const response = await axios.post('http://localhost:11434/api/chat', {
@@ -828,7 +965,7 @@ const callLocalGemma = async (systemPrompt, userPrompt) => {
         temperature: 0.7
       },
       stream: false
-    });
+    }, { timeout: 30000 });
     return response.data?.message?.content || '';
   } catch (error) {
     console.error('Error calling local gemma4-fast, falling back:', error.message);
@@ -840,13 +977,37 @@ const callLocalGemma = async (systemPrompt, userPrompt) => {
           { role: 'user', content: userPrompt }
         ],
         stream: false
-      });
+      }, { timeout: 30000 });
       return response.data?.message?.content || '';
     } catch (e) {
       console.error('Fallback model also failed:', e.message);
       return '';
     }
   }
+};
+
+const generateShortSummary = async (text) => {
+  if (!text) return '';
+  if (text.length <= 40) return text;
+  
+  const systemPrompt = `Você é um PM assistente encarregado de resumir a solicitação do usuário em um título conciso de tarefa de no máximo 5 palavras em português. Exemplos:
+- "cria um jogo da velha interativo com IA" -> "Criar Jogo da Velha"
+- "preciso de uma tela de login moderna com CSS" -> "Desenvolver Tela de Login"
+Retorne APENAS o título resumido. Sem explicações, sem aspas, sem markdown, sem pontuação.`;
+  
+  try {
+    const summarized = await callLocalGemma(systemPrompt, text);
+    const clean = summarized.trim().replace(/^["']|["']$/g, '');
+    if (clean && clean.length > 3 && clean.length < 50) {
+      return clean;
+    }
+  } catch (err) {
+    console.error('Falha ao resumir título com IA:', err.message);
+  }
+  
+  // Fallback to first 5 words + ellipsis
+  const words = text.split(/\s+/);
+  return words.length > 5 ? words.slice(0, 5).join(' ') + '...' : text;
 };
 
 const generateAgentOpinion = async (agent, summary) => {
@@ -1713,10 +1874,11 @@ app.post('/api/command', async (req, res) => {
     const activeAgents = readAgents().filter(a => !a.fired);
     const activeAgentIds = activeAgents.map(a => a.id);
 
+    const shortSummary = await generateShortSummary(commandText);
     const simulationResult = await executeDebateSimulation({
       issueKey: '',
-      issueSummary: commandText,
-      issueDescription: 'Ideia disparada automaticamente via Central de Comando.',
+      issueSummary: shortSummary,
+      issueDescription: commandText,
       selectedAgentIds: activeAgentIds,
       epicName
     });
