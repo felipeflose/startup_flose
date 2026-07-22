@@ -433,7 +433,7 @@ app.get('/api/jira/issues', async (req, res) => {
       params: { 
         jql, 
         maxResults: 50,
-        fields: 'summary,description,status,issuetype'
+        fields: 'summary,description,status,issuetype,parent'
       }
     });
 
@@ -454,6 +454,40 @@ app.get('/api/jira/issues', async (req, res) => {
     }
 
     const issues = response.data?.issues || [];
+    
+    // Background Real-time cleanup of any orphan issues by Director Arthur de Flose
+    const orphans = issues.filter(issue => !issue.fields.parent && issue.fields.issuetype?.name !== 'Epic');
+    if (orphans.length > 0) {
+      (async () => {
+        try {
+          console.log(`[REAL-TIME AUDIT] Arthur de Flose is cleaning up ${orphans.length} orphan issues...`);
+          const epicMap = await getOrCreateEpics();
+          for (const issue of orphans) {
+            const summaryText = (issue.fields.summary || '').toLowerCase();
+            let targetEpic = 'Infraestrutura & Tecnologia';
+            if (summaryText.includes('contrat') || summaryText.includes('colaborador') || summaryText.includes('demiss') || summaryText.includes('rh') || summaryText.includes('onboarding')) {
+              targetEpic = 'Gestão de Pessoas';
+            } else if (summaryText.includes('sap') || summaryText.includes('faturam') || summaryText.includes('invoice') || summaryText.includes('financ')) {
+              targetEpic = 'Faturamento & Finanças';
+            } else if (summaryText.includes('jogo') || summaryText.includes('game') || summaryText.includes('velha')) {
+              targetEpic = 'Entretenimento & Games';
+            } else if (summaryText.includes('melhoria') || summaryText.includes('refator') || summaryText.includes('cache') || summaryText.includes('boundary') || summaryText.includes('rate limit')) {
+              targetEpic = 'Melhorias Internas';
+            }
+            const epicKey = epicMap[targetEpic];
+            if (epicKey) {
+              await axios.put(`${JIRA_HOST}/rest/api/3/issue/${issue.key}`, {
+                fields: { parent: { key: epicKey } }
+              }, { headers: getJiraAuthHeader() });
+              console.log(`[REAL-TIME AUDIT] Arthur de Flose linked ${issue.key} to Epic: ${targetEpic}`);
+            }
+          }
+        } catch (e) {
+          console.error('[REAL-TIME AUDIT] Cleanup failed:', e.message);
+        }
+      })();
+    }
+
     issues.forEach(issue => {
       // First check if already resolved/executed
       const dec = decisions.find(d => d.issueKey === issue.key);
