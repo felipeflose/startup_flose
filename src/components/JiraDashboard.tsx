@@ -20,6 +20,7 @@ export interface JiraIssue {
     };
   };
   executorName?: string;
+  creatorName?: string;
 }
 
 interface JiraDashboardProps {
@@ -70,7 +71,8 @@ export const JiraDashboard: React.FC<JiraDashboardProps> = ({ onSelectIssue, sel
           summary: newSummary,
           description: newDescription,
           projectKey: newProjectKey,
-          issueType: newIssueType
+          issueType: newIssueType,
+          creatorName: 'Felipe Flose (CEO)'
         })
       });
       if (!res.ok) throw new Error('Erro ao criar ticket.');
@@ -171,9 +173,14 @@ export const JiraDashboard: React.FC<JiraDashboardProps> = ({ onSelectIssue, sel
                 <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', marginBottom: '4px' }}>
                   {desc}
                 </p>
+                {issue.creatorName && (
+                  <div style={{ fontSize: '0.72rem', color: '#a78bfa', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    ✍️ Criado por: {issue.creatorName}
+                  </div>
+                )}
                 {issue.executorName && (
-                  <div style={{ fontSize: '0.75rem', color: 'var(--color-secondary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', margin: '4px 0' }}>
-                    👤 Executado por: {issue.executorName}
+                  <div style={{ fontSize: '0.75rem', color: 'var(--color-secondary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', margin: '2px 0' }}>
+                    👤 Responsável: {issue.executorName}
                   </div>
                 )}
                 <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }} onClick={e => e.stopPropagation()}>
