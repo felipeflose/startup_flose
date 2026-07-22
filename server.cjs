@@ -445,11 +445,23 @@ app.get('/api/jira/issues', async (req, res) => {
       } catch (e) {}
     }
 
+    const assignmentsFile = path.join(__dirname, 'task_assignments.json');
+    let assignments = {};
+    if (fs.existsSync(assignmentsFile)) {
+      try {
+        assignments = JSON.parse(fs.readFileSync(assignmentsFile, 'utf8'));
+      } catch (e) {}
+    }
+
     const issues = response.data?.issues || [];
     issues.forEach(issue => {
+      // First check if already resolved/executed
       const dec = decisions.find(d => d.issueKey === issue.key);
       if (dec && dec.executorName) {
         issue.executorName = dec.executorName;
+      } else if (assignments[issue.key]) {
+        // Fallback to assigned responsible person for new tasks
+        issue.executorName = assignments[issue.key];
       }
     });
 
@@ -513,6 +525,39 @@ app.post('/api/jira/issue', async (req, res) => {
     const response = await axios.post(`${JIRA_HOST}/rest/api/3/issue`, bodyData, {
       headers: getJiraAuthHeader()
     });
+
+    const jiraKey = response.data?.key;
+    if (jiraKey) {
+      // Auto-resolve Assignee ("Pessoa que toca o card") based on summary/description
+      let assignedAgentName = 'David Dev';
+      if (summaryText.includes('designer') || summaryText.includes('design') || summaryText.includes('ux') || summaryText.includes('ui') || summaryText.includes('layout') || summaryText.includes('pixel')) {
+        assignedAgentName = 'Elsa Pixel';
+      } else if (summaryText.includes('python') || summaryText.includes('backend') || summaryText.includes('monolito')) {
+        assignedAgentName = 'Mariana Python';
+      } else if (summaryText.includes('qa') || summaryText.includes('test') || summaryText.includes('valida') || summaryText.includes('bug')) {
+        assignedAgentName = 'Juliana QA Sênior';
+      } else if (summaryText.includes('cloud') || summaryText.includes('devops') || summaryText.includes('kubernetes') || summaryText.includes('docker') || summaryText.includes('ci/cd')) {
+        assignedAgentName = 'Lucas Cloud';
+      } else if (summaryText.includes('seguranca') || summaryText.includes('secops') || summaryText.includes('vulnerabilidade')) {
+        assignedAgentName = 'Carla SecOps';
+      } else if (summaryText.includes('banco') || summaryText.includes('sql') || summaryText.includes('dba') || summaryText.includes('query')) {
+        assignedAgentName = 'Davi DBA';
+      } else if (summaryText.includes('documentacao') || summaryText.includes('tech writer') || summaryText.includes('manual') || summaryText.includes('especificacao')) {
+        assignedAgentName = 'Sofia Tech Writer';
+      }
+
+      const assignmentsFile = path.join(__dirname, 'task_assignments.json');
+      let assignments = {};
+      if (fs.existsSync(assignmentsFile)) {
+        try {
+          assignments = JSON.parse(fs.readFileSync(assignmentsFile, 'utf8'));
+        } catch (e) {}
+      }
+      assignments[jiraKey] = assignedAgentName;
+      fs.writeFileSync(assignmentsFile, JSON.stringify(assignments, null, 2), 'utf8');
+      console.log(`[GOVERNANÇA] Card ${jiraKey} atribuído a ${assignedAgentName}`);
+    }
+
     res.json(response.data);
   } catch (error) {
     console.error('Error creating issue:', error.message);
@@ -1593,6 +1638,35 @@ const executeDebateSimulation = async ({ issueKey, issueSummary, issueDescriptio
       });
       if (jiraResponse.data && jiraResponse.data.key) {
         finalIssueKey = jiraResponse.data.key;
+        
+        // Save assignment for the custom issue
+        const summaryText = (finalIssueSummary || '').toLowerCase();
+        let assignedAgentName = 'David Dev';
+        if (summaryText.includes('designer') || summaryText.includes('design') || summaryText.includes('ux') || summaryText.includes('ui') || summaryText.includes('layout') || summaryText.includes('pixel')) {
+          assignedAgentName = 'Elsa Pixel';
+        } else if (summaryText.includes('python') || summaryText.includes('backend') || summaryText.includes('monolito')) {
+          assignedAgentName = 'Mariana Python';
+        } else if (summaryText.includes('qa') || summaryText.includes('test') || summaryText.includes('valida') || summaryText.includes('bug')) {
+          assignedAgentName = 'Juliana QA Sênior';
+        } else if (summaryText.includes('cloud') || summaryText.includes('devops') || summaryText.includes('kubernetes') || summaryText.includes('docker') || summaryText.includes('ci/cd')) {
+          assignedAgentName = 'Lucas Cloud';
+        } else if (summaryText.includes('seguranca') || summaryText.includes('secops') || summaryText.includes('vulnerabilidade')) {
+          assignedAgentName = 'Carla SecOps';
+        } else if (summaryText.includes('banco') || summaryText.includes('sql') || summaryText.includes('dba') || summaryText.includes('query')) {
+          assignedAgentName = 'Davi DBA';
+        } else if (summaryText.includes('documentacao') || summaryText.includes('tech writer') || summaryText.includes('manual') || summaryText.includes('especificacao')) {
+          assignedAgentName = 'Sofia Tech Writer';
+        }
+
+        const assignmentsFile = path.join(__dirname, 'task_assignments.json');
+        let assignments = {};
+        if (fs.existsSync(assignmentsFile)) {
+          try {
+            assignments = JSON.parse(fs.readFileSync(assignmentsFile, 'utf8'));
+          } catch (e) {}
+        }
+        assignments[finalIssueKey] = assignedAgentName;
+        fs.writeFileSync(assignmentsFile, JSON.stringify(assignments, null, 2), 'utf8');
       }
     } catch (jiraErr) {
       console.error('Error auto-creating Jira issue for custom idea:', jiraErr.message);
