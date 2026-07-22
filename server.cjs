@@ -995,7 +995,7 @@ const runAgentTasksSimulation = async (parentKey, summary, activeAgents) => {
             ]
           },
           parent: parentKey ? { key: parentKey } : undefined,
-          issuetype: { name: 'Subtask' }
+          issuetype: { name: 'Sub-task' }
         }
       };
 
@@ -1712,7 +1712,21 @@ const executeDebateSimulation = async ({ issueKey, issueSummary, issueDescriptio
   if (!finalIssueKey && finalIssueSummary) {
     try {
       const epicMap = await getOrCreateEpics();
-      const selectedEpic = epicName || 'Infraestrutura & Tecnologia';
+      const summaryText = (finalIssueSummary || '').toLowerCase();
+      let selectedEpic = epicName || 'Infraestrutura & Tecnologia';
+
+      if (!epicName) {
+        if (summaryText.includes('contrat') || summaryText.includes('colaborador') || summaryText.includes('demiss') || summaryText.includes('rh')) {
+          selectedEpic = 'Gestão de Pessoas';
+        } else if (summaryText.includes('sap') || summaryText.includes('faturam') || summaryText.includes('invoice') || summaryText.includes('financ')) {
+          selectedEpic = 'Faturamento & Finanças';
+        } else if (summaryText.includes('jogo') || summaryText.includes('game') || summaryText.includes('velha')) {
+          selectedEpic = 'Entretenimento & Games';
+        } else if (summaryText.includes('melhoria') || summaryText.includes('refator') || summaryText.includes('cache') || summaryText.includes('boundary') || summaryText.includes('rate limit')) {
+          selectedEpic = 'Melhorias Internas';
+        }
+      }
+      
       const epicKey = epicMap[selectedEpic];
 
       const bodyData = {
