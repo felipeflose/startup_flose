@@ -18,8 +18,49 @@ function App() {
   const [dashboardMetrics, setDashboardMetrics] = useState({ users: 12490, conversion: 3.42, load: 24 });
   const [scanActive, setScanActive] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
+  const [selectedScreenContent, setSelectedScreenContent] = useState<string>('');
+  const [visualizerTab, setVisualizerTab] = useState<'staging' | 'code'>('staging');
+  const [memoryCards, setMemoryCards] = useState<{ id: number; symbol: string; flipped: boolean; matched: boolean }[]>([]);
+  const [memorySelected, setMemorySelected] = useState<number[]>([]);
+  const [gtaLog, setGtaLog] = useState<string[]>(['Bem-vindo a Flose Vice City. Selecione uma missão.']);
+  const [gtaStats, setGtaStats] = useState({ money: 100, respect: 20, wanted: 0 });
+  const [dataLakeSyncing, setDataLakeSyncing] = useState(false);
+  const [dataLakeProgress, setDataLakeProgress] = useState(0);
+  const [dataLakeStatus, setDataLakeStatus] = useState('Pronto para replicação');
+  const [assetsList, setAssetsList] = useState([
+    { id: '1', name: 'Servidor Dell PowerEdge R760', category: 'Infraestrutura', cost: 'R$ 24.500' },
+    { id: '2', name: 'MacBook Pro M3 Max (Felipe)', category: 'Equipamentos', cost: 'R$ 32.000' }
+  ]);
+  const [sapInvoices, setSapInvoices] = useState([
+    { id: 'INV-4401', client: 'Petrobras Distribuidora', value: 'R$ 1.250.000', status: 'Aprovada' },
+    { id: 'INV-4402', client: 'Vale S.A.', value: 'R$ 940.000', status: 'Pendente' }
+  ]);
   const [gameBoard, setGameBoard] = useState<(string | null)[]>(Array(9).fill(null));
   const [gameXNext, setGameXNext] = useState(true);
+
+  const shortenBranch = (name: string) => {
+    if (!name) return '';
+    if (name.length <= 25) return name;
+    return name.substring(0, 22) + '...';
+  };
+
+  const shortenUrl = (url: string) => {
+    if (!url) return '';
+    try {
+      const parts = url.split('/');
+      const num = parts[parts.length - 1];
+      if (url.includes('/issues/')) return `Issue #${num}`;
+      if (url.includes('/pull/')) return `PR #${num}`;
+      return `Link #${num}`;
+    } catch {
+      return 'Link';
+    }
+  };
+
+  const getFilename = (path: string) => {
+    if (!path) return '';
+    return path.split('/').pop() || path;
+  };
 
   const fetchDecisions = () => {
     fetch('http://localhost:5001/api/decisions')
@@ -42,7 +83,7 @@ function App() {
       .then(res => res.json())
       .then(data => {
         setAgents(data);
-        const defaultIds = data.filter((a: Agent) => a.level === 'C-Level' || a.level === 'Diretor').map((a: Agent) => a.id);
+        const defaultIds = data.map((a: Agent) => a.id);
         setSelectedAgentIds(defaultIds);
       })
       .catch(err => console.error('Erro ao buscar agentes:', err));
@@ -61,7 +102,29 @@ function App() {
   useEffect(() => {
     setGameBoard(Array(9).fill(null));
     setGameXNext(true);
-  }, [selectedScreenKey]);
+    setGtaLog(['Bem-vindo a Flose Vice City. Selecione uma missão.']);
+    setGtaStats({ money: 100, respect: 20, wanted: 0 });
+    setDataLakeSyncing(false);
+    setDataLakeProgress(0);
+    setDataLakeStatus('Pronto para replicação');
+
+    const symbols = ['🎮', '🕹️', '🛡️', '📊', '🎮', '🕹️', '🛡️', '📊'];
+    const shuffled = symbols
+      .map((symbol, idx) => ({ id: idx, symbol, flipped: false, matched: false }))
+      .sort(() => Math.random() - 0.5);
+    setMemoryCards(shuffled);
+    setMemorySelected([]);
+
+    const currentDec = decisions.find(d => d.id === selectedScreenKey) || decisions[0];
+    if (currentDec?.generatedFile) {
+      fetch(`http://localhost:5001/api/code?file=${currentDec.generatedFile}`)
+        .then(res => res.json())
+        .then(data => setSelectedScreenContent(data.content || ''))
+        .catch(err => console.error('Erro ao buscar código:', err));
+    } else {
+      setSelectedScreenContent('');
+    }
+  }, [selectedScreenKey, decisions]);
 
   const handleSelectAgentToggle = (id: string) => {
     setSelectedAgentIds(prev => 
@@ -419,7 +482,7 @@ function App() {
                       }}>
                         {dec.gitBranchName && (
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span>🌿 Branch Git: <code style={{ color: '#a5b4fc' }}>{dec.gitBranchName}</code></span>
+                            <span>🌿 Branch Git: <code style={{ color: '#a5b4fc' }} title={dec.gitBranchName}>{shortenBranch(dec.gitBranchName)}</code></span>
                             <button
                               onClick={() => {
                                 navigator.clipboard.writeText(`git checkout ${dec.gitBranchName}`);
@@ -443,7 +506,7 @@ function App() {
                           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                             <span>🐙 GitHub Issue: </span>
                             <a href={dec.githubIssueUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-primary)', textDecoration: 'underline' }}>
-                              {dec.githubIssueUrl}
+                              {shortenUrl(dec.githubIssueUrl)}
                             </a>
                           </div>
                         )}
@@ -461,7 +524,7 @@ function App() {
                         color: '#fef3c7'
                       }}>
                         <strong>🔧 Executado por:</strong> {dec.executorName} ({dec.executorRole}) 
-                        {dec.generatedFile && <span> | 📄 <code>{dec.generatedFile}</code></span>}
+                        {dec.generatedFile && <span> | 📄 <code title={dec.generatedFile}>{getFilename(dec.generatedFile)}</code></span>}
                         {dec.commitHash && <span> | 💾 Git Commit: <code style={{ color: '#fbbf24' }}>{dec.commitHash}</code></span>}
                       </div>
                     )}
@@ -655,7 +718,17 @@ function App() {
                     screenType = 'dashboard';
                   } else if (textLower.includes('seguranca') || textLower.includes('secops') || textLower.includes('cyber') || textLower.includes('proteg') || textLower.includes('protect')) {
                     screenType = 'secops';
-                  } else if (textLower.includes('jogo') || textLower.includes('velha') || textLower.includes('game') || textLower.includes('tictactoe') || textLower.includes('gta')) {
+                  } else if (textLower.includes('memoria')) {
+                    screenType = 'memory';
+                  } else if (textLower.includes('gta')) {
+                    screenType = 'gta';
+                  } else if (textLower.includes('datalake') || textLower.includes('gcp') || textLower.includes('sqlserver') || textLower.includes('repli') || textLower.includes('etl')) {
+                    screenType = 'datalake';
+                  } else if (textLower.includes('ativo') || textLower.includes('patrimonio') || textLower.includes('inventar')) {
+                    screenType = 'assets';
+                  } else if (textLower.includes('sap') || textLower.includes('mm') || textLower.includes('sd') || textLower.includes('fatura') || textLower.includes('invoice')) {
+                    screenType = 'sap';
+                  } else if (textLower.includes('jogo') || textLower.includes('velha') || textLower.includes('game') || textLower.includes('tictactoe')) {
                     screenType = 'game';
                   }
 
@@ -671,7 +744,7 @@ function App() {
                           </p>
                         </div>
                         <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textAlign: 'right' }}>
-                          <div>🌿 Branch: <code>{currentDec.gitBranchName}</code></div>
+                          <div>🌿 Branch: <code title={currentDec.gitBranchName}>{shortenBranch(currentDec.gitBranchName)}</code></div>
                           {currentDec.commitHash && <div>💾 Commit: <code style={{ color: '#fbbf24' }}>{currentDec.commitHash}</code></div>}
                         </div>
                       </div>
@@ -706,17 +779,53 @@ function App() {
                         </div>
                       )}
 
-                      {/* Device Simulator Frame */}
-                      <div style={{
-                        background: '#090d16',
-                        borderRadius: '12px',
-                        border: '4px solid #1f2937',
-                        boxShadow: '0 12px 32px rgba(0, 0, 0, 0.6)',
-                        overflow: 'hidden',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        minHeight: '480px'
-                      }}>
+                      {/* Visualizer Tab Bar */}
+                      <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                        <button
+                          onClick={() => setVisualizerTab('staging')}
+                          style={{
+                            padding: '8px 16px',
+                            borderRadius: '6px',
+                            border: 'none',
+                            background: visualizerTab === 'staging' ? 'var(--color-primary)' : 'var(--bg-tertiary)',
+                            color: '#fff',
+                            fontWeight: 600,
+                            fontSize: '0.8rem',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease'
+                          }}
+                        >
+                          🖥️ Protótipo Staging
+                        </button>
+                        <button
+                          onClick={() => setVisualizerTab('code')}
+                          style={{
+                            padding: '8px 16px',
+                            borderRadius: '6px',
+                            border: 'none',
+                            background: visualizerTab === 'code' ? 'var(--color-primary)' : 'var(--bg-tertiary)',
+                            color: '#fff',
+                            fontWeight: 600,
+                            fontSize: '0.8rem',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease'
+                          }}
+                        >
+                          📜 Código Fonte (Gemma 4)
+                        </button>
+                      </div>
+
+                      {visualizerTab === 'staging' ? (
+                        <div style={{
+                          background: '#090d16',
+                          borderRadius: '12px',
+                          border: '4px solid #1f2937',
+                          boxShadow: '0 12px 32px rgba(0, 0, 0, 0.6)',
+                          overflow: 'hidden',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          minHeight: '480px'
+                        }}>
                         {/* Browser Bar */}
                         <div style={{
                           background: '#1f2937',
@@ -944,11 +1053,282 @@ function App() {
                             </div>
                           )}
 
-                          {/* 5. Game Screen Staging Visualizer */}
+                          {/* 4. Memory Game Screen */}
+                          {screenType === 'memory' && (
+                            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '14px', alignItems: 'center' }}>
+                              <h4 style={{ margin: 0, fontSize: '1.1rem', color: '#fff', fontWeight: 700 }}>Jogo da Memória</h4>
+                              <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-secondary)', textAlign: 'center' }}>Clique nas cartas para encontrar os pares.</p>
+                              
+                              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', width: '260px' }}>
+                                {memoryCards.map((card) => (
+                                  <button
+                                    key={card.id}
+                                    onClick={() => {
+                                      if (card.flipped || card.matched || memorySelected.length >= 2) return;
+                                      const nextCards = memoryCards.map(c => c.id === card.id ? { ...c, flipped: true } : c);
+                                      setMemoryCards(nextCards);
+                                      
+                                      const newSel = [...memorySelected, card.id];
+                                      setMemorySelected(newSel);
+
+                                      if (newSel.length === 2) {
+                                        const first = memoryCards.find(c => c.id === newSel[0])!;
+                                        const second = card;
+                                        if (first.symbol === second.symbol) {
+                                          setTimeout(() => {
+                                            setMemoryCards(prev => prev.map(c => (c.id === first.id || c.id === second.id) ? { ...c, matched: true } : c));
+                                            setMemorySelected([]);
+                                          }, 500);
+                                        } else {
+                                          setTimeout(() => {
+                                            setMemoryCards(prev => prev.map(c => (c.id === first.id || c.id === second.id) ? { ...c, flipped: false } : c));
+                                            setMemorySelected([]);
+                                          }, 1000);
+                                        }
+                                      }
+                                    }}
+                                    style={{
+                                      height: '60px',
+                                      background: card.flipped || card.matched ? 'var(--bg-tertiary)' : 'var(--color-primary)',
+                                      border: '1px solid var(--border-color)',
+                                      borderRadius: '8px',
+                                      fontSize: '1.5rem',
+                                      color: '#fff',
+                                      cursor: 'pointer',
+                                      transition: 'all 0.2s'
+                                    }}
+                                  >
+                                    {card.flipped || card.matched ? card.symbol : '❓'}
+                                  </button>
+                                ))}
+                              </div>
+                              <div style={{ fontSize: '0.85rem', color: '#10b981', fontWeight: 600 }}>
+                                  {memoryCards.every(c => c.matched) ? '🎉 Todos os pares encontrados!' : 'Encontre os pares correspondentes.'}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* 5. GTA 6 Simulator Screen */}
+                          {screenType === 'gta' && (
+                            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '12px', textAlign: 'left' }}>
+                              <h4 style={{ margin: 0, fontSize: '1.1rem', color: '#fff', fontWeight: 700, textAlign: 'center' }}>Flose Vice City Console</h4>
+                              
+                              <div style={{ display: 'flex', justifyContent: 'space-around', background: 'rgba(255,255,255,0.02)', padding: '8px', borderRadius: '8px', fontSize: '0.8rem' }}>
+                                <div>💰 Dinheiro: <strong style={{ color: '#10b981' }}>${gtaStats.money}</strong></div>
+                                <div>⭐ Respeito: <strong style={{ color: 'var(--color-primary)' }}>{gtaStats.respect}</strong></div>
+                                <div>🚨 Nível: <strong style={{ color: '#ef4444' }}>{'★'.repeat(gtaStats.wanted) || 'Clean'}</strong></div>
+                              </div>
+
+                              <div style={{ background: '#020617', padding: '12px', borderRadius: '8px', height: '120px', overflowY: 'auto', fontSize: '0.75rem', fontFamily: 'monospace', color: '#38bdf8', border: '1px solid var(--border-color)' }}>
+                                {gtaLog.map((log, i) => <div key={i} style={{ marginBottom: '4px' }}>&gt; {log}</div>)}
+                              </div>
+
+                              <div style={{ display: 'flex', gap: '8px' }}>
+                                <button
+                                  onClick={() => {
+                                    setGtaStats(prev => ({ ...prev, money: prev.money + 50, respect: prev.respect + 5, wanted: Math.min(prev.wanted + 1, 5) }));
+                                    setGtaLog(prev => [...prev, 'Roubou um carro esporte na avenida principal! +$50.']);
+                                  }}
+                                  style={{ flex: 1, padding: '8px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: '#fff', borderRadius: '6px', fontSize: '0.75rem', cursor: 'pointer' }}
+                                >
+                                  🚗 Roubar Carro
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setGtaStats(prev => ({ ...prev, money: prev.money + 200, respect: prev.respect + 15, wanted: Math.min(prev.wanted + 2, 5) }));
+                                    setGtaLog(prev => [...prev, 'Assaltou a joalheria de Vice Point! +$200.']);
+                                  }}
+                                  style={{ flex: 1, padding: '8px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: '#fff', borderRadius: '6px', fontSize: '0.75rem', cursor: 'pointer' }}
+                                >
+                                  💰 Assaltar Loja
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setGtaStats(prev => ({ ...prev, wanted: 0, money: Math.max(prev.money - 30, 0) }));
+                                    setGtaLog(prev => [...prev, 'Subornou a polícia local! -$30.']);
+                                  }}
+                                  style={{ flex: 1, padding: '8px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '6px', fontSize: '0.75rem', cursor: 'pointer' }}
+                                >
+                                  🚨 Subornar
+                                </button>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* 6. Data Lake GCP ETL Screen */}
+                          {screenType === 'datalake' && (
+                            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '14px', textAlign: 'left' }}>
+                              <h4 style={{ margin: 0, fontSize: '1.1rem', color: '#fff', fontWeight: 700, textAlign: 'center' }}>Data Lake GCP Ingestor</h4>
+                              
+                              <div style={{ background: '#020617', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '0.8rem' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                                  <span>Origem:</span> <strong style={{ color: '#60a5fa' }}>SQL Server Local</strong>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                                  <span>Destino:</span> <strong style={{ color: '#34d399' }}>GCP BigQuery & GCS</strong>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                  <span>Status:</span> <strong style={{ color: dataLakeSyncing ? '#f59e0b' : '#10b981' }}>{dataLakeStatus}</strong>
+                                </div>
+                              </div>
+
+                              {dataLakeSyncing && (
+                                <div style={{ width: '100%', background: 'rgba(255,255,255,0.05)', borderRadius: '6px', height: '16px', overflow: 'hidden', position: 'relative' }}>
+                                  <div style={{ width: `${dataLakeProgress}%`, height: '100%', background: 'var(--color-primary)', transition: 'width 0.2s' }} />
+                                  <span style={{ position: 'absolute', width: '100%', textAlign: 'center', fontSize: '0.65rem', color: '#fff', fontWeight: 'bold', top: 0 }}>{dataLakeProgress}%</span>
+                                </div>
+                              )}
+
+                              <button
+                                onClick={() => {
+                                  if (dataLakeSyncing) return;
+                                  setDataLakeSyncing(true);
+                                  setDataLakeProgress(0);
+                                  setDataLakeStatus('Iniciando handshake SQL Server...');
+                                  
+                                  const interval = setInterval(() => {
+                                    setDataLakeProgress(prev => {
+                                      if (prev >= 100) {
+                                        clearInterval(interval);
+                                        setDataLakeSyncing(false);
+                                        setDataLakeStatus('Ingestão concluída! 12,490 linhas migradas para o BigQuery.');
+                                        return 100;
+                                      }
+                                      if (prev === 30) setDataLakeStatus('Extraindo tabelas relacionais...');
+                                      if (prev === 60) setDataLakeStatus('Efetuando upload para GCS Staging...');
+                                      if (prev === 85) setDataLakeStatus('Efetuando merge no BigQuery DWH...');
+                                      return prev + 10;
+                                    });
+                                  }, 300);
+                                }}
+                                style={{
+                                  padding: '10px',
+                                  background: 'var(--color-primary)',
+                                  color: '#fff',
+                                  border: 'none',
+                                  borderRadius: '6px',
+                                  fontWeight: 'bold',
+                                  cursor: 'pointer',
+                                  fontSize: '0.8rem'
+                                }}
+                              >
+                                {dataLakeSyncing ? '⌛ Sincronizando...' : '🚀 Iniciar Replicação de Dados'}
+                              </button>
+                            </div>
+                          )}
+
+                          {/* 7. Asset Management Grid Screen */}
+                          {screenType === 'assets' && (
+                            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '12px', textAlign: 'left' }}>
+                              <h4 style={{ margin: 0, fontSize: '1.1rem', color: '#fff', fontWeight: 700, textAlign: 'center' }}>Controle de Ativos Flose</h4>
+                              
+                              <div style={{ maxHeight: '150px', overflowY: 'auto', border: '1px solid var(--border-color)', borderRadius: '6px' }}>
+                                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.75rem' }}>
+                                  <thead>
+                                    <tr style={{ background: 'rgba(255,255,255,0.02)', borderBottom: '1px solid var(--border-color)' }}>
+                                      <th style={{ padding: '6px' }}>Nome</th>
+                                      <th style={{ padding: '6px' }}>Categoria</th>
+                                      <th style={{ padding: '6px', textAlign: 'right' }}>Valor</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {assetsList.map((asset) => (
+                                      <tr key={asset.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.02)' }}>
+                                        <td style={{ padding: '6px' }}>{asset.name}</td>
+                                        <td style={{ padding: '6px' }}>{asset.category}</td>
+                                        <td style={{ padding: '6px', textAlign: 'right', color: '#10b981' }}>{asset.cost}</td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+
+                              <button
+                                onClick={() => {
+                                  const name = prompt('Nome do novo ativo:');
+                                  if (!name) return;
+                                  const category = prompt('Categoria (ex: Equipamentos):') || 'Geral';
+                                  const cost = prompt('Valor (ex: R$ 5.000):') || 'R$ 0';
+                                  setAssetsList(prev => [...prev, { id: Date.now().toString(), name, category, cost }]);
+                                }}
+                                style={{
+                                  padding: '8px',
+                                  background: 'var(--color-primary)',
+                                  color: '#fff',
+                                  border: 'none',
+                                  borderRadius: '6px',
+                                  fontSize: '0.75rem',
+                                  fontWeight: 'bold',
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                ➕ Cadastrar Novo Ativo Patrimonial
+                              </button>
+                            </div>
+                          )}
+
+                          {/* 8. SAP MM/SD Procurement Screen */}
+                          {screenType === 'sap' && (
+                            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '12px', textAlign: 'left' }}>
+                              <h4 style={{ margin: 0, fontSize: '1.1rem', color: '#fff', fontWeight: 700, textAlign: 'center' }}>SAP MM/SD Procurement</h4>
+                              
+                              <div style={{ border: '1px solid var(--border-color)', borderRadius: '6px', overflow: 'hidden' }}>
+                                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.75rem' }}>
+                                  <thead>
+                                    <tr style={{ background: 'rgba(255,255,255,0.02)', borderBottom: '1px solid var(--border-color)' }}>
+                                      <th style={{ padding: '6px' }}>Fatura</th>
+                                      <th style={{ padding: '6px' }}>Cliente</th>
+                                      <th style={{ padding: '6px', textAlign: 'right' }}>Total</th>
+                                      <th style={{ padding: '6px', textAlign: 'center' }}>Status</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {sapInvoices.map((inv) => (
+                                      <tr key={inv.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.02)' }}>
+                                        <td style={{ padding: '6px', fontWeight: 'bold' }}>{inv.id}</td>
+                                        <td style={{ padding: '6px' }}>{inv.client}</td>
+                                        <td style={{ padding: '6px', textAlign: 'right', color: '#38bdf8' }}>{inv.value}</td>
+                                        <td style={{ padding: '6px', textAlign: 'center' }}>
+                                          <span style={{
+                                            padding: '2px 6px',
+                                            borderRadius: '4px',
+                                            fontSize: '0.62rem',
+                                            background: inv.status === 'Aprovada' ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.1)',
+                                            color: inv.status === 'Aprovada' ? '#10b981' : '#f59e0b'
+                                          }}>{inv.status}</span>
+                                        </td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+
+                              <button
+                                onClick={() => {
+                                  setSapInvoices(prev => prev.map(inv => inv.status !== 'Aprovada' ? { ...inv, status: 'Aprovada' } : inv));
+                                  alert('Integração Cortex & SAP executada! Contas a receber atualizadas no GCP DWH.');
+                                }}
+                                style={{
+                                  padding: '8px',
+                                  background: '#10b981',
+                                  color: '#fff',
+                                  border: 'none',
+                                  borderRadius: '6px',
+                                  fontSize: '0.75rem',
+                                  fontWeight: 'bold',
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                ⚙️ Executar Integração de Cobranças
+                              </button>
+                            </div>
+                          )}
+
+                          {/* 9. Tic-Tac-Toe Game Screen */}
                           {screenType === 'game' && (
                             <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center' }}>
-                              <h4 style={{ margin: 0, fontSize: '1.1rem', color: '#fff', fontWeight: 700 }}>Staging Demo: Jogo da Velha</h4>
-                              <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Instância interativa do componente React gerado autonomamente.</p>
+                              <h4 style={{ margin: 0, fontSize: '1.1rem', color: '#fff', fontWeight: 700 }}>Jogo da Velha</h4>
+                              <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Instância interativa gerada autonomamente.</p>
                               
                               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', width: '260px', height: '260px' }}>
                                 {gameBoard.map((val, idx) => (
@@ -1027,6 +1407,41 @@ function App() {
 
                         </div>
                       </div>
+                      ) : (
+                        <div className="glass" style={{
+                          background: '#020617',
+                          borderRadius: '12px',
+                          border: '1px solid var(--border-color)',
+                          padding: '24px',
+                          textAlign: 'left',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '12px',
+                          minHeight: '480px',
+                          maxHeight: '650px',
+                          overflowY: 'auto'
+                        }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>📄 Arquivo: <code>{currentDec.generatedFile || 'default.ts'}</code></span>
+                            <span style={{ fontSize: '0.72rem', background: '#10b981', padding: '2px 8px', borderRadius: '4px', color: '#fff', fontWeight: 600 }}>CÓDIGO DE PRODUÇÃO (GEMMA 4)</span>
+                          </div>
+                          <pre style={{
+                            margin: 0,
+                            fontFamily: 'monospace',
+                            fontSize: '0.82rem',
+                            color: '#e2e8f0',
+                            whiteSpace: 'pre-wrap',
+                            lineHeight: '1.5',
+                            background: '#090d16',
+                            padding: '16px',
+                            borderRadius: '8px',
+                            border: '1px solid rgba(255, 255, 255, 0.04)',
+                            overflowX: 'auto'
+                          }}>
+                            {selectedScreenContent || '// Carregando código fonte...' }
+                          </pre>
+                        </div>
+                      )}
                     </div>
                   );
                 })()}
