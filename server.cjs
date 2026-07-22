@@ -1197,19 +1197,77 @@ const performLeadAuditsAndFireRehire = async (currentAgents, decisionEntry) => {
     }
     const candidates = JSON.parse(fs.readFileSync(candidatesFile, 'utf8'));
 
+    // 1. Identify which agents received negative feedbacks/warnings in this decision log entry
+    // (feedbacks is returned by evaluateSprintPerformanceAndRH and stored inside decisionEntry.feedbacks)
+    const newFeedbacks = decisionEntry.feedbacks || [];
+    const warningFeedbacks = newFeedbacks.filter(f => f.type === 'advertencia' || f.rating === 'negativo');
+
+    for (const feed of warningFeedbacks) {
+      const badAgent = currentAgents.find(a => a.id === feed.agentId);
+      if (!badAgent || badAgent.fired) continue;
+
+      // Find designated Tech Lead
+      let leadId = null;
+      const roleText = (badAgent.role || '').toLowerCase();
+      
+      if (roleText.includes('desenvolvedor') || roleText.includes('devops') || roleText.includes('database') || roleText.includes('dba') || roleText.includes('backend') || roleText.includes('frontend')) {
+        leadId = 'tech_lead_laura';
+      } else if (roleText.includes('qa') || roleText.includes('qualidade') || roleText.includes('testes') || roleText.includes('validador')) {
+        leadId = 'qa_lead_marcos';
+      } else if (roleText.includes('product') || roleText.includes('produto') || roleText.includes('owner') || roleText.includes('manager')) {
+        // Product/PM/PO Lead
+        // We can add a fallback or default lead if not present, let's verify if tech_lead_laura or qa_lead_marcos can manage them, or we can use tech_lead_laura as general lead
+        leadId = 'tech_lead_laura';
+      }
+
+      if (leadId && badAgent.id !== leadId) {
+        const leadAgent = currentAgents.find(a => a.id === leadId);
+        if (leadAgent && !leadAgent.fired) {
+          // Penalize Lead for team member's error
+          if (!leadAgent.feedbacks) leadAgent.feedbacks = [];
+          leadAgent.feedbacks.unshift({
+            id: Date.now().toString() + Math.random().toString(36).substr(2, 4),
+            timestamp: new Date().toISOString(),
+            type: 'advertencia',
+            text: `GOVERNANÇA (Arthur): Penalizado devido a falhas técnicas ou desvios de processo do liderado ${badAgent.name} (${badAgent.role}).`,
+            impact: 'Atenção a Prazos',
+            sprintTicket: decisionEntry.issueKey
+          });
+          console.log(`[GOVERNANÇA] Arthur penalizou o Tech Lead ${leadAgent.name} por erro de ${badAgent.name}`);
+
+          // HR Upgrades Tech Lead profile description to make them stricter
+          leadAgent.advantage = (leadAgent.advantage || '') + " (RH: Ajustado com treinamento avançado de supervisão e conformidade)";
+          leadAgent.personality = (leadAgent.personality || '') + " (RH: Liderança intensificada e 200% mais rigorosa)";
+          
+          logActivity('ceo', 'Felipe Flose', '💼', `RH aprimorou o perfil do Tech Lead ${leadAgent.name} para intensificar a cobrança na equipe.`, decisionEntry.issueKey || '', decisionEntry.issueSummary);
+        }
+      }
+
+      // Tech Lead mentors Developer/PO to help them improve
+      if (leadId) {
+        const leadAgent = currentAgents.find(a => a.id === leadId);
+        if (leadAgent && !leadAgent.fired) {
+          badAgent.advantage = (badAgent.advantage || '') + " (Mentorado em prevenção de falhas pelo Tech Lead)";
+          badAgent.disadvantage = "Superou os desvios técnicos anteriores após mentoria do Tech Lead.";
+          console.log(`[GOVERNANÇA] Tech Lead ${leadAgent.name} aplicou mentoria e aprimorou o perfil de ${badAgent.name}`);
+        }
+      }
+    }
+
+    // 2. Perform Firing and Rehiring loop (including Tech Leads, fired by Arthur Tech Lead & Auditor)
     for (let i = 0; i < currentAgents.length; i++) {
       const agent = currentAgents[i];
       if (agent.fired) continue;
       
-      // Filter negative feedbacks
       const warningsCount = (agent.feedbacks || []).filter(f => f.type === 'advertencia' || f.rating === 'negativo').length;
       if (warningsCount >= 3) {
         console.log(`[GOVERNANÇA] Demitindo ${agent.name} (${agent.role}) por atingir ${warningsCount} advertências.`);
         agent.fired = true;
         agent.status = 'Desligado';
         
-        const fireMessage = `💼 Felipe Flose (CEO) demitiu ${agent.name} (${agent.role}) devido a reincidência de erros técnicos/operacionais (${warningsCount} advertências).`;
-        logActivity('ceo', 'Felipe Flose', '💼', fireMessage, decisionEntry.issueKey || '', decisionEntry.issueSummary);
+        const isLead = agent.id.includes('lead') || agent.role.includes('Lead');
+        const fireMessage = `⚖️ Arthur Tech Lead & Auditor demitiu o ${isLead ? 'Tech Lead' : 'Colaborador'} ${agent.name} (${agent.role}) devido a reincidência de erros técnicos/operacionais (${warningsCount} advertências).`;
+        logActivity('auditor_arthur', 'Arthur Tech Lead & Auditor', '⚖️', fireMessage, decisionEntry.issueKey || '', decisionEntry.issueSummary);
 
         // Create Jira ticket for fire
         try {
@@ -1242,25 +1300,25 @@ const performLeadAuditsAndFireRehire = async (currentAgents, decisionEntry) => {
           console.error('Failed to log fire in Jira:', err.message);
         }
 
-        // 4. Find replacement candidate
+        // Find replacement candidate
         const targetRole = agent.role;
         const matchedCandidates = candidates.filter(c => 
           c.role.toLowerCase() === targetRole.toLowerCase() && 
           !currentAgents.some(a => a.id === c.id)
         );
 
-        const replacement = matchedCandidates[0] || candidates.find(c => c.role.toLowerCase().includes('sênior') && !currentAgents.some(a => a.id === c.id));
+        const replacement = matchedCandidates[0] || candidates.find(c => c.role.toLowerCase().includes('lead') === isLead && !currentAgents.some(a => a.id === c.id));
         if (replacement) {
           const newAgent = {
             id: replacement.id,
             name: replacement.name,
             role: replacement.role,
-            level: "Analista SR",
+            level: isLead ? "Coordenador" : "Analista SR",
             avatar: replacement.avatar,
-            advantage: replacement.advantage,
+            advantage: replacement.advantage + " (Contratado sob conformidade estrita da Auditoria)",
             disadvantage: replacement.disadvantage,
             dilemma: replacement.dilemma,
-            personality: replacement.personality,
+            personality: replacement.personality + " (Obsessivo por conformidade e relatórios impecáveis)",
             status: 'Disponível',
             schedule: '09:00 - 18:00',
             area: agent.area || "Engenharia & TI",
@@ -1271,7 +1329,7 @@ const performLeadAuditsAndFireRehire = async (currentAgents, decisionEntry) => {
           currentAgents.push(newAgent);
           console.log(`[GOVERNANÇA] Contratando substituto: ${newAgent.name} (${newAgent.role}) para a ${newAgent.desk}`);
           
-          const hireMessage = `🤝 RH contratou o substituto ${newAgent.name} (${newAgent.role}) para ocupar a ${newAgent.desk} e corrigir as falhas anteriores de ${agent.name}.`;
+          const hireMessage = `🤝 RH contratou o substituto sênior ${newAgent.name} (${newAgent.role}) para ocupar a ${newAgent.desk} e corrigir as falhas de ${agent.name}.`;
           logActivity('ceo', 'Felipe Flose', '💼', hireMessage, decisionEntry.issueKey || '', decisionEntry.issueSummary);
 
           // Create Jira onboarding ticket
