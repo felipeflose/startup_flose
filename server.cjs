@@ -397,10 +397,28 @@ app.get('/api/jira/issues', async (req, res) => {
 app.post('/api/jira/issue', async (req, res) => {
   try {
     const { summary, description, projectKey, issueType } = req.body;
+    
+    // Auto-resolve Epic parent key based on summary
+    const epicMap = await getOrCreateEpics();
+    const summaryText = (summary || '').toLowerCase();
+    let targetEpic = 'Infraestrutura & Tecnologia';
+    
+    if (summaryText.includes('contrat') || summaryText.includes('colaborador') || summaryText.includes('demiss') || summaryText.includes('rh')) {
+      targetEpic = 'Gestão de Pessoas';
+    } else if (summaryText.includes('sap') || summaryText.includes('faturam') || summaryText.includes('invoice') || summaryText.includes('financ')) {
+      targetEpic = 'Faturamento & Finanças';
+    } else if (summaryText.includes('jogo') || summaryText.includes('game') || summaryText.includes('velha')) {
+      targetEpic = 'Entretenimento & Games';
+    } else if (summaryText.includes('melhoria') || summaryText.includes('refator') || summaryText.includes('cache') || summaryText.includes('boundary') || summaryText.includes('rate limit')) {
+      targetEpic = 'Melhorias Internas';
+    }
+    
+    const epicKey = epicMap[targetEpic];
+
     const bodyData = {
       fields: {
         project: {
-          key: projectKey || 'KAN' // Default to KAN or first project
+          key: projectKey || 'KAN'
         },
         summary: summary,
         description: {
@@ -418,6 +436,7 @@ app.post('/api/jira/issue', async (req, res) => {
             }
           ]
         },
+        parent: epicKey ? { key: epicKey } : undefined,
         issuetype: {
           name: issueType || 'Task'
         }
@@ -1356,6 +1375,51 @@ const executeDebateSimulation = async ({ issueKey, issueSummary, issueDescriptio
   const branchCreated = await createGitBranch(gitBranchName);
 
   if (finalIssueKey && !finalIssueKey.startsWith('MOCK')) {
+    try {
+      const issueDetails = await axios.get(`${JIRA_HOST}/rest/api/3/issue/${finalIssueKey}`, {
+        headers: getJiraAuthHeader(),
+        params: { fields: 'parent,summary' }
+      });
+      const hasParent = issueDetails.data?.fields?.parent;
+      if (!hasParent) {
+        console.warn(`Governance Alert: Issue ${finalIssueKey} has no Epic! Linking automatically and penalizing PM/PO...`);
+        const epicMap = await getOrCreateEpics();
+        const summaryText = (issueDetails.data?.fields?.summary || '').toLowerCase();
+        let targetEpic = 'Infraestrutura & Tecnologia';
+        if (summaryText.includes('contrat') || summaryText.includes('colaborador') || summaryText.includes('demiss') || summaryText.includes('rh')) {
+          targetEpic = 'Gestão de Pessoas';
+        } else if (summaryText.includes('sap') || summaryText.includes('faturam') || summaryText.includes('invoice') || summaryText.includes('financ')) {
+          targetEpic = 'Faturamento & Finanças';
+        } else if (summaryText.includes('jogo') || summaryText.includes('game') || summaryText.includes('velha')) {
+          targetEpic = 'Entretenimento & Games';
+        } else if (summaryText.includes('melhoria') || summaryText.includes('refator') || summaryText.includes('cache')) {
+          targetEpic = 'Melhorias Internas';
+        }
+        const epicKey = epicMap[targetEpic];
+        if (epicKey) {
+          await axios.put(`${JIRA_HOST}/rest/api/3/issue/${finalIssueKey}`, {
+            fields: { parent: { key: epicKey } }
+          }, { headers: getJiraAuthHeader() });
+        }
+        
+        // Log severe penalty to Sarah and Pedro
+        const agents = readAgents();
+        agents.forEach(a => {
+          if (a.id === 'mgr_prod' || a.id === 'spec_po_pedro') {
+            if (!a.feedbacks) a.feedbacks = [];
+            a.feedbacks.push({
+              text: `ADVERTÊNCIA GRAVE: Criou ou liberou a tarefa ${finalIssueKey} sem associar a um Épico. Reincidência de falha grave de governança.`,
+              rating: 'negativo',
+              date: new Date().toISOString()
+            });
+          }
+        });
+        saveAgents(agents);
+      }
+    } catch (e) {
+      console.error('Governance validation error:', e.message);
+    }
+    
     await transitionJiraIssue(finalIssueKey, 'In Progress');
   }
   
