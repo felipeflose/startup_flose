@@ -4,6 +4,13 @@ interface CardCreatorProps {
   onCreated?: () => void;
 }
 
+interface Agent {
+  id: string;
+  name: string;
+  role: string;
+  avatar: string;
+}
+
 const EPICS = [
   { label: '🏗️ Infraestrutura & Tecnologia', value: 'Infraestrutura & Tecnologia' },
   { label: '🎨 Design & Produto', value: 'Design & Produto' },
@@ -20,41 +27,33 @@ const ISSUE_TYPES = [
   { label: '📖 Story', value: 'Story' },
 ];
 
-const CREATORS = [
-  { label: '👑 Felipe Flose (CEO)', value: 'Felipe Flose (CEO)' },
-  { label: '📋 Sarah Backlog (PM)', value: 'Sarah Backlog (PM)' },
-  { label: '👑⚖️ Arthur de Flose (Governança)', value: 'Arthur de Flose (Governança)' },
-  { label: '🧑‍💼 Hugo Organizador (RH)', value: 'Hugo Organizador (RH)' },
-  { label: '🧑‍💻 David Dev', value: 'David Dev' },
-  { label: '🎨 Elsa Pixel', value: 'Elsa Pixel' },
-  { label: '🐍 Mariana Python', value: 'Mariana Python' },
-  { label: '☁️ Lucas Cloud', value: 'Lucas Cloud' },
-  { label: '🔍 Juliana QA Sênior', value: 'Juliana QA Sênior' },
-];
-
-const ASSIGNEES = [
-  { label: '🧑‍💻 David Dev', value: 'David Dev' },
-  { label: '🎨 Elsa Pixel', value: 'Elsa Pixel' },
-  { label: '🐍 Mariana Python', value: 'Mariana Python' },
-  { label: '☁️ Lucas Cloud', value: 'Lucas Cloud' },
-  { label: '🔍 Juliana QA Sênior', value: 'Juliana QA Sênior' },
-  { label: '🛡️ Carla SecOps', value: 'Carla SecOps' },
-  { label: '🗄️ Davi DBA', value: 'Davi DBA' },
-  { label: '📝 Sofia Tech Writer', value: 'Sofia Tech Writer' },
-];
-
 export const CardCreator: React.FC<CardCreatorProps> = ({ onCreated }) => {
   const [open, setOpen] = useState(false);
+  const [agents, setAgents] = useState<Agent[]>([]);
   const [summary, setSummary] = useState('');
   const [description, setDescription] = useState('');
   const [epic, setEpic] = useState('Infraestrutura & Tecnologia');
   const [issueType, setIssueType] = useState('Task');
-  const [creator, setCreator] = useState('Felipe Flose (CEO)');
-  const [assignee, setAssignee] = useState('David Dev');
+  const [creator, setCreator] = useState('');
+  const [assignee, setAssignee] = useState('');
   const [creating, setCreating] = useState(false);
   const [success, setSuccess] = useState(false);
   const [createdKey, setCreatedKey] = useState('');
   const [error, setError] = useState('');
+
+  // Load real agents from backend
+  useEffect(() => {
+    fetch('http://localhost:5001/api/agents')
+      .then(r => r.json())
+      .then((data: Agent[]) => {
+        setAgents(data);
+        if (data.length > 0) {
+          setCreator(data[0].name);
+          setAssignee(data[0].name);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Close on Escape
   useEffect(() => {
@@ -276,16 +275,16 @@ export const CardCreator: React.FC<CardCreatorProps> = ({ onCreated }) => {
                   <div>
                     <div style={labelStyle}>✍️ Criado por *</div>
                     <select value={creator} onChange={e => setCreator(e.target.value)} style={inputStyle}>
-                      {CREATORS.map(c => (
-                        <option key={c.value} value={c.value}>{c.label}</option>
+                      {agents.map(a => (
+                        <option key={a.id} value={a.name}>{a.avatar} {a.name} — {a.role.split('(')[0].trim()}</option>
                       ))}
                     </select>
                   </div>
                   <div>
                     <div style={labelStyle}>👤 Responsável *</div>
                     <select value={assignee} onChange={e => setAssignee(e.target.value)} style={inputStyle}>
-                      {ASSIGNEES.map(a => (
-                        <option key={a.value} value={a.value}>{a.label}</option>
+                      {agents.map(a => (
+                        <option key={a.id} value={a.name}>{a.avatar} {a.name} — {a.role.split('(')[0].trim()}</option>
                       ))}
                     </select>
                   </div>

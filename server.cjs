@@ -429,6 +429,44 @@ app.get('/api/rankings', async (req, res) => {
     try { decisions = JSON.parse(fs.readFileSync(decisionsFile, 'utf8')); } catch (e) {}
     try { activities = JSON.parse(fs.readFileSync(activityFile, 'utf8')); } catch (e) {}
 
+    // Alias map: fictional/short names → real agent names in DB
+    const ALIAS = {
+      'David Dev': 'Gabriel Augusto Silva',
+      'Mariana Python': 'Lucas Augusto Silva',
+      'Juliana QA Sênior': 'Diana Test',
+      'Juliana QA': 'Diana Test',
+      'Lucas Cloud': 'Lucas Cloud',
+      'Carla SecOps': 'Carla SecOps',
+      'Davi DBA': 'Davi DBA',
+      'Sofia Tech Writer': 'Sofia Tech Writer',
+      'Elsa Pixel': 'Elsa Pixel',
+      'Sarah Backlog (PM)': 'Felipe Flose',
+      'Sarah Backlog': 'Felipe Flose',
+      'Hugo Organizador (RH)': 'Hugo Organizador',
+      'Arthur de Flose (Diretor de Governança)': 'Arthur de Flose',
+      'Arthur de Flose (Governança)': 'Arthur de Flose',
+      'Felipe Flose (CEO)': 'Felipe Flose',
+    };
+
+    // Normalize name: strip role suffix, apply alias
+    const normalizeName = (raw) => {
+      const stripped = String(raw || '').split(' (')[0].trim();
+      return ALIAS[stripped] || ALIAS[raw] || stripped;
+    };
+
+    // Fuzzy match name to agent key in scoreMap
+    const findAgentKey = (scoreMap, rawName) => {
+      const n = normalizeName(rawName);
+      // Exact match
+      if (scoreMap[n]) return n;
+      // Partial match: agent key contains first word of n, or n contains first word of key
+      const nFirst = n.split(' ')[0].toLowerCase();
+      return Object.keys(scoreMap).find(k => {
+        const kFirst = k.split(' ')[0].toLowerCase();
+        return k.toLowerCase().includes(nFirst) || nFirst.includes(kFirst) || n.toLowerCase().includes(kFirst);
+      }) || null;
+    };
+
     // Aggregate scores per agent
     const scoreMap = {};
     agents.forEach(a => {
@@ -449,31 +487,29 @@ app.get('/api/rankings', async (req, res) => {
 
     // Cards created
     Object.values(creators).forEach(name => {
-      const n = String(name).split(' (')[0]; // strip role suffix
-      const match = Object.keys(scoreMap).find(k => k.includes(n) || n.includes(k.split(' ')[0]));
+      const match = findAgentKey(scoreMap, name);
       if (match) scoreMap[match].cardsCreated++;
     });
 
     // Cards executed/coded
     Object.values(assignments).forEach(name => {
-      const n = String(name).split(' (')[0];
-      const match = Object.keys(scoreMap).find(k => k.includes(n) || n.includes(k.split(' ')[0]));
+      const match = findAgentKey(scoreMap, name);
       if (match) scoreMap[match].cardsExecuted++;
     });
 
     // Cards closed (from decisions_log)
     decisions.forEach(d => {
       if (d.executorName) {
-        const n = String(d.executorName).split(' (')[0];
-        const match = Object.keys(scoreMap).find(k => k.includes(n) || n.includes(k.split(' ')[0]));
+        const match = findAgentKey(scoreMap, d.executorName);
         if (match) scoreMap[match].cardsClosed++;
       }
     });
 
-    // Debates / activity
+    // Debates / activity log
     activities.forEach(a => {
-      if (a.name && scoreMap[a.name]) {
-        scoreMap[a.name].debatesWon++;
+      if (a.name) {
+        const match = findAgentKey(scoreMap, a.name);
+        if (match) scoreMap[match].debatesWon++;
       }
     });
 
@@ -491,7 +527,6 @@ app.get('/api/rankings', async (req, res) => {
     // 🏆 Prize for 1st place
     if (ranked.length > 0) {
       ranked[0].prize = '🏆 Prêmio Funcionário do Minuto — Bônus de performance + destaque no painel!';
-      // Update agent description with prize badge
       const agents2 = readAgents();
       const topIdx = agents2.findIndex(a => a.id === ranked[0].agentId);
       if (topIdx !== -1 && !agents2[topIdx].advantage?.includes('🏆')) {
@@ -500,11 +535,10 @@ app.get('/api/rankings', async (req, res) => {
       }
     }
 
-    // 🎓 School for last place
+    // 🎓 School for last place (only if they have 0 or very low score)
     if (ranked.length > 1) {
       const last = ranked[ranked.length - 1];
       last.penalty = '🎓 Escola Obrigatória — Deve retornar com 100% de melhoria na descrição das atividades!';
-      // Update agent description with school mandate
       const agents2 = readAgents();
       const lastIdx = agents2.findIndex(a => a.id === last.agentId);
       if (lastIdx !== -1 && !agents2[lastIdx].disadvantage?.includes('🎓')) {
