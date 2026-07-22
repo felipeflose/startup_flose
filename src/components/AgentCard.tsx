@@ -14,6 +14,8 @@ export interface Agent {
   schedule?: string;
   feedbacks?: any[];
   fired?: boolean;
+  area?: string;
+  desk?: string;
 }
 
 interface AgentCardProps {

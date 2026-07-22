@@ -4,7 +4,7 @@ import { AgentCard } from './components/AgentCard';
 import { OrgChart } from './components/OrgChart';
 import { JiraDashboard } from './components/JiraDashboard';
 import { GemmaConsole } from './components/GemmaConsole';
-import { Briefcase, Cpu, FileText, Layers, Terminal, History, Users, Monitor } from 'lucide-react';
+import { Briefcase, Cpu, FileText, Layers, Terminal, History, Users, Monitor, Home } from 'lucide-react';
 import { CompanyPulse } from './components/CompanyPulse';
 
 function App() {
@@ -19,7 +19,7 @@ function App() {
   const [hrSearching, setHrSearching] = useState<boolean>(false);
   const [selectedAgentIds, setSelectedAgentIds] = useState<string[]>([]);
   const [selectedIssue, setSelectedIssue] = useState<{ key: string; summary: string; description: string } | null>(null);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'backlog' | 'agents' | 'docs' | 'decisions' | 'rh' | 'screens'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'backlog' | 'agents' | 'docs' | 'decisions' | 'rh' | 'screens' | 'office'>('dashboard');
   const [decisions, setDecisions] = useState<any[]>([]);
   const [selectedScreenKey, setSelectedScreenKey] = useState<string>('');
   const [loginSuccess, setLoginSuccess] = useState(false);
@@ -287,6 +287,27 @@ function App() {
           >
             <Users size={18} />
             RH & Gestão (Empresa)
+          </button>
+
+          <button
+            onClick={() => setActiveTab('office')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              padding: '12px 16px',
+              borderRadius: 'var(--radius-sm)',
+              border: 'none',
+              background: activeTab === 'office' ? 'var(--bg-tertiary)' : 'transparent',
+              color: activeTab === 'office' ? 'var(--color-primary)' : 'var(--text-secondary)',
+              cursor: 'pointer',
+              fontWeight: 600,
+              textAlign: 'left',
+              width: '100%'
+            }}
+          >
+            <Home size={18} />
+            Escritório & Áreas
           </button>
 
           <button
@@ -935,6 +956,103 @@ function App() {
             </div>
           </div>
 
+        )}
+        {activeTab === 'office' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div>
+              <h1 style={{ fontSize: '2.25rem', fontWeight: 800, textAlign: 'left' }}>
+                🏢 Mapa de <span className="text-gradient">Áreas & Estações de Trabalho</span>
+              </h1>
+              <p style={{ color: 'var(--text-secondary)', textAlign: 'left' }}>
+                Layout projetado pelo **Enzo Facilities** (Infraestrutura) e organizado pelo **Hugo Organizador** (RH/Estrutura) para acomodar todos os colaboradores da Flose Startup.
+              </p>
+            </div>
+
+            {/* Organizadores Info */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+              <div className="glass" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '16px', background: 'rgba(96, 165, 250, 0.1)', border: '1px solid #60a5fa' }}>
+                <span style={{ fontSize: '2.5rem' }}>📋</span>
+                <div style={{ textAlign: 'left' }}>
+                  <strong style={{ color: '#60a5fa', fontSize: '1rem' }}>Hugo Organizador (RH & Processos)</strong>
+                  <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                    Estruturou os colaboradores em 4 departamentos distintos para otimizar os fluxos de comunicação e debates.
+                  </p>
+                </div>
+              </div>
+              <div className="glass" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '16px', background: 'rgba(52, 211, 153, 0.1)', border: '1px solid #34d399' }}>
+                <span style={{ fontSize: '2.5rem' }}>🏗️</span>
+                <div style={{ textAlign: 'left' }}>
+                  <strong style={{ color: '#34d399', fontSize: '1rem' }}>Enzo Facilities (Engenharia Física)</strong>
+                  <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                    Alocou as mesas físicas e salas garantindo a ergonomia e sinergia de mesa (clean desk policy ativa).
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Department Grid Layout */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(480px, 1fr))', gap: '24px', marginTop: '12px' }}>
+              {[
+                { name: "Diretoria & C-Suite", color: "#ffd700", desc: "Sala executiva da presidência e diretoria." },
+                { name: "Engenharia & TI", color: "#3b82f6", desc: "Ilha de desenvolvimento backend, frontend e nuvem." },
+                { name: "Produto & Design", color: "#f59e0b", desc: "Espaço criativo para UI/UX e roadmap." },
+                { name: "Qualidade, RH & Operações", color: "#34d399", desc: "Área de testes, facilitação ágil e gestão de pessoas." }
+              ].map(dept => {
+                const deptAgents = agents.filter(a => !a.fired && (a.area === dept.name || (!a.area && dept.name === "Engenharia & TI")));
+                return (
+                  <div key={dept.name} className="glass" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left', minHeight: '380px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: `2px solid ${dept.color}`, paddingBottom: '8px' }}>
+                      <div>
+                        <h2 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>{dept.name}</h2>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{dept.desc}</span>
+                      </div>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 700, color: dept.color, background: `${dept.color}1A`, padding: '2px 8px', borderRadius: '12px' }}>
+                        {deptAgents.length} pessoas
+                      </span>
+                    </div>
+
+                    {/* Mesas list */}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', overflowY: 'auto', maxHeight: '350px' }}>
+                      {deptAgents.map(agent => (
+                        <div key={agent.id} style={{
+                          padding: '12px',
+                          background: 'var(--bg-secondary)',
+                          borderRadius: '8px',
+                          border: '1px solid var(--border-color)',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '6px',
+                          position: 'relative'
+                        }}>
+                          <span style={{
+                            position: 'absolute',
+                            top: '8px',
+                            right: '8px',
+                            fontSize: '0.65rem',
+                            fontWeight: 700,
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            background: 'rgba(255,255,255,0.03)',
+                            color: 'var(--color-secondary)',
+                            border: '1px solid var(--border-color)'
+                          }}>
+                            {agent.desk || 'Mesa'}
+                          </span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '1.5rem' }}>{agent.avatar}</span>
+                            <div style={{ overflow: 'hidden' }}>
+                              <strong style={{ fontSize: '0.85rem', color: 'var(--text-primary)', whiteSpace: 'nowrap', textOverflow: 'ellipsis', display: 'block' }}>{agent.name}</strong>
+                              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{agent.role}</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         )}
         {activeTab === 'screens' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
