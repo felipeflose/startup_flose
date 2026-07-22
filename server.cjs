@@ -1005,12 +1005,7 @@ const runAgentTasksSimulation = async (parentKey, summary, activeAgents) => {
       ticketKey = jiraResponse.data?.key;
 
       if (ticketKey) {
-        logActivity(agent.id, agent.name, agent.avatar, 'progressing', ticketKey, role.title);
-        await sleep(500);
-        await transitionJiraIssue(ticketKey, 'In Progress');
-        await sleep(800);
-        await transitionJiraIssue(ticketKey, 'Done');
-        logActivity(agent.id, agent.name, agent.avatar, 'closed', ticketKey, role.title);
+        logActivity(agent.id, agent.name, agent.avatar, 'created', ticketKey, role.title);
       }
     } catch (err) {
       console.error(`Subtask error for ${agent.name}:`, err.message);
@@ -1031,15 +1026,11 @@ const runAgentTasksSimulation = async (parentKey, summary, activeAgents) => {
         const fallbackRes = await axios.post(`${JIRA_HOST}/rest/api/3/issue`, taskBody, { headers: getJiraAuthHeader() });
         ticketKey = fallbackRes.data?.key;
         if (ticketKey) {
-          await sleep(500);
-          await transitionJiraIssue(ticketKey, 'In Progress');
-          await sleep(600);
-          await transitionJiraIssue(ticketKey, 'Done');
-          logActivity(agent.id, agent.name, agent.avatar, 'closed', ticketKey, role.title);
+          logActivity(agent.id, agent.name, agent.avatar, 'created', ticketKey, role.title);
         }
       } catch (fallbackErr) {
         ticketKey = `MOCK-${role.prefix}-${Math.floor(100 + Math.random() * 900)}`;
-        logActivity(agent.id, agent.name, agent.avatar, 'closed', ticketKey, role.title);
+        logActivity(agent.id, agent.name, agent.avatar, 'created', ticketKey, role.title);
       }
     }
 
