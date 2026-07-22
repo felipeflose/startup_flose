@@ -488,15 +488,25 @@ app.get('/api/jira/issues', async (req, res) => {
       })();
     }
 
+    const creatorsFile = path.join(__dirname, 'task_creators.json');
+    let creators = {};
+    if (fs.existsSync(creatorsFile)) {
+      try {
+        creators = JSON.parse(fs.readFileSync(creatorsFile, 'utf8'));
+      } catch (e) {}
+    }
+
     let assignmentsChanged = false;
+    let creatorsChanged = false;
+
     issues.forEach(issue => {
+      // 1. Resolve Assignee / Executor
       const dec = decisions.find(d => d.issueKey === issue.key);
       if (dec && dec.executorName) {
         issue.executorName = dec.executorName;
       } else if (assignments[issue.key]) {
         issue.executorName = assignments[issue.key];
       } else {
-        // Resolve on the fly based on summary/description keywords
         const summaryText = (issue.fields.summary || '').toLowerCase();
         let assignedAgentName = 'David Dev';
         if (summaryText.includes('designer') || summaryText.includes('design') || summaryText.includes('ux') || summaryText.includes('ui') || summaryText.includes('layout') || summaryText.includes('pixel') || summaryText.includes('contraste') || summaryText.includes('skeleton')) {
@@ -519,11 +529,35 @@ app.get('/api/jira/issues', async (req, res) => {
         assignments[issue.key] = assignedAgentName;
         assignmentsChanged = true;
       }
+
+      // 2. Resolve Creator
+      if (creators[issue.key]) {
+        issue.creatorName = creators[issue.key];
+      } else {
+        const summaryText = (issue.fields.summary || '').toLowerCase();
+        let derivedCreator = 'Sarah Backlog (PM)';
+        if (summaryText.includes('onboarding') || summaryText.includes('contratacao') || summaryText.includes('contrat') || summaryText.includes('recrutamento') || summaryText.includes('admitiu')) {
+          derivedCreator = 'Hugo Organizador (RH)';
+        } else if (summaryText.includes('demissao') || summaryText.includes('desligar') || summaryText.includes('desligamento')) {
+          derivedCreator = 'Arthur de Flose (Diretor de Governança)';
+        } else if (summaryText.includes('feedback') || summaryText.includes('elogio') || summaryText.includes('advertencia')) {
+          derivedCreator = 'Hugo Organizador (RH)';
+        }
+        
+        issue.creatorName = derivedCreator;
+        creators[issue.key] = derivedCreator;
+        creatorsChanged = true;
+      }
     });
 
     if (assignmentsChanged) {
       try {
         fs.writeFileSync(assignmentsFile, JSON.stringify(assignments, null, 2), 'utf8');
+      } catch (e) {}
+    }
+    if (creatorsChanged) {
+      try {
+        fs.writeFileSync(creatorsFile, JSON.stringify(creators, null, 2), 'utf8');
       } catch (e) {}
     }
 
@@ -611,13 +645,23 @@ app.post('/api/jira/issue', async (req, res) => {
       const assignmentsFile = path.join(__dirname, 'task_assignments.json');
       let assignments = {};
       if (fs.existsSync(assignmentsFile)) {
-        try {
-          assignments = JSON.parse(fs.readFileSync(assignmentsFile, 'utf8'));
-        } catch (e) {}
+        try { assignments = JSON.parse(fs.readFileSync(assignmentsFile, 'utf8')); } catch (e) {}
       }
       assignments[jiraKey] = assignedAgentName;
       fs.writeFileSync(assignmentsFile, JSON.stringify(assignments, null, 2), 'utf8');
       console.log(`[GOVERNANÇA] Card ${jiraKey} atribuído a ${assignedAgentName}`);
+
+      // Persist creator name
+      const creatorsFile = path.join(__dirname, 'task_creators.json');
+      let creators = {};
+      if (fs.existsSync(creatorsFile)) {
+        try { creators = JSON.parse(fs.readFileSync(creatorsFile, 'utf8')); } catch (e) {}
+      }
+      // Resolve creator based on context
+      let creatorName = req.body.creatorName || 'Sarah Backlog (PM)';
+      creators[jiraKey] = creatorName;
+      fs.writeFileSync(creatorsFile, JSON.stringify(creators, null, 2), 'utf8');
+      console.log(`[GOVERNANÇA] Card ${jiraKey} criado por ${creatorName}`);
     }
 
     res.json(response.data);
