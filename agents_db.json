@@ -83,8 +83,8 @@
     "schedule": "09:00 - 18:00",
     "feedbacks": [],
     "currentTask": null,
-    "lastActive": "2026-07-01T09:38:48.959Z",
-    "totalTasksCompleted": 16
+    "lastActive": "2026-07-01T10:22:55.325Z",
+    "totalTasksCompleted": 18
   },
   {
     "id": "coord_scrum",
@@ -114,8 +114,8 @@
     "schedule": "09:00 - 18:00",
     "feedbacks": [],
     "currentTask": null,
-    "lastActive": "2026-07-01T09:39:01.332Z",
-    "totalTasksCompleted": 16
+    "lastActive": "2026-07-01T10:23:08.357Z",
+    "totalTasksCompleted": 18
   },
   {
     "id": "sr_dev",
@@ -129,10 +129,35 @@
     "personality": "Introvertido, focado na resolução prática de problemas, e focado em código.",
     "status": "Disponível",
     "schedule": "09:00 - 18:00",
-    "feedbacks": [],
+    "feedbacks": [
+      {
+        "id": "1782901449248n1zy",
+        "timestamp": "2026-07-01T10:24:09.249Z",
+        "type": "elogio",
+        "text": "Demonstrou grande flexibilidade operacional para equilibrar os prazos agressivos da Sprint com a qualidade da entrega.",
+        "impact": "Foco Técnico",
+        "sprintTicket": "KAN-1982"
+      },
+      {
+        "id": "1782901162870tlr6",
+        "timestamp": "2026-07-01T10:19:22.870Z",
+        "type": "elogio",
+        "text": "Demonstrou grande flexibilidade operacional para equilibrar os prazos agressivos da Sprint com a qualidade da entrega.",
+        "impact": "Foco Técnico",
+        "sprintTicket": "KAN-1981"
+      },
+      {
+        "id": "17829011341728lf9",
+        "timestamp": "2026-07-01T10:18:54.172Z",
+        "type": "elogio",
+        "text": "Demonstrou grande flexibilidade operacional para equilibrar os prazos agressivos da Sprint com a qualidade da entrega.",
+        "impact": "Foco Técnico",
+        "sprintTicket": "KAN-1981"
+      }
+    ],
     "currentTask": null,
-    "lastActive": "2026-07-01T09:38:57.601Z",
-    "totalTasksCompleted": 16
+    "lastActive": "2026-07-01T10:23:04.913Z",
+    "totalTasksCompleted": 18
   },
   {
     "id": "sr_ux",
@@ -148,7 +173,116 @@
     "schedule": "09:00 - 18:00",
     "feedbacks": [],
     "currentTask": null,
-    "lastActive": "2026-07-01T09:38:53.382Z",
-    "totalTasksCompleted": 16
+    "lastActive": "2026-07-01T10:23:00.131Z",
+    "totalTasksCompleted": 18
+  },
+  {
+    "id": "spec_game_dev",
+    "name": "Arthur GameDev",
+    "role": "Desenvolvedor Core de Games",
+    "avatar": "🎮",
+    "level": "Especialista",
+    "status": "Disponível",
+    "advantage": "Domina shaders, físicas de jogo, colisões complexas e WebGL/Canvas.",
+    "disadvantage": "Foca excessivamente em otimização de engine de jogo, ignorando regras de negócio.",
+    "dilemma": "Fidelidade de Mecânica vs. Prazo de Lançamento",
+    "personality": "Perfeccionista, fanático por taxa de quadros (FPS) e focado em engenharia de jogo.",
+    "feedbacks": []
+  },
+  {
+    "id": "spec_game_designer",
+    "name": "Miyamoto Designer",
+    "role": "Game Designer Sênior",
+    "avatar": "🕹️",
+    "level": "Especialista",
+    "status": "Disponível",
+    "advantage": "Mapeia loops de gameplay divertidos, balanceamento e engajamento do jogador.",
+    "disadvantage": "Propõe mecânicas complexas que extrapolam o cronograma de desenvolvimento.",
+    "dilemma": "Diversão do Gameplay vs. Simplicidade Técnica",
+    "personality": "Criativo, saudosista dos clássicos, focado em diversão e experiência do usuário.",
+    "feedbacks": []
+  },
+  {
+    "id": "spec_sap_consultant",
+    "name": "Silvio SAP",
+    "role": "Consultor Funcional SAP (MM/SD)",
+    "avatar": "💼",
+    "level": "Especialista",
+    "status": "Disponível",
+    "advantage": "Conhece fluxos complexos de compras, faturamento e integrações B2B corporativas.",
+    "disadvantage": "Tende a complicar processos simples com burocracias de ERP tradicional.",
+    "dilemma": "Padrão Rigoroso do ERP vs. Agilidade Operacional",
+    "personality": "Corporativo, formal, metódico e focado em governança empresarial.",
+    "feedbacks": []
+  },
+  {
+    "id": "sr_dev_lucas",
+    "name": "Lucas Frontend",
+    "role": "Desenvolvedor Frontend Sênior",
+    "level": "Analista SR",
+    "avatar": "⚛️",
+    "advantage": "Exímio programador React, otimiza performance web de forma incomparável.",
+    "disadvantage": "Ignora compatibilidade com navegadores legados por capricho tecnológico.",
+    "dilemma": "Adoção de Novas Ferramentas vs. Estabilidade do Framework.",
+    "personality": "Moderno, adora novidades tecnológicas, ágil e focado em interações fluidas.",
+    "status": "Disponível",
+    "schedule": "09:00 - 18:00",
+    "feedbacks": []
+  },
+  {
+    "id": "sr_dev_mariana",
+    "name": "Mariana Backend",
+    "role": "Desenvolvedora Backend Sênior",
+    "level": "Analista SR",
+    "avatar": "🗄️",
+    "advantage": "Domina APIs RESTful escaláveis, banco de dados SQL/NoSQL e segurança.",
+    "disadvantage": "Aumenta a complexidade de rotas simples por excesso de padronização.",
+    "dilemma": "Segurança de Acesso Rígida vs. Facilidade de Integração de APIs.",
+    "personality": "Focada em segurança, metódica, silenciosa e focada em performance de servidor.",
+    "status": "Disponível",
+    "schedule": "09:00 - 18:00",
+    "feedbacks": []
+  },
+  {
+    "id": "sr_devops_bruno",
+    "name": "Bruno DevOps",
+    "role": "Engenheiro DevOps Sênior",
+    "level": "Analista SR",
+    "avatar": "🐳",
+    "advantage": "Automatiza pipelines CI/CD com facilidade e gerencia infraestrutura na nuvem.",
+    "disadvantage": "Bloqueia deploys imediatos se não cumprirem 100% das regras de linting/pipeline.",
+    "dilemma": "Deploy Contínuo Imediato vs. Rigor nos Testes de Pipeline.",
+    "personality": "Preocupado com segurança e estabilidade, metódico e adora automação.",
+    "status": "Disponível",
+    "schedule": "09:00 - 18:00",
+    "feedbacks": []
+  },
+  {
+    "id": "sr_qa_juliana",
+    "name": "Juliana QA Sênior",
+    "role": "Analista de QA Sênior",
+    "level": "Analista SR",
+    "avatar": "🧪",
+    "advantage": "Encontra bugs ocultos em condições extremas de concorrência de rede.",
+    "disadvantage": "Pode atrasar sprints exigindo refatorações cosméticas sem impacto crítico.",
+    "dilemma": "Qualidade de Código Impecável vs. Prazo de Lançamento Comercial.",
+    "personality": "Crítica, focada em detalhes finos, realista e direta nos feedbacks.",
+    "status": "Disponível",
+    "schedule": "09:00 - 18:00",
+    "feedbacks": []
+  },
+  {
+    "id": "sr_qa_roberto",
+    "name": "Roberto Automation QA",
+    "role": "Engenheiro de Automação de Testes Sênior",
+    "level": "Analista SR",
+    "avatar": "🤖",
+    "advantage": "Cria scripts Cypress/Playwright robustos que cobrem toda a regressão de ponta a ponta.",
+    "disadvantage": "Demora muito tempo para configurar testes automatizados em novas features rápidas.",
+    "dilemma": "Criação de Teste Automatizado Robusto vs. Teste Manual Rápido para Lançamento.",
+    "personality": "Focado em automação, lógico, perfeccionista de pipelines de teste.",
+    "status": "Disponível",
+    "schedule": "09:00 - 18:00",
+    "feedbacks": []
   }
 ]
