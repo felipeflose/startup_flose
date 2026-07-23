@@ -3116,6 +3116,26 @@ app.post('/api/hr/hire', async (req, res) => {
   }
 });
 
+// Endpoint to fetch GitHub commits for all cards
+app.get('/api/card-commits', (req, res) => {
+  const commitsFile = path.join(__dirname, 'card_commits.json');
+  let commits = {};
+  if (fs.existsSync(commitsFile)) {
+    try { commits = JSON.parse(fs.readFileSync(commitsFile, 'utf8')); } catch (e) {}
+  }
+  res.json(commits);
+});
+
 app.listen(PORT, () => {
   console.log(`Flose Startup Backend running on port ${PORT}`);
+
+  // Start Full 3-Stage Autonomous Gemma 4 Routine (PO Creation -> Dev Execution -> QA Approval)
+  try {
+    const { startRoutine } = require('./gemma4_autonomous_pipeline.cjs');
+    startRoutine();
+  } catch (e) {
+    console.error('Failed to start Gemma 4 Autonomous Pipeline:', e.message);
+  }
 });
+
+
