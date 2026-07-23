@@ -69,7 +69,7 @@ async function executeGovernanceCleanup() {
     }
   }
 
-  console.log("Starting full Jira board cleanup...");
+  console.log("Starting targeted JQL Epic orphan cleanup...");
   const headers = getJiraAuthHeader();
 
   try {
@@ -77,35 +77,37 @@ async function executeGovernanceCleanup() {
     const epicMap = {};
     const epicSearch = await axios.get(`${JIRA_HOST}/rest/api/3/search/jql`, {
       headers,
-      params: { jql: 'project = KAN AND issuetype = Epic', maxResults: 50, fields: 'summary' }
+      params: { jql: 'project = KAN AND issuetype = Epic', maxResults: 100, fields: 'summary' }
     });
     (epicSearch.data?.issues || []).forEach(issue => {
       epicMap[issue.fields.summary] = issue.key;
     });
 
-    // 2. Fetch all tasks in KAN project
-    const searchRes = await axios.get(`${JIRA_HOST}/rest/api/3/search/jql`, {
-      headers,
-      params: {
-        jql: 'project = KAN AND issuetype != Epic',
-        maxResults: 100,
-        fields: 'summary,status,parent'
+    let loop = true;
+    let totalCleaned = 0;
+
+    while (loop) {
+      console.log("Fetching next batch of orphan issues (parent = null)...");
+      const searchRes = await axios.get(`${JIRA_HOST}/rest/api/3/search/jql`, {
+        headers,
+        params: {
+          jql: 'project = KAN AND parent = null AND issuetype != Epic',
+          maxResults: 100,
+          fields: 'summary,status'
+        }
+      });
+
+      const orphans = searchRes.data?.issues || [];
+      if (orphans.length === 0) {
+        console.log("No more orphan issues found!");
+        break;
       }
-    });
 
-    const issues = searchRes.data?.issues || [];
-    console.log(`Auditing ${issues.length} issues...`);
-
-    let adjustedCount = 0;
-
-    for (const issue of issues) {
-      const summaryText = (issue.fields.summary || '').toLowerCase();
-      let parentKey = issue.fields.parent?.key;
-      let statusName = issue.fields.status?.name;
-      let needsUpdate = false;
-
-      // Check Epic Parent
-      if (!parentKey) {
+      console.log(`Cleaning batch of ${orphans.length} orphan issues...`);
+      for (const issue of orphans) {
+        const summaryText = (issue.fields.summary || '').toLowerCase();
+        let statusName = issue.fields.status?.name;
+        
         let targetEpic = 'Infraestrutura & Tecnologia';
         if (summaryText.includes('contrat') || summaryText.includes('colaborador') || summaryText.includes('demiss') || summaryText.includes('rh') || summaryText.includes('onboarding')) {
           targetEpic = 'Gestão de Pessoas';
@@ -119,39 +121,45 @@ async function executeGovernanceCleanup() {
         
         const epicKey = epicMap[targetEpic];
         if (epicKey) {
-          console.log(`  Linking KAN issue ${issue.key} to Epic: ${targetEpic} (${epicKey})`);
-          await axios.put(`${JIRA_HOST}/rest/api/3/issue/${issue.key}`, {
-            fields: { parent: { key: epicKey } }
-          }, { headers });
-          needsUpdate = true;
+          console.log(`  Linking orphan ${issue.key} to Epic: ${targetEpic} (${epicKey})`);
+          try {
+            await axios.put(`${JIRA_HOST}/rest/api/3/issue/${issue.key}`, {
+              fields: { parent: { key: epicKey } }
+            }, { headers });
+            totalCleaned++;
+          } catch (e) {
+            console.error(`  Failed to link ${issue.key}:`, e.message);
+          }
+        }
+
+        // Also ensure status starts in "A fazer" if stuck in others (excluding resolved/done ones)
+        if (statusName !== 'A fazer' && statusName !== 'To Do' && statusName !== 'Concluído' && statusName !== 'Done') {
+          console.log(`  Resetting status of ${issue.key} to "A fazer" (Current: "${statusName}")`);
+          try {
+            const transRes = await axios.get(`${JIRA_HOST}/rest/api/3/issue/${issue.key}/transitions`, { headers });
+            const transitions = transRes.data?.transitions || [];
+            const todoTrans = transitions.find(t => {
+              const name = (t.name || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+              return name.includes('fazer') || name.includes('todo');
+            });
+
+            if (todoTrans) {
+              await transitionIssue(issue.key, todoTrans.id);
+            }
+          } catch (e) {
+            console.error(`  Failed to reset status for ${issue.key}:`, e.message);
+          }
         }
       }
 
-      // Check birth status rule (move back to A fazer if not resolved/done but stuck in other states)
-      if (statusName !== 'A fazer' && statusName !== 'To Do' && statusName !== 'Concluído' && statusName !== 'Done') {
-        console.log(`  Resetting KAN issue ${issue.key} to "A fazer" (Current status: "${statusName}")`);
-        
-        const transRes = await axios.get(`${JIRA_HOST}/rest/api/3/issue/${issue.key}/transitions`, { headers });
-        const transitions = transRes.data?.transitions || [];
-        const todoTrans = transitions.find(t => {
-          const name = (t.name || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-          return name.includes('fazer') || name.includes('todo');
-        });
-
-        if (todoTrans) {
-          await transitionIssue(issue.key, todoTrans.id);
-          needsUpdate = true;
-        }
-      }
-
-      if (needsUpdate) {
-        adjustedCount++;
-        const message = `👑 Arthur de Flose (Diretor de Governança) auditou e corrigiu o card, vinculando ao Épico correspondente e resetando status.`;
-        logActivity('auditor_arthur', 'Arthur de Flose', '👑⚖️', message, issue.key, issue.fields.summary);
+      // Safeguard to prevent infinite loops if something fails to update
+      if (totalCleaned > 5000) {
+        console.warn("Safety limit reached. Stopping loop.");
+        break;
       }
     }
 
-    console.log(`Governance cleanup complete! Adjusted ${adjustedCount} cards.`);
+    console.log(`Governance cleanup complete! Cleaned total of ${totalCleaned} orphan cards.`);
   } catch (err) {
     console.error("Cleanup failed:", err.message);
   }

@@ -27,15 +27,32 @@ export const PrototypeViewer: React.FC<PrototypeViewerProps> = ({ decisions, jir
   const [filter, setFilter] = useState<'all' | 'done' | 'in_progress' | 'gemma'>('all');
   const [viewportMode, setViewportMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [activeTab, setActiveTab] = useState<'preview' | 'code' | 'spec'>('preview');
+  const [realCode, setRealCode] = useState<string>('');
 
-  // Interactive Prototype State Controls
-  const [loginSuccess, setLoginSuccess] = useState(false);
-  const [scanActive, setScanActive] = useState(false);
-  const [scanProgress, setScanProgress] = useState(0);
-  const [dashUsers, setDashUsers] = useState(14850);
-  const [dashLoad, setDashLoad] = useState(38);
-  const [ticBoard, setTicBoard] = useState<Array<string | null>>(Array(9).fill(null));
-  const [ticTurn, setTicTurn] = useState<'X' | 'O'>('X');
+  useEffect(() => {
+    const selectedItem = items.find(i => i.id === selectedId) || items[0];
+    if (!selectedItem) return;
+    setRealCode('Carregando código fonte...');
+    const ext = selectedItem.issueSummary.toLowerCase().match(/tela|layout|login|visual|ui|ux|componente|botao|modal|tabela|card|jogo|velha/) ? 'tsx' : 'js';
+    const filePath = `src/simulations/${selectedItem.issueKey}-code.${ext}`;
+    fetch(`http://localhost:5001/api/code?file=${encodeURIComponent(filePath)}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.content) {
+          setRealCode(data.content);
+        } else {
+          const fallbackPath = `docs/simulations/${selectedItem.issueKey}-code.md`;
+          return fetch(`http://localhost:5001/api/code?file=${encodeURIComponent(fallbackPath)}`)
+            .then(res => res.json())
+            .then(data2 => {
+              setRealCode(data2.content || 'Código fonte não disponível.');
+            });
+        }
+      })
+      .catch(err => {
+        setRealCode('Falha ao carregar código fonte: ' + err.message);
+      });
+  }, [selectedId, items]);
 
   // Combine Chamber decisions and Jira issues into unified Prototypes list
   useEffect(() => {
@@ -95,18 +112,8 @@ export const PrototypeViewer: React.FC<PrototypeViewerProps> = ({ decisions, jir
 
   const selectedItem = items.find(i => i.id === selectedId) || filteredItems[0] || items[0];
 
-  // Identify screen type for dynamic prototype rendering
-  const getScreenType = (summary: string) => {
-    const s = (summary || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    if (s.includes('login') || s.includes('autentic') || s.includes('senha') || s.includes('mfa')) return 'login';
-    if (s.includes('dashboard') || s.includes('metricas') || s.includes('relatorio') || s.includes('grafic') || s.includes('dora')) return 'dashboard';
-    if (s.includes('seguranca') || s.includes('secops') || s.includes('owasp') || s.includes('vulnerab')) return 'secops';
-    if (s.includes('datalake') || s.includes('gcp') || s.includes('etl') || s.includes('sql')) return 'datalake';
-    if (s.includes('jogo') || s.includes('velha') || s.includes('game') || s.includes('tictactoe') || s.includes('gta')) return 'game';
-    return 'workbench';
-  };
 
-  const screenType = selectedItem ? getScreenType(selectedItem.issueSummary) : 'workbench';
+
   const githubCommit = selectedItem ? commits[selectedItem.issueKey] : null;
 
   return (
@@ -200,8 +207,6 @@ export const PrototypeViewer: React.FC<PrototypeViewerProps> = ({ decisions, jir
                     key={item.id}
                     onClick={() => {
                       setSelectedId(item.id);
-                      setLoginSuccess(false);
-                      setScanActive(false);
                     }}
                     style={{
                       padding: '12px',
@@ -350,214 +355,19 @@ export const PrototypeViewer: React.FC<PrototypeViewerProps> = ({ decisions, jir
                     </div>
 
                     {/* Live Render Area */}
-                    <div style={{ flex: 1, padding: '24px', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'radial-gradient(circle at top, #0f172a 0%, #020617 100%)' }}>
-                      
-                      {/* 1. Login Prototype */}
-                      {screenType === 'login' && (
-                        <div className="glass" style={{ width: '100%', maxWidth: '380px', padding: '28px', borderRadius: '14px', display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left' }}>
-                          {loginSuccess ? (
-                            <div style={{ textAlign: 'center', padding: '24px 0', display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
-                              <span style={{ fontSize: '3.5rem' }}>🎉</span>
-                              <h4 style={{ color: '#34d399', fontSize: '1.3rem', margin: 0 }}>Autenticação Concluída com Sucesso!</h4>
-                              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>Acesso concedido pelo Gateway Seguro da Flose Startup.</p>
-                              <button onClick={() => setLoginSuccess(false)} style={{ padding: '8px 16px', borderRadius: '6px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: '#fff', fontSize: '0.8rem', cursor: 'pointer', marginTop: '8px' }}>Efetuar Logout</button>
-                            </div>
-                          ) : (
-                            <>
-                              <div style={{ textAlign: 'center', marginBottom: '8px' }}>
-                                <strong style={{ fontSize: '1.3rem', color: '#fff' }}>Portal Corporativo</strong>
-                                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: '4px 0 0 0' }}>Staging Protegida por Gemma Autônoma</p>
-                              </div>
-                              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                                <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>E-mail corporativo</label>
-                                <input type="email" defaultValue="ceo@flosestartup.ai" style={{ padding: '10px 14px', borderRadius: '6px', background: 'rgba(255, 255, 255, 0.04)', border: '1px solid var(--border-color)', color: '#fff', fontSize: '0.85rem' }} />
-                              </div>
-                              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                                <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Senha de Acesso</label>
-                                <input type="password" defaultValue="••••••••" style={{ padding: '10px 14px', borderRadius: '6px', background: 'rgba(255, 255, 255, 0.04)', border: '1px solid var(--border-color)', color: '#fff', fontSize: '0.85rem' }} />
-                              </div>
-                              <button
-                                onClick={() => setLoginSuccess(true)}
-                                className="bg-gradient"
-                                style={{ padding: '12px', borderRadius: '8px', border: 'none', color: '#fff', fontWeight: 700, cursor: 'pointer', textAlign: 'center', marginTop: '8px', width: '100%', fontSize: '0.9rem' }}
-                              >
-                                🔑 Autenticar no Sistema
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      )}
-
-                      {/* 2. Dashboard Prototype */}
-                      {screenType === 'dashboard' && (
-                        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <div>
-                              <h3 style={{ margin: 0, fontSize: '1.2rem', color: '#fff' }}>Painel Executivo de Métricas DORA</h3>
-                              <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Métricas em tempo real geradas pelos agentes de engenharia</p>
-                            </div>
-                            <button
-                              onClick={() => {
-                                setDashUsers(Math.floor(12000 + Math.random() * 8000));
-                                setDashLoad(Math.floor(20 + Math.random() * 50));
-                              }}
-                              style={{ padding: '8px 14px', borderRadius: '6px', background: 'var(--color-primary)', border: 'none', color: '#fff', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}
-                            >
-                              🔄 Atualizar Dados
-                            </button>
-                          </div>
-
-                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
-                            <div className="glass" style={{ padding: '18px', borderRadius: '10px' }}>
-                              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Usuários Ativos</span>
-                              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--color-primary)', marginTop: '4px' }}>{dashUsers.toLocaleString()}</div>
-                            </div>
-                            <div className="glass" style={{ padding: '18px', borderRadius: '10px' }}>
-                              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Deployment Frequency</span>
-                              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#34d399', marginTop: '4px' }}>14.2 / dia</div>
-                            </div>
-                            <div className="glass" style={{ padding: '18px', borderRadius: '10px' }}>
-                              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Carga do Servidor</span>
-                              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: dashLoad > 60 ? '#ef4444' : '#fbbf24', marginTop: '4px' }}>{dashLoad}%</div>
-                            </div>
-                          </div>
-
-                          <div className="glass" style={{ padding: '20px', borderRadius: '10px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>Telemetria de Deployments Autônomos (Gemma 4)</span>
-                            <div style={{ height: '140px', display: 'flex', alignItems: 'flex-end', gap: '12px', paddingBottom: '8px', borderBottom: '1px solid var(--border-color)' }}>
-                              <div style={{ flex: 1, background: 'var(--color-primary)', height: '40%', borderRadius: '4px' }}></div>
-                              <div style={{ flex: 1, background: 'var(--color-primary)', height: '65%', borderRadius: '4px' }}></div>
-                              <div style={{ flex: 1, background: 'var(--color-primary)', height: '50%', borderRadius: '4px' }}></div>
-                              <div style={{ flex: 1, background: 'var(--color-primary)', height: '80%', borderRadius: '4px' }}></div>
-                              <div style={{ flex: 1, background: '#34d399', height: `${dashLoad}%`, borderRadius: '4px', transition: 'height 0.3s ease' }}></div>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* 3. SecOps Defense Prototype */}
-                      {screenType === 'secops' && (
-                        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left' }}>
-                          <div className="glass" style={{ padding: '20px', borderRadius: '12px', border: '1px solid rgba(239, 68, 68, 0.3)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <div>
-                              <h4 style={{ margin: 0, color: '#ef4444', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#ef4444' }}></span>
-                                Flose SecOps Defense Shield
-                              </h4>
-                              <p style={{ margin: '4px 0 0 0', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Proteção OWASP Top 10 ativada pelo Gemma 4</p>
-                            </div>
-                            <span style={{ padding: '6px 12px', borderRadius: '6px', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid #10b981', color: '#34d399', fontSize: '0.8rem', fontWeight: 700 }}>EM CONFORMIDADE</span>
-                          </div>
-
-                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                            <div className="glass" style={{ padding: '20px', borderRadius: '10px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                              <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>Varredura de Vulnerabilidades</span>
-                              {scanActive ? (
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                  <div style={{ fontSize: '0.85rem', color: '#fbbf24' }}>Analisando portas e pacotes... {scanProgress}%</div>
-                                  <div style={{ width: '100%', height: '8px', background: 'var(--bg-tertiary)', borderRadius: '4px', overflow: 'hidden' }}>
-                                    <div style={{ width: `${scanProgress}%`, height: '100%', background: '#fbbf24', transition: 'width 0.2s ease' }}></div>
-                                  </div>
-                                </div>
-                              ) : (
-                                <button
-                                  onClick={() => {
-                                    setScanActive(true);
-                                    setScanProgress(0);
-                                    const inv = setInterval(() => {
-                                      setScanProgress(p => {
-                                        if (p >= 100) {
-                                          clearInterval(inv);
-                                          setTimeout(() => setScanActive(false), 1000);
-                                          return 100;
-                                        }
-                                        return p + 20;
-                                      });
-                                    }, 250);
-                                  }}
-                                  style={{ padding: '10px', borderRadius: '6px', background: '#fbbf24', border: 'none', color: '#000', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer' }}
-                                >
-                                  🛡️ Executar Scanner OWASP
-                                </button>
-                              )}
-                            </div>
-
-                            <div className="glass" style={{ padding: '20px', borderRadius: '10px', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                              <strong>Status dos Módulos:</strong>
-                              <div style={{ marginTop: '8px', display: 'flex', flexDirection: 'column', gap: '6px', fontFamily: 'monospace' }}>
-                                <div style={{ color: '#34d399' }}>✓ MFA Obligatory Gate: PASS</div>
-                                <div style={{ color: '#34d399' }}>✓ Input Sanitizer: PASS</div>
-                                <div style={{ color: '#34d399' }}>✓ Rate Limiting (100 req/min): PASS</div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* 4. Game / TicTacToe Prototype */}
-                      {screenType === 'game' && (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center' }}>
-                          <h3 style={{ margin: 0, fontSize: '1.3rem', color: '#fff', fontWeight: 700 }}>Jogo da Velha Autônomo</h3>
-                          <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Vez do jogador: <strong style={{ color: 'var(--color-primary)' }}>{ticTurn}</strong></p>
-
-                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', width: '240px' }}>
-                            {ticBoard.map((val, idx) => (
-                              <button
-                                key={idx}
-                                onClick={() => {
-                                  if (val || ticBoard.every(b => b)) return;
-                                  const next = [...ticBoard];
-                                  next[idx] = ticTurn;
-                                  setTicBoard(next);
-                                  setTicTurn(ticTurn === 'X' ? 'O' : 'X');
-                                }}
-                                style={{
-                                  width: '70px', height: '70px', borderRadius: '10px',
-                                  background: 'var(--bg-secondary)', border: '1px solid var(--border-color)',
-                                  fontSize: '1.8rem', fontWeight: 800, color: val === 'X' ? '#34d399' : '#a78bfa',
-                                  cursor: 'pointer'
-                                }}
-                              >
-                                {val}
-                              </button>
-                            ))}
-                          </div>
-
-                          <button
-                            onClick={() => { setTicBoard(Array(9).fill(null)); setTicTurn('X'); }}
-                            style={{ padding: '6px 14px', borderRadius: '6px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', color: '#fff', fontSize: '0.75rem', cursor: 'pointer' }}
-                          >
-                            🔄 Reiniciar Partida
-                          </button>
-                        </div>
-                      )}
-
-                      {/* 5. General AI Agent Workbench (Fallback for any custom task) */}
-                      {screenType === 'workbench' && (
-                        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'left' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <div>
-                              <h4 style={{ margin: 0, fontSize: '1.1rem', color: '#fff' }}>Gemma 4 Code Workbench Runner</h4>
-                              <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Ambiente de execução e simulação de entrega técnica</p>
-                            </div>
-                            <span style={{ padding: '4px 10px', borderRadius: '4px', background: 'rgba(52, 211, 153, 0.15)', color: '#34d399', fontSize: '0.75rem', fontWeight: 700 }}>EXECEUÇÃO OK</span>
-                          </div>
-
-                          <div style={{ background: '#020617', padding: '20px', borderRadius: '10px', border: '1px solid var(--border-color)', fontFamily: 'monospace', fontSize: '0.85rem', color: '#38bdf8', display: 'flex', flexDirection: 'column', gap: '8px', minHeight: '220px' }}>
-                            <div style={{ color: '#64748b' }}>// Executando tarefa de código gerada pelo Gemma 4 Engine</div>
-                            <div>$ node src/modules/{selectedItem.issueKey.toLowerCase()}-service.ts</div>
-                            <div style={{ color: '#34d399' }}>&gt; [Gemma 4] Inspeção de código concluída com sucesso.</div>
-                            <div style={{ color: '#fbbf24' }}>&gt; Autor: {selectedItem.executorName} ({selectedItem.executorRole})</div>
-                            <div style={{ color: '#fff' }}>&gt; Status do Card: {selectedItem.status}</div>
-                            {selectedItem.description && (
-                              <div style={{ color: '#94a3b8', marginTop: '8px', whiteSpace: 'pre-wrap', borderTop: '1px solid #1e293b', paddingTop: '8px' }}>
-                                {selectedItem.description.slice(0, 300)}...
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-
+                    <div style={{ flex: 1, display: 'flex', background: '#0b0b0c', minHeight: '620px' }}>
+                      <iframe
+                        src={`http://localhost:5001/api/prototype/${selectedItem.issueKey}`}
+                        sandbox="allow-scripts allow-same-origin"
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          minHeight: '620px',
+                          border: 'none',
+                          background: '#0b0b0c',
+                          borderRadius: '0 0 12px 12px'
+                        }}
+                      />
                     </div>
                   </div>
                 </div>
@@ -575,8 +385,8 @@ export const PrototypeViewer: React.FC<PrototypeViewerProps> = ({ decisions, jir
                     )}
                   </div>
 
-                  <div style={{ background: '#020617', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-color)', fontFamily: 'monospace', fontSize: '0.82rem', color: '#e2e8f0', whiteSpace: 'pre-wrap', overflowX: 'auto', maxHeight: '400px' }}>
-                    {`// Arch: ${selectedItem.issueKey} — ${selectedItem.issueSummary}\n// Commit: ${selectedItem.commitHash}\n// Dev: ${selectedItem.executorName}\n\n+ export const ${selectedItem.issueKey.replace('-', '_')} = async () => {\n+   console.log("[Gemma4 Engine] Executando funcionalidade da Flose Startup");\n+   return { status: 200, success: true, key: "${selectedItem.issueKey}" };\n+ };`}
+                  <div style={{ background: '#020617', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-color)', fontFamily: 'monospace', fontSize: '0.82rem', color: '#e2e8f0', whiteSpace: 'pre-wrap', overflowX: 'auto', maxHeight: '500px' }}>
+                    {realCode}
                   </div>
                 </div>
               )}

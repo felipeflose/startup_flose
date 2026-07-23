@@ -9,6 +9,7 @@ import { CompanyPulse } from './components/CompanyPulse';
 import { EmployeeRanking } from './components/EmployeeRanking';
 import { CardCreator } from './components/CardCreator';
 import { PrototypeViewer } from './components/PrototypeViewer';
+import { OfficeMap } from './components/OfficeMap';
 
 function App() {
   const [agents, setAgents] = useState<Agent[]>([]);
@@ -343,9 +344,115 @@ function App() {
               </div>
             </div>
 
+            {/* Control Panel (Metrics & Actions) */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px', marginTop: '20px', marginBottom: '28px', width: '100%' }}>
+              
+              {/* Operational Metrics Card */}
+              <div className="glass" style={{ padding: '20px', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  📊 Métricas de Controle de Sprint
+                </h3>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div style={{ background: 'rgba(255,255,255,0.02)', padding: '10px 14px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.03)' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block' }}>Backlog Ativo</span>
+                    <strong style={{ fontSize: '1.4rem', color: '#fb923c' }}>
+                      {jiraIssues.filter(j => {
+                        const statusName = j.fields?.status?.name?.toLowerCase() || '';
+                        return !statusName.includes('done') && !statusName.includes('concluid');
+                      }).length} cards
+                    </strong>
+                  </div>
+                  <div style={{ background: 'rgba(255,255,255,0.02)', padding: '10px 14px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.03)' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block' }}>Vazão (Concluídos)</span>
+                    <strong style={{ fontSize: '1.4rem', color: '#34d399' }}>
+                      {jiraIssues.filter(j => {
+                        const statusName = j.fields?.status?.name?.toLowerCase() || '';
+                        return statusName.includes('done') || statusName.includes('concluid');
+                      }).length} cards
+                    </strong>
+                  </div>
+                  <div style={{ background: 'rgba(255,255,255,0.02)', padding: '10px 14px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.03)' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block' }}>Devs Ativos</span>
+                    <strong style={{ fontSize: '1.4rem', color: 'var(--color-primary)' }}>
+                      {agents.filter(a => !a.fired && ['frontend', 'backend', 'devops', 'dba', 'secops', 'developer', 'desenvolvedor', 'ux', 'ui'].some(r => (a.role || '').toLowerCase().includes(r))).length}
+                    </strong>
+                  </div>
+                  <div style={{ background: 'rgba(255,255,255,0.02)', padding: '10px 14px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.03)' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block' }}>QAs Ativos</span>
+                    <strong style={{ fontSize: '1.4rem', color: 'var(--color-secondary)' }}>
+                      {agents.filter(a => !a.fired && ['qa', 'test', 'qualidade', 'garantia'].some(r => (a.role || '').toLowerCase().includes(r))).length}
+                    </strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quick Operation Triggers */}
+              <div className="glass" style={{ padding: '20px', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  ⚙️ Operação Rápida de Governança
+                </h3>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', margin: 0 }}>
+                  Ações de saneamento rápido para restaurar a vazão das entregas e aumentar a força produtiva do time de engenharia.
+                </p>
+                <div style={{ display: 'flex', gap: '12px', marginTop: 'auto' }}>
+                  <button
+                    onClick={() => {
+                      if (!confirm('Deseja realmente zerar todos os cards do backlog ativos transicionando-os para Concluído?')) return;
+                      const btn = document.getElementById('btn-resolve-all');
+                      if (btn) btn.innerText = '🕒 Processando...';
+                      fetch('http://localhost:5001/api/issues/resolve-all', { method: 'POST' })
+                        .then(res => res.json())
+                        .then(data => {
+                          alert(`Saneamento efetuado! ${data.resolvedCount} cards transicionados para Concluído.`);
+                          fetchDecisions();
+                        })
+                        .catch(err => alert('Erro: ' + err.message))
+                        .finally(() => { if (btn) btn.innerText = '⚡ Zerar Backlog'; });
+                    }}
+                    id="btn-resolve-all"
+                    style={{
+                      flex: 1, padding: '12px', borderRadius: '10px', border: '1px solid rgba(239, 68, 68, 0.4)',
+                      background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05))',
+                      color: '#f87171', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', transition: 'all 0.2s'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.25)'}
+                    onMouseOut={(e) => e.currentTarget.style.background = 'linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05))'}
+                  >
+                    ⚡ Zerar Backlog
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      const btn = document.getElementById('btn-bulk-hire');
+                      if (btn) btn.innerText = '🕒 Contratando...';
+                      fetch('http://localhost:5001/api/hiring/bulk', { method: 'POST' })
+                        .then(res => res.json())
+                        .then(data => {
+                          alert(`Contratação concluída! ${data.hiredCount} engenheiros reativados para a sprint.`);
+                          fetchAgents();
+                        })
+                        .catch(err => alert('Erro: ' + err.message))
+                        .finally(() => { if (btn) btn.innerText = '👥 Contratar Devs & QAs'; });
+                    }}
+                    id="btn-bulk-hire"
+                    style={{
+                      flex: 1, padding: '12px', borderRadius: '10px', border: '1px solid rgba(52, 211, 153, 0.4)',
+                      background: 'linear-gradient(135deg, rgba(52, 211, 153, 0.15), rgba(52, 211, 153, 0.05))',
+                      color: '#34d399', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', transition: 'all 0.2s'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.background = 'rgba(52, 211, 153, 0.25)'}
+                    onMouseOut={(e) => e.currentTarget.style.background = 'linear-gradient(135deg, rgba(52, 211, 153, 0.15), rgba(52, 211, 153, 0.05))'}
+                  >
+                    👥 Contratar Devs & QAs
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
             {/* OrgChart Selection */}
             <OrgChart 
-              agents={agents} 
+              agents={agents.filter(a => !a.fired)} 
               selectedAgentIds={selectedAgentIds} 
               onSelectAgent={handleSelectAgentToggle} 
             />
@@ -358,7 +465,7 @@ function App() {
             />
 
             {/* Company Activity Stream Panel */}
-            <CompanyPulse agents={agents} />
+            <CompanyPulse agents={agents.filter(a => !a.fired)} />
           </>
         )}
 
@@ -659,11 +766,14 @@ function App() {
                       <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>Nenhum colaborador desligado no momento.</span>
                     ) : (
                       agents.filter(a => a.fired).map((agent) => (
-                        <div key={agent.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 14px', background: 'rgba(255, 255, 255, 0.01)', borderRadius: '8px', border: '1px solid var(--border-color)', opacity: 0.5 }}>
+                        <div key={agent.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 14px', background: 'rgba(255, 255, 255, 0.01)', borderRadius: '8px', border: '1px solid var(--border-color)', opacity: 0.65 }}>
                           <span style={{ fontSize: '1.5rem', filter: 'grayscale(100%)' }}>{agent.avatar}</span>
-                          <div>
+                          <div style={{ flex: 1, textAlign: 'left' }}>
                             <strong style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', textDecoration: 'line-through' }}>{agent.name}</strong>
                             <p style={{ margin: 0, fontSize: '0.7rem', color: 'var(--text-muted)' }}>{agent.role}</p>
+                            <p style={{ margin: '4px 0 0 0', fontSize: '0.65rem', color: '#f87171', fontStyle: 'italic', fontWeight: 500 }}>
+                              🚫 {agent.firedReason || 'Demissão em massa para reestruturação hierárquica pelo CEO.'}
+                            </p>
                           </div>
                         </div>
                       ))
@@ -975,6 +1085,13 @@ function App() {
                 </div>
               </div>
             </div>
+
+            {/* Live Interactive Office Map */}
+            <OfficeMap 
+              agents={agents} 
+              selectedAgentIds={selectedAgentIds} 
+              jiraIssues={jiraIssues}
+            />
 
             {/* Department Grid Layout */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(480px, 1fr))', gap: '24px', marginTop: '12px' }}>

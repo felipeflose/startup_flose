@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface DebateLog {
   agentId: string;
@@ -35,6 +35,20 @@ export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selec
   const [generatedFile, setGeneratedFile] = useState<string | null>(null);
   const [commitHash, setCommitHash] = useState<string | null>(null);
   const [sprintTickets, setSprintTickets] = useState<any[]>([]);
+  const [autoIdeas, setAutoIdeas] = useState<string[]>([]);
+  const [latestIdea, setLatestIdea] = useState<string>('');
+  const [ideaPulse, setIdeaPulse] = useState(false);
+  const ideaTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Profile context for Gemma 4 idea engine (Felipe Viana Flose's real background)
+  const OWNER_PROFILE = {
+    name: 'Felipe Viana Flose',
+    background: 'Arquiteto de Soluções & IA, especialista em Modern Data Stack',
+    tools: 'GCP, Databricks, Snowflake, dbt, Apache Airflow, BigQuery, Python, LLMs, Gemma, Langchain',
+    companies: 'Accenture, empresas de dados e tecnologia em São Paulo',
+    courses: 'Arquitetura de dados, IA Generativa, Cloud GCP, Databricks Lakehouse',
+    currentCompany: 'Flose Startup — plataforma de simulação de empresa com agentes de IA, integração Jira, GitHub e Gemma 4'
+  };
 
   const startDebate = async () => {
     if (!selectedIssue) {
@@ -92,6 +106,33 @@ export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selec
       setDebating(false);
     }
   };
+
+  // Auto-idea engine — Gemma 4 generates ideas based on Felipe's real profile every 10s
+  useEffect(() => {
+    const fetchIdea = async () => {
+      try {
+        const res = await fetch('http://localhost:5001/api/ideas/suggest', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ownerProfile: OWNER_PROFILE })
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.idea) {
+          setLatestIdea(data.idea);
+          setIdeaPulse(true);
+          setAutoIdeas(prev => [data.idea, ...prev].slice(0, 5));
+          setTimeout(() => setIdeaPulse(false), 800);
+        }
+      } catch (e) {}
+    };
+
+    fetchIdea(); // immediately on mount
+    ideaTimerRef.current = setInterval(fetchIdea, 10000);
+    return () => {
+      if (ideaTimerRef.current) clearInterval(ideaTimerRef.current);
+    };
+  }, []);
 
   const handleSendCommand = async () => {
     if (!customIdea.trim()) {
@@ -172,6 +213,49 @@ export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selec
         <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: 0 }}>
           Digite qualquer ordem ou ideia em linguagem natural. Os agentes de IA interpretarão o pedido e executarão as ações (contratar colaboradores, demissões, dar feedbacks, ajustar horários ou debater e comitar códigos).
         </p>
+
+        {/* Auto-ideas from Gemma 4 — based on Felipe's real profile */}
+        {autoIdeas.length > 0 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{
+                display: 'inline-block',
+                width: '8px', height: '8px',
+                borderRadius: '50%',
+                background: ideaPulse ? '#a78bfa' : '#6d28d9',
+                transition: 'background 0.3s, transform 0.3s',
+                transform: ideaPulse ? 'scale(1.6)' : 'scale(1)',
+                boxShadow: ideaPulse ? '0 0 8px #a78bfa' : 'none'
+              }} />
+              Gemma 4 gerando ideias com base no seu perfil (atualiza a cada 10s)
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              {autoIdeas.map((idea, i) => (
+                <div
+                  key={idea}
+                  onClick={() => setCustomIdea(idea)}
+                  style={{
+                    cursor: 'pointer',
+                    padding: '8px 12px',
+                    borderRadius: '8px',
+                    background: i === 0 ? 'rgba(139,92,246,0.15)' : 'var(--bg-tertiary)',
+                    border: `1px solid ${i === 0 ? 'rgba(139,92,246,0.5)' : 'var(--border-color)'}`,
+                    fontSize: '0.78rem',
+                    color: i === 0 ? '#c4b5fd' : 'var(--text-secondary)',
+                    transition: 'all 0.2s',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    animation: i === 0 && ideaPulse ? 'pulse-glow 0.8s ease' : 'none'
+                  }}
+                >
+                  <span style={{ opacity: 0.7, fontSize: '0.9rem' }}>{i === 0 ? '💡' : '○'}</span>
+                  {idea}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
           <span style={{ fontWeight: 600 }}>Exemplos:</span>
           <code style={{ cursor: 'pointer', background: 'var(--bg-tertiary)', padding: '2px 6px', borderRadius: '4px' }} onClick={() => setCustomIdea("Contrate um dev Python backend")}>"Contrate um dev Python backend"</code>

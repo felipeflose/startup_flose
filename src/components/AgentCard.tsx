@@ -14,6 +14,7 @@ export interface Agent {
   schedule?: string;
   feedbacks?: any[];
   fired?: boolean;
+  firedReason?: string;
   area?: string;
   desk?: string;
 }
@@ -51,13 +52,15 @@ export const AgentCard: React.FC<AgentCardProps> = ({ agent, isSelected, onSelec
         flexDirection: 'column',
         gap: '12px',
         textAlign: 'left',
-        cursor: 'pointer',
+        cursor: agent.fired ? 'default' : 'pointer',
         borderWidth: isSelected ? '2px' : '1px',
         borderColor: isSelected ? 'var(--color-primary)' : 'var(--border-color)',
         position: 'relative',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        opacity: agent.fired ? 0.6 : 1,
+        pointerEvents: agent.fired ? 'none' : 'auto'
       }}
-      onClick={onSelectToggle}
+      onClick={agent.fired ? undefined : onSelectToggle}
     >
       <div 
         style={{
@@ -66,14 +69,32 @@ export const AgentCard: React.FC<AgentCardProps> = ({ agent, isSelected, onSelec
           right: 0,
           width: '6px',
           height: '100%',
-          background: getLevelColor(agent.level)
+          background: agent.fired ? '#6b7280' : getLevelColor(agent.level)
         }}
       />
       
+      {agent.fired && (
+        <div style={{
+          position: 'absolute',
+          top: '10px',
+          right: '16px',
+          fontSize: '0.65rem',
+          fontWeight: 700,
+          background: '#ef444426',
+          border: '1px solid #ef44444d',
+          color: '#f87171',
+          padding: '1px 6px',
+          borderRadius: '4px',
+          textTransform: 'uppercase'
+        }}>
+          Desligado
+        </div>
+      )}
+
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <span style={{ fontSize: '2rem' }}>{agent.avatar}</span>
+        <span style={{ fontSize: '2rem', filter: agent.fired ? 'grayscale(100%)' : 'none' }}>{agent.avatar}</span>
         <div>
-          <h3 style={{ fontSize: '1.15rem', fontWeight: 600, color: 'var(--text-primary)' }}>{agent.name}</h3>
+          <h3 style={{ fontSize: '1.15rem', fontWeight: 600, color: agent.fired ? 'var(--text-muted)' : 'var(--text-primary)', textDecoration: agent.fired ? 'line-through' : 'none' }}>{agent.name}</h3>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 500 }}>{agent.role}</p>
         </div>
       </div>
@@ -110,6 +131,13 @@ export const AgentCard: React.FC<AgentCardProps> = ({ agent, isSelected, onSelec
         </div>
       </div>
 
+      {agent.fired && agent.firedReason && (
+        <div style={{ marginTop: '8px', padding: '6px 10px', background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.1)', borderRadius: '6px', fontSize: '0.72rem' }}>
+          <strong style={{ color: '#f87171' }}>🚫 Histórico de Desligamento:</strong>
+          <p style={{ color: 'var(--text-secondary)', marginTop: '2px', margin: 0, fontStyle: 'italic' }}>{agent.firedReason}</p>
+        </div>
+      )}
+
       {agent.feedbacks && agent.feedbacks.length > 0 && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', borderTop: '1px dashed var(--border-color)', paddingTop: '12px', marginTop: '8px' }}>
           <strong style={{ fontSize: '0.8rem', color: '#10b981' }}>📋 Histórico de Performance (RH):</strong>
@@ -142,8 +170,8 @@ export const AgentCard: React.FC<AgentCardProps> = ({ agent, isSelected, onSelec
         fontSize: '0.8rem',
         borderTop: '1px solid var(--border-color)'
       }}>
-        <span style={{ color: isSelected ? 'var(--color-primary)' : 'var(--text-muted)' }}>
-          {isSelected ? '✓ Selecionado para Debate' : 'Selecionar'}
+        <span style={{ color: agent.fired ? 'var(--text-muted)' : isSelected ? 'var(--color-primary)' : 'var(--text-muted)' }}>
+          {agent.fired ? 'Desligado (Inativo)' : isSelected ? '✓ Selecionado para Debate' : 'Selecionar'}
         </span>
       </div>
     </div>

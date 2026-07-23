@@ -176,6 +176,7 @@ export const JiraDashboard: React.FC<JiraDashboardProps> = ({ onSelectIssue, sel
                   transition: 'all 0.2s'
                 }}
               >
+                {/* Header row: key + status */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-secondary)' }}>{issue.key}</span>
                   <span style={{
@@ -184,20 +185,36 @@ export const JiraDashboard: React.FC<JiraDashboardProps> = ({ onSelectIssue, sel
                     borderRadius: '8px',
                     background: 'hsla(var(--hue-secondary), 20%, 30%, 0.3)',
                     color: 'var(--text-primary)'
-                  }}>{issue.fields.status.name}</span>
+                  }}>{issue.fields.status?.name || 'A fazer'}</span>
                 </div>
+
                 <h3 style={{ fontSize: '1rem', fontWeight: 600 }}>{issue.fields.summary}</h3>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', marginBottom: '4px' }}>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', marginBottom: '2px' }}>
                   {desc}
                 </p>
+
+                {/* Assignee badge — ALWAYS visible */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  background: issue.executorName ? 'rgba(139,92,246,0.15)' : 'rgba(100,100,120,0.15)',
+                  border: `1px solid ${issue.executorName ? 'rgba(139,92,246,0.5)' : 'rgba(100,100,120,0.4)'}`,
+                  borderRadius: '20px',
+                  padding: '4px 10px',
+                  width: 'fit-content',
+                  marginTop: '2px'
+                }}>
+                  <span style={{ fontSize: '0.85rem' }}>👤</span>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: issue.executorName ? '#c4b5fd' : '#9ca3af' }}>
+                    {issue.executorName || 'Não atribuído'}
+                  </span>
+                </div>
+
+                {/* Creator badge */}
                 {issue.creatorName && (
-                  <div style={{ fontSize: '0.72rem', color: '#a78bfa', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    ✍️ Criado por: {issue.creatorName}
-                  </div>
-                )}
-                {issue.executorName && (
-                  <div style={{ fontSize: '0.75rem', color: 'var(--color-secondary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', margin: '2px 0' }}>
-                    👤 Responsável: {issue.executorName}
+                  <div style={{ fontSize: '0.7rem', color: '#a78bfa', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '4px', opacity: 0.8 }}>
+                    ✍️ {issue.creatorName}
                   </div>
                 )}
                 {commits[issue.key] ? (
@@ -218,7 +235,7 @@ export const JiraDashboard: React.FC<JiraDashboardProps> = ({ onSelectIssue, sel
                   </div>
                 )}
                 <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }} onClick={e => e.stopPropagation()}>
-                  {issue.fields.status.name !== 'Em andamento' && issue.fields.status.name !== 'In Progress' && (
+                  {issue.fields.status?.name !== 'Em andamento' && issue.fields.status?.name !== 'In Progress' && (
                     <button
                       onClick={async () => {
                         try {
@@ -243,7 +260,7 @@ export const JiraDashboard: React.FC<JiraDashboardProps> = ({ onSelectIssue, sel
                       ▶ Iniciar
                     </button>
                   )}
-                  {issue.fields.status.name !== 'Concluído' && issue.fields.status.name !== 'Done' && (
+                  {issue.fields.status?.name !== 'Concluído' && issue.fields.status?.name !== 'Done' && (
                     <button
                       onClick={async () => {
                         try {
@@ -268,7 +285,7 @@ export const JiraDashboard: React.FC<JiraDashboardProps> = ({ onSelectIssue, sel
                       ✔ Concluir
                     </button>
                   )}
-                  {(issue.fields.status.name === 'Concluído' || issue.fields.status.name === 'Done' || issue.fields.status.name === 'Em andamento' || issue.fields.status.name === 'In Progress') && (
+                  {((issue.fields.status?.name === 'Concluído' || issue.fields.status?.name === 'Done' || issue.fields.status?.name === 'Em andamento' || issue.fields.status?.name === 'In Progress')) && (
                     <button
                       onClick={async () => {
                         try {
