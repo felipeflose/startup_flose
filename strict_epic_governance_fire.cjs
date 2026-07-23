@@ -84,6 +84,7 @@ async function auditAndFireAll() {
         console.log(`[GOVERNANÇA AUDITORIA] Demitindo imediatamente: ${agent.name} (${agent.role}) por falha grave de Épicos.`);
         agent.fired = true;
         agent.status = 'Desligado';
+        agent.firedReason = 'Demissão imediata por infração gravíssima de governança (Tarefas sem Épico identificadas).';
         firedCount++;
         
         const fireMsg = `💼 Felipe Flose (CEO) demitiu sumariamente ${agent.name} (${agent.role}) por infração gravíssima de governança (Tarefas sem Épico identificadas).`;

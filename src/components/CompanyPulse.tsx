@@ -24,25 +24,55 @@ export const CompanyPulse: React.FC<CompanyPulseProps> = ({ agents }) => {
     fetch('http://localhost:5001/api/activity')
       .then(res => res.json())
       .then(data => {
-        setActivities(data);
-        setLoading(false);
+        if (Array.isArray(data)) {
+          setActivities(data);
+        }
+        setLoading(false)
       })
       .catch(err => console.error('Error fetching activities:', err));
   };
 
   useEffect(() => {
     fetchActivity();
-    const interval = setInterval(fetchActivity, 4000);
-    return () => clearInterval(interval);
+
+    // Connect to live SSE Stream
+    const eventSource = new EventSource('http://localhost:5001/api/activity/stream');
+
+    eventSource.onmessage = (event) => {
+      try {
+        const newEntry = JSON.parse(event.data);
+        setActivities(prev => {
+          if (prev.some(a => a.id === newEntry.id)) return prev;
+          return [newEntry, ...prev].slice(0, 100);
+        });
+      } catch (err) {
+        console.error('Error parsing SSE event:', err);
+      }
+    };
+
+    return () => {
+      eventSource.close();
+    };
   }, []);
 
-  const getActionLabel = (action: ActivityItem['action']) => {
-    switch (action) {
-      case 'opened': return { text: 'abriu o chamado', color: '#fbbf24', icon: '🎫' };
-      case 'progressing': return { text: 'transicionou para Em Progresso', color: '#60a5fa', icon: '⚡' };
-      case 'closed': return { text: 'concluiu e fechou chamado', color: '#10b981', icon: '✅' };
-      default: return { text: 'realizou ação', color: '#fff', icon: '⚙️' };
+  const getActionLabel = (action: string) => {
+    const act = (action || '').toLowerCase();
+    if (act.includes('criou') || act.includes('abriu')) {
+      return { text: action, color: '#fbbf24', icon: '🎫' };
     }
+    if (act.includes('progresso') || act.includes('codificou') || act.includes('andamento') || act.includes('desenvolv') || act.includes('resolveu')) {
+      return { text: action, color: '#60a5fa', icon: '💻' };
+    }
+    if (act.includes('concluiu') || act.includes('fechou') || act.includes('aprov') || act.includes('homolog')) {
+      return { text: action, color: '#10b981', icon: '✅' };
+    }
+    if (act.includes('demitiu') || act.includes('demiss')) {
+      return { text: action, color: '#ef4444', icon: '❌' };
+    }
+    if (act.includes('admitiu') || act.includes('contrat')) {
+      return { text: action, color: '#34d399', icon: '👥' };
+    }
+    return { text: action, color: '#e4e4e7', icon: '⚙️' };
   };
 
   return (

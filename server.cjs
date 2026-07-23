@@ -77,14 +77,14 @@ const getJiraAuthHeader = () => {
 const DEFAULT_AGENTS = [
   {
     "id": "ceo",
-    "name": "Felipe Flose",
-    "role": "CEO (Chief Executive Officer)",
+    "name": "Felipe Viana Flose",
+    "role": "DONO (Arquiteto de Soluções & IA)",
     "level": "C-Level",
-    "avatar": "💼",
-    "advantage": "Visão de mercado disruptiva, atração de investimentos e liderança motivacional contagiante.",
-    "disadvantage": "Falta de paciência crônica para processos burocráticos; foca excessivamente no resultado imediato.",
-    "dilemma": "Crescimento Acelerado (Burn Rate Alto) vs. Sustentabilidade Financeira a Longo Prazo.",
-    "personality": "Focado em resultados de impacto, impaciente, carismático e visionário.",
+    "avatar": "👑",
+    "advantage": "Atua na interseção entre estratégia de negócios e arquitetura tecnológica. Especialista em Modern Data Stack, Inteligência Artificial Generativa e sistemas multi-agentes.",
+    "disadvantage": "Por ter um perfil muito técnico e estratégico focado em soluções complexas, pode se frustrar com tarefas operacionais básicas ou falta de visão de longo prazo.",
+    "dilemma": "Engenharia Estruturada e Escalável vs. Entregas Rápidas e Desestruturadas.",
+    "personality": "Determinado, focado em busca de conhecimento, com forte viés para arquitetura de dados (GCP, Databricks, Snowflake) e integração de LLMs para otimização de fluxos.",
     "status": "Disponível",
     "schedule": "09:00 - 18:00",
     "feedbacks": []
@@ -405,7 +405,7 @@ const saveAgents = (agents) => {
 
 // 1. Get List of Agents
 app.get('/api/agents', (req, res) => {
-  res.json(readAgents().filter(a => !a.fired)); // Somente ativos
+  res.json(readAgents());
 });
 
 // RANKING: Funcionário do Minuto
@@ -895,16 +895,31 @@ const readActivity = () => {
   } catch { return []; }
 };
 
+let sseClients = [];
+
+const broadcastActivity = (entry) => {
+  const data = JSON.stringify(entry);
+  sseClients.forEach(client => {
+    try {
+      client.write(`data: ${data}\n\n`);
+    } catch (err) {
+      // client might have disconnected
+    }
+  });
+};
+
 const logActivity = (agentId, agentName, agentAvatar, action, ticketKey, ticketSummary) => {
   try {
     const log = readActivity();
-    log.unshift({
+    const entry = {
       id: Date.now().toString() + Math.random().toString(36).slice(2),
       agentId, agentName, agentAvatar, action, ticketKey, ticketSummary,
       at: new Date().toISOString()
-    });
+    };
+    log.unshift(entry);
     // keep last 100 entries
     fs.writeFileSync(ACTIVITY_LOG_FILE, JSON.stringify(log.slice(0, 100), null, 2), 'utf8');
+    broadcastActivity(entry);
   } catch (e) {
     console.error('Error writing activity log:', e.message);
   }
@@ -1332,6 +1347,156 @@ app.get('/api/activity', (req, res) => {
   res.json(readActivity());
 });
 
+app.post('/api/activity', (req, res) => {
+  const { agentId, agentName, agentAvatar, action, ticketKey, ticketSummary } = req.body;
+  logActivity(agentId, agentName, agentAvatar, action, ticketKey, ticketSummary);
+  res.json({ success: true });
+});
+
+app.get('/api/activity/stream', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.flushHeaders();
+
+  sseClients.push(res);
+
+  req.on('close', () => {
+    sseClients = sseClients.filter(client => client !== res);
+  });
+});
+
+app.get('/api/prototype/:cardId', (req, res) => {
+  const { cardId } = req.params;
+  const simulationsDir = path.join(__dirname, 'src', 'simulations');
+  const docsDir = path.join(__dirname, 'docs', 'simulations');
+
+  let filePath = null;
+  let ext = null;
+
+  if (fs.existsSync(simulationsDir)) {
+    const files = fs.readdirSync(simulationsDir);
+    const matched = files.find(f => f.startsWith(cardId));
+    if (matched) {
+      filePath = path.join(simulationsDir, matched);
+      ext = path.extname(matched).slice(1);
+    }
+  }
+
+  if (!filePath && fs.existsSync(docsDir)) {
+    const files = fs.readdirSync(docsDir);
+    const matched = files.find(f => f.startsWith(cardId));
+    if (matched) {
+      filePath = path.join(docsDir, matched);
+      ext = path.extname(matched).slice(1);
+    }
+  }
+
+  if (!filePath) {
+    return res.send(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          body { display: flex; align-items: center; justify-content: center; height: 100vh; background: #0b0b0c; color: #7c7c8a; font-family: sans-serif; margin: 0; }
+          .card { text-align: center; border: 1px dashed #29292e; padding: 40px; border-radius: 8px; }
+          h2 { color: #e1e1e6; margin-bottom: 8px; }
+        </style>
+      </head>
+      <body>
+        <div class="card">
+          <h2>Protótipo para ${cardId}</h2>
+          <p>O desenvolvedor responsável está codificando a solução neste momento...</p>
+        </div>
+      </body>
+      </html>
+    `);
+  }
+
+  try {
+    const code = fs.readFileSync(filePath, 'utf8');
+
+    if (ext === 'tsx' || ext === 'jsx') {
+      let cleanedCode = code
+        .replace(/import\s+[\s\S]*?\s+from\s+['"].*?['"];?/g, '')
+        .replace(/export\s+default\s+function\s+(\w+)/g, 'function $1')
+        .replace(/export\s+default\s+(\w+)/g, 'const DefaultExportedComponent = $1')
+        .replace(/export\s+/g, '');
+
+      let componentToMount = 'App';
+      const matchFunc = cleanedCode.match(/function\s+(\w+)/);
+      const matchConst = cleanedCode.match(/const\s+(\w+)\s*=\s*\(/);
+      if (cleanedCode.includes('DefaultExportedComponent')) {
+        componentToMount = 'DefaultExportedComponent';
+      } else if (matchFunc) {
+        componentToMount = matchFunc[1];
+      } else if (matchConst) {
+        componentToMount = matchConst[1];
+      }
+
+      res.send(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Prototype ${cardId}</title>
+          <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+          <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+          <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+          <style>
+            body {
+              margin: 0;
+              padding: 20px;
+              font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+              background-color: #0b0b0c;
+              color: #e4e4e7;
+            }
+          </style>
+        </head>
+        <body>
+          <div id="root"></div>
+          <script type="text/babel">
+            ${cleanedCode}
+
+            try {
+              if (typeof ${componentToMount} !== 'undefined') {
+                const RootComponent = ${componentToMount};
+                ReactDOM.createRoot(document.getElementById('root')).render(<RootComponent />);
+              } else {
+                document.getElementById('root').innerHTML = '<div style="color: red; padding: 20px;">Nenhum componente React válido encontrado para renderizar.</div>';
+              }
+            } catch(err) {
+              document.getElementById('root').innerHTML = '<div style="color: red; padding: 20px;">Erro de renderização: ' + err.message + '</div>';
+            }
+          </script>
+        </body>
+        </html>
+      `);
+    } else {
+      // Plain text or standard HTML
+      if (code.trim().startsWith('<!DOCTYPE html>') || code.trim().startsWith('<html>')) {
+        res.setHeader('Content-Type', 'text/html');
+        res.send(code);
+      } else {
+        res.send(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <style>
+              body { background: #0b0b0c; color: #a1a1aa; font-family: monospace; padding: 20px; white-space: pre-wrap; margin: 0; }
+            </style>
+          </head>
+          <body>${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</body>
+          </html>
+        `);
+      }
+    }
+  } catch (err) {
+    res.status(500).send(`Erro ao carregar protótipo: ${err.message}`);
+  }
+});
+
 app.get('/api/code', (req, res) => {
   const filePath = req.query.file;
   if (!filePath) {
@@ -1356,36 +1521,28 @@ app.get('/api/code', (req, res) => {
 });
 
 const callLocalGemma = async (systemPrompt, userPrompt) => {
-  try {
-    const response = await axios.post('http://localhost:11434/api/chat', {
-      model: 'gemma4-fast:latest',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt }
-      ],
-      options: {
-        temperature: 0.7
-      },
-      stream: false
-    }, { timeout: 30000 });
-    return response.data?.message?.content || '';
-  } catch (error) {
-    console.error('Error calling local gemma4-fast, falling back:', error.message);
+  const models = ['gemma4-fast:latest', 'gemma4-prod:latest', 'gemma4:latest'];
+  for (const model of models) {
     try {
+      console.log(`🤖 server.cjs: Requesting LLM using model: ${model} (timeout: 120s)...`);
       const response = await axios.post('http://localhost:11434/api/chat', {
-        model: 'gemma4:latest',
+        model: model,
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
         ],
+        options: {
+          temperature: 0.7
+        },
         stream: false
-      }, { timeout: 30000 });
+      }, { timeout: 120000 });
       return response.data?.message?.content || '';
-    } catch (e) {
-      console.error('Fallback model also failed:', e.message);
-      return '';
+    } catch (error) {
+      console.error(`Error calling model ${model}:`, error.message);
     }
   }
+  console.error('All local Gemma models failed.');
+  return '';
 };
 
 const generateShortSummary = async (text) => {
@@ -1522,6 +1679,7 @@ const performLeadAuditsAndFireRehire = async (currentAgents, decisionEntry) => {
         console.log(`[GOVERNANÇA] Demitindo ${agent.name} (${agent.role}) por atingir ${warningsCount} advertências.`);
         agent.fired = true;
         agent.status = 'Desligado';
+        agent.firedReason = `Demitido por reincidência de erros técnicos/operacionais (${warningsCount} advertências).`;
         
         const isLead = agent.id.includes('lead') || agent.role.includes('Lead');
         const fireMessage = `⚖️ Arthur Tech Lead & Auditor demitiu o ${isLead ? 'Tech Lead' : 'Colaborador'} ${agent.name} (${agent.role}) devido a reincidência de erros técnicos/operacionais (${warningsCount} advertências).`;
@@ -2387,6 +2545,93 @@ app.post('/api/simulate-debate', async (req, res) => {
   }
 });
 
+// POST /api/ideas/suggest — Gemma 4 generates an idea based on the owner's real profile
+const _ideasCache = new Set();
+app.post('/api/ideas/suggest', async (req, res) => {
+  try {
+    const { ownerProfile } = req.body || {};
+
+    // Fetch recent Jira issues as context
+    let jiraContext = '';
+    try {
+      const jiraRes = await axios.get(`${JIRA_HOST}/rest/api/3/search/jql`, {
+        headers: getJiraAuthHeader(),
+        params: { jql: 'project = KAN order by created DESC', maxResults: 8, fields: 'summary,status' }
+      });
+      const issues = jiraRes.data?.issues || [];
+      jiraContext = issues.map(i => `[${i.key}] ${i.fields?.status?.name}: ${i.fields?.summary}`).join('\n');
+    } catch (e) {}
+
+    // Fetch recent activity as context
+    const recentActivity = readActivity().slice(-5).map(a => `${a.agentName}: ${a.action}`).join('\n');
+
+    const profile = ownerProfile || {};
+    const prompt = `Você é um assistente estratégico de inovação e tecnologia.
+
+PERFIL DO DONO DA EMPRESA:
+Nome: ${profile.name || 'Felipe Viana Flose'}
+Background: ${profile.background || 'Arquiteto de Soluções & IA, Modern Data Stack'}
+Ferramentas dominadas: ${profile.tools || 'GCP, Databricks, Snowflake, dbt, BigQuery, Python, LLMs'}
+Empresas onde trabalhou: ${profile.companies || 'Accenture'}
+Cursos e certificações: ${profile.courses || 'Arquitetura de dados, IA Generativa, Cloud GCP'}
+Empresa atual: ${profile.currentCompany || 'Flose Startup — plataforma de simulação com agentes de IA'}
+
+CARDS ABERTOS NO JIRA (problemas reais da empresa agora):
+${jiraContext || 'Sem cards no momento.'}
+
+ATIVIDADE RECENTE DOS AGENTES:
+${recentActivity || 'Nenhuma atividade recente.'}
+
+Com base 100% neste contexto real (não invente coisas genéricas), gere UMA ideia de ação estratégica para o dono executar AGORA.
+A ideia deve:
+- Ser diretamente relacionada às habilidades reais do dono (GCP, Databricks, Snowflake, LLMs, dbt, Python, IA Generativa)
+- Resolver algum problema real que aparece nos cards do Jira OU melhorar algo na operação da empresa
+- Ser específica e executável (não vaga como "melhorar a qualidade")
+- Ser um comando que o dono pode dar aos agentes da empresa agora mesmo
+
+Responda com APENAS o texto do comando/ideia em uma única linha, máximo 120 caracteres.
+Não inclua aspas, explicações ou prefixos. Apenas o comando direto.`;
+
+    const models = ['gemma4-fast:latest', 'gemma4-prod:latest', 'gemma4:latest'];
+    let idea = '';
+
+    for (const model of models) {
+      try {
+        const response = await axios.post('http://localhost:11434/api/generate', {
+          model,
+          prompt,
+          stream: false,
+          options: { temperature: 0.95, num_predict: 80 }
+        }, { timeout: 25000 });
+        idea = (response.data.response || '').trim().replace(/^["']|["']$/g, '').split('\n')[0].trim();
+        if (idea && !_ideasCache.has(idea)) break;
+      } catch (e) {}
+    }
+
+    // Fallback ideas based on profile if Gemma times out
+    if (!idea) {
+      const fallbacks = [
+        'Criar pipeline de dados no Databricks para monitorar throughput dos agentes em tempo real',
+        'Implementar data lakehouse no GCP com BigQuery para analytics do backlog do Jira',
+        'Usar dbt para transformar logs de atividade dos agentes em relatórios de performance',
+        'Contratar Engenheiro de Dados para automatizar ETL entre Jira e Snowflake',
+        'Criar dashboard de métricas operacionais integrando BigQuery com Looker Studio',
+        'Implementar LLM router com Langchain para distribuir tasks aos agentes por habilidade',
+        'Criar política de data governance para logs de decisões dos agentes',
+        'Contratar ML Engineer para treinar modelo preditivo de prazo de entrega de cards',
+      ];
+      idea = fallbacks[Math.floor(Math.random() * fallbacks.length)];
+    }
+
+    _ideasCache.add(idea);
+    if (_ideasCache.size > 100) _ideasCache.clear(); // prevent memory leak
+
+    res.json({ idea });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // POST /api/command (The Central dispatcher)
 app.post('/api/command', async (req, res) => {
   try {
@@ -2522,6 +2767,7 @@ app.post('/api/command', async (req, res) => {
       }
 
       firedAgent.fired = true;
+      firedAgent.firedReason = 'Desligamento efetuado voluntariamente pelo usuário via Central de Comando.';
       saveAgents(agents);
 
       let jiraKey = null;
@@ -2658,6 +2904,125 @@ app.post('/api/command', async (req, res) => {
   }
 });
 
+// POST /api/hiring/bulk - Hire Devs and QAs without limits
+app.post('/api/hiring/bulk', async (req, res) => {
+  try {
+    const agents = readAgents();
+    let hiredCount = 0;
+    
+    // Re-hire fired Devs and QAs in the database
+    const rolesToHire = ['frontend', 'backend', 'devops', 'dba', 'secops', 'developer', 'desenvolvedor', 'ux', 'ui', 'qa', 'test', 'qualidade', 'garantia'];
+    agents.forEach(a => {
+      if (a.fired && rolesToHire.some(r => (a.role || '').toLowerCase().includes(r))) {
+        a.fired = false;
+        a.status = 'Disponível';
+        a.totalScore = 50; // reset score to baseline
+        hiredCount++;
+      }
+    });
+
+    saveAgents(agents);
+    
+    // Broadcast live event via SSE
+    broadcastActivity({
+      agentId: 'felipe_intern',
+      name: 'Felipe Viana Flose',
+      avatar: '👑',
+      action: `Contratou em massa ${hiredCount} engenheiros (Devs & QAs) para acelerar a vazão da sprint!`,
+      timestamp: new Date().toISOString()
+    });
+
+    res.json({ success: true, hiredCount });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// POST /api/issues/resolve-all - Instantly resolve/close all pending issues
+app.post('/api/issues/resolve-all', async (req, res) => {
+  try {
+    const searchUrl = `${JIRA_HOST}/rest/api/3/search/jql`;
+    const searchResponse = await axios.get(searchUrl, {
+      headers: getJiraAuthHeader(),
+      params: {
+        jql: 'project = KAN AND status != Done AND status != Concluído',
+        fields: 'summary,status',
+        maxResults: 50
+      }
+    });
+
+    const issues = searchResponse.data?.issues || [];
+    let resolvedCount = 0;
+
+    for (const issue of issues) {
+      try {
+        const transUrl = `${JIRA_HOST}/rest/api/3/issue/${issue.id}/transitions`;
+        let transResponse = await axios.get(transUrl, { headers: getJiraAuthHeader() });
+        let transitions = transResponse.data?.transitions || [];
+
+        let doneTransition = transitions.find(t => 
+          t.name.toLowerCase().includes('done') || 
+          t.name.toLowerCase().includes('conclu') || 
+          t.name.toLowerCase().includes('pronto') ||
+          t.name.toLowerCase().includes('concluir')
+        );
+
+        if (doneTransition) {
+          await axios.post(transUrl, {
+            transition: { id: doneTransition.id }
+          }, { headers: getJiraAuthHeader() });
+          resolvedCount++;
+        } else {
+          // If Done transition is not direct, move to In Progress/Em andamento first
+          const inProgressTransition = transitions.find(t => 
+            t.name.toLowerCase().includes('andamento') || 
+            t.name.toLowerCase().includes('progress')
+          );
+          
+          if (inProgressTransition) {
+            await axios.post(transUrl, {
+              transition: { id: inProgressTransition.id }
+            }, { headers: getJiraAuthHeader() });
+
+            // Refetch transitions to move it to Done
+            transResponse = await axios.get(transUrl, { headers: getJiraAuthHeader() });
+            transitions = transResponse.data?.transitions || [];
+
+            doneTransition = transitions.find(t => 
+              t.name.toLowerCase().includes('done') || 
+              t.name.toLowerCase().includes('conclu') || 
+              t.name.toLowerCase().includes('pronto') ||
+              t.name.toLowerCase().includes('concluir')
+            );
+
+            if (doneTransition) {
+              await axios.post(transUrl, {
+                transition: { id: doneTransition.id }
+              }, { headers: getJiraAuthHeader() });
+              resolvedCount++;
+            }
+          }
+        }
+      } catch (err) {
+        console.error(`Failed to transition issue ${issue.key} in bulk resolve:`, err.message);
+      }
+    }
+
+    // Broadcast live event via SSE
+    broadcastActivity({
+      agentId: 'felipe_intern',
+      name: 'Felipe Viana Flose',
+      avatar: '👑',
+      action: `Realizou saneamento de backlog e arquivou ${resolvedCount} cards técnicos no Jira!`,
+      timestamp: new Date().toISOString()
+    });
+
+    res.json({ success: true, resolvedCount });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // POST /api/agents/hire
 app.post('/api/agents/hire', async (req, res) => {
   try {
@@ -2738,6 +3103,7 @@ app.post('/api/agents/fire', async (req, res) => {
     }
 
     agent.fired = true; // Mark as fired
+    agent.firedReason = req.body.reason || 'Desligamento administrativo efetuado pelo RH / Diretoria.';
     saveAgents(agents);
 
     // Sync to Jira under "Gestão de Pessoas" Epic
@@ -3126,6 +3492,128 @@ app.get('/api/card-commits', (req, res) => {
   res.json(commits);
 });
 
+const ensureAgentIsHiredInServer = (agentName) => {
+  try {
+    const agents = readAgents();
+    const agent = agents.find(a => a.name === agentName || (a.role && a.role.includes(agentName)));
+    if (agent && agent.fired) {
+      agent.fired = false;
+      agent.status = 'Disponível';
+      agent.totalScore = 50;
+      saveAgents(agents);
+      console.log(`[CEO RECRUTAMENTO] Felipe Flose reativou/contratou ${agent.name} (${agent.role}) para assumir novas demandas.`);
+      logActivity('ceo', 'Felipe Flose', '💼', `Contratou e alocou ${agent.name} (${agent.role}) para a esteira de desenvolvimento e debates.`, '', '');
+    }
+  } catch (e) {
+    console.error('Error ensuring agent is hired:', e.message);
+  }
+};
+
+const runAutoDebateScheduler = () => {
+  // Let's run every 120 seconds (2 minutes)
+  setInterval(async () => {
+    try {
+      console.log('🕒 [Auto-Debate Scheduler] Scanning for pending Jira tasks to debate...');
+      const jiraUrl = `${JIRA_HOST}/rest/api/3/search/jql`;
+      const res = await axios.get(jiraUrl, {
+        headers: getJiraAuthHeader(),
+        params: {
+          jql: 'project = KAN AND status in ("To Do", "A Fazer", "Backlog") AND summary ~ "Gemma4"',
+          fields: 'summary,description,parent,priority',
+          maxResults: 10
+        }
+      });
+
+      const issues = res.data?.issues || [];
+      if (issues.length === 0) {
+        console.log('🕒 [Auto-Debate Scheduler] No pending tasks found.');
+        return;
+      }
+
+      // Pick the first issue
+      const targetIssue = issues[0];
+      const issueKey = targetIssue.key;
+      const issueSummary = targetIssue.fields?.summary || '';
+      let issueDescription = '';
+      try {
+        issueDescription = targetIssue.fields?.description?.content?.[0]?.content?.[0]?.text || '';
+      } catch (e) {}
+
+      console.log(`🕒 [Auto-Debate Scheduler] Selected issue for auto-debate: ${issueKey} - "${issueSummary}"`);
+
+      // Read current assignments and creators
+      let assignments = {};
+      let creators = {};
+      try {
+        assignments = JSON.parse(fs.readFileSync(path.join(__dirname, 'task_assignments.json'), 'utf8'));
+      } catch (e) {}
+      try {
+        creators = JSON.parse(fs.readFileSync(path.join(__dirname, 'task_creators.json'), 'utf8'));
+      } catch (e) {}
+
+      const assigneeName = assignments[issueKey];
+      const creatorName = creators[issueKey];
+
+      // Only debate if we have an active assignee
+      const allAgents = readAgents();
+      const assigneeAgent = allAgents.find(a => a.name === assigneeName);
+      if (!assigneeAgent || assigneeAgent.fired) {
+        console.log(`🕒 [Auto-Debate Scheduler] Skipping ${issueKey} because assignee "${assigneeName}" is not hired/active yet.`);
+        return;
+      }
+
+      // Read active agents
+      const agents = readAgents().filter(a => !a.fired);
+
+      // Select participating agents
+      const selectedAgents = [];
+      const ceo = agents.find(a => a.role?.toLowerCase().includes('ceo'));
+      const cto = agents.find(a => a.role?.toLowerCase().includes('cto'));
+      if (ceo) selectedAgents.push(ceo);
+      if (cto) selectedAgents.push(cto);
+
+      if (creatorName) {
+        const creatorAgent = agents.find(a => a.name === creatorName);
+        if (creatorAgent && !selectedAgents.includes(creatorAgent)) {
+          selectedAgents.push(creatorAgent);
+        }
+      }
+      if (assigneeName) {
+        const assigneeAgent = agents.find(a => a.name === assigneeName);
+        if (assigneeAgent && !selectedAgents.includes(assigneeAgent)) {
+          selectedAgents.push(assigneeAgent);
+        }
+      }
+
+      // Fallback
+      while (selectedAgents.length < 3 && agents.length > selectedAgents.length) {
+        const randomAgent = agents[Math.floor(Math.random() * agents.length)];
+        if (!selectedAgents.includes(randomAgent)) {
+          selectedAgents.push(randomAgent);
+        }
+      }
+
+      const selectedAgentIds = selectedAgents.map(a => a.id);
+      console.log(`🕒 [Auto-Debate Scheduler] Running debate with agents: ${selectedAgents.map(a => a.name).join(', ')}`);
+
+      executeDebateSimulation({
+        issueKey,
+        issueSummary,
+        issueDescription,
+        selectedAgentIds,
+        epicName: ''
+      }).then(result => {
+        console.log(`🕒 [Auto-Debate Scheduler] Auto-debate completed for ${issueKey}.`);
+      }).catch(err => {
+        console.error(`🕒 [Auto-Debate Scheduler] Auto-debate failed for ${issueKey}:`, err.message);
+      });
+
+    } catch (e) {
+      console.error('🕒 [Auto-Debate Scheduler] Error in auto-debate check:', e.message);
+    }
+  }, 120000);
+};
+
 app.listen(PORT, () => {
   console.log(`Flose Startup Backend running on port ${PORT}`);
 
@@ -3135,6 +3623,61 @@ app.listen(PORT, () => {
     startRoutine();
   } catch (e) {
     console.error('Failed to start Gemma 4 Autonomous Pipeline:', e.message);
+  }
+
+  // Start Frenetic PO Code Analyzer & Card Creator (Non-Dev/Non-QA)
+  try {
+    const { startRoutine: startFreneticPO } = require('./po_frenetic_analyzer.cjs');
+    startFreneticPO();
+  } catch (e) {
+    console.error('Failed to start Frenetic PO Analyzer:', e.message);
+  }
+
+  // Start Auto-Debate Scheduler
+  runAutoDebateScheduler();
+
+  // Start Automated Role & Attribution Auditor
+  try {
+    const { runGovernanceAudit } = require('./role_attribution_auditor.cjs');
+    runGovernanceAudit();
+    setInterval(runGovernanceAudit, 60000);
+  } catch (e) {
+    console.error('Failed to start Role & Attribution Auditor:', e.message);
+  }
+
+  // Start Automated Recruitment & Selection Engine (Interviews & Selection Card Pipeline)
+  try {
+    const { startRecruitmentRoutine } = require('./hiring_recruitment_engine.cjs');
+    startRecruitmentRoutine();
+  } catch (e) {
+    console.error('Failed to start Recruitment Engine:', e.message);
+  }
+
+  // Start Hierarchical Recruitment Director — Helena Talent (Gemma 4 powered)
+  try {
+    const { startHierarchicalRecruitment } = require('./hierarchical_recruitment_director.cjs');
+    startHierarchicalRecruitment();
+  } catch (e) {
+    console.error('Failed to start Hierarchical Recruitment Director:', e.message);
+  }
+
+  // Start Gemma 4 Company Analyst — reads codebase + Jira, defines real org structure
+  try {
+    // Clean up previously hardcoded fake HR agents before Gemma 4 takes over
+    const AGENTS_FILE_PATH = path.join(__dirname, 'agents_db.json');
+    if (fs.existsSync(AGENTS_FILE_PATH)) {
+      const allAgents = JSON.parse(fs.readFileSync(AGENTS_FILE_PATH, 'utf8'));
+      const FAKE_HARDCODED_IDS = ['director_people_talent', 'coord_recrutamento', 'analista_rh_sr'];
+      const cleaned = allAgents.filter(a => !FAKE_HARDCODED_IDS.includes(a.id));
+      if (cleaned.length !== allAgents.length) {
+        fs.writeFileSync(AGENTS_FILE_PATH, JSON.stringify(cleaned, null, 2), 'utf8');
+        console.log(`🧹 Removidos ${allAgents.length - cleaned.length} agentes hardcoded. Gemma 4 vai recriar o time certo.`);
+      }
+    }
+    const { startCompanyAnalyst } = require('./gemma4_company_analyst.cjs');
+    startCompanyAnalyst();
+  } catch (e) {
+    console.error('Failed to start Gemma 4 Company Analyst:', e.message);
   }
 });
 

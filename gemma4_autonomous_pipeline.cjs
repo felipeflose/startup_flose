@@ -13,6 +13,16 @@ const BRANCH = 'feature/KAN-5648-implementar-melhorias-continuas';
 const OLLAMA_URL = 'http://localhost:11434/api/chat';
 const GEMMA_MODEL = 'gemma4-fast:latest';
 
+async function logActivityToBackend(agentId, agentName, agentAvatar, action, ticketKey, ticketSummary) {
+  try {
+    await axios.post('http://localhost:5001/api/activity', {
+      agentId, agentName, agentAvatar, action, ticketKey, ticketSummary
+    });
+  } catch (e) {
+    // backend down or starting
+  }
+}
+
 const getJiraAuthHeader = () => ({
   'Authorization': `Basic ${Buffer.from(`${JIRA_USER}:${JIRA_TOKEN}`).toString('base64')}`,
   'Accept': 'application/json',
@@ -47,6 +57,104 @@ function getAgents() {
   return JSON.parse(fs.readFileSync(agentsFile, 'utf8')).filter(a => !a.fired);
 }
 
+function ensureAgentIsHiredHierarchically(agentName) {
+  const agentsFile = path.join(__dirname, 'agents_db.json');
+  if (!fs.existsSync(agentsFile)) return;
+  const agents = JSON.parse(fs.readFileSync(agentsFile, 'utf8'));
+
+  const agent = agents.find(a => a.name === agentName || (a.role && a.role.includes(agentName)));
+  if (!agent) return;
+
+  if (!agent.fired) return; // already active
+
+  const area = agent.area || '';
+  let director = null;
+  let manager = null;
+
+  if (area.includes('Engenharia') || area.includes('TI')) {
+    director = agents.find(a => a.id === 'cto');
+    manager = agents.find(a => a.role && a.role.includes('Gerente de Engenharia'));
+  } else if (area.includes('Produto') || area.includes('Design')) {
+    director = agents.find(a => a.role && a.role.includes('Diretora de Design'));
+    manager = agents.find(a => a.role && a.role.includes('Product Manager') || (a.role && a.role.includes('PM') && !a.role.includes('DBA')));
+  } else {
+    director = agents.find(a => a.id === 'coo');
+    manager = agents.find(a => a.role && (a.role.includes('QA Lead') || a.role.includes('Organizador')));
+  }
+
+  const activateAgent = (target, hiredBy) => {
+    if (!target || !hiredBy) return; // guard against nulls
+    if (target.fired) {
+      target.fired = false;
+      target.status = 'Disponível';
+      target.totalScore = 50;
+      const logText = `${hiredBy.avatar || '👤'} ${hiredBy.name} (${hiredBy.role}) contratou o colaborador ${target.name} (${target.role}) para compor a equipe.`;
+      console.log(`[RECRUTAMENTO HIERÁRQUICO] ${logText}`);
+      axios.post('http://localhost:5001/api/activity', {
+        agentId: hiredBy.id || 'recruiter',
+        agentName: hiredBy.name,
+        agentAvatar: hiredBy.avatar || '👤',
+        action: logText,
+        ticketKey: '',
+        ticketSummary: ''
+      }).catch(() => {});
+    }
+  };
+
+  // Find CEO flexibly — match by id OR by role containing DONO/CEO
+  const ceo = agents.find(a => a.id === 'ceo') ||
+    agents.find(a => (a.role || '').toLowerCase().includes('dono') || (a.role || '').toLowerCase().includes('ceo')) ||
+    agents.find(a => !a.fired); // last resort: first active agent
+
+  if (!ceo) {
+    console.log('[RECRUTAMENTO] Sem agente ativo para contratar. Aguardando...');
+    return;
+  }
+
+  if (director && director.fired) activateAgent(director, ceo);
+  if (manager && manager.fired) {
+    const recruiter = (director && !director.fired) ? director : ceo;
+    activateAgent(manager, recruiter);
+  }
+
+  const finalRecruiter = (manager && !manager.fired) ? manager : (director && !director.fired) ? director : ceo;
+  activateAgent(agent, finalRecruiter);
+
+  fs.writeFileSync(agentsFile, JSON.stringify(agents, null, 2), 'utf8');
+}
+
+function hireAgentForRole(roleCategory) {
+  const agentsFile = path.join(__dirname, 'agents_db.json');
+  if (!fs.existsSync(agentsFile)) return null;
+  const agents = JSON.parse(fs.readFileSync(agentsFile, 'utf8'));
+
+  const roleKeywords = {
+    dev: ['Frontend', 'Backend', 'DevOps', 'DBA', 'SecOps', 'Developer', 'Desenvolvedor', 'UX', 'UX Sênior'],
+    qa: ['QA', 'Test', 'Qualidade', 'Garantia', 'Lead de Integração']
+  };
+
+  const keywords = roleKeywords[roleCategory] || roleKeywords.dev;
+  const candidate = agents.find(a => a.fired && keywords.some(k => (a.role || '').toLowerCase().includes(k.toLowerCase())));
+
+  if (candidate) {
+    ensureAgentIsHiredHierarchically(candidate.name);
+
+    // MENTORSHIP & TRAINING POLICY:
+    // When hiring a dev/specialist, hire a Junior/Intern to shadow and train under their mentorship
+    if (roleCategory === 'dev') {
+      const juniorOrIntern = agents.find(a => a.fired && (a.level === 'Júnior' || a.level === 'Estagiário') && a.id !== 'ceo');
+      if (juniorOrIntern) {
+        console.log(`[POLÍTICA DE TREINAMENTO] Contratando ${juniorOrIntern.name} (${juniorOrIntern.role}) como par de treinamento de ${candidate.name}.`);
+        ensureAgentIsHiredHierarchically(juniorOrIntern.name);
+      }
+    }
+
+    const freshAgents = JSON.parse(fs.readFileSync(agentsFile, 'utf8'));
+    return freshAgents.find(a => a.id === candidate.id);
+  }
+  return null;
+}
+
 function getNonDevOfficers() {
   const roles = ['Product Owner', 'PO', 'CEO', 'CTO', 'COO', 'Diretora de Design', 'Gerente de Engenharia', 'Scrum Master', 'Gestor', 'Organizador', 'Game Designer', 'Tech Writer', 'Facilities', 'Governança'];
   return getAgents().filter(a => roles.some(r => (a.role || '').toLowerCase().includes(r.toLowerCase())));
@@ -77,89 +185,104 @@ async function getEpicKey(epicName) {
 // GEMMA 4 INFERENCE ENGINE
 // ----------------------------------------------------
 async function askGemma4(systemPrompt, userPrompt, outputSchema = 'json') {
-  try {
-    const res = await axios.post(OLLAMA_URL, {
-      model: GEMMA_MODEL,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt }
-      ],
-      stream: false,
-      format: outputSchema === 'json' ? 'json' : undefined
-    }, { timeout: 25000 });
+  const models = ['gemma4-fast:latest', 'gemma4-prod:latest', 'gemma4:latest'];
+  for (const model of models) {
+    try {
+      console.log(`🤖 Requesting LLM using model: ${model} (timeout: 120s)...`);
+      const res = await axios.post(OLLAMA_URL, {
+        model: model,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ],
+        stream: false,
+        format: outputSchema === 'json' ? 'json' : undefined
+      }, { timeout: 120000 });
 
-    const content = res.data?.message?.content;
-    if (outputSchema === 'json' && content) {
-      return JSON.parse(content);
+      const content = res.data?.message?.content;
+      if (outputSchema === 'json' && content) {
+        return JSON.parse(content);
+      }
+      return content;
+    } catch (err) {
+      console.log(`⚠️ Gemma 4 model ${model} failed (${err.message}).`);
     }
-    return content;
-  } catch (err) {
-    console.log(`⚠️ Gemma 4 timeout/erro (${err.message}) — ativando gerador estrito de fallback.`);
-    return null;
   }
+  console.log(`❌ All Gemma 4 models failed/timed out — falling back to static generator template.`);
+  return null;
 }
 
 // ----------------------------------------------------
 // GITHUB COMMIT HELPER
 // ----------------------------------------------------
 async function commitCardEvidence(jiraKey, message, authorName, markdownContent) {
-  try {
-    const refRes = await gh.get(`/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/refs/heads/${BRANCH}`);
-    const latestCommitSha = refRes.data.object.sha;
+  let retries = 5;
+  while (retries > 0) {
+    try {
+      const refRes = await gh.get(`/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/refs/heads/${BRANCH}`);
+      const latestCommitSha = refRes.data.object.sha;
 
-    const commitRes = await gh.get(`/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/commits/${latestCommitSha}`);
-    const baseTreeSha = commitRes.data.tree.sha;
+      const commitRes = await gh.get(`/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/commits/${latestCommitSha}`);
+      const baseTreeSha = commitRes.data.tree.sha;
 
-    const blobRes = await gh.post(`/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/blobs`, {
-      content: Buffer.from(markdownContent).toString('base64'),
-      encoding: 'base64'
-    });
+      const blobRes = await gh.post(`/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/blobs`, {
+        content: Buffer.from(markdownContent).toString('base64'),
+        encoding: 'base64'
+      });
 
-    const treeRes = await gh.post(`/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/trees`, {
-      base_tree: baseTreeSha,
-      tree: [{
-        path: `.card-work/${jiraKey}.md`,
-        mode: '100644',
-        type: 'blob',
-        sha: blobRes.data.sha
-      }]
-    });
+      const treeRes = await gh.post(`/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/trees`, {
+        base_tree: baseTreeSha,
+        tree: [{
+          path: `.card-work/${jiraKey}.md`,
+          mode: '100644',
+          type: 'blob',
+          sha: blobRes.data.sha
+        }]
+      });
 
-    const newCommit = await gh.post(`/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/commits`, {
-      message: `${message} [by ${authorName}]`,
-      tree: treeRes.data.sha,
-      parents: [latestCommitSha],
-      author: {
-        name: authorName.split(' (')[0],
-        email: `${authorName.toLowerCase().replace(/[^a-z]/g, '')}@flose.startup`,
-        date: new Date().toISOString()
+      const newCommit = await gh.post(`/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/commits`, {
+        message: `${message} [by ${authorName}]`,
+        tree: treeRes.data.sha,
+        parents: [latestCommitSha],
+        author: {
+          name: authorName.split(' (')[0],
+          email: `${authorName.toLowerCase().replace(/[^a-z]/g, '')}@flose.startup`,
+          date: new Date().toISOString()
+        }
+      });
+
+      await gh.patch(`/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/refs/heads/${BRANCH}`, {
+        sha: newCommit.data.sha,
+        force: false
+      });
+
+      const commitInfo = {
+        sha: newCommit.data.sha,
+        shortSha: newCommit.data.sha.slice(0, 7),
+        url: `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/commit/${newCommit.data.sha}`,
+        fileUrl: `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/blob/${BRANCH}/.card-work/${jiraKey}.md`,
+        committedAt: new Date().toISOString()
+      };
+
+      const commitsFile = path.join(__dirname, 'card_commits.json');
+      let cardCommits = {};
+      try { cardCommits = JSON.parse(fs.readFileSync(commitsFile, 'utf8')); } catch (e) {}
+      cardCommits[jiraKey] = commitInfo;
+      fs.writeFileSync(commitsFile, JSON.stringify(cardCommits, null, 2), 'utf8');
+
+      return commitInfo;
+    } catch (e) {
+      const errMsg = e.response?.data?.message || e.message;
+      console.log(`⚠️ GitHub Commit attempt failed for ${jiraKey} (${errMsg}). Retrying... (${retries - 1} left)`);
+      retries--;
+      if (retries === 0) {
+        console.error(`❌ GitHub Commit error for ${jiraKey} after retries:`, errMsg);
+        return null;
       }
-    });
-
-    await gh.patch(`/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/refs/heads/${BRANCH}`, {
-      sha: newCommit.data.sha,
-      force: false
-    });
-
-    const commitInfo = {
-      sha: newCommit.data.sha,
-      shortSha: newCommit.data.sha.slice(0, 7),
-      url: `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/commit/${newCommit.data.sha}`,
-      fileUrl: `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/blob/${BRANCH}/.card-work/${jiraKey}.md`,
-      committedAt: new Date().toISOString()
-    };
-
-    const commitsFile = path.join(__dirname, 'card_commits.json');
-    let cardCommits = {};
-    try { cardCommits = JSON.parse(fs.readFileSync(commitsFile, 'utf8')); } catch (e) {}
-    cardCommits[jiraKey] = commitInfo;
-    fs.writeFileSync(commitsFile, JSON.stringify(cardCommits, null, 2), 'utf8');
-
-    return commitInfo;
-  } catch (e) {
-    console.error(`❌ GitHub Commit error for ${jiraKey}:`, e.response?.data?.message || e.message);
-    return null;
+      await new Promise(r => setTimeout(r, 1000 + Math.random() * 2000));
+    }
   }
+  return null;
 }
 
 // ----------------------------------------------------
@@ -221,14 +344,32 @@ async function transitionJiraIssue(issueKey, targetStatusName) {
 // 1. PO GEMMA 4 ROUTINE (CREATION)
 // ----------------------------------------------------
 async function runPOCreationCycle() {
+  const agents = getAgents();
+  // Fallback officer: use any active agent, or CEO as last resort
   const officers = getNonDevOfficers();
-  const devs = getDevAgents();
-  if (officers.length === 0) return;
+  const activeOfficers = officers.length > 0 ? officers : agents.slice(0, 1);
+  if (activeOfficers.length === 0) {
+    console.log('  ⚠️ PO Engine: nenhum agente ativo. Aguardando contratações...');
+    return;
+  }
 
-  const officer = officers[officerIndex % officers.length];
+  // Fallback dev: use any active agent that is not the officer, or the officer itself
+  const devs = getDevAgents();
+  const activeDev = devs.length > 0
+    ? devs[Math.floor(Math.random() * devs.length)]
+    : agents.find(a => !officers.includes(a)) || agents[0] || activeOfficers[0];
+
+  if (!activeDev) {
+    console.log('  ⚠️ PO Engine: nenhum dev disponível. Aguardando contratações...');
+    return;
+  }
+
+  const officer = activeOfficers[officerIndex % activeOfficers.length];
   officerIndex++;
   const targetFile = SCAN_FILES[fileIndex % SCAN_FILES.length];
   fileIndex++;
+
+  const dev = activeDev; // already safe
 
   let snippet = '// Código não disponível';
   const fullPath = path.join(__dirname, targetFile);
@@ -250,7 +391,6 @@ async function runPOCreationCycle() {
     category: 'Arquitetura'
   };
 
-  const dev = devs[Math.floor(Math.random() * devs.length)];
   const epicKey = await getEpicKey(analysis.epic || 'Melhorias Internas');
 
   try {
@@ -285,6 +425,7 @@ async function runPOCreationCycle() {
       const commit = await commitCardEvidence(key, `po(Gemma4): ${analysis.summary}`, officer.name, md);
 
       console.log(`  ✅ Card Criado: ${key} | Criador: ${officer.name} | Executante: ${dev.name} | Commit: ${commit?.shortSha || 'OK'}`);
+      await logActivityToBackend(officer.id || 'po', officer.name, officer.avatar, `Criou e analisou card no Jira: ${analysis.summary}`, key, analysis.summary);
       return key;
     }
   } catch (e) {
@@ -338,7 +479,8 @@ async function runDevExecutionCycle() {
     // Comment on Jira
     await addJiraComment(issue.key, `💻 [DEV GEMMA 4] Card codificado por ${devName}.\nSolução: ${devSolution.solution}\nCommit GitHub: ${commit?.url || 'Sim'}`);
 
-    console.log(`  ✅ Card ${issue.key} Codificado por ${devName} → Transicionado para 'In Progress' | Commit: ${commit?.shortSha}`);
+      console.log(`  ✅ Card ${issue.key} Codificado por ${devName} → Transicionado para 'In Progress' | Commit: ${commit?.shortSha}`);
+      await logActivityToBackend('dev', devName, '💻', `Codificou e resolveu o card no Jira`, issue.key, summaryText);
   } catch (e) {
     console.error(`  ❌ Erro Dev Execution: ${e.message}`);
   }
@@ -403,7 +545,8 @@ async function runQAApprovalCycle() {
     // Comment on Jira
     await addJiraComment(issue.key, `🎉 [QA GEMMA 4] Card Aprovado e Finalizado por ${qaAgent.name}.\nVeredito: ${qaReport.verdict}\nResultados: ${qaReport.testResults}\nCommit Final: ${commit?.url}`);
 
-    console.log(`  🏆 Card ${issue.key} APROVADO POR QA (${qaAgent.name}) → Transicionado para 'DONE' | Commit: ${commit?.shortSha}`);
+      console.log(`  🏆 Card ${issue.key} APROVADO POR QA (${qaAgent.name}) → Transicionado para 'DONE' | Commit: ${commit?.shortSha}`);
+      await logActivityToBackend(qaAgent.id || 'qa', qaAgent.name, qaAgent.avatar || '🧪', `Homologou e aprovou o card no Jira`, issue.key, summaryText);
   } catch (e) {
     console.error(`  ❌ Erro QA Approval: ${e.message}`);
   }

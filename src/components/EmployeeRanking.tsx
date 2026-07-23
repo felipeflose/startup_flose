@@ -46,22 +46,44 @@ export const EmployeeRanking: React.FC = () => {
   const top3 = rankings.slice(0, 3);
   const last = rankings[rankings.length - 1];
 
+  // Reorder for visual podium: 2nd, 1st, 3rd
   const podiumOrder = top3.length === 3
     ? [top3[1], top3[0], top3[2]]
     : top3;
 
-  const podiumHeights = [120, 180, 90];
-  const podiumColors = [
-    'linear-gradient(135deg, #94a3b8, #64748b)',
-    'linear-gradient(135deg, #fbbf24, #f59e0b)',
-    'linear-gradient(135deg, #cd7c2e, #a0522d)'
-  ];
-  const podiumLabels = ['🥈 2º', '🥇 1º', '🥉 3º'];
-  const podiumGlow = [
-    '0 0 20px rgba(148,163,184,0.4)',
-    '0 0 40px rgba(251,191,36,0.6)',
-    '0 0 20px rgba(205,124,46,0.4)'
-  ];
+  // Gold, Silver, Bronze styling
+  const getPodiumConfig = (idx: number, isCenter: boolean) => {
+    if (isCenter) {
+      return {
+        height: 200,
+        gradient: 'linear-gradient(135deg, rgba(251, 191, 36, 0.25), rgba(245, 158, 11, 0.55))',
+        border: '1px solid rgba(251, 191, 36, 0.7)',
+        glow: '0 0 30px rgba(251, 191, 36, 0.45)',
+        label: '🥇 1º Lugar',
+        titleColor: '#fbbf24'
+      };
+    }
+    // 2nd Place is left in podiumOrder [2nd, 1st, 3rd]
+    if (idx === 0) {
+      return {
+        height: 140,
+        gradient: 'linear-gradient(135deg, rgba(226, 232, 240, 0.2), rgba(148, 163, 184, 0.4))',
+        border: '1px solid rgba(148, 163, 184, 0.5)',
+        glow: '0 0 20px rgba(148, 163, 184, 0.25)',
+        label: '🥈 2º Lugar',
+        titleColor: '#cbd5e1'
+      };
+    }
+    // 3rd Place is right
+    return {
+      height: 110,
+      gradient: 'linear-gradient(135deg, rgba(254, 215, 170, 0.15), rgba(194, 65, 12, 0.35))',
+      border: '1px solid rgba(194, 65, 12, 0.45)',
+      glow: '0 0 20px rgba(194, 65, 12, 0.2)',
+      label: '🥉 3º Lugar',
+      titleColor: '#fb923c'
+    };
+  };
 
   const rankBadge = (rank: number) => {
     if (rank === 1) return '🥇';
@@ -72,53 +94,56 @@ export const EmployeeRanking: React.FC = () => {
 
   const rankColor = (rank: number, total: number) => {
     if (rank === 1) return '#fbbf24';
-    if (rank === 2) return '#94a3b8';
-    if (rank === 3) return '#cd7c2e';
-    if (rank === total) return '#ef4444';
+    if (rank === 2) return '#cbd5e1';
+    if (rank === 3) return '#fb923c';
+    if (rank === total) return '#f87171';
     return 'var(--text-secondary)';
   };
 
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+  // Sparkle particles helper
+  const sparkles = Array.from({ length: celebrating ? 25 : 8 });
 
-      {/* Header */}
-      <div style={{ textAlign: 'center' }}>
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', width: '100%' }}>
+      {/* Header with glassmorphism */}
+      <div style={{ textAlign: 'center', position: 'relative', overflow: 'hidden', borderRadius: '24px', padding: '24px', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+        {/* Animated glowing backdrop */}
         <div style={{
-          display: 'inline-flex', alignItems: 'center', gap: '12px',
-          background: 'linear-gradient(135deg, rgba(251,191,36,0.15), rgba(245,158,11,0.05))',
-          border: '1px solid rgba(251,191,36,0.3)',
-          borderRadius: '16px', padding: '16px 32px'
-        }}>
-          <span style={{ fontSize: '2rem' }}>🏆</span>
-          <div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, background: 'linear-gradient(135deg, #fbbf24, #f97316)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              Funcionário do Minuto
-            </h2>
-            <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', margin: 0 }}>
-              Rankings atualizam a cada 30s · {updatedAt ? new Date(updatedAt).toLocaleTimeString('pt-BR') : '—'}
-            </p>
-          </div>
-          <span style={{ fontSize: '2rem' }}>⚡</span>
+          position: 'absolute', top: '-50%', left: '-50%', width: '200%', height: '200%',
+          background: 'radial-gradient(circle, rgba(251,191,36,0.07) 0%, transparent 60%)',
+          animation: 'rotateBg 20s linear infinite',
+          pointerEvents: 'none'
+        }} />
+
+        <div style={{ position: 'relative', zIndex: 1, display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+          <div style={{ fontSize: '2.5rem', animation: 'float 3s ease-in-out infinite' }}>🏆</div>
+          <h2 style={{ fontSize: '2rem', fontWeight: 800, background: 'linear-gradient(135deg, #fbbf24, #f97316)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: '4px 0 0' }}>
+            Quadro de Líderes e Medalhas
+          </h2>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>
+            Rankings recalculados dinamicamente com base nas entregas · Última atualização: {updatedAt ? new Date(updatedAt).toLocaleTimeString('pt-BR') : '—'}
+          </p>
         </div>
       </div>
 
-      {/* Score legend */}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', flexWrap: 'wrap' }}>
+      {/* Rules & Points Legend */}
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
         {[
           { icon: '✍️', label: 'Card Criado', pts: 10, color: '#a78bfa' },
           { icon: '💻', label: 'Card Executado', pts: 15, color: '#38bdf8' },
           { icon: '✅', label: 'Card Fechado', pts: 25, color: '#34d399' },
-          { icon: '💬', label: 'Debate/Atividade', pts: 5, color: '#fb923c' },
+          { icon: '💬', label: 'Atividade/Debates', pts: 5, color: '#fb923c' },
         ].map(item => (
           <div key={item.label} style={{
-            display: 'flex', alignItems: 'center', gap: '6px',
-            background: 'var(--bg-secondary)', borderRadius: '8px',
-            padding: '6px 12px', fontSize: '0.75rem',
-            border: `1px solid ${item.color}33`
+            display: 'flex', alignItems: 'center', gap: '8px',
+            background: 'rgba(255, 255, 255, 0.02)', borderRadius: '12px',
+            padding: '8px 16px', fontSize: '0.8rem',
+            border: `1px solid ${item.color}22`,
+            backdropFilter: 'blur(8px)'
           }}>
             <span>{item.icon}</span>
-            <span style={{ color: 'var(--text-secondary)' }}>{item.label}</span>
-            <span style={{ color: item.color, fontWeight: 700 }}>+{item.pts}pts</span>
+            <span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>{item.label}</span>
+            <span style={{ color: item.color, fontWeight: 700 }}>+{item.pts} pts</span>
           </div>
         ))}
       </div>
@@ -127,53 +152,126 @@ export const EmployeeRanking: React.FC = () => {
         <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>Calculando rankings...</p>
       )}
 
-      {/* PODIUM */}
+      {/* PODIUM SECTION WITH FLOATING PARTICLES */}
       {top3.length > 0 && (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', gap: '16px', padding: '24px 0 0' }}>
+        <div style={{
+          position: 'relative',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'flex-end',
+          gap: '24px',
+          padding: '40px 0 20px',
+          minHeight: '340px',
+          overflow: 'hidden',
+          borderRadius: '24px',
+          background: 'rgba(0, 0, 0, 0.15)',
+          border: '1px solid rgba(255, 255, 255, 0.03)'
+        }}>
+          {/* Shine particles floating around */}
+          {sparkles.map((_, i) => (
+            <div
+              key={i}
+              className="sparkle-particle"
+              style={{
+                position: 'absolute',
+                bottom: '10px',
+                left: `${15 + Math.random() * 70}%`,
+                width: `${4 + Math.random() * 6}px`,
+                height: `${4 + Math.random() * 6}px`,
+                background: '#fbbf24',
+                borderRadius: '50%',
+                boxShadow: '0 0 10px #fbbf24',
+                animation: `floatSparkle ${3 + Math.random() * 4}s linear infinite`,
+                animationDelay: `${Math.random() * 3}s`,
+                opacity: 0,
+                pointerEvents: 'none'
+              }}
+            />
+          ))}
+
           {(top3.length === 3 ? podiumOrder : top3).map((entry, i) => {
             const isCenter = top3.length === 3 ? i === 1 : i === 0;
-            return (
-              <div key={entry.agentId} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                {/* Champion crown */}
-                {isCenter && <div style={{ fontSize: '2rem', animation: celebrating ? 'bounce 0.5s ease infinite alternate' : 'none' }}>👑</div>}
+            const config = getPodiumConfig(i, isCenter);
 
-                {/* Avatar bubble */}
+            return (
+              <div key={entry.agentId} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 2 }}>
+                {/* Crown for Champion */}
+                {isCenter && (
+                  <div style={{
+                    fontSize: '2.5rem',
+                    animation: 'bounceCrown 0.6s ease infinite alternate',
+                    filter: 'drop-shadow(0 0 12px rgba(251,191,36,0.6))',
+                    marginBottom: '-4px'
+                  }}>
+                    👑
+                  </div>
+                )}
+
+                {/* Avatar container with metallic frames */}
                 <div style={{
-                  width: isCenter ? '80px' : '64px',
-                  height: isCenter ? '80px' : '64px',
+                  position: 'relative',
+                  width: isCenter ? '90px' : '72px',
+                  height: isCenter ? '90px' : '72px',
                   borderRadius: '50%',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: isCenter ? '2.5rem' : '2rem',
-                  background: podiumColors[i],
-                  boxShadow: podiumGlow[i],
-                  border: `3px solid ${isCenter ? '#fbbf24' : 'transparent'}`,
+                  fontSize: isCenter ? '3rem' : '2.25rem',
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  boxShadow: config.glow,
+                  border: config.border,
+                  zIndex: 3,
+                  transform: `translateY(${isCenter ? '-12px' : '0px'})`,
                   transition: 'all 0.3s'
                 }}>
                   {entry.avatar}
-                </div>
-
-                {/* Name */}
-                <div style={{ textAlign: 'center', maxWidth: '100px' }}>
-                  <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.2 }}>
-                    {entry.name.split(' ')[0]}
+                  <div style={{
+                    position: 'absolute',
+                    bottom: '-4px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    background: config.titleColor,
+                    color: '#000',
+                    fontSize: '0.62rem',
+                    fontWeight: 800,
+                    padding: '2px 8px',
+                    borderRadius: '8px',
+                    whiteSpace: 'nowrap',
+                    textTransform: 'uppercase',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+                  }}>
+                    {entry.totalScore} pts
                   </div>
-                  <div style={{ fontSize: '0.65rem', color: 'var(--text-secondary)' }}>{entry.role.split(' ')[0]}</div>
                 </div>
 
-                {/* Podium block */}
+                {/* Name & Role tag */}
+                <div style={{ textAlign: 'center', marginTop: '4px', marginBottom: '12px', maxWidth: '120px' }}>
+                  <div style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--text-primary)', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                    {entry.name}
+                  </div>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>{entry.role}</div>
+                </div>
+
+                {/* Podium Block */}
                 <div style={{
-                  width: isCenter ? '120px' : '96px',
-                  height: `${podiumHeights[i]}px`,
-                  background: podiumColors[i],
-                  borderRadius: '8px 8px 0 0',
+                  width: isCenter ? '140px' : '110px',
+                  height: `${config.height}px`,
+                  background: config.gradient,
+                  border: config.border,
+                  borderRadius: '16px 16px 0 0',
                   display: 'flex', flexDirection: 'column',
-                  alignItems: 'center', justifyContent: 'center', gap: '4px',
-                  boxShadow: podiumGlow[i],
-                  transition: 'all 0.5s ease'
+                  alignItems: 'center', justifyContent: 'center', gap: '6px',
+                  boxShadow: `0 10px 30px rgba(0,0,0,0.4), ${config.glow}`,
+                  backdropFilter: 'blur(12px)',
+                  transition: 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
                 }}>
-                  <div style={{ fontSize: isCenter ? '1.5rem' : '1.2rem' }}>{podiumLabels[i]}</div>
-                  <div style={{ fontSize: '1rem', fontWeight: 800, color: '#fff' }}>{entry.totalScore}</div>
-                  <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.8)' }}>pontos</div>
+                  <div style={{ fontSize: isCenter ? '1.15rem' : '0.9rem', fontWeight: 800, color: '#fff', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+                    {config.label}
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', opacity: 0.8 }}>
+                    <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Entregas</span>
+                    <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#fff' }}>
+                      ✅ {entry.cardsClosed}
+                    </span>
+                  </div>
                 </div>
               </div>
             );
@@ -181,143 +279,193 @@ export const EmployeeRanking: React.FC = () => {
         </div>
       )}
 
-      {/* Prize alert for 1st */}
-      {rankings[0]?.prize && (
-        <div style={{
-          background: 'linear-gradient(135deg, rgba(251,191,36,0.15), rgba(251,191,36,0.05))',
-          border: '1px solid rgba(251,191,36,0.5)',
-          borderRadius: '12px', padding: '14px 20px',
-          display: 'flex', alignItems: 'center', gap: '12px'
-        }}>
-          <span style={{ fontSize: '1.5rem' }}>🏆</span>
-          <div>
-            <div style={{ fontWeight: 700, color: '#fbbf24', fontSize: '0.9rem' }}>{rankings[0].name} — CAMPEÃO!</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{rankings[0].prize}</div>
-          </div>
-        </div>
-      )}
-
-      {/* School penalty for last */}
-      {last?.penalty && (
-        <div style={{
-          background: 'linear-gradient(135deg, rgba(239,68,68,0.12), rgba(239,68,68,0.04))',
-          border: '1px solid rgba(239,68,68,0.4)',
-          borderRadius: '12px', padding: '14px 20px',
-          display: 'flex', alignItems: 'center', gap: '12px'
-        }}>
-          <span style={{ fontSize: '1.5rem' }}>🎓</span>
-          <div>
-            <div style={{ fontWeight: 700, color: '#ef4444', fontSize: '0.9rem' }}>{last.name} — ESCOLA OBRIGATÓRIA</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{last.penalty}</div>
-          </div>
-        </div>
-      )}
-
-      {/* Full Leaderboard */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-          📊 Placar Completo
-        </h3>
-        {rankings.map((entry) => {
-          const isFirst = entry.rank === 1;
-          const isLast = entry.rank === rankings.length && rankings.length > 1;
-          const barWidth = rankings[0].totalScore > 0
-            ? Math.max(4, Math.round((entry.totalScore / rankings[0].totalScore) * 100))
-            : 0;
-
-          return (
-            <div key={entry.agentId} style={{
-              display: 'flex', alignItems: 'center', gap: '14px',
-              padding: '14px 16px',
-              borderRadius: '12px',
-              background: isFirst
-                ? 'linear-gradient(135deg, rgba(251,191,36,0.12), rgba(251,191,36,0.04))'
-                : isLast
-                  ? 'linear-gradient(135deg, rgba(239,68,68,0.1), rgba(239,68,68,0.03))'
-                  : 'var(--bg-secondary)',
-              border: `1px solid ${isFirst ? 'rgba(251,191,36,0.35)' : isLast ? 'rgba(239,68,68,0.3)' : 'var(--border-color)'}`,
-              transition: 'all 0.2s'
-            }}>
-              {/* Rank badge */}
-              <div style={{
-                minWidth: '36px', textAlign: 'center',
-                fontSize: entry.rank <= 3 ? '1.4rem' : '0.9rem',
-                fontWeight: 800,
-                color: rankColor(entry.rank, rankings.length)
-              }}>
-                {rankBadge(entry.rank)}
-              </div>
-
-              {/* Avatar */}
-              <div style={{ fontSize: '1.5rem', minWidth: '32px', textAlign: 'center' }}>{entry.avatar}</div>
-
-              {/* Name + bar */}
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-primary)' }}>
-                    {entry.name}
-                    {isFirst && <span style={{ marginLeft: '6px', fontSize: '0.7rem', background: 'rgba(251,191,36,0.2)', color: '#fbbf24', padding: '2px 6px', borderRadius: '4px' }}>CAMPEÃO</span>}
-                    {isLast && <span style={{ marginLeft: '6px', fontSize: '0.7rem', background: 'rgba(239,68,68,0.2)', color: '#ef4444', padding: '2px 6px', borderRadius: '4px' }}>ESCOLA</span>}
-                  </span>
-                  <span style={{ fontWeight: 800, fontSize: '1rem', color: rankColor(entry.rank, rankings.length) }}>
-                    {entry.totalScore} pts
-                  </span>
-                </div>
-
-                {/* Progress bar */}
-                <div style={{ height: '6px', background: 'rgba(255,255,255,0.08)', borderRadius: '3px', overflow: 'hidden' }}>
-                  <div style={{
-                    height: '100%',
-                    width: `${barWidth}%`,
-                    borderRadius: '3px',
-                    background: isFirst
-                      ? 'linear-gradient(90deg, #fbbf24, #f97316)'
-                      : isLast
-                        ? 'linear-gradient(90deg, #ef4444, #dc2626)'
-                        : 'linear-gradient(90deg, var(--color-primary), var(--color-secondary))',
-                    transition: 'width 0.8s ease'
-                  }} />
-                </div>
-
-                {/* Stats */}
-                <div style={{ display: 'flex', gap: '12px', fontSize: '0.7rem', color: 'var(--text-secondary)' }}>
-                  <span>✍️ {entry.cardsCreated} criados</span>
-                  <span>💻 {entry.cardsExecuted} executados</span>
-                  <span>✅ {entry.cardsClosed} fechados</span>
-                  <span>💬 {entry.debatesWon} atividades</span>
-                </div>
-              </div>
+      {/* Prize / Governance Awards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
+        {rankings[0]?.prize && (
+          <div style={{
+            position: 'relative', overflow: 'hidden',
+            background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.08), rgba(251, 191, 36, 0.02))',
+            border: '1px solid rgba(251, 191, 36, 0.25)',
+            borderRadius: '16px', padding: '16px 20px',
+            display: 'flex', alignItems: 'center', gap: '16px',
+            backdropFilter: 'blur(10px)'
+          }}>
+            <span style={{ fontSize: '2rem', filter: 'drop-shadow(0 0 8px rgba(251,191,36,0.5))' }}>👑</span>
+            <div>
+              <div style={{ fontWeight: 800, color: '#fbbf24', fontSize: '0.95rem' }}>Prêmio de Liderança (1º Lugar): {rankings[0].name}</div>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '4px', lineHeight: 1.4 }}>{rankings[0].prize}</div>
             </div>
-          );
-        })}
+          </div>
+        )}
+
+        {last?.penalty && rankings.length > 1 && (
+          <div style={{
+            position: 'relative', overflow: 'hidden',
+            background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.08), rgba(239, 68, 68, 0.02))',
+            border: '1px solid rgba(239, 68, 68, 0.25)',
+            borderRadius: '16px', padding: '16px 20px',
+            display: 'flex', alignItems: 'center', gap: '16px',
+            backdropFilter: 'blur(10px)'
+          }}>
+            <span style={{ fontSize: '2rem', filter: 'drop-shadow(0 0 8px rgba(239,68,68,0.5))' }}>🎓</span>
+            <div>
+              <div style={{ fontWeight: 800, color: '#f87171', fontSize: '0.95rem' }}>Alerta de Capacitação (Lanterna): {last.name}</div>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '4px', lineHeight: 1.4 }}>{last.penalty}</div>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Refresh button */}
-      <div style={{ textAlign: 'center' }}>
+      {/* Leaderboard Table with Custom Glass Rows */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          📊 Classificação Geral <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 500 }}>({rankings.length} agentes alocados)</span>
+        </h3>
+        
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {rankings.map((entry) => {
+            const isFirst = entry.rank === 1;
+            const isLast = entry.rank === rankings.length && rankings.length > 1;
+            const barWidth = rankings[0].totalScore > 0
+              ? Math.max(5, Math.round((entry.totalScore / rankings[0].totalScore) * 100))
+              : 0;
+
+            return (
+              <div key={entry.agentId} className="rank-row" style={{
+                display: 'flex', alignItems: 'center', gap: '16px',
+                padding: '16px 20px',
+                borderRadius: '16px',
+                background: isFirst
+                  ? 'linear-gradient(135deg, rgba(251, 191, 36, 0.08), rgba(251, 191, 36, 0.02))'
+                  : isLast
+                    ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.06), rgba(239, 68, 68, 0.01))'
+                    : 'rgba(255, 255, 255, 0.02)',
+                border: `1px solid ${isFirst ? 'rgba(251, 191, 36, 0.2)' : isLast ? 'rgba(239, 68, 68, 0.2)' : 'rgba(255, 255, 255, 0.04)'}`,
+                backdropFilter: 'blur(8px)',
+                transition: 'all 0.2s ease-in-out'
+              }}>
+                {/* Rank Badge */}
+                <div style={{
+                  minWidth: '40px', textAlign: 'center',
+                  fontSize: entry.rank <= 3 ? '1.5rem' : '0.95rem',
+                  fontWeight: 800,
+                  color: rankColor(entry.rank, rankings.length)
+                }}>
+                  {rankBadge(entry.rank)}
+                </div>
+
+                {/* Avatar with dynamic status indicator */}
+                <div style={{ fontSize: '1.8rem', minWidth: '40px', textAlign: 'center', position: 'relative' }}>
+                  {entry.avatar}
+                </div>
+
+                {/* Main statistics container */}
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--text-primary)' }}>
+                      {entry.name}
+                      <span style={{ marginLeft: '8px', fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
+                        {entry.role}
+                      </span>
+                    </span>
+                    <span style={{ fontWeight: 800, fontSize: '1.1rem', color: rankColor(entry.rank, rankings.length) }}>
+                      {entry.totalScore} pts
+                    </span>
+                  </div>
+
+                  {/* Glass progress bar */}
+                  <div style={{ height: '8px', background: 'rgba(255,255,255,0.04)', borderRadius: '4px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.02)' }}>
+                    <div style={{
+                      height: '100%',
+                      width: `${barWidth}%`,
+                      borderRadius: '4px',
+                      background: isFirst
+                        ? 'linear-gradient(90deg, #fbbf24, #f97316)'
+                        : isLast
+                          ? 'linear-gradient(90deg, #ef4444, #dc2626)'
+                          : 'linear-gradient(90deg, var(--color-primary), var(--color-secondary))',
+                      boxShadow: isFirst ? '0 0 10px rgba(251,191,36,0.5)' : 'none',
+                      transition: 'width 1s cubic-bezier(0.19, 1, 0.22, 1)'
+                    }} />
+                  </div>
+
+                  {/* Detailed counter icons */}
+                  <div style={{ display: 'flex', gap: '16px', fontSize: '0.72rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                    <span>✍️ {entry.cardsCreated} criados</span>
+                    <span>💻 {entry.cardsExecuted} executados</span>
+                    <span>✅ {entry.cardsClosed} fechados</span>
+                    <span>💬 {entry.debatesWon} participações</span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Control Buttons */}
+      <div style={{ textAlign: 'center', marginTop: '12px' }}>
         <button
           onClick={fetchRankings}
           disabled={loading}
+          className="glow-btn"
           style={{
-            padding: '10px 28px',
-            borderRadius: '8px',
+            padding: '12px 36px',
+            borderRadius: '12px',
             border: 'none',
             background: 'linear-gradient(135deg, #fbbf24, #f97316)',
             color: '#000',
-            fontWeight: 700,
-            fontSize: '0.85rem',
+            fontWeight: 800,
+            fontSize: '0.9rem',
             cursor: loading ? 'not-allowed' : 'pointer',
             opacity: loading ? 0.6 : 1,
-            transition: 'all 0.2s'
+            boxShadow: '0 4px 20px rgba(251, 191, 36, 0.3)',
+            transition: 'all 0.2s ease'
           }}
         >
-          {loading ? '⟳ Calculando...' : '⟳ Atualizar Ranking'}
+          {loading ? '⟳ Recalculando...' : '⟳ Atualizar Placar'}
         </button>
       </div>
 
+      {/* Scoped CSS animations for beautiful wow effects */}
       <style>{`
-        @keyframes bounce {
-          from { transform: translateY(0); }
-          to { transform: translateY(-8px); }
+        @keyframes float {
+          0% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+          100% { transform: translateY(0px); }
+        }
+        @keyframes rotateBg {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        @keyframes floatSparkle {
+          0% {
+            transform: translateY(0px) scale(0) rotate(0deg);
+            opacity: 0;
+          }
+          20% {
+            opacity: 0.8;
+          }
+          80% {
+            opacity: 0.8;
+          }
+          100% {
+            transform: translateY(-260px) scale(1.2) rotate(180deg);
+            opacity: 0;
+          }
+        }
+        @keyframes bounceCrown {
+          from { transform: translateY(0) scale(1); }
+          to { transform: translateY(-6px) scale(1.05); }
+        }
+        .rank-row:hover {
+          transform: translateX(4px);
+          background: rgba(255, 255, 255, 0.04) !important;
+          border-color: rgba(255, 255, 255, 0.08) !important;
+        }
+        .glow-btn:hover:not(:disabled) {
+          transform: scale(1.03);
+          boxShadow: 0 6px 25px rgba(251, 191, 36, 0.5) !important;
         }
       `}</style>
     </div>

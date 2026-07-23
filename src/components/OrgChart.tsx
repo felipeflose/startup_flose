@@ -9,7 +9,7 @@ interface OrgChartProps {
 
 export const OrgChart: React.FC<OrgChartProps> = ({ agents, selectedAgentIds, onSelectAgent }) => {
   // Group agents by their levels
-  const levels = ['C-Level', 'Diretor', 'Gerente', 'Coordenador', 'Analista SR'];
+  const levels = ['C-Level', 'Diretor', 'Gerente', 'Coordenador', 'Analista SR', 'Júnior', 'Estagiário'];
   
   const groupedAgents = levels.reduce((acc, lvl) => {
     acc[lvl] = agents.filter(a => a.level === lvl);
@@ -23,6 +23,8 @@ export const OrgChart: React.FC<OrgChartProps> = ({ agents, selectedAgentIds, on
       case 'Gerente': return '#b45309';
       case 'Coordenador': return '#3b82f6';
       case 'Analista SR': return '#10b981';
+      case 'Júnior': return '#a78bfa';
+      case 'Estagiário': return '#fb7185';
       default: return '#8b5cf6';
     }
   };

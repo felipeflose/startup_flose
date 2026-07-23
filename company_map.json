@@ -1,0 +1,44 @@
+{
+  "company_summary": "A empresa opera em um ambiente ágil de desenvolvimento de software, focando na integração de funcionalidades complexas com IA/LLM e gestão robusta do backlog via metodologias Scrum. Há um foco intenso em garantir a qualidade do código (testes, segurança) e a otimização da arquitetura de dados.",
+  "areas": [
+    {
+      "name": "Gestão de Produto e Backlog",
+      "purpose": "Definir a visão do produto, gerenciar o fluxo de trabalho das funcionalidades e equilibrar o lançamento de novas features com a estabilização do sistema existente.",
+      "open_positions": [
+        {
+          "title": "Gerente de Produto (PM)",
+          "level": "Gerente",
+          "why_needed": "Para liderar a estratégia de desenvolvimento, priorizar o backlog e gerenciar o dilema entre novas funcionalidades e estabilização.",
+          "skills_needed": "Product Discovery, análise qualitativa, gestão de jornada do usuário.",
+          "priority": "alta"
+        }
+      ]
+    },
+    {
+      "name": "Engenharia de Software e Qualidade (DevOps)",
+      "purpose": "Garantir a qualidade, segurança e reprodutibilidade do código através de testes automatizados, práticas de desenvolvimento seguro (CSRF, validação de entrada) e otimização da arquitetura.",
+      "open_positions": [
+        {
+          "title": "Engenheiro(a) de Software/Backend",
+          "level": "Pleno | Sênior",
+          "why_needed": "Para implementar correções de segurança (CSRF), refatorar código (extração de módulos), otimizar a arquitetura de dados e implementar testes unitários.",
+          "skills_needed": "TypeScript/React, Python (para lógica de backend), segurança de API, testes unitários, CI/CD (GitHub Actions).",
+          "priority": "alta"
+        }
+      ]
+    },
+    {
+      "name": "Coordenação Ágil e Processos",
+      "purpose": "Assegurar a fluidez do processo de desenvolvimento, remover bloqueios organizacionais e aplicar governança sobre o fluxo de trabalho.",
+      "open_positions": [
+        {
+          "title": "Scrum Master / Coordenador Agile",
+          "level": "Coordenador | Gerente",
+          "why_needed": "Para otimizar as retrospectivas, remover impedimentos e aplicar a governança necessária para manter o ritmo das entregas.",
+          "skills_needed": "Agilidade (Scrum), facilitação, gestão de fluxo, comunicação organizacional.",
+          "priority": "média"
+        }
+      ]
+    }
+  ]
+}

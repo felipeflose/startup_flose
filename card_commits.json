@@ -986,5 +986,3358 @@
     "url": "https://github.com/felipeflose/startup_flose/commit/67f8fbcaa7c512c1d513611d4b62249fbba55c6d",
     "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6258.md",
     "committedAt": "2026-07-23T10:29:07.181Z"
+  },
+  "KAN-6259": {
+    "sha": "5118aafed28aa75935238f7dbb887f50f15f486f",
+    "shortSha": "5118aaf",
+    "url": "https://github.com/felipeflose/startup_flose/commit/5118aafed28aa75935238f7dbb887f50f15f486f",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6259.md",
+    "committedAt": "2026-07-23T10:29:44.752Z"
+  },
+  "KAN-6260": {
+    "sha": "c24dc2cb23ca4650a560e0c473d8d4383c68a904",
+    "shortSha": "c24dc2c",
+    "url": "https://github.com/felipeflose/startup_flose/commit/c24dc2cb23ca4650a560e0c473d8d4383c68a904",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6260.md",
+    "committedAt": "2026-07-23T10:31:10.153Z"
+  },
+  "KAN-6261": {
+    "sha": "2427f0f32a9aa4d4be05b2bae2483864f822b70f",
+    "shortSha": "2427f0f",
+    "url": "https://github.com/felipeflose/startup_flose/commit/2427f0f32a9aa4d4be05b2bae2483864f822b70f",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6261.md",
+    "committedAt": "2026-07-23T10:32:07.193Z"
+  },
+  "KAN-6262": {
+    "sha": "4dea5cd5ce78ffcb5f4238d310642dc3a78d1e5a",
+    "shortSha": "4dea5cd",
+    "url": "https://github.com/felipeflose/startup_flose/commit/4dea5cd5ce78ffcb5f4238d310642dc3a78d1e5a",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6262.md",
+    "committedAt": "2026-07-23T10:32:22.777Z"
+  },
+  "KAN-6263": {
+    "sha": "0fcae531110910beab369bea5c8a3a5541598139",
+    "shortSha": "0fcae53",
+    "url": "https://github.com/felipeflose/startup_flose/commit/0fcae531110910beab369bea5c8a3a5541598139",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6263.md",
+    "committedAt": "2026-07-23T10:33:08.957Z"
+  },
+  "KAN-6264": {
+    "sha": "cf05cc67990e63f0ce4d0efb798156e8a080448a",
+    "shortSha": "cf05cc6",
+    "url": "https://github.com/felipeflose/startup_flose/commit/cf05cc67990e63f0ce4d0efb798156e8a080448a",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6264.md",
+    "committedAt": "2026-07-23T10:33:13.623Z"
+  },
+  "undefined": {
+    "sha": "caaf82dce8a519d903f8274b1a48f30d2c4e430b",
+    "shortSha": "caaf82d",
+    "url": "https://github.com/felipeflose/startup_flose/commit/caaf82dce8a519d903f8274b1a48f30d2c4e430b",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/undefined.md",
+    "committedAt": "2026-07-23T10:33:32.294Z"
+  },
+  "KAN-6265": {
+    "sha": "fe6fc6d58ad0ea7a1925c7983b913bd4a5c274fa",
+    "shortSha": "fe6fc6d",
+    "url": "https://github.com/felipeflose/startup_flose/commit/fe6fc6d58ad0ea7a1925c7983b913bd4a5c274fa",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6265.md",
+    "committedAt": "2026-07-23T10:34:13.057Z"
+  },
+  "KAN-6266": {
+    "sha": "016d814aa61cd358d3883aa344efa93f6a31b20b",
+    "shortSha": "016d814",
+    "url": "https://github.com/felipeflose/startup_flose/commit/016d814aa61cd358d3883aa344efa93f6a31b20b",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6266.md",
+    "committedAt": "2026-07-23T10:35:21.360Z"
+  },
+  "KAN-6267": {
+    "sha": "57c2b55a367414546c564c763d262b8112a7b3d7",
+    "shortSha": "57c2b55",
+    "url": "https://github.com/felipeflose/startup_flose/commit/57c2b55a367414546c564c763d262b8112a7b3d7",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6267.md",
+    "committedAt": "2026-07-23T10:35:15.407Z"
+  },
+  "KAN-6268": {
+    "sha": "355e084c99a230242698819fe8b20dd1406fd7e7",
+    "shortSha": "355e084",
+    "url": "https://github.com/felipeflose/startup_flose/commit/355e084c99a230242698819fe8b20dd1406fd7e7",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6268.md",
+    "committedAt": "2026-07-23T10:36:46.688Z"
+  },
+  "KAN-6269": {
+    "sha": "c8fd4b548468455ad584b3e25f22f0332c96bf20",
+    "shortSha": "c8fd4b5",
+    "url": "https://github.com/felipeflose/startup_flose/commit/c8fd4b548468455ad584b3e25f22f0332c96bf20",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6269.md",
+    "committedAt": "2026-07-23T10:39:08.677Z"
+  },
+  "KAN-6271": {
+    "sha": "266d1741259d4764e133e8787e6df81fcb4c62cb",
+    "shortSha": "266d174",
+    "url": "https://github.com/felipeflose/startup_flose/commit/266d1741259d4764e133e8787e6df81fcb4c62cb",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6271.md",
+    "committedAt": "2026-07-23T10:40:00.655Z"
+  },
+  "KAN-6272": {
+    "sha": "2efbbe222d17867c6a9e24631a1a4b7dcdb2e03d",
+    "shortSha": "2efbbe2",
+    "url": "https://github.com/felipeflose/startup_flose/commit/2efbbe222d17867c6a9e24631a1a4b7dcdb2e03d",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6272.md",
+    "committedAt": "2026-07-23T10:42:13.451Z"
+  },
+  "KAN-6273": {
+    "sha": "8c8809b859f6a116d03122b42a3fe380519e279a",
+    "shortSha": "8c8809b",
+    "url": "https://github.com/felipeflose/startup_flose/commit/8c8809b859f6a116d03122b42a3fe380519e279a",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6273.md",
+    "committedAt": "2026-07-23T10:43:28.165Z"
+  },
+  "KAN-6274": {
+    "sha": "ce79e39e2684745a56b035b741cf43499da206ea",
+    "shortSha": "ce79e39",
+    "url": "https://github.com/felipeflose/startup_flose/commit/ce79e39e2684745a56b035b741cf43499da206ea",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6274.md",
+    "committedAt": "2026-07-23T10:44:28.609Z"
+  },
+  "KAN-6275": {
+    "sha": "b89cb47041ad629b6d32cbbedeae47b5e93f7c3f",
+    "shortSha": "b89cb47",
+    "url": "https://github.com/felipeflose/startup_flose/commit/b89cb47041ad629b6d32cbbedeae47b5e93f7c3f",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6275.md",
+    "committedAt": "2026-07-23T10:45:28.798Z"
+  },
+  "KAN-6276": {
+    "sha": "36982559dc819d42c4cb636064ed229c4dac1895",
+    "shortSha": "3698255",
+    "url": "https://github.com/felipeflose/startup_flose/commit/36982559dc819d42c4cb636064ed229c4dac1895",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6276.md",
+    "committedAt": "2026-07-23T10:46:24.213Z"
+  },
+  "KAN-6277": {
+    "sha": "2703ee11abefffede4b4b37bf3dbd66adb3fb395",
+    "shortSha": "2703ee1",
+    "url": "https://github.com/felipeflose/startup_flose/commit/2703ee11abefffede4b4b37bf3dbd66adb3fb395",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6277.md",
+    "committedAt": "2026-07-23T10:47:29.185Z"
+  },
+  "KAN-6278": {
+    "sha": "dba3ece451f11f8d914f195db55c956ded5695c0",
+    "shortSha": "dba3ece",
+    "url": "https://github.com/felipeflose/startup_flose/commit/dba3ece451f11f8d914f195db55c956ded5695c0",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6278.md",
+    "committedAt": "2026-07-23T10:48:29.001Z"
+  },
+  "KAN-6279": {
+    "sha": "8169f131788107a38f0e58412abfa2be2f36f9a0",
+    "shortSha": "8169f13",
+    "url": "https://github.com/felipeflose/startup_flose/commit/8169f131788107a38f0e58412abfa2be2f36f9a0",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6279.md",
+    "committedAt": "2026-07-23T10:49:27.105Z"
+  },
+  "KAN-6280": {
+    "sha": "bda1ab7298b2a8109b486f51efc52e2dea370ee0",
+    "shortSha": "bda1ab7",
+    "url": "https://github.com/felipeflose/startup_flose/commit/bda1ab7298b2a8109b486f51efc52e2dea370ee0",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6280.md",
+    "committedAt": "2026-07-23T10:50:28.634Z"
+  },
+  "KAN-6281": {
+    "sha": "f7d91aa6bd5b6cd40a61d86a3f03bb3c6e56d701",
+    "shortSha": "f7d91aa",
+    "url": "https://github.com/felipeflose/startup_flose/commit/f7d91aa6bd5b6cd40a61d86a3f03bb3c6e56d701",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6281.md",
+    "committedAt": "2026-07-23T10:51:29.649Z"
+  },
+  "KAN-6282": {
+    "sha": "4fefb1083e8549812e556accfb6fb38ffb5d59b1",
+    "shortSha": "4fefb10",
+    "url": "https://github.com/felipeflose/startup_flose/commit/4fefb1083e8549812e556accfb6fb38ffb5d59b1",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6282.md",
+    "committedAt": "2026-07-23T10:52:28.408Z"
+  },
+  "KAN-6284": {
+    "sha": "ae5c5e43f6be6a5f1e057ca3c83695f9de5e22c9",
+    "shortSha": "ae5c5e4",
+    "url": "https://github.com/felipeflose/startup_flose/commit/ae5c5e43f6be6a5f1e057ca3c83695f9de5e22c9",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6284.md",
+    "committedAt": "2026-07-23T10:53:26.763Z"
+  },
+  "KAN-6285": {
+    "sha": "ea30328cd91383ebcede21c7249999a5b0bc4fbe",
+    "shortSha": "ea30328",
+    "url": "https://github.com/felipeflose/startup_flose/commit/ea30328cd91383ebcede21c7249999a5b0bc4fbe",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6285.md",
+    "committedAt": "2026-07-23T10:54:29.587Z"
+  },
+  "KAN-6286": {
+    "sha": "592c77065c3d4f656348cb703cc01d3513e843d3",
+    "shortSha": "592c770",
+    "url": "https://github.com/felipeflose/startup_flose/commit/592c77065c3d4f656348cb703cc01d3513e843d3",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6286.md",
+    "committedAt": "2026-07-23T10:55:28.874Z"
+  },
+  "KAN-6287": {
+    "sha": "f62988b1f902762f1017bf5642a7e10aa9df5509",
+    "shortSha": "f62988b",
+    "url": "https://github.com/felipeflose/startup_flose/commit/f62988b1f902762f1017bf5642a7e10aa9df5509",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6287.md",
+    "committedAt": "2026-07-23T10:56:28.203Z"
+  },
+  "KAN-6288": {
+    "sha": "6a5e5c4f7178e464cb167b2aac65a9dc6aecb993",
+    "shortSha": "6a5e5c4",
+    "url": "https://github.com/felipeflose/startup_flose/commit/6a5e5c4f7178e464cb167b2aac65a9dc6aecb993",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6288.md",
+    "committedAt": "2026-07-23T10:57:29.925Z"
+  },
+  "KAN-6289": {
+    "sha": "c53f72c4c2eb9394dd4223f74f2d02b033a7e34d",
+    "shortSha": "c53f72c",
+    "url": "https://github.com/felipeflose/startup_flose/commit/c53f72c4c2eb9394dd4223f74f2d02b033a7e34d",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6289.md",
+    "committedAt": "2026-07-23T10:58:29.240Z"
+  },
+  "KAN-6290": {
+    "sha": "bf9ab524b5be94c6737bd51724e2d7381ddbaa47",
+    "shortSha": "bf9ab52",
+    "url": "https://github.com/felipeflose/startup_flose/commit/bf9ab524b5be94c6737bd51724e2d7381ddbaa47",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6290.md",
+    "committedAt": "2026-07-23T10:59:28.418Z"
+  },
+  "KAN-6291": {
+    "sha": "3fa7201dc02b6991d45ad7f71b4042bd520dcd1e",
+    "shortSha": "3fa7201",
+    "url": "https://github.com/felipeflose/startup_flose/commit/3fa7201dc02b6991d45ad7f71b4042bd520dcd1e",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6291.md",
+    "committedAt": "2026-07-23T11:00:28.004Z"
+  },
+  "KAN-6292": {
+    "sha": "40d920154ab92bdfa5f1677a3d7a37f3defdc029",
+    "shortSha": "40d9201",
+    "url": "https://github.com/felipeflose/startup_flose/commit/40d920154ab92bdfa5f1677a3d7a37f3defdc029",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6292.md",
+    "committedAt": "2026-07-23T11:01:28.658Z"
+  },
+  "KAN-6293": {
+    "sha": "1620607d0009140eda0f19f06154186270b19d3b",
+    "shortSha": "1620607",
+    "url": "https://github.com/felipeflose/startup_flose/commit/1620607d0009140eda0f19f06154186270b19d3b",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6293.md",
+    "committedAt": "2026-07-23T11:02:28.274Z"
+  },
+  "KAN-6294": {
+    "sha": "ebdf478142bf65bff0eb8c569b55c96cdd6cdf0a",
+    "shortSha": "ebdf478",
+    "url": "https://github.com/felipeflose/startup_flose/commit/ebdf478142bf65bff0eb8c569b55c96cdd6cdf0a",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6294.md",
+    "committedAt": "2026-07-23T11:03:28.872Z"
+  },
+  "KAN-6295": {
+    "sha": "71eab05d755452e8507bc398876393319faeaee9",
+    "shortSha": "71eab05",
+    "url": "https://github.com/felipeflose/startup_flose/commit/71eab05d755452e8507bc398876393319faeaee9",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6295.md",
+    "committedAt": "2026-07-23T11:04:28.955Z"
+  },
+  "KAN-6296": {
+    "sha": "cd98ee93128230f666d6874c59aaa0b9c624c12f",
+    "shortSha": "cd98ee9",
+    "url": "https://github.com/felipeflose/startup_flose/commit/cd98ee93128230f666d6874c59aaa0b9c624c12f",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6296.md",
+    "committedAt": "2026-07-23T11:05:28.490Z"
+  },
+  "KAN-6297": {
+    "sha": "3acf87d3431fedf74282351baec7b2d8a0278055",
+    "shortSha": "3acf87d",
+    "url": "https://github.com/felipeflose/startup_flose/commit/3acf87d3431fedf74282351baec7b2d8a0278055",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6297.md",
+    "committedAt": "2026-07-23T11:06:27.872Z"
+  },
+  "KAN-6298": {
+    "sha": "462433175415b7086c5e3879c90c21b4ea8f1570",
+    "shortSha": "4624331",
+    "url": "https://github.com/felipeflose/startup_flose/commit/462433175415b7086c5e3879c90c21b4ea8f1570",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6298.md",
+    "committedAt": "2026-07-23T11:07:28.071Z"
+  },
+  "KAN-6299": {
+    "sha": "4fd622cb49c709fd1766b121f1ba0724912a4c62",
+    "shortSha": "4fd622c",
+    "url": "https://github.com/felipeflose/startup_flose/commit/4fd622cb49c709fd1766b121f1ba0724912a4c62",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6299.md",
+    "committedAt": "2026-07-23T11:08:28.754Z"
+  },
+  "KAN-6300": {
+    "sha": "9b94f86cf338df92a5bae836afea00a3bc4c9b32",
+    "shortSha": "9b94f86",
+    "url": "https://github.com/felipeflose/startup_flose/commit/9b94f86cf338df92a5bae836afea00a3bc4c9b32",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6300.md",
+    "committedAt": "2026-07-23T11:09:31.039Z"
+  },
+  "KAN-6303": {
+    "sha": "903d19f0d15b6ea513325a8a9c1c372baff0776d",
+    "shortSha": "903d19f",
+    "url": "https://github.com/felipeflose/startup_flose/commit/903d19f0d15b6ea513325a8a9c1c372baff0776d",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6303.md",
+    "committedAt": "2026-07-23T11:15:46.865Z"
+  },
+  "KAN-6304": {
+    "sha": "67cf323714954cbc9216fd95c31bc34b2ba4282b",
+    "shortSha": "67cf323",
+    "url": "https://github.com/felipeflose/startup_flose/commit/67cf323714954cbc9216fd95c31bc34b2ba4282b",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6304.md",
+    "committedAt": "2026-07-23T11:24:19.808Z"
+  },
+  "KAN-6305": {
+    "sha": "30065be32abb16a4bc117b986ddd53362e536a1c",
+    "shortSha": "30065be",
+    "url": "https://github.com/felipeflose/startup_flose/commit/30065be32abb16a4bc117b986ddd53362e536a1c",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6305.md",
+    "committedAt": "2026-07-23T11:30:24.023Z"
+  },
+  "KAN-6306": {
+    "sha": "0da6acbe2215ca42032cc87d708c3a0241df6257",
+    "shortSha": "0da6acb",
+    "url": "https://github.com/felipeflose/startup_flose/commit/0da6acbe2215ca42032cc87d708c3a0241df6257",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6306.md",
+    "committedAt": "2026-07-23T11:31:57.909Z"
+  },
+  "KAN-6307": {
+    "sha": "75ceda702c03a5b74e416305698d0b0bdf8dd9d5",
+    "shortSha": "75ceda7",
+    "url": "https://github.com/felipeflose/startup_flose/commit/75ceda702c03a5b74e416305698d0b0bdf8dd9d5",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6307.md",
+    "committedAt": "2026-07-23T11:31:55.506Z"
+  },
+  "KAN-6308": {
+    "sha": "09fbabbab7d48b3fedc3ed99490f881d1e20dbf3",
+    "shortSha": "09fbabb",
+    "url": "https://github.com/felipeflose/startup_flose/commit/09fbabbab7d48b3fedc3ed99490f881d1e20dbf3",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6308.md",
+    "committedAt": "2026-07-23T11:32:56.850Z"
+  },
+  "KAN-6309": {
+    "sha": "b4be7e4595cbe6d66079657d71b175d21c9856ac",
+    "shortSha": "b4be7e4",
+    "url": "https://github.com/felipeflose/startup_flose/commit/b4be7e4595cbe6d66079657d71b175d21c9856ac",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6309.md",
+    "committedAt": "2026-07-23T11:29:41.354Z"
+  },
+  "KAN-6310": {
+    "sha": "ec5d0fe15a83fd6ba466616ffdd86298065865bf",
+    "shortSha": "ec5d0fe",
+    "url": "https://github.com/felipeflose/startup_flose/commit/ec5d0fe15a83fd6ba466616ffdd86298065865bf",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6310.md",
+    "committedAt": "2026-07-23T11:30:28.223Z"
+  },
+  "KAN-6311": {
+    "sha": "33ae5f993b05190bb59860aff13c4224576047c5",
+    "shortSha": "33ae5f9",
+    "url": "https://github.com/felipeflose/startup_flose/commit/33ae5f993b05190bb59860aff13c4224576047c5",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6311.md",
+    "committedAt": "2026-07-23T11:37:00.765Z"
+  },
+  "KAN-6312": {
+    "sha": "fe0cd1584a4f28f7301ec032c61c9cdaf27b820c",
+    "shortSha": "fe0cd15",
+    "url": "https://github.com/felipeflose/startup_flose/commit/fe0cd1584a4f28f7301ec032c61c9cdaf27b820c",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6312.md",
+    "committedAt": "2026-07-23T11:35:55.235Z"
+  },
+  "KAN-6313": {
+    "sha": "8b19cefc601e1678e6e12c39c85b78366e2430e8",
+    "shortSha": "8b19cef",
+    "url": "https://github.com/felipeflose/startup_flose/commit/8b19cefc601e1678e6e12c39c85b78366e2430e8",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6313.md",
+    "committedAt": "2026-07-23T11:36:08.246Z"
+  },
+  "KAN-6314": {
+    "sha": "c39589f999934cac1ec873ac129fa680ae724244",
+    "shortSha": "c39589f",
+    "url": "https://github.com/felipeflose/startup_flose/commit/c39589f999934cac1ec873ac129fa680ae724244",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6314.md",
+    "committedAt": "2026-07-23T11:39:05.914Z"
+  },
+  "KAN-6315": {
+    "sha": "3691d7b036c3415ca31decbb364cb326060f22c2",
+    "shortSha": "3691d7b",
+    "url": "https://github.com/felipeflose/startup_flose/commit/3691d7b036c3415ca31decbb364cb326060f22c2",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6315.md",
+    "committedAt": "2026-07-23T11:37:56.585Z"
+  },
+  "KAN-6316": {
+    "sha": "648427673d2bb63292b88fc45fb869c6df7feff1",
+    "shortSha": "6484276",
+    "url": "https://github.com/felipeflose/startup_flose/commit/648427673d2bb63292b88fc45fb869c6df7feff1",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6316.md",
+    "committedAt": "2026-07-23T11:44:32.686Z"
+  },
+  "KAN-6317": {
+    "sha": "a556420e7035ffd51548a812048547c064dd22d1",
+    "shortSha": "a556420",
+    "url": "https://github.com/felipeflose/startup_flose/commit/a556420e7035ffd51548a812048547c064dd22d1",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6317.md",
+    "committedAt": "2026-07-23T11:41:55.523Z"
+  },
+  "KAN-6318": {
+    "sha": "c0517d0ce41b79e5eb0a54f0eb962f5ed7cf5b24",
+    "shortSha": "c0517d0",
+    "url": "https://github.com/felipeflose/startup_flose/commit/c0517d0ce41b79e5eb0a54f0eb962f5ed7cf5b24",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6318.md",
+    "committedAt": "2026-07-23T11:54:51.909Z"
+  },
+  "KAN-6319": {
+    "sha": "a22d19d2b587ac60d0c2db297ff9ac37d3f81616",
+    "shortSha": "a22d19d",
+    "url": "https://github.com/felipeflose/startup_flose/commit/a22d19d2b587ac60d0c2db297ff9ac37d3f81616",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6319.md",
+    "committedAt": "2026-07-23T11:44:24.808Z"
+  },
+  "KAN-6320": {
+    "sha": "84f6bb6013f01cee5fa3190509f5d6985244987e",
+    "shortSha": "84f6bb6",
+    "url": "https://github.com/felipeflose/startup_flose/commit/84f6bb6013f01cee5fa3190509f5d6985244987e",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6320.md",
+    "committedAt": "2026-07-23T11:55:00.138Z"
+  },
+  "KAN-6322": {
+    "sha": "38f4949ca322827fae9041bcacfc118386341a7e",
+    "shortSha": "38f4949",
+    "url": "https://github.com/felipeflose/startup_flose/commit/38f4949ca322827fae9041bcacfc118386341a7e",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6322.md",
+    "committedAt": "2026-07-23T11:54:56.196Z"
+  },
+  "KAN-6323": {
+    "sha": "e4f8a99411d71eb1ce4597906e8e7ed5172fc346",
+    "shortSha": "e4f8a99",
+    "url": "https://github.com/felipeflose/startup_flose/commit/e4f8a99411d71eb1ce4597906e8e7ed5172fc346",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6323.md",
+    "committedAt": "2026-07-23T11:56:58.915Z"
+  },
+  "KAN-6324": {
+    "sha": "afa82878dd38e110e3bfe50728bde7f9b39d3dd1",
+    "shortSha": "afa8287",
+    "url": "https://github.com/felipeflose/startup_flose/commit/afa82878dd38e110e3bfe50728bde7f9b39d3dd1",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6324.md",
+    "committedAt": "2026-07-23T11:59:05.853Z"
+  },
+  "KAN-6325": {
+    "sha": "6ba600e345d9a4a5df1e77555d5a293fa5e77005",
+    "shortSha": "6ba600e",
+    "url": "https://github.com/felipeflose/startup_flose/commit/6ba600e345d9a4a5df1e77555d5a293fa5e77005",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6325.md",
+    "committedAt": "2026-07-23T11:44:35.067Z"
+  },
+  "KAN-6326": {
+    "sha": "47c2a048e019a50ce31dddd1e567e3dffca34df7",
+    "shortSha": "47c2a04",
+    "url": "https://github.com/felipeflose/startup_flose/commit/47c2a048e019a50ce31dddd1e567e3dffca34df7",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6326.md",
+    "committedAt": "2026-07-23T12:01:04.696Z"
+  },
+  "KAN-6327": {
+    "sha": "af8e833abc536a97a871cbc81c6923f416af7462",
+    "shortSha": "af8e833",
+    "url": "https://github.com/felipeflose/startup_flose/commit/af8e833abc536a97a871cbc81c6923f416af7462",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6327.md",
+    "committedAt": "2026-07-23T11:55:04.939Z"
+  },
+  "KAN-6328": {
+    "sha": "80fa9c453052aaee5948110d1efe20c73d20e888",
+    "shortSha": "80fa9c4",
+    "url": "https://github.com/felipeflose/startup_flose/commit/80fa9c453052aaee5948110d1efe20c73d20e888",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6328.md",
+    "committedAt": "2026-07-23T12:01:09.279Z"
+  },
+  "KAN-6329": {
+    "sha": "b81b1e4bf499c2961240c37b380719590f8b6222",
+    "shortSha": "b81b1e4",
+    "url": "https://github.com/felipeflose/startup_flose/commit/b81b1e4bf499c2961240c37b380719590f8b6222",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6329.md",
+    "committedAt": "2026-07-23T12:03:02.608Z"
+  },
+  "KAN-6330": {
+    "sha": "6494459350afd38302203278ae103c6731a75bee",
+    "shortSha": "6494459",
+    "url": "https://github.com/felipeflose/startup_flose/commit/6494459350afd38302203278ae103c6731a75bee",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6330.md",
+    "committedAt": "2026-07-23T11:57:03.659Z"
+  },
+  "KAN-6331": {
+    "sha": "407492a822eb8385a8ed5a87d6acff688a2de473",
+    "shortSha": "407492a",
+    "url": "https://github.com/felipeflose/startup_flose/commit/407492a822eb8385a8ed5a87d6acff688a2de473",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6331.md",
+    "committedAt": "2026-07-23T12:03:12.584Z"
+  },
+  "KAN-6332": {
+    "sha": "b15e1509f988d0aea68fa2b91fde69682092f16b",
+    "shortSha": "b15e150",
+    "url": "https://github.com/felipeflose/startup_flose/commit/b15e1509f988d0aea68fa2b91fde69682092f16b",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6332.md",
+    "committedAt": "2026-07-23T12:05:03.715Z"
+  },
+  "KAN-6333": {
+    "sha": "e77a66e711269394d06e683ce1eef90669601a7c",
+    "shortSha": "e77a66e",
+    "url": "https://github.com/felipeflose/startup_flose/commit/e77a66e711269394d06e683ce1eef90669601a7c",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6333.md",
+    "committedAt": "2026-07-23T12:07:20.273Z"
+  },
+  "KAN-6334": {
+    "sha": "745ce2a2c6d0197e1c07dbbd3b358e0767b1d9cc",
+    "shortSha": "745ce2a",
+    "url": "https://github.com/felipeflose/startup_flose/commit/745ce2a2c6d0197e1c07dbbd3b358e0767b1d9cc",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6334.md",
+    "committedAt": "2026-07-23T12:09:19.529Z"
+  },
+  "KAN-6335": {
+    "sha": "8b617eeae45efbe44ca0d0ecdee16d2d7b5bcf0e",
+    "shortSha": "8b617ee",
+    "url": "https://github.com/felipeflose/startup_flose/commit/8b617eeae45efbe44ca0d0ecdee16d2d7b5bcf0e",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6335.md",
+    "committedAt": "2026-07-23T12:09:56.930Z"
+  },
+  "KAN-6336": {
+    "sha": "beff66c891ed3069c9d21be2e23e1424e9ad5a53",
+    "shortSha": "beff66c",
+    "url": "https://github.com/felipeflose/startup_flose/commit/beff66c891ed3069c9d21be2e23e1424e9ad5a53",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6336.md",
+    "committedAt": "2026-07-23T12:10:56.480Z"
+  },
+  "KAN-6337": {
+    "sha": "d2ef585d6b7a69423772c9fec020f338bab03cba",
+    "shortSha": "d2ef585",
+    "url": "https://github.com/felipeflose/startup_flose/commit/d2ef585d6b7a69423772c9fec020f338bab03cba",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6337.md",
+    "committedAt": "2026-07-23T12:05:52.089Z"
+  },
+  "KAN-6338": {
+    "sha": "8eab4e6f1e547b34549fc5e18db7598f2c577b6a",
+    "shortSha": "8eab4e6",
+    "url": "https://github.com/felipeflose/startup_flose/commit/8eab4e6f1e547b34549fc5e18db7598f2c577b6a",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6338.md",
+    "committedAt": "2026-07-23T12:06:51.802Z"
+  },
+  "KAN-6340": {
+    "sha": "2d3dbdfb17fb6038b15c21cb36b8cd39c02b367f",
+    "shortSha": "2d3dbdf",
+    "url": "https://github.com/felipeflose/startup_flose/commit/2d3dbdfb17fb6038b15c21cb36b8cd39c02b367f",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6340.md",
+    "committedAt": "2026-07-23T12:07:52.334Z"
+  },
+  "KAN-6341": {
+    "sha": "15e333806644a77999a3e7717e10d34d0858f68f",
+    "shortSha": "15e3338",
+    "url": "https://github.com/felipeflose/startup_flose/commit/15e333806644a77999a3e7717e10d34d0858f68f",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6341.md",
+    "committedAt": "2026-07-23T12:08:51.700Z"
+  },
+  "KAN-6342": {
+    "sha": "fd3e2216056852cd5e9e9122663b0d7b49656d08",
+    "shortSha": "fd3e221",
+    "url": "https://github.com/felipeflose/startup_flose/commit/fd3e2216056852cd5e9e9122663b0d7b49656d08",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6342.md",
+    "committedAt": "2026-07-23T12:09:52.484Z"
+  },
+  "KAN-6343": {
+    "sha": "f3a3d303d2bdca890c53931c7c0f6398f0372744",
+    "shortSha": "f3a3d30",
+    "url": "https://github.com/felipeflose/startup_flose/commit/f3a3d303d2bdca890c53931c7c0f6398f0372744",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6343.md",
+    "committedAt": "2026-07-23T12:10:51.558Z"
+  },
+  "KAN-6370": {
+    "sha": "b1c0a3beeb5a39381bcf40d14ac1ad540735ae6b",
+    "shortSha": "b1c0a3b",
+    "url": "https://github.com/felipeflose/startup_flose/commit/b1c0a3beeb5a39381bcf40d14ac1ad540735ae6b",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6370.md",
+    "committedAt": "2026-07-23T12:23:54.296Z"
+  },
+  "KAN-6427": {
+    "sha": "81e0a0f46ab8a945ef4049d6b7858ba5ebe9ea4e",
+    "shortSha": "81e0a0f",
+    "url": "https://github.com/felipeflose/startup_flose/commit/81e0a0f46ab8a945ef4049d6b7858ba5ebe9ea4e",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6427.md",
+    "committedAt": "2026-07-23T12:29:52.259Z"
+  },
+  "KAN-6436": {
+    "sha": "56ba3041a402a8a83496cb95abaa6e191f115cbb",
+    "shortSha": "56ba304",
+    "url": "https://github.com/felipeflose/startup_flose/commit/56ba3041a402a8a83496cb95abaa6e191f115cbb",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6436.md",
+    "committedAt": "2026-07-23T12:28:01.798Z"
+  },
+  "KAN-6444": {
+    "sha": "d2e345893b20aaa2431ff64d82fb043745122f89",
+    "shortSha": "d2e3458",
+    "url": "https://github.com/felipeflose/startup_flose/commit/d2e345893b20aaa2431ff64d82fb043745122f89",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6444.md",
+    "committedAt": "2026-07-23T12:31:18.872Z"
+  },
+  "KAN-6466": {
+    "sha": "d532f248e9bfa81ded3af0923066acf365df8208",
+    "shortSha": "d532f24",
+    "url": "https://github.com/felipeflose/startup_flose/commit/d532f248e9bfa81ded3af0923066acf365df8208",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6466.md",
+    "committedAt": "2026-07-23T12:34:33.345Z"
+  },
+  "KAN-6474": {
+    "sha": "77d393fc931aa14d90d7fbc28c4a2b42d8d1f6b0",
+    "shortSha": "77d393f",
+    "url": "https://github.com/felipeflose/startup_flose/commit/77d393fc931aa14d90d7fbc28c4a2b42d8d1f6b0",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6474.md",
+    "committedAt": "2026-07-23T12:38:14.882Z"
+  },
+  "KAN-6480": {
+    "sha": "d2f02b25c92e7bbe57704c9b0845dc5453182448",
+    "shortSha": "d2f02b2",
+    "url": "https://github.com/felipeflose/startup_flose/commit/d2f02b25c92e7bbe57704c9b0845dc5453182448",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6480.md",
+    "committedAt": "2026-07-23T12:36:50.094Z"
+  },
+  "KAN-6481": {
+    "sha": "cb6b6036cd8fe5a9b73486e7b16ca26bd908e6cc",
+    "shortSha": "cb6b603",
+    "url": "https://github.com/felipeflose/startup_flose/commit/cb6b6036cd8fe5a9b73486e7b16ca26bd908e6cc",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6481.md",
+    "committedAt": "2026-07-23T12:41:39.686Z"
+  },
+  "KAN-6489": {
+    "sha": "6c130476bb0fa258c2d881685349d3eb030efe27",
+    "shortSha": "6c13047",
+    "url": "https://github.com/felipeflose/startup_flose/commit/6c130476bb0fa258c2d881685349d3eb030efe27",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6489.md",
+    "committedAt": "2026-07-23T12:36:12.665Z"
+  },
+  "KAN-6490": {
+    "sha": "b035bed7c1f5feeb442a2500a4829bf1594cee4c",
+    "shortSha": "b035bed",
+    "url": "https://github.com/felipeflose/startup_flose/commit/b035bed7c1f5feeb442a2500a4829bf1594cee4c",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6490.md",
+    "committedAt": "2026-07-23T12:42:34.961Z"
+  },
+  "KAN-6495": {
+    "sha": "85ede0a4eccc2a912ebbcfada5b6e1b27ed5c810",
+    "shortSha": "85ede0a",
+    "url": "https://github.com/felipeflose/startup_flose/commit/85ede0a4eccc2a912ebbcfada5b6e1b27ed5c810",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6495.md",
+    "committedAt": "2026-07-23T12:41:23.315Z"
+  },
+  "KAN-6502": {
+    "sha": "331d4f35fb5281ab06008ec512ca72cf95326cb0",
+    "shortSha": "331d4f3",
+    "url": "https://github.com/felipeflose/startup_flose/commit/331d4f35fb5281ab06008ec512ca72cf95326cb0",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6502.md",
+    "committedAt": "2026-07-23T12:42:32.882Z"
+  },
+  "KAN-6511": {
+    "sha": "02501a002ab7d7020abd8fd687fe42c979849de1",
+    "shortSha": "02501a0",
+    "url": "https://github.com/felipeflose/startup_flose/commit/02501a002ab7d7020abd8fd687fe42c979849de1",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6511.md",
+    "committedAt": "2026-07-23T12:44:18.597Z"
+  },
+  "KAN-6517": {
+    "sha": "377fb0b645f62c44deeeb83ed7509f9d9f0fa6d7",
+    "shortSha": "377fb0b",
+    "url": "https://github.com/felipeflose/startup_flose/commit/377fb0b645f62c44deeeb83ed7509f9d9f0fa6d7",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6517.md",
+    "committedAt": "2026-07-23T12:40:50.042Z"
+  },
+  "KAN-6529": {
+    "sha": "0529af97249243148eba29d6e9b8dcbe0e40520c",
+    "shortSha": "0529af9",
+    "url": "https://github.com/felipeflose/startup_flose/commit/0529af97249243148eba29d6e9b8dcbe0e40520c",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6529.md",
+    "committedAt": "2026-07-23T12:40:24.097Z"
+  },
+  "KAN-6534": {
+    "sha": "c6a133b3e9a69e1651206eb8d10722622deb3da9",
+    "shortSha": "c6a133b",
+    "url": "https://github.com/felipeflose/startup_flose/commit/c6a133b3e9a69e1651206eb8d10722622deb3da9",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6534.md",
+    "committedAt": "2026-07-23T12:44:27.317Z"
+  },
+  "KAN-6548": {
+    "sha": "2ae15b984dfb7eafd7130f819d80f2a4ae67f3ff",
+    "shortSha": "2ae15b9",
+    "url": "https://github.com/felipeflose/startup_flose/commit/2ae15b984dfb7eafd7130f819d80f2a4ae67f3ff",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6548.md",
+    "committedAt": "2026-07-23T12:43:55.347Z"
+  },
+  "KAN-6549": {
+    "sha": "d9bcbec538fc0bb881714d0a3f5c5c61f4ee5d7b",
+    "shortSha": "d9bcbec",
+    "url": "https://github.com/felipeflose/startup_flose/commit/d9bcbec538fc0bb881714d0a3f5c5c61f4ee5d7b",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6549.md",
+    "committedAt": "2026-07-23T12:43:58.736Z"
+  },
+  "KAN-6553": {
+    "sha": "e06a8d91bccf71db04c2afb62eb972caaafe6050",
+    "shortSha": "e06a8d9",
+    "url": "https://github.com/felipeflose/startup_flose/commit/e06a8d91bccf71db04c2afb62eb972caaafe6050",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6553.md",
+    "committedAt": "2026-07-23T12:44:43.201Z"
+  },
+  "KAN-6557": {
+    "sha": "dd8ebb80cbb83074a30aafc36dfc7b04589471e3",
+    "shortSha": "dd8ebb8",
+    "url": "https://github.com/felipeflose/startup_flose/commit/dd8ebb80cbb83074a30aafc36dfc7b04589471e3",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6557.md",
+    "committedAt": "2026-07-23T12:45:58.010Z"
+  },
+  "KAN-6558": {
+    "sha": "d743d8820d3208d964907554a243187fe6683a5d",
+    "shortSha": "d743d88",
+    "url": "https://github.com/felipeflose/startup_flose/commit/d743d8820d3208d964907554a243187fe6683a5d",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6558.md",
+    "committedAt": "2026-07-23T12:47:03.485Z"
+  },
+  "KAN-6571": {
+    "sha": "d408fd3c6956c790174e18321538dcaab872c5c7",
+    "shortSha": "d408fd3",
+    "url": "https://github.com/felipeflose/startup_flose/commit/d408fd3c6956c790174e18321538dcaab872c5c7",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6571.md",
+    "committedAt": "2026-07-23T12:47:26.687Z"
+  },
+  "KAN-6579": {
+    "sha": "811cffd3c5d244f2c261a17ba2ce79100d459e8e",
+    "shortSha": "811cffd",
+    "url": "https://github.com/felipeflose/startup_flose/commit/811cffd3c5d244f2c261a17ba2ce79100d459e8e",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6579.md",
+    "committedAt": "2026-07-23T12:48:31.433Z"
+  },
+  "KAN-6580": {
+    "sha": "d4e11ced47f0f606dc489bcad2c829cc8e6e6dc8",
+    "shortSha": "d4e11ce",
+    "url": "https://github.com/felipeflose/startup_flose/commit/d4e11ced47f0f606dc489bcad2c829cc8e6e6dc8",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6580.md",
+    "committedAt": "2026-07-23T12:49:15.839Z"
+  },
+  "KAN-6593": {
+    "sha": "39d6c5b9b982ff690485c494b31eca489cbaafa7",
+    "shortSha": "39d6c5b",
+    "url": "https://github.com/felipeflose/startup_flose/commit/39d6c5b9b982ff690485c494b31eca489cbaafa7",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6593.md",
+    "committedAt": "2026-07-23T12:53:30.707Z"
+  },
+  "KAN-6594": {
+    "sha": "46fd603646c06b17c4157cfeb6d25cd9c568555e",
+    "shortSha": "46fd603",
+    "url": "https://github.com/felipeflose/startup_flose/commit/46fd603646c06b17c4157cfeb6d25cd9c568555e",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6594.md",
+    "committedAt": "2026-07-23T12:50:33.709Z"
+  },
+  "KAN-6611": {
+    "sha": "12a299dfa97752906fb75545ab8a9c9a02969d86",
+    "shortSha": "12a299d",
+    "url": "https://github.com/felipeflose/startup_flose/commit/12a299dfa97752906fb75545ab8a9c9a02969d86",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6611.md",
+    "committedAt": "2026-07-23T12:53:28.258Z"
+  },
+  "KAN-6612": {
+    "sha": "4e6b0a319259830553ed12f565374cf784927920",
+    "shortSha": "4e6b0a3",
+    "url": "https://github.com/felipeflose/startup_flose/commit/4e6b0a319259830553ed12f565374cf784927920",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6612.md",
+    "committedAt": "2026-07-23T12:53:36.491Z"
+  },
+  "KAN-6613": {
+    "sha": "e6af47206295505a2ef213cb65f78266c117fbfb",
+    "shortSha": "e6af472",
+    "url": "https://github.com/felipeflose/startup_flose/commit/e6af47206295505a2ef213cb65f78266c117fbfb",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6613.md",
+    "committedAt": "2026-07-23T12:53:54.038Z"
+  },
+  "KAN-6618": {
+    "sha": "84ecde8c0cf46386b2860e57918b499c02a03e2c",
+    "shortSha": "84ecde8",
+    "url": "https://github.com/felipeflose/startup_flose/commit/84ecde8c0cf46386b2860e57918b499c02a03e2c",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6618.md",
+    "committedAt": "2026-07-23T12:54:56.059Z"
+  },
+  "KAN-6619": {
+    "sha": "6ae473bfc2222e561459e2525d65e4ab62b0bf8e",
+    "shortSha": "6ae473b",
+    "url": "https://github.com/felipeflose/startup_flose/commit/6ae473bfc2222e561459e2525d65e4ab62b0bf8e",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6619.md",
+    "committedAt": "2026-07-23T12:58:39.890Z"
+  },
+  "KAN-6632": {
+    "sha": "044df789ccfb87f7dff4cba5ce3c6025e8f8736b",
+    "shortSha": "044df78",
+    "url": "https://github.com/felipeflose/startup_flose/commit/044df789ccfb87f7dff4cba5ce3c6025e8f8736b",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6632.md",
+    "committedAt": "2026-07-23T12:56:42.001Z"
+  },
+  "KAN-6644": {
+    "sha": "aff0fc9e16f7da8c40800ca4334af27811e967eb",
+    "shortSha": "aff0fc9",
+    "url": "https://github.com/felipeflose/startup_flose/commit/aff0fc9e16f7da8c40800ca4334af27811e967eb",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6644.md",
+    "committedAt": "2026-07-23T12:58:33.602Z"
+  },
+  "KAN-6645": {
+    "sha": "d9039ddc644e1fec4c1b0bfd12eb74760f23e9ed",
+    "shortSha": "d9039dd",
+    "url": "https://github.com/felipeflose/startup_flose/commit/d9039ddc644e1fec4c1b0bfd12eb74760f23e9ed",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6645.md",
+    "committedAt": "2026-07-23T12:58:47.092Z"
+  },
+  "KAN-6650": {
+    "sha": "57220c60aab450c3d8c39249fe8122a50b63c423",
+    "shortSha": "57220c6",
+    "url": "https://github.com/felipeflose/startup_flose/commit/57220c60aab450c3d8c39249fe8122a50b63c423",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6650.md",
+    "committedAt": "2026-07-23T13:01:32.989Z"
+  },
+  "KAN-6651": {
+    "sha": "c1bd942297e30e8f8ef22421a08b796908c85cc1",
+    "shortSha": "c1bd942",
+    "url": "https://github.com/felipeflose/startup_flose/commit/c1bd942297e30e8f8ef22421a08b796908c85cc1",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6651.md",
+    "committedAt": "2026-07-23T13:00:52.950Z"
+  },
+  "KAN-6664": {
+    "sha": "3d509d3bb7ff193c132fbf644e54bfa999d42913",
+    "shortSha": "3d509d3",
+    "url": "https://github.com/felipeflose/startup_flose/commit/3d509d3bb7ff193c132fbf644e54bfa999d42913",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6664.md",
+    "committedAt": "2026-07-23T13:01:24.517Z"
+  },
+  "KAN-6671": {
+    "sha": "608a9eb67f4d14d6fb57e5e3875925b72702c48f",
+    "shortSha": "608a9eb",
+    "url": "https://github.com/felipeflose/startup_flose/commit/608a9eb67f4d14d6fb57e5e3875925b72702c48f",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6671.md",
+    "committedAt": "2026-07-23T13:02:33.894Z"
+  },
+  "KAN-6711": {
+    "sha": "4ef7e917579cd85570c4bd5ba29b0a5b820ad99b",
+    "shortSha": "4ef7e91",
+    "url": "https://github.com/felipeflose/startup_flose/commit/4ef7e917579cd85570c4bd5ba29b0a5b820ad99b",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6711.md",
+    "committedAt": "2026-07-23T13:14:45.877Z"
+  },
+  "KAN-6712": {
+    "sha": "33de8f761e883ea9dae0c9d0e515dd28339005d6",
+    "shortSha": "33de8f7",
+    "url": "https://github.com/felipeflose/startup_flose/commit/33de8f761e883ea9dae0c9d0e515dd28339005d6",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6712.md",
+    "committedAt": "2026-07-23T13:08:54.350Z"
+  },
+  "KAN-6718": {
+    "sha": "3f45d46d52c80169726d883f318e72f422b37535",
+    "shortSha": "3f45d46",
+    "url": "https://github.com/felipeflose/startup_flose/commit/3f45d46d52c80169726d883f318e72f422b37535",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6718.md",
+    "committedAt": "2026-07-23T13:15:41.887Z"
+  },
+  "KAN-6719": {
+    "sha": "c117f1e27d76fb310448d30a818cfcf31cc102de",
+    "shortSha": "c117f1e",
+    "url": "https://github.com/felipeflose/startup_flose/commit/c117f1e27d76fb310448d30a818cfcf31cc102de",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6719.md",
+    "committedAt": "2026-07-23T13:09:51.787Z"
+  },
+  "KAN-6725": {
+    "sha": "ca9f5932b483c972e5b9d40196a1bf895e851940",
+    "shortSha": "ca9f593",
+    "url": "https://github.com/felipeflose/startup_flose/commit/ca9f5932b483c972e5b9d40196a1bf895e851940",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6725.md",
+    "committedAt": "2026-07-23T13:16:42.100Z"
+  },
+  "KAN-6726": {
+    "sha": "fb72188ff01659b3ccb693c7f1f6c3c05a52f16c",
+    "shortSha": "fb72188",
+    "url": "https://github.com/felipeflose/startup_flose/commit/fb72188ff01659b3ccb693c7f1f6c3c05a52f16c",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6726.md",
+    "committedAt": "2026-07-23T13:10:53.783Z"
+  },
+  "KAN-6731": {
+    "sha": "788ea2e6dea55a6a866c00b5f4e9e9c970ce9884",
+    "shortSha": "788ea2e",
+    "url": "https://github.com/felipeflose/startup_flose/commit/788ea2e6dea55a6a866c00b5f4e9e9c970ce9884",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6731.md",
+    "committedAt": "2026-07-23T13:17:41.446Z"
+  },
+  "KAN-6732": {
+    "sha": "684f3ee32a8c0f4d218543ea1efc9f8d1a33449a",
+    "shortSha": "684f3ee",
+    "url": "https://github.com/felipeflose/startup_flose/commit/684f3ee32a8c0f4d218543ea1efc9f8d1a33449a",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6732.md",
+    "committedAt": "2026-07-23T13:11:51.444Z"
+  },
+  "KAN-6737": {
+    "sha": "59334d79135abe9a7af504dacd91f23fe77ee204",
+    "shortSha": "59334d7",
+    "url": "https://github.com/felipeflose/startup_flose/commit/59334d79135abe9a7af504dacd91f23fe77ee204",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6737.md",
+    "committedAt": "2026-07-23T13:18:42.484Z"
+  },
+  "KAN-6738": {
+    "sha": "30aa7aaa02720d98c9ee2eddbbefba267c338432",
+    "shortSha": "30aa7aa",
+    "url": "https://github.com/felipeflose/startup_flose/commit/30aa7aaa02720d98c9ee2eddbbefba267c338432",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6738.md",
+    "committedAt": "2026-07-23T13:12:54.155Z"
+  },
+  "KAN-6746": {
+    "sha": "3aff349de68ebfd72db0d99b64cadf84aa2ead58",
+    "shortSha": "3aff349",
+    "url": "https://github.com/felipeflose/startup_flose/commit/3aff349de68ebfd72db0d99b64cadf84aa2ead58",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6746.md",
+    "committedAt": "2026-07-23T13:19:41.610Z"
+  },
+  "KAN-6747": {
+    "sha": "4b5746aacf716a46012a1dd22cb23e0838035ce9",
+    "shortSha": "4b5746a",
+    "url": "https://github.com/felipeflose/startup_flose/commit/4b5746aacf716a46012a1dd22cb23e0838035ce9",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6747.md",
+    "committedAt": "2026-07-23T13:20:50.170Z"
+  },
+  "KAN-6753": {
+    "sha": "e32950119bacf33b44a2b47d7c170671ec7dbf05",
+    "shortSha": "e329501",
+    "url": "https://github.com/felipeflose/startup_flose/commit/e32950119bacf33b44a2b47d7c170671ec7dbf05",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6753.md",
+    "committedAt": "2026-07-23T13:20:43.468Z"
+  },
+  "KAN-6754": {
+    "sha": "e39100ebea3c283c8d3033da1923d40984ffed9b",
+    "shortSha": "e39100e",
+    "url": "https://github.com/felipeflose/startup_flose/commit/e39100ebea3c283c8d3033da1923d40984ffed9b",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6754.md",
+    "committedAt": "2026-07-23T13:21:45.824Z"
+  },
+  "KAN-6761": {
+    "sha": "257f1e2acfaf5a0390f42250cbcd2e8a3bc95b1b",
+    "shortSha": "257f1e2",
+    "url": "https://github.com/felipeflose/startup_flose/commit/257f1e2acfaf5a0390f42250cbcd2e8a3bc95b1b",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6761.md",
+    "committedAt": "2026-07-23T13:21:42.206Z"
+  },
+  "KAN-6762": {
+    "sha": "cd21feee08f0a573558043c707eeda8a23d1ded2",
+    "shortSha": "cd21fee",
+    "url": "https://github.com/felipeflose/startup_flose/commit/cd21feee08f0a573558043c707eeda8a23d1ded2",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6762.md",
+    "committedAt": "2026-07-23T13:22:46.447Z"
+  },
+  "KAN-6765": {
+    "sha": "3543092dc912a9120b23c6a2793b9356b657ed1f",
+    "shortSha": "3543092",
+    "url": "https://github.com/felipeflose/startup_flose/commit/3543092dc912a9120b23c6a2793b9356b657ed1f",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6765.md",
+    "committedAt": "2026-07-23T13:22:41.619Z"
+  },
+  "KAN-6766": {
+    "sha": "f595ce5843e74d519eba1325cafa0ee24328e1ce",
+    "shortSha": "f595ce5",
+    "url": "https://github.com/felipeflose/startup_flose/commit/f595ce5843e74d519eba1325cafa0ee24328e1ce",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6766.md",
+    "committedAt": "2026-07-23T13:23:45.213Z"
+  },
+  "KAN-6769": {
+    "sha": "8f96808b2603d72527d5008915a68c61136f979e",
+    "shortSha": "8f96808",
+    "url": "https://github.com/felipeflose/startup_flose/commit/8f96808b2603d72527d5008915a68c61136f979e",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6769.md",
+    "committedAt": "2026-07-23T13:23:42.670Z"
+  },
+  "KAN-6770": {
+    "sha": "643c8f18b38fa47eac7b075885b57b23fcc0c12b",
+    "shortSha": "643c8f1",
+    "url": "https://github.com/felipeflose/startup_flose/commit/643c8f18b38fa47eac7b075885b57b23fcc0c12b",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6770.md",
+    "committedAt": "2026-07-23T13:24:46.077Z"
+  },
+  "KAN-6776": {
+    "sha": "1f0de45fe3aa755bd77d055be2b8aac0ba833d16",
+    "shortSha": "1f0de45",
+    "url": "https://github.com/felipeflose/startup_flose/commit/1f0de45fe3aa755bd77d055be2b8aac0ba833d16",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6776.md",
+    "committedAt": "2026-07-23T13:24:42.007Z"
+  },
+  "KAN-6777": {
+    "sha": "fc58eadbb36ef342d5829a22cd7c22cb4a430e02",
+    "shortSha": "fc58ead",
+    "url": "https://github.com/felipeflose/startup_flose/commit/fc58eadbb36ef342d5829a22cd7c22cb4a430e02",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6777.md",
+    "committedAt": "2026-07-23T13:25:45.292Z"
+  },
+  "KAN-6783": {
+    "sha": "fa1281526ebca28a7ebdf69bb6a66b0c042eda7c",
+    "shortSha": "fa12815",
+    "url": "https://github.com/felipeflose/startup_flose/commit/fa1281526ebca28a7ebdf69bb6a66b0c042eda7c",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6783.md",
+    "committedAt": "2026-07-23T13:26:47.404Z"
+  },
+  "KAN-6784": {
+    "sha": "9165150f60768e694cc89380579dabe90466067b",
+    "shortSha": "9165150",
+    "url": "https://github.com/felipeflose/startup_flose/commit/9165150f60768e694cc89380579dabe90466067b",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6784.md",
+    "committedAt": "2026-07-23T13:19:53.386Z"
+  },
+  "KAN-6789": {
+    "sha": "a40104af423e2d7a4392755c464ed18a1a1aff72",
+    "shortSha": "a40104a",
+    "url": "https://github.com/felipeflose/startup_flose/commit/a40104af423e2d7a4392755c464ed18a1a1aff72",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6789.md",
+    "committedAt": "2026-07-23T13:32:45.733Z"
+  },
+  "KAN-6790": {
+    "sha": "1ebf18c8c0cec60bd5676748abf1f6a100b65500",
+    "shortSha": "1ebf18c",
+    "url": "https://github.com/felipeflose/startup_flose/commit/1ebf18c8c0cec60bd5676748abf1f6a100b65500",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6790.md",
+    "committedAt": "2026-07-23T13:27:45.848Z"
+  },
+  "KAN-6793": {
+    "sha": "7ec42cdc3ca3d2f3e3beea6f8b259b2be0390b3d",
+    "shortSha": "7ec42cd",
+    "url": "https://github.com/felipeflose/startup_flose/commit/7ec42cdc3ca3d2f3e3beea6f8b259b2be0390b3d",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6793.md",
+    "committedAt": "2026-07-23T13:27:42.059Z"
+  },
+  "KAN-6794": {
+    "sha": "f945c543b3b440fdc82ac544e42953b9d1549dd8",
+    "shortSha": "f945c54",
+    "url": "https://github.com/felipeflose/startup_flose/commit/f945c543b3b440fdc82ac544e42953b9d1549dd8",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6794.md",
+    "committedAt": "2026-07-23T13:28:45.188Z"
+  },
+  "KAN-6799": {
+    "sha": "9818aaf6a53ad8c428be5630bdfb5cc07c699d9c",
+    "shortSha": "9818aaf",
+    "url": "https://github.com/felipeflose/startup_flose/commit/9818aaf6a53ad8c428be5630bdfb5cc07c699d9c",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6799.md",
+    "committedAt": "2026-07-23T13:28:42.043Z"
+  },
+  "KAN-6800": {
+    "sha": "d367ac4c644c4f1961de5964ae7d985b8cc32663",
+    "shortSha": "d367ac4",
+    "url": "https://github.com/felipeflose/startup_flose/commit/d367ac4c644c4f1961de5964ae7d985b8cc32663",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6800.md",
+    "committedAt": "2026-07-23T13:29:46.664Z"
+  },
+  "KAN-6806": {
+    "sha": "3ae66eefbe6ecb3b1c7adfa29305cc59ce1fb374",
+    "shortSha": "3ae66ee",
+    "url": "https://github.com/felipeflose/startup_flose/commit/3ae66eefbe6ecb3b1c7adfa29305cc59ce1fb374",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6806.md",
+    "committedAt": "2026-07-23T13:29:42.377Z"
+  },
+  "KAN-6807": {
+    "sha": "6460bb81a647f2a2936bfc5e91333aa759b18deb",
+    "shortSha": "6460bb8",
+    "url": "https://github.com/felipeflose/startup_flose/commit/6460bb81a647f2a2936bfc5e91333aa759b18deb",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6807.md",
+    "committedAt": "2026-07-23T13:23:54.256Z"
+  },
+  "KAN-6810": {
+    "sha": "cb37bc04f3339ca2c625876ecc54947a31ea1d03",
+    "shortSha": "cb37bc0",
+    "url": "https://github.com/felipeflose/startup_flose/commit/cb37bc04f3339ca2c625876ecc54947a31ea1d03",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6810.md",
+    "committedAt": "2026-07-23T13:30:45.786Z"
+  },
+  "KAN-6813": {
+    "sha": "2fa6b3c19a806bd0e897b8caf901234e7674556a",
+    "shortSha": "2fa6b3c",
+    "url": "https://github.com/felipeflose/startup_flose/commit/2fa6b3c19a806bd0e897b8caf901234e7674556a",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6813.md",
+    "committedAt": "2026-07-23T13:31:46.018Z"
+  },
+  "KAN-6814": {
+    "sha": "52b6c450fbf09018be533e6bbbb113a2d5566588",
+    "shortSha": "52b6c45",
+    "url": "https://github.com/felipeflose/startup_flose/commit/52b6c450fbf09018be533e6bbbb113a2d5566588",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6814.md",
+    "committedAt": "2026-07-23T13:31:42.103Z"
+  },
+  "KAN-6815": {
+    "sha": "ed7b9b94ce3e5a5259409ad6dd08b539e3ec2f9a",
+    "shortSha": "ed7b9b9",
+    "url": "https://github.com/felipeflose/startup_flose/commit/ed7b9b94ce3e5a5259409ad6dd08b539e3ec2f9a",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6815.md",
+    "committedAt": "2026-07-23T13:25:53.210Z"
+  },
+  "KAN-6818": {
+    "sha": "5ba2c75715ee1c5633cb7071b7c11ab988521b55",
+    "shortSha": "5ba2c75",
+    "url": "https://github.com/felipeflose/startup_flose/commit/5ba2c75715ee1c5633cb7071b7c11ab988521b55",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6818.md",
+    "committedAt": "2026-07-23T13:32:42.613Z"
+  },
+  "KAN-6819": {
+    "sha": "5d4aa34ae65018d77f1079ae87dcd12bc313d9cf",
+    "shortSha": "5d4aa34",
+    "url": "https://github.com/felipeflose/startup_flose/commit/5d4aa34ae65018d77f1079ae87dcd12bc313d9cf",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6819.md",
+    "committedAt": "2026-07-23T13:33:45.733Z"
+  },
+  "KAN-6822": {
+    "sha": "36a04722993f94131e5cb22b9e964f281e3ed039",
+    "shortSha": "36a0472",
+    "url": "https://github.com/felipeflose/startup_flose/commit/36a04722993f94131e5cb22b9e964f281e3ed039",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6822.md",
+    "committedAt": "2026-07-23T13:34:46.053Z"
+  },
+  "KAN-6823": {
+    "sha": "c89a1a394696f17bafe75410e08a4a35a4d2d776",
+    "shortSha": "c89a1a3",
+    "url": "https://github.com/felipeflose/startup_flose/commit/c89a1a394696f17bafe75410e08a4a35a4d2d776",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6823.md",
+    "committedAt": "2026-07-23T13:27:53.818Z"
+  },
+  "KAN-6828": {
+    "sha": "83d45b81b6b62278f3ba84641fdc2e56794c6f53",
+    "shortSha": "83d45b8",
+    "url": "https://github.com/felipeflose/startup_flose/commit/83d45b81b6b62278f3ba84641fdc2e56794c6f53",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6828.md",
+    "committedAt": "2026-07-23T13:35:46.020Z"
+  },
+  "KAN-6829": {
+    "sha": "b6714c47e07e8b03799c0f8777a4bf82a7d51440",
+    "shortSha": "b6714c4",
+    "url": "https://github.com/felipeflose/startup_flose/commit/b6714c47e07e8b03799c0f8777a4bf82a7d51440",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6829.md",
+    "committedAt": "2026-07-23T13:28:53.675Z"
+  },
+  "KAN-6834": {
+    "sha": "98986f986c17988c8574c3112ac03e08f03512e6",
+    "shortSha": "98986f9",
+    "url": "https://github.com/felipeflose/startup_flose/commit/98986f986c17988c8574c3112ac03e08f03512e6",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6834.md",
+    "committedAt": "2026-07-23T13:36:46.662Z"
+  },
+  "KAN-6835": {
+    "sha": "3c206393f64b69623e6caac872c2005629c61808",
+    "shortSha": "3c20639",
+    "url": "https://github.com/felipeflose/startup_flose/commit/3c206393f64b69623e6caac872c2005629c61808",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6835.md",
+    "committedAt": "2026-07-23T13:29:53.738Z"
+  },
+  "KAN-6839": {
+    "sha": "5962fd5b0e120ca4199da7669715f097083732e3",
+    "shortSha": "5962fd5",
+    "url": "https://github.com/felipeflose/startup_flose/commit/5962fd5b0e120ca4199da7669715f097083732e3",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6839.md",
+    "committedAt": "2026-07-23T13:42:47.360Z"
+  },
+  "KAN-6840": {
+    "sha": "fb8b7bf7df15753bccd0824e17bf607d22a4ff9b",
+    "shortSha": "fb8b7bf",
+    "url": "https://github.com/felipeflose/startup_flose/commit/fb8b7bf7df15753bccd0824e17bf607d22a4ff9b",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6840.md",
+    "committedAt": "2026-07-23T13:30:53.416Z"
+  },
+  "KAN-6844": {
+    "sha": "69bbbe5780cadd701390257c5d70544ad37d2316",
+    "shortSha": "69bbbe5",
+    "url": "https://github.com/felipeflose/startup_flose/commit/69bbbe5780cadd701390257c5d70544ad37d2316",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6844.md",
+    "committedAt": "2026-07-23T13:38:46.232Z"
+  },
+  "KAN-6845": {
+    "sha": "cc75f112c78365808f024195fd1f9b400828eecf",
+    "shortSha": "cc75f11",
+    "url": "https://github.com/felipeflose/startup_flose/commit/cc75f112c78365808f024195fd1f9b400828eecf",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6845.md",
+    "committedAt": "2026-07-23T13:31:54.902Z"
+  },
+  "KAN-6850": {
+    "sha": "50c755cac3e32bf022f33617c60c329749e45f39",
+    "shortSha": "50c755c",
+    "url": "https://github.com/felipeflose/startup_flose/commit/50c755cac3e32bf022f33617c60c329749e45f39",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6850.md",
+    "committedAt": "2026-07-23T13:39:46.127Z"
+  },
+  "KAN-6851": {
+    "sha": "c380b991bc22f318a2eddac9a751bef363a291ab",
+    "shortSha": "c380b99",
+    "url": "https://github.com/felipeflose/startup_flose/commit/c380b991bc22f318a2eddac9a751bef363a291ab",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6851.md",
+    "committedAt": "2026-07-23T13:32:53.191Z"
+  },
+  "KAN-6853": {
+    "sha": "e3839e0bd17139b02f36560f10a3fb7a3498fbd1",
+    "shortSha": "e3839e0",
+    "url": "https://github.com/felipeflose/startup_flose/commit/e3839e0bd17139b02f36560f10a3fb7a3498fbd1",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6853.md",
+    "committedAt": "2026-07-23T13:39:42.272Z"
+  },
+  "KAN-6854": {
+    "sha": "c36fea4da072c458e02ce9f71e8146c8e3e6fddd",
+    "shortSha": "c36fea4",
+    "url": "https://github.com/felipeflose/startup_flose/commit/c36fea4da072c458e02ce9f71e8146c8e3e6fddd",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6854.md",
+    "committedAt": "2026-07-23T13:40:46.701Z"
+  },
+  "KAN-6861": {
+    "sha": "e4c34495faf1f4a473baaa166d630831f434195c",
+    "shortSha": "e4c3449",
+    "url": "https://github.com/felipeflose/startup_flose/commit/e4c34495faf1f4a473baaa166d630831f434195c",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6861.md",
+    "committedAt": "2026-07-23T13:40:43.474Z"
+  },
+  "KAN-6862": {
+    "sha": "72ab9c87b7930048430ff99f1bf80d4d74e4fe27",
+    "shortSha": "72ab9c8",
+    "url": "https://github.com/felipeflose/startup_flose/commit/72ab9c87b7930048430ff99f1bf80d4d74e4fe27",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6862.md",
+    "committedAt": "2026-07-23T13:41:46.415Z"
+  },
+  "KAN-6866": {
+    "sha": "147f25a0a86a2e1dcb622b9925bb195303b3cd21",
+    "shortSha": "147f25a",
+    "url": "https://github.com/felipeflose/startup_flose/commit/147f25a0a86a2e1dcb622b9925bb195303b3cd21",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6866.md",
+    "committedAt": "2026-07-23T13:41:42.990Z"
+  },
+  "KAN-6867": {
+    "sha": "fb5ab7272c38202eab3206e0b0abfebd532add76",
+    "shortSha": "fb5ab72",
+    "url": "https://github.com/felipeflose/startup_flose/commit/fb5ab7272c38202eab3206e0b0abfebd532add76",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6867.md",
+    "committedAt": "2026-07-23T13:35:54.556Z"
+  },
+  "KAN-6874": {
+    "sha": "59b215384b5c2e5e873515e5302ef19b7eb06c7f",
+    "shortSha": "59b2153",
+    "url": "https://github.com/felipeflose/startup_flose/commit/59b215384b5c2e5e873515e5302ef19b7eb06c7f",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6874.md",
+    "committedAt": "2026-07-23T13:42:42.686Z"
+  },
+  "KAN-6875": {
+    "sha": "07f1695cf9caa9cc46ec0dab40d3bb3884f9e742",
+    "shortSha": "07f1695",
+    "url": "https://github.com/felipeflose/startup_flose/commit/07f1695cf9caa9cc46ec0dab40d3bb3884f9e742",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6875.md",
+    "committedAt": "2026-07-23T13:43:45.674Z"
+  },
+  "KAN-6880": {
+    "sha": "89109f0d6b6bbd84d53de16603e90a65a165fb03",
+    "shortSha": "89109f0",
+    "url": "https://github.com/felipeflose/startup_flose/commit/89109f0d6b6bbd84d53de16603e90a65a165fb03",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6880.md",
+    "committedAt": "2026-07-23T13:43:43.261Z"
+  },
+  "KAN-6881": {
+    "sha": "ab77308e8472f0d31262a68956dd3f143516ea9b",
+    "shortSha": "ab77308",
+    "url": "https://github.com/felipeflose/startup_flose/commit/ab77308e8472f0d31262a68956dd3f143516ea9b",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6881.md",
+    "committedAt": "2026-07-23T13:44:47.958Z"
+  },
+  "KAN-6886": {
+    "sha": "4187554ffd99d6b1fef4e400267bf1879d3000f1",
+    "shortSha": "4187554",
+    "url": "https://github.com/felipeflose/startup_flose/commit/4187554ffd99d6b1fef4e400267bf1879d3000f1",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6886.md",
+    "committedAt": "2026-07-23T13:44:42.746Z"
+  },
+  "KAN-6887": {
+    "sha": "943095da44754aa842c6ee4aedfac24b42c44153",
+    "shortSha": "943095d",
+    "url": "https://github.com/felipeflose/startup_flose/commit/943095da44754aa842c6ee4aedfac24b42c44153",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6887.md",
+    "committedAt": "2026-07-23T13:45:46.500Z"
+  },
+  "KAN-6893": {
+    "sha": "49739923fd5d23c13b86c96f2e9c0d45ea371d1c",
+    "shortSha": "4973992",
+    "url": "https://github.com/felipeflose/startup_flose/commit/49739923fd5d23c13b86c96f2e9c0d45ea371d1c",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6893.md",
+    "committedAt": "2026-07-23T13:45:42.708Z"
+  },
+  "KAN-6894": {
+    "sha": "ae9f8947c01331a5a5a4d1dd158cc2663267f212",
+    "shortSha": "ae9f894",
+    "url": "https://github.com/felipeflose/startup_flose/commit/ae9f8947c01331a5a5a4d1dd158cc2663267f212",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6894.md",
+    "committedAt": "2026-07-23T13:46:47.489Z"
+  },
+  "KAN-6897": {
+    "sha": "700f026afd0adb6c476982ccb5a4a7286a141157",
+    "shortSha": "700f026",
+    "url": "https://github.com/felipeflose/startup_flose/commit/700f026afd0adb6c476982ccb5a4a7286a141157",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6897.md",
+    "committedAt": "2026-07-23T13:46:43.649Z"
+  },
+  "KAN-6898": {
+    "sha": "a6f11f2300e339175e21019ba3771efc95285b6b",
+    "shortSha": "a6f11f2",
+    "url": "https://github.com/felipeflose/startup_flose/commit/a6f11f2300e339175e21019ba3771efc95285b6b",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6898.md",
+    "committedAt": "2026-07-23T13:47:46.377Z"
+  },
+  "KAN-6904": {
+    "sha": "25053e39888c8a7449fd3679836dea61801f422c",
+    "shortSha": "25053e3",
+    "url": "https://github.com/felipeflose/startup_flose/commit/25053e39888c8a7449fd3679836dea61801f422c",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6904.md",
+    "committedAt": "2026-07-23T13:53:50.349Z"
+  },
+  "KAN-6905": {
+    "sha": "e6a651254fd664539b9346c773c361527700df8c",
+    "shortSha": "e6a6512",
+    "url": "https://github.com/felipeflose/startup_flose/commit/e6a651254fd664539b9346c773c361527700df8c",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6905.md",
+    "committedAt": "2026-07-23T13:48:46.536Z"
+  },
+  "KAN-6910": {
+    "sha": "c11e90128a8827b5bef77de2576b7dae2b0a8444",
+    "shortSha": "c11e901",
+    "url": "https://github.com/felipeflose/startup_flose/commit/c11e90128a8827b5bef77de2576b7dae2b0a8444",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6910.md",
+    "committedAt": "2026-07-23T13:48:43.344Z"
+  },
+  "KAN-6911": {
+    "sha": "c2e696c74f311cb4fa12cb8e34e3b8aae7548280",
+    "shortSha": "c2e696c",
+    "url": "https://github.com/felipeflose/startup_flose/commit/c2e696c74f311cb4fa12cb8e34e3b8aae7548280",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6911.md",
+    "committedAt": "2026-07-23T13:49:50.727Z"
+  },
+  "KAN-6915": {
+    "sha": "a854d55e028fb9b6d60958ba00f959ef472c66de",
+    "shortSha": "a854d55",
+    "url": "https://github.com/felipeflose/startup_flose/commit/a854d55e028fb9b6d60958ba00f959ef472c66de",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6915.md",
+    "committedAt": "2026-07-23T13:49:44.720Z"
+  },
+  "KAN-6916": {
+    "sha": "c40f7d43b456e6c6413d55f7dee93a806a1c0167",
+    "shortSha": "c40f7d4",
+    "url": "https://github.com/felipeflose/startup_flose/commit/c40f7d43b456e6c6413d55f7dee93a806a1c0167",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6916.md",
+    "committedAt": "2026-07-23T13:50:46.561Z"
+  },
+  "KAN-6920": {
+    "sha": "1b76625a1849a3d605c7a103797eb56bfadd7947",
+    "shortSha": "1b76625",
+    "url": "https://github.com/felipeflose/startup_flose/commit/1b76625a1849a3d605c7a103797eb56bfadd7947",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6920.md",
+    "committedAt": "2026-07-23T14:11:17.573Z"
+  },
+  "KAN-6921": {
+    "sha": "0d4fa97fd8e8a628f1b78e199d2d856d015d7ddc",
+    "shortSha": "0d4fa97",
+    "url": "https://github.com/felipeflose/startup_flose/commit/0d4fa97fd8e8a628f1b78e199d2d856d015d7ddc",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6921.md",
+    "committedAt": "2026-07-23T13:51:51.110Z"
+  },
+  "KAN-6927": {
+    "sha": "38a4232f9a363422e16281d9c76a1ab308ed68dd",
+    "shortSha": "38a4232",
+    "url": "https://github.com/felipeflose/startup_flose/commit/38a4232f9a363422e16281d9c76a1ab308ed68dd",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6927.md",
+    "committedAt": "2026-07-23T13:51:44.202Z"
+  },
+  "KAN-6928": {
+    "sha": "9080fc653c61e7d08d66091ff5bf5390e95ae0e4",
+    "shortSha": "9080fc6",
+    "url": "https://github.com/felipeflose/startup_flose/commit/9080fc653c61e7d08d66091ff5bf5390e95ae0e4",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6928.md",
+    "committedAt": "2026-07-23T13:52:50.388Z"
+  },
+  "KAN-6934": {
+    "sha": "c1b49c4191a6042ab0213cfdc1aa8f1040b7974a",
+    "shortSha": "c1b49c4",
+    "url": "https://github.com/felipeflose/startup_flose/commit/c1b49c4191a6042ab0213cfdc1aa8f1040b7974a",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6934.md",
+    "committedAt": "2026-07-23T13:52:45.471Z"
+  },
+  "KAN-6935": {
+    "sha": "d60332caafac6cdc021eb8afd7f8870e51c0a1c4",
+    "shortSha": "d60332c",
+    "url": "https://github.com/felipeflose/startup_flose/commit/d60332caafac6cdc021eb8afd7f8870e51c0a1c4",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6935.md",
+    "committedAt": "2026-07-23T13:46:54.354Z"
+  },
+  "KAN-6940": {
+    "sha": "b7bacfb758adfc6198f1f0f440b68c38f3d07efc",
+    "shortSha": "b7bacfb",
+    "url": "https://github.com/felipeflose/startup_flose/commit/b7bacfb758adfc6198f1f0f440b68c38f3d07efc",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6940.md",
+    "committedAt": "2026-07-23T13:53:44.210Z"
+  },
+  "KAN-6941": {
+    "sha": "cbb0654df63fe28edfbad766684de6abf7c79757",
+    "shortSha": "cbb0654",
+    "url": "https://github.com/felipeflose/startup_flose/commit/cbb0654df63fe28edfbad766684de6abf7c79757",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6941.md",
+    "committedAt": "2026-07-23T13:54:52.446Z"
+  },
+  "KAN-6946": {
+    "sha": "61d9c54b2d96748fdc1f7e78ec7f9d4771b80c15",
+    "shortSha": "61d9c54",
+    "url": "https://github.com/felipeflose/startup_flose/commit/61d9c54b2d96748fdc1f7e78ec7f9d4771b80c15",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6946.md",
+    "committedAt": "2026-07-23T13:55:48.387Z"
+  },
+  "KAN-6947": {
+    "sha": "7103f33b889d07d5c7a31c6f0088609ccbee45d3",
+    "shortSha": "7103f33",
+    "url": "https://github.com/felipeflose/startup_flose/commit/7103f33b889d07d5c7a31c6f0088609ccbee45d3",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6947.md",
+    "committedAt": "2026-07-23T13:48:54.055Z"
+  },
+  "KAN-6951": {
+    "sha": "ef36adb486e2f0b5ea5748e8b2f502fa7f37e73a",
+    "shortSha": "ef36adb",
+    "url": "https://github.com/felipeflose/startup_flose/commit/ef36adb486e2f0b5ea5748e8b2f502fa7f37e73a",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6951.md",
+    "committedAt": "2026-07-23T13:55:45.774Z"
+  },
+  "KAN-6952": {
+    "sha": "218691b1660264eb2edb2b93177af5077756482c",
+    "shortSha": "218691b",
+    "url": "https://github.com/felipeflose/startup_flose/commit/218691b1660264eb2edb2b93177af5077756482c",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6952.md",
+    "committedAt": "2026-07-23T13:49:53.693Z"
+  },
+  "KAN-6956": {
+    "sha": "a33c1497c4a5834e877be13cd86f28d11f873801",
+    "shortSha": "a33c149",
+    "url": "https://github.com/felipeflose/startup_flose/commit/a33c1497c4a5834e877be13cd86f28d11f873801",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6956.md",
+    "committedAt": "2026-07-23T14:11:13.395Z"
+  },
+  "KAN-6957": {
+    "sha": "540bb96212132579ea8f3e1c9077799febf8c9b8",
+    "shortSha": "540bb96",
+    "url": "https://github.com/felipeflose/startup_flose/commit/540bb96212132579ea8f3e1c9077799febf8c9b8",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6957.md",
+    "committedAt": "2026-07-23T13:50:57.793Z"
+  },
+  "KAN-6960": {
+    "sha": "d4ffd890523154632766d5392af92f34d9344980",
+    "shortSha": "d4ffd89",
+    "url": "https://github.com/felipeflose/startup_flose/commit/d4ffd890523154632766d5392af92f34d9344980",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6960.md",
+    "committedAt": "2026-07-23T14:11:26.475Z"
+  },
+  "KAN-6961": {
+    "sha": "a8db4ac4bc4da412305dd4ed680c0a984cd9a0fb",
+    "shortSha": "a8db4ac",
+    "url": "https://github.com/felipeflose/startup_flose/commit/a8db4ac4bc4da412305dd4ed680c0a984cd9a0fb",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6961.md",
+    "committedAt": "2026-07-23T14:27:04.772Z"
+  },
+  "KAN-6963": {
+    "sha": "5119136da4f8e662f67a35b79ba4253e5dc9d74d",
+    "shortSha": "5119136",
+    "url": "https://github.com/felipeflose/startup_flose/commit/5119136da4f8e662f67a35b79ba4253e5dc9d74d",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6963.md",
+    "committedAt": "2026-07-23T13:52:40.159Z"
+  },
+  "KAN-6964": {
+    "sha": "f73f6af1d68584301f35c39e3853a2163bbcac97",
+    "shortSha": "f73f6af",
+    "url": "https://github.com/felipeflose/startup_flose/commit/f73f6af1d68584301f35c39e3853a2163bbcac97",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6964.md",
+    "committedAt": "2026-07-23T14:27:08.376Z"
+  },
+  "KAN-6967": {
+    "sha": "605fb3435866de7398943ccd6d9782d7b45b2909",
+    "shortSha": "605fb34",
+    "url": "https://github.com/felipeflose/startup_flose/commit/605fb3435866de7398943ccd6d9782d7b45b2909",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6967.md",
+    "committedAt": "2026-07-23T14:27:17.378Z"
+  },
+  "KAN-6968": {
+    "sha": "0de03d73182498c6e68e0ac98ed0fffbf2f6ea5c",
+    "shortSha": "0de03d7",
+    "url": "https://github.com/felipeflose/startup_flose/commit/0de03d73182498c6e68e0ac98ed0fffbf2f6ea5c",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6968.md",
+    "committedAt": "2026-07-23T13:53:53.659Z"
+  },
+  "KAN-6975": {
+    "sha": "bc5f4f201cec4073bba36c61cc39b6fdc12ca1f2",
+    "shortSha": "bc5f4f2",
+    "url": "https://github.com/felipeflose/startup_flose/commit/bc5f4f201cec4073bba36c61cc39b6fdc12ca1f2",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6975.md",
+    "committedAt": "2026-07-23T14:43:12.161Z"
+  },
+  "KAN-6976": {
+    "sha": "f9a5ccdb8feb711cb71e64f412ae00bc78ba214a",
+    "shortSha": "f9a5ccd",
+    "url": "https://github.com/felipeflose/startup_flose/commit/f9a5ccdb8feb711cb71e64f412ae00bc78ba214a",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6976.md",
+    "committedAt": "2026-07-23T14:43:01.737Z"
+  },
+  "KAN-6979": {
+    "sha": "7707fd0e3c2b12fbe7c5613ca190af034be7c78a",
+    "shortSha": "7707fd0",
+    "url": "https://github.com/felipeflose/startup_flose/commit/7707fd0e3c2b12fbe7c5613ca190af034be7c78a",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6979.md",
+    "committedAt": "2026-07-23T13:55:40.600Z"
+  },
+  "KAN-6980": {
+    "sha": "1078bae592e8978458eef885980574aff0f32aa9",
+    "shortSha": "1078bae",
+    "url": "https://github.com/felipeflose/startup_flose/commit/1078bae592e8978458eef885980574aff0f32aa9",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6980.md",
+    "committedAt": "2026-07-23T13:55:54.051Z"
+  },
+  "KAN-6981": {
+    "sha": "f1b7d570396b2416637a581e8b12e46a3691a318",
+    "shortSha": "f1b7d57",
+    "url": "https://github.com/felipeflose/startup_flose/commit/f1b7d570396b2416637a581e8b12e46a3691a318",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6981.md",
+    "committedAt": "2026-07-23T14:11:22.139Z"
+  },
+  "KAN-6982": {
+    "sha": "ca71c4dfd5ded9b3debd8a23e16147594e2ae89a",
+    "shortSha": "ca71c4d",
+    "url": "https://github.com/felipeflose/startup_flose/commit/ca71c4dfd5ded9b3debd8a23e16147594e2ae89a",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6982.md",
+    "committedAt": "2026-07-23T14:11:30.152Z"
+  },
+  "KAN-6983": {
+    "sha": "e825b7a6fc634fdacf363d7620b1bd0617403777",
+    "shortSha": "e825b7a",
+    "url": "https://github.com/felipeflose/startup_flose/commit/e825b7a6fc634fdacf363d7620b1bd0617403777",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6983.md",
+    "committedAt": "2026-07-23T15:07:33.586Z"
+  },
+  "KAN-6995": {
+    "sha": "36de3887d3063bbe3bbe2116fdc5cd6515310b01",
+    "shortSha": "36de388",
+    "url": "https://github.com/felipeflose/startup_flose/commit/36de3887d3063bbe3bbe2116fdc5cd6515310b01",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6995.md",
+    "committedAt": "2026-07-23T14:27:11.815Z"
+  },
+  "KAN-6996": {
+    "sha": "e06cd7eb0f0ea7438516ae073516fb005da2b23f",
+    "shortSha": "e06cd7e",
+    "url": "https://github.com/felipeflose/startup_flose/commit/e06cd7eb0f0ea7438516ae073516fb005da2b23f",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6996.md",
+    "committedAt": "2026-07-23T15:07:41.807Z"
+  },
+  "KAN-6993": {
+    "sha": "209c3959535b173a6ce8a2a17893826f5780be76",
+    "shortSha": "209c395",
+    "url": "https://github.com/felipeflose/startup_flose/commit/209c3959535b173a6ce8a2a17893826f5780be76",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6993.md",
+    "committedAt": "2026-07-23T14:27:21.373Z"
+  },
+  "KAN-6994": {
+    "sha": "609fd96560418f76ce8446d53e82a8c37af60348",
+    "shortSha": "609fd96",
+    "url": "https://github.com/felipeflose/startup_flose/commit/609fd96560418f76ce8446d53e82a8c37af60348",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6994.md",
+    "committedAt": "2026-07-23T14:27:23.562Z"
+  },
+  "KAN-6997": {
+    "sha": "a41887d0826b8d19983ba0a08842028f193d86ab",
+    "shortSha": "a41887d",
+    "url": "https://github.com/felipeflose/startup_flose/commit/a41887d0826b8d19983ba0a08842028f193d86ab",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6997.md",
+    "committedAt": "2026-07-23T14:43:05.995Z"
+  },
+  "KAN-6998": {
+    "sha": "fbbd79197ef6d76d5031dcea3b84b723f6434419",
+    "shortSha": "fbbd791",
+    "url": "https://github.com/felipeflose/startup_flose/commit/fbbd79197ef6d76d5031dcea3b84b723f6434419",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6998.md",
+    "committedAt": "2026-07-23T14:43:09.952Z"
+  },
+  "KAN-7000": {
+    "sha": "0274dd509622e930d8d4deaabfd4b8125fcd817d",
+    "shortSha": "0274dd5",
+    "url": "https://github.com/felipeflose/startup_flose/commit/0274dd509622e930d8d4deaabfd4b8125fcd817d",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7000.md",
+    "committedAt": "2026-07-23T15:19:52.776Z"
+  },
+  "KAN-6999": {
+    "sha": "8dfb0076365aff688f7a86a5f3fcd882fd3a1085",
+    "shortSha": "8dfb007",
+    "url": "https://github.com/felipeflose/startup_flose/commit/8dfb0076365aff688f7a86a5f3fcd882fd3a1085",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6999.md",
+    "committedAt": "2026-07-23T14:43:20.952Z"
+  },
+  "KAN-6984": {
+    "sha": "ea6e2bf846f5d0a9d1142f394c27caa83b9bfe44",
+    "shortSha": "ea6e2bf",
+    "url": "https://github.com/felipeflose/startup_flose/commit/ea6e2bf846f5d0a9d1142f394c27caa83b9bfe44",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-6984.md",
+    "committedAt": "2026-07-23T14:59:18.414Z"
+  },
+  "KAN-7001": {
+    "sha": "24bdc963456c0671e8612d9a8247c40ce1db541c",
+    "shortSha": "24bdc96",
+    "url": "https://github.com/felipeflose/startup_flose/commit/24bdc963456c0671e8612d9a8247c40ce1db541c",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7001.md",
+    "committedAt": "2026-07-23T14:59:08.690Z"
+  },
+  "KAN-7002": {
+    "sha": "84170936cbca9be1b86484e6e94fa10fb202ad55",
+    "shortSha": "8417093",
+    "url": "https://github.com/felipeflose/startup_flose/commit/84170936cbca9be1b86484e6e94fa10fb202ad55",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7002.md",
+    "committedAt": "2026-07-23T15:37:28.147Z"
+  },
+  "KAN-7003": {
+    "sha": "0f93f642753120cfece2ed71faabb10f982feb17",
+    "shortSha": "0f93f64",
+    "url": "https://github.com/felipeflose/startup_flose/commit/0f93f642753120cfece2ed71faabb10f982feb17",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7003.md",
+    "committedAt": "2026-07-23T15:44:44.994Z"
+  },
+  "KAN-7005": {
+    "sha": "b3e5b088c29dc66bfaf52c8a85599b6d5d924f88",
+    "shortSha": "b3e5b08",
+    "url": "https://github.com/felipeflose/startup_flose/commit/b3e5b088c29dc66bfaf52c8a85599b6d5d924f88",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7005.md",
+    "committedAt": "2026-07-23T15:48:40.058Z"
+  },
+  "KAN-7004": {
+    "sha": "a5e3dfed224df35161546ebb0677e53ee99936da",
+    "shortSha": "a5e3dfe",
+    "url": "https://github.com/felipeflose/startup_flose/commit/a5e3dfed224df35161546ebb0677e53ee99936da",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7004.md",
+    "committedAt": "2026-07-23T15:07:37.048Z"
+  },
+  "KAN-7007": {
+    "sha": "47a283c2be185b4d277f237e0ed247763b3cf4d6",
+    "shortSha": "47a283c",
+    "url": "https://github.com/felipeflose/startup_flose/commit/47a283c2be185b4d277f237e0ed247763b3cf4d6",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7007.md",
+    "committedAt": "2026-07-23T15:52:50.642Z"
+  },
+  "KAN-7016": {
+    "sha": "2c48ca9305c69f3c96bf11a868bfc23b4e085113",
+    "shortSha": "2c48ca9",
+    "url": "https://github.com/felipeflose/startup_flose/commit/2c48ca9305c69f3c96bf11a868bfc23b4e085113",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7016.md",
+    "committedAt": "2026-07-23T15:37:15.630Z"
+  },
+  "KAN-7017": {
+    "sha": "71881006f2f8c22d36939c5334bd9f3479400205",
+    "shortSha": "7188100",
+    "url": "https://github.com/felipeflose/startup_flose/commit/71881006f2f8c22d36939c5334bd9f3479400205",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7017.md",
+    "committedAt": "2026-07-23T15:37:19.539Z"
+  },
+  "KAN-7019": {
+    "sha": "6de11f3d260d88bd3e3100635981aeb79011137f",
+    "shortSha": "6de11f3",
+    "url": "https://github.com/felipeflose/startup_flose/commit/6de11f3d260d88bd3e3100635981aeb79011137f",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7019.md",
+    "committedAt": "2026-07-23T15:37:24.264Z"
+  },
+  "KAN-7018": {
+    "sha": "ae3eebaf9c26863468aebf0c18876a224ac2cd26",
+    "shortSha": "ae3eeba",
+    "url": "https://github.com/felipeflose/startup_flose/commit/ae3eebaf9c26863468aebf0c18876a224ac2cd26",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7018.md",
+    "committedAt": "2026-07-23T15:37:33.172Z"
+  },
+  "KAN-7022": {
+    "sha": "0def11387305350aa4ce63c613656c56c79a85fe",
+    "shortSha": "0def113",
+    "url": "https://github.com/felipeflose/startup_flose/commit/0def11387305350aa4ce63c613656c56c79a85fe",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7022.md",
+    "committedAt": "2026-07-23T15:44:51.491Z"
+  },
+  "KAN-7021": {
+    "sha": "385dc83cf970019399365b19f9973c3321cbb7fd",
+    "shortSha": "385dc83",
+    "url": "https://github.com/felipeflose/startup_flose/commit/385dc83cf970019399365b19f9973c3321cbb7fd",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7021.md",
+    "committedAt": "2026-07-23T15:45:05.303Z"
+  },
+  "KAN-7030": {
+    "sha": "b40a38ebe369952b71a041959de77eefe277b2ce",
+    "shortSha": "b40a38e",
+    "url": "https://github.com/felipeflose/startup_flose/commit/b40a38ebe369952b71a041959de77eefe277b2ce",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7030.md",
+    "committedAt": "2026-07-23T15:58:59.389Z"
+  },
+  "KAN-7029": {
+    "sha": "2ce71886d1a9cb0c9f97d0c90b80e6a46e524336",
+    "shortSha": "2ce7188",
+    "url": "https://github.com/felipeflose/startup_flose/commit/2ce71886d1a9cb0c9f97d0c90b80e6a46e524336",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7029.md",
+    "committedAt": "2026-07-23T15:46:53.750Z"
+  },
+  "KAN-7043": {
+    "sha": "253c22be9e66a307e5f7d18cf84060b2bedba7f8",
+    "shortSha": "253c22b",
+    "url": "https://github.com/felipeflose/startup_flose/commit/253c22be9e66a307e5f7d18cf84060b2bedba7f8",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7043.md",
+    "committedAt": "2026-07-23T15:48:44.493Z"
+  },
+  "KAN-7020": {
+    "sha": "942bba8ae7988b2324d80dba32bcec794497813a",
+    "shortSha": "942bba8",
+    "url": "https://github.com/felipeflose/startup_flose/commit/942bba8ae7988b2324d80dba32bcec794497813a",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7020.md",
+    "committedAt": "2026-07-23T15:55:01.459Z"
+  },
+  "KAN-7044": {
+    "sha": "116338e89af957c87217cd4105f1614c137f543c",
+    "shortSha": "116338e",
+    "url": "https://github.com/felipeflose/startup_flose/commit/116338e89af957c87217cd4105f1614c137f543c",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7044.md",
+    "committedAt": "2026-07-23T15:54:48.364Z"
+  },
+  "KAN-7054": {
+    "sha": "d5fba6f71d559ccaa2d93fe01285d26267ccf67a",
+    "shortSha": "d5fba6f",
+    "url": "https://github.com/felipeflose/startup_flose/commit/d5fba6f71d559ccaa2d93fe01285d26267ccf67a",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7054.md",
+    "committedAt": "2026-07-23T15:50:39.842Z"
+  },
+  "KAN-7055": {
+    "sha": "2db60f661e02b1a8e42cb0d3c28818024fbe7d83",
+    "shortSha": "2db60f6",
+    "url": "https://github.com/felipeflose/startup_flose/commit/2db60f661e02b1a8e42cb0d3c28818024fbe7d83",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7055.md",
+    "committedAt": "2026-07-23T15:57:15.658Z"
+  },
+  "KAN-7023": {
+    "sha": "dfc14d5e8ab5babfc1e42010b1f2052f1cad5794",
+    "shortSha": "dfc14d5",
+    "url": "https://github.com/felipeflose/startup_flose/commit/dfc14d5e8ab5babfc1e42010b1f2052f1cad5794",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7023.md",
+    "committedAt": "2026-07-23T15:51:10.998Z"
+  },
+  "KAN-7062": {
+    "sha": "3cfb977782c40305ebd2b09498e08c13509e00a5",
+    "shortSha": "3cfb977",
+    "url": "https://github.com/felipeflose/startup_flose/commit/3cfb977782c40305ebd2b09498e08c13509e00a5",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7062.md",
+    "committedAt": "2026-07-23T15:51:40.109Z"
+  },
+  "KAN-7063": {
+    "sha": "5cdcc8d5063d25c0f9087597eb57991a6a4f0c9b",
+    "shortSha": "5cdcc8d",
+    "url": "https://github.com/felipeflose/startup_flose/commit/5cdcc8d5063d25c0f9087597eb57991a6a4f0c9b",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7063.md",
+    "committedAt": "2026-07-23T15:57:43.799Z"
+  },
+  "KAN-7067": {
+    "sha": "5cc2175050a347a745f26acfe94e6b12b1ba08ce",
+    "shortSha": "5cc2175",
+    "url": "https://github.com/felipeflose/startup_flose/commit/5cc2175050a347a745f26acfe94e6b12b1ba08ce",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7067.md",
+    "committedAt": "2026-07-23T15:52:39.786Z"
+  },
+  "KAN-7068": {
+    "sha": "3683cd645cf2c05759b6fa08a0b9a8079b52f7de",
+    "shortSha": "3683cd6",
+    "url": "https://github.com/felipeflose/startup_flose/commit/3683cd645cf2c05759b6fa08a0b9a8079b52f7de",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7068.md",
+    "committedAt": "2026-07-23T15:58:43.536Z"
+  },
+  "KAN-7073": {
+    "sha": "2e368e04e88b3e04fcd5fffafa340f25886508ac",
+    "shortSha": "2e368e0",
+    "url": "https://github.com/felipeflose/startup_flose/commit/2e368e04e88b3e04fcd5fffafa340f25886508ac",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7073.md",
+    "committedAt": "2026-07-23T16:00:52.256Z"
+  },
+  "KAN-7074": {
+    "sha": "71fe6a49198eea9e517288802a1e63b9b7aa49d2",
+    "shortSha": "71fe6a4",
+    "url": "https://github.com/felipeflose/startup_flose/commit/71fe6a49198eea9e517288802a1e63b9b7aa49d2",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7074.md",
+    "committedAt": "2026-07-23T16:05:56.383Z"
+  },
+  "KAN-7081": {
+    "sha": "62d58cf724eba121d770b3c1d4054f181b9a9043",
+    "shortSha": "62d58cf",
+    "url": "https://github.com/felipeflose/startup_flose/commit/62d58cf724eba121d770b3c1d4054f181b9a9043",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7081.md",
+    "committedAt": "2026-07-23T15:54:40.718Z"
+  },
+  "KAN-7082": {
+    "sha": "5273e5a41cd1625be9fbedffe4fe9355fc131125",
+    "shortSha": "5273e5a",
+    "url": "https://github.com/felipeflose/startup_flose/commit/5273e5a41cd1625be9fbedffe4fe9355fc131125",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7082.md",
+    "committedAt": "2026-07-23T16:00:44.466Z"
+  },
+  "KAN-7084": {
+    "sha": "394d98859149e2d2f621d469421eefde01d0a574",
+    "shortSha": "394d988",
+    "url": "https://github.com/felipeflose/startup_flose/commit/394d98859149e2d2f621d469421eefde01d0a574",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7084.md",
+    "committedAt": "2026-07-23T16:02:52.746Z"
+  },
+  "KAN-7083": {
+    "sha": "98b61a13be065ffc395b813debbbdde799d0daa8",
+    "shortSha": "98b61a1",
+    "url": "https://github.com/felipeflose/startup_flose/commit/98b61a13be065ffc395b813debbbdde799d0daa8",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7083.md",
+    "committedAt": "2026-07-23T15:55:43.745Z"
+  },
+  "KAN-7087": {
+    "sha": "70842dee38203f8ce1706faab1fcd7f69afdf58a",
+    "shortSha": "70842de",
+    "url": "https://github.com/felipeflose/startup_flose/commit/70842dee38203f8ce1706faab1fcd7f69afdf58a",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7087.md",
+    "committedAt": "2026-07-23T16:03:47.269Z"
+  },
+  "KAN-7088": {
+    "sha": "fe387a1926841774b4f3aa1ba267ddabf6b3cfc2",
+    "shortSha": "fe387a1",
+    "url": "https://github.com/felipeflose/startup_flose/commit/fe387a1926841774b4f3aa1ba267ddabf6b3cfc2",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7088.md",
+    "committedAt": "2026-07-23T16:02:48.633Z"
+  },
+  "KAN-7096": {
+    "sha": "8fce3f438e7a8ba19d6f95647dc3bffb35623488",
+    "shortSha": "8fce3f4",
+    "url": "https://github.com/felipeflose/startup_flose/commit/8fce3f438e7a8ba19d6f95647dc3bffb35623488",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7096.md",
+    "committedAt": "2026-07-23T16:03:50.556Z"
+  },
+  "KAN-7095": {
+    "sha": "086f2edde59e2b97c95e9fcbe36fb680cf10d6be",
+    "shortSha": "086f2ed",
+    "url": "https://github.com/felipeflose/startup_flose/commit/086f2edde59e2b97c95e9fcbe36fb680cf10d6be",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7095.md",
+    "committedAt": "2026-07-23T16:04:52.023Z"
+  },
+  "KAN-7099": {
+    "sha": "8460088cd886d3ef175a485410c399530eae9165",
+    "shortSha": "8460088",
+    "url": "https://github.com/felipeflose/startup_flose/commit/8460088cd886d3ef175a485410c399530eae9165",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7099.md",
+    "committedAt": "2026-07-23T15:58:39.701Z"
+  },
+  "KAN-7100": {
+    "sha": "b1480194acdc192d5c8ef1a9b6b46141f40f383d",
+    "shortSha": "b148019",
+    "url": "https://github.com/felipeflose/startup_flose/commit/b1480194acdc192d5c8ef1a9b6b46141f40f383d",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7100.md",
+    "committedAt": "2026-07-23T16:04:57.095Z"
+  },
+  "KAN-7105": {
+    "sha": "540b92b2a99294cbcbef13de4040de29654173fc",
+    "shortSha": "540b92b",
+    "url": "https://github.com/felipeflose/startup_flose/commit/540b92b2a99294cbcbef13de4040de29654173fc",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7105.md",
+    "committedAt": "2026-07-23T15:59:41.541Z"
+  },
+  "KAN-7106": {
+    "sha": "28d8dd1ebaf31ce3564ca85ba6d831b41bdde82e",
+    "shortSha": "28d8dd1",
+    "url": "https://github.com/felipeflose/startup_flose/commit/28d8dd1ebaf31ce3564ca85ba6d831b41bdde82e",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7106.md",
+    "committedAt": "2026-07-23T16:11:52.553Z"
+  },
+  "KAN-7111": {
+    "sha": "e6eb39f86fe0b182201229276705673b4ebe7f89",
+    "shortSha": "e6eb39f",
+    "url": "https://github.com/felipeflose/startup_flose/commit/e6eb39f86fe0b182201229276705673b4ebe7f89",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7111.md",
+    "committedAt": "2026-07-23T16:12:57.652Z"
+  },
+  "KAN-7110": {
+    "sha": "346d976a9df6f9856b8b0e56ce0246bbcebc9324",
+    "shortSha": "346d976",
+    "url": "https://github.com/felipeflose/startup_flose/commit/346d976a9df6f9856b8b0e56ce0246bbcebc9324",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7110.md",
+    "committedAt": "2026-07-23T16:07:49.281Z"
+  },
+  "KAN-7115": {
+    "sha": "7c471688a85bd5e5740d6ae93abf45fc6febb4d6",
+    "shortSha": "7c47168",
+    "url": "https://github.com/felipeflose/startup_flose/commit/7c471688a85bd5e5740d6ae93abf45fc6febb4d6",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7115.md",
+    "committedAt": "2026-07-23T16:01:40.211Z"
+  },
+  "KAN-7116": {
+    "sha": "e2a3f3a791bde23ec4f1292ca3f211533054290b",
+    "shortSha": "e2a3f3a",
+    "url": "https://github.com/felipeflose/startup_flose/commit/e2a3f3a791bde23ec4f1292ca3f211533054290b",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7116.md",
+    "committedAt": "2026-07-23T16:08:52.446Z"
+  },
+  "KAN-7123": {
+    "sha": "752930b37fe7594f1c1625d87034d67e0ed7aae0",
+    "shortSha": "752930b",
+    "url": "https://github.com/felipeflose/startup_flose/commit/752930b37fe7594f1c1625d87034d67e0ed7aae0",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7123.md",
+    "committedAt": "2026-07-23T16:08:43.933Z"
+  },
+  "KAN-7122": {
+    "sha": "cb8da5d8245f30eb841026cfdcef4f351b14faf8",
+    "shortSha": "cb8da5d",
+    "url": "https://github.com/felipeflose/startup_flose/commit/cb8da5d8245f30eb841026cfdcef4f351b14faf8",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7122.md",
+    "committedAt": "2026-07-23T16:09:54.389Z"
+  },
+  "KAN-7128": {
+    "sha": "2bdfcc9e3dde9f40e4c5274311d3392af2a30904",
+    "shortSha": "2bdfcc9",
+    "url": "https://github.com/felipeflose/startup_flose/commit/2bdfcc9e3dde9f40e4c5274311d3392af2a30904",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7128.md",
+    "committedAt": "2026-07-23T16:03:39.821Z"
+  },
+  "KAN-7129": {
+    "sha": "189cc9a246bb8fc32035dc6314e7378c2efb5e73",
+    "shortSha": "189cc9a",
+    "url": "https://github.com/felipeflose/startup_flose/commit/189cc9a246bb8fc32035dc6314e7378c2efb5e73",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7129.md",
+    "committedAt": "2026-07-23T16:30:39.047Z"
+  },
+  "KAN-7132": {
+    "sha": "50a26c599371aa0a4a0dc9b3973306d5488715c8",
+    "shortSha": "50a26c5",
+    "url": "https://github.com/felipeflose/startup_flose/commit/50a26c599371aa0a4a0dc9b3973306d5488715c8",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7132.md",
+    "committedAt": "2026-07-23T16:04:40.186Z"
+  },
+  "KAN-7133": {
+    "sha": "96ba5137ac6371ff9885702320511d60ce698196",
+    "shortSha": "96ba513",
+    "url": "https://github.com/felipeflose/startup_flose/commit/96ba5137ac6371ff9885702320511d60ce698196",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7133.md",
+    "committedAt": "2026-07-23T16:30:35.019Z"
+  },
+  "KAN-7138": {
+    "sha": "c94c8d911879a3b6953114f6b75d0cb02ec35f6c",
+    "shortSha": "c94c8d9",
+    "url": "https://github.com/felipeflose/startup_flose/commit/c94c8d911879a3b6953114f6b75d0cb02ec35f6c",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7138.md",
+    "committedAt": "2026-07-23T16:05:40.247Z"
+  },
+  "KAN-7139": {
+    "sha": "c0192a20fe8125f90056bc3c907c83921e9fc91f",
+    "shortSha": "c0192a2",
+    "url": "https://github.com/felipeflose/startup_flose/commit/c0192a20fe8125f90056bc3c907c83921e9fc91f",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7139.md",
+    "committedAt": "2026-07-23T16:11:43.729Z"
+  },
+  "KAN-7144": {
+    "sha": "4dbef14dccb7aeac1c832aa5451fa6b95e0cce46",
+    "shortSha": "4dbef14",
+    "url": "https://github.com/felipeflose/startup_flose/commit/4dbef14dccb7aeac1c832aa5451fa6b95e0cce46",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7144.md",
+    "committedAt": "2026-07-23T16:06:40.288Z"
+  },
+  "KAN-7145": {
+    "sha": "d81ed8cb711b2753b4df05632881683a4ea359b6",
+    "shortSha": "d81ed8c",
+    "url": "https://github.com/felipeflose/startup_flose/commit/d81ed8cb711b2753b4df05632881683a4ea359b6",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7145.md",
+    "committedAt": "2026-07-23T16:13:49.091Z"
+  },
+  "KAN-7149": {
+    "sha": "a00c8746673d53634748b0933b9032c9758733bc",
+    "shortSha": "a00c874",
+    "url": "https://github.com/felipeflose/startup_flose/commit/a00c8746673d53634748b0933b9032c9758733bc",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7149.md",
+    "committedAt": "2026-07-23T16:07:41.530Z"
+  },
+  "KAN-7150": {
+    "sha": "95667d6dedf2fcfbca6c536961f950a5530ee1a0",
+    "shortSha": "95667d6",
+    "url": "https://github.com/felipeflose/startup_flose/commit/95667d6dedf2fcfbca6c536961f950a5530ee1a0",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7150.md",
+    "committedAt": "2026-07-23T16:14:47.017Z"
+  },
+  "KAN-7154": {
+    "sha": "1e9cd29edeb703ee3ff0d1d5eb1b4c74a0375ed2",
+    "shortSha": "1e9cd29",
+    "url": "https://github.com/felipeflose/startup_flose/commit/1e9cd29edeb703ee3ff0d1d5eb1b4c74a0375ed2",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7154.md",
+    "committedAt": "2026-07-23T16:08:40.113Z"
+  },
+  "KAN-7155": {
+    "sha": "2b9fb8f679b62a904f3e9d8b3d593ab766c41208",
+    "shortSha": "2b9fb8f",
+    "url": "https://github.com/felipeflose/startup_flose/commit/2b9fb8f679b62a904f3e9d8b3d593ab766c41208",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7155.md",
+    "committedAt": "2026-07-23T16:14:44.218Z"
+  },
+  "KAN-7159": {
+    "sha": "3d96b56085b3042563d34e7d9a509440688e1a8d",
+    "shortSha": "3d96b56",
+    "url": "https://github.com/felipeflose/startup_flose/commit/3d96b56085b3042563d34e7d9a509440688e1a8d",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7159.md",
+    "committedAt": "2026-07-23T16:09:41.054Z"
+  },
+  "KAN-7160": {
+    "sha": "c99f9e24d5017a8f403a4130279c82ac12313b80",
+    "shortSha": "c99f9e2",
+    "url": "https://github.com/felipeflose/startup_flose/commit/c99f9e24d5017a8f403a4130279c82ac12313b80",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7160.md",
+    "committedAt": "2026-07-23T16:09:46.039Z"
+  },
+  "KAN-7164": {
+    "sha": "bfd89c6a17b56ee54f4c3d15ddb53aa1109a32be",
+    "shortSha": "bfd89c6",
+    "url": "https://github.com/felipeflose/startup_flose/commit/bfd89c6a17b56ee54f4c3d15ddb53aa1109a32be",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7164.md",
+    "committedAt": "2026-07-23T16:10:39.893Z"
+  },
+  "KAN-7165": {
+    "sha": "061dd2e689a9f233d20e3f7002ff050e2512997d",
+    "shortSha": "061dd2e",
+    "url": "https://github.com/felipeflose/startup_flose/commit/061dd2e689a9f233d20e3f7002ff050e2512997d",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7165.md",
+    "committedAt": "2026-07-23T16:30:42.645Z"
+  },
+  "KAN-7167": {
+    "sha": "d2e68d7b9c656e20370e7fdb0e012a38ebdbc10e",
+    "shortSha": "d2e68d7",
+    "url": "https://github.com/felipeflose/startup_flose/commit/d2e68d7b9c656e20370e7fdb0e012a38ebdbc10e",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7167.md",
+    "committedAt": "2026-07-23T16:11:40.635Z"
+  },
+  "KAN-7168": {
+    "sha": "3c527a504f77ca566a18fb198cc142f24139c955",
+    "shortSha": "3c527a5",
+    "url": "https://github.com/felipeflose/startup_flose/commit/3c527a504f77ca566a18fb198cc142f24139c955",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7168.md",
+    "committedAt": "2026-07-23T16:32:45.502Z"
+  },
+  "KAN-7174": {
+    "sha": "ae921631ad3343e2fc99793c1ef833b5c4cf4a05",
+    "shortSha": "ae92163",
+    "url": "https://github.com/felipeflose/startup_flose/commit/ae921631ad3343e2fc99793c1ef833b5c4cf4a05",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7174.md",
+    "committedAt": "2026-07-23T16:12:39.714Z"
+  },
+  "KAN-7175": {
+    "sha": "4b35b129af11ec4ace5c466c2cefd676529b78c6",
+    "shortSha": "4b35b12",
+    "url": "https://github.com/felipeflose/startup_flose/commit/4b35b129af11ec4ace5c466c2cefd676529b78c6",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7175.md",
+    "committedAt": "2026-07-23T16:34:37.740Z"
+  },
+  "KAN-7178": {
+    "sha": "2d328259d06b7fec54697431de35f955885fc1ce",
+    "shortSha": "2d32825",
+    "url": "https://github.com/felipeflose/startup_flose/commit/2d328259d06b7fec54697431de35f955885fc1ce",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7178.md",
+    "committedAt": "2026-07-23T16:13:39.622Z"
+  },
+  "KAN-7179": {
+    "sha": "7d851a7ff67c1f906e8b75cefe859da5ead57d7d",
+    "shortSha": "7d851a7",
+    "url": "https://github.com/felipeflose/startup_flose/commit/7d851a7ff67c1f906e8b75cefe859da5ead57d7d",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7179.md",
+    "committedAt": "2026-07-23T16:34:46.502Z"
+  },
+  "KAN-7183": {
+    "sha": "171910bb8eb3925b86640f43986f36aad5299699",
+    "shortSha": "171910b",
+    "url": "https://github.com/felipeflose/startup_flose/commit/171910bb8eb3925b86640f43986f36aad5299699",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7183.md",
+    "committedAt": "2026-07-23T16:46:27.413Z"
+  },
+  "KAN-7182": {
+    "sha": "4dc309c9ae5e150ed393196b913ea11528b3b935",
+    "shortSha": "4dc309c",
+    "url": "https://github.com/felipeflose/startup_flose/commit/4dc309c9ae5e150ed393196b913ea11528b3b935",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7182.md",
+    "committedAt": "2026-07-23T16:14:49.408Z"
+  },
+  "KAN-7184": {
+    "sha": "a7e788ba7681bca486d856b82e8a79264bcf7146",
+    "shortSha": "a7e788b",
+    "url": "https://github.com/felipeflose/startup_flose/commit/a7e788ba7681bca486d856b82e8a79264bcf7146",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7184.md",
+    "committedAt": "2026-07-23T16:30:46.437Z"
+  },
+  "KAN-7186": {
+    "sha": "324026a94d9a20a023a64cae25487f445151864a",
+    "shortSha": "324026a",
+    "url": "https://github.com/felipeflose/startup_flose/commit/324026a94d9a20a023a64cae25487f445151864a",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7186.md",
+    "committedAt": "2026-07-23T16:30:50.850Z"
+  },
+  "KAN-7192": {
+    "sha": "22a31fdc7e8c450de2f4bf5205f340456e345c8e",
+    "shortSha": "22a31fd",
+    "url": "https://github.com/felipeflose/startup_flose/commit/22a31fdc7e8c450de2f4bf5205f340456e345c8e",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7192.md",
+    "committedAt": "2026-07-23T16:48:33.949Z"
+  },
+  "KAN-7195": {
+    "sha": "e185747fa30277cb75873229f62bf126d9d6bf99",
+    "shortSha": "e185747",
+    "url": "https://github.com/felipeflose/startup_flose/commit/e185747fa30277cb75873229f62bf126d9d6bf99",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7195.md",
+    "committedAt": "2026-07-23T16:58:56.521Z"
+  },
+  "KAN-7193": {
+    "sha": "dc637f711118d8c2dd0aa10617ac3700d06f940c",
+    "shortSha": "dc637f7",
+    "url": "https://github.com/felipeflose/startup_flose/commit/dc637f711118d8c2dd0aa10617ac3700d06f940c",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7193.md",
+    "committedAt": "2026-07-23T16:32:40.840Z"
+  },
+  "KAN-7194": {
+    "sha": "e92756f593924045dbdfef537131de6cea1dc154",
+    "shortSha": "e92756f",
+    "url": "https://github.com/felipeflose/startup_flose/commit/e92756f593924045dbdfef537131de6cea1dc154",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7194.md",
+    "committedAt": "2026-07-23T16:32:49.353Z"
+  },
+  "KAN-7201": {
+    "sha": "571e1ad562af26400f406a12d2e2ae4555bd54d7",
+    "shortSha": "571e1ad",
+    "url": "https://github.com/felipeflose/startup_flose/commit/571e1ad562af26400f406a12d2e2ae4555bd54d7",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7201.md",
+    "committedAt": "2026-07-23T16:55:03.056Z"
+  },
+  "KAN-7203": {
+    "sha": "a8cd705176c797311ca67cb2d21a61bd3f6e585a",
+    "shortSha": "a8cd705",
+    "url": "https://github.com/felipeflose/startup_flose/commit/a8cd705176c797311ca67cb2d21a61bd3f6e585a",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7203.md",
+    "committedAt": "2026-07-23T16:34:30.776Z"
+  },
+  "KAN-7204": {
+    "sha": "c28a98637792a97e4b2c131564c30c2b2cacb700",
+    "shortSha": "c28a986",
+    "url": "https://github.com/felipeflose/startup_flose/commit/c28a98637792a97e4b2c131564c30c2b2cacb700",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7204.md",
+    "committedAt": "2026-07-23T16:55:06.985Z"
+  },
+  "KAN-7202": {
+    "sha": "dbeb21ad6eb507fa1064fbe68b80c69a79d286fe",
+    "shortSha": "dbeb21a",
+    "url": "https://github.com/felipeflose/startup_flose/commit/dbeb21ad6eb507fa1064fbe68b80c69a79d286fe",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7202.md",
+    "committedAt": "2026-07-23T16:34:48.903Z"
+  },
+  "KAN-7209": {
+    "sha": "713db7f96e406c88ee453daa3489a8d6a38f8043",
+    "shortSha": "713db7f",
+    "url": "https://github.com/felipeflose/startup_flose/commit/713db7f96e406c88ee453daa3489a8d6a38f8043",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7209.md",
+    "committedAt": "2026-07-23T16:46:32.382Z"
+  },
+  "KAN-7207": {
+    "sha": "55ed138f07289d6629cd25f96c3d9b012e0ffac9",
+    "shortSha": "55ed138",
+    "url": "https://github.com/felipeflose/startup_flose/commit/55ed138f07289d6629cd25f96c3d9b012e0ffac9",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7207.md",
+    "committedAt": "2026-07-23T16:46:36.571Z"
+  },
+  "KAN-7187": {
+    "sha": "67863af4f36df2ec0002ae8e160489a04593a8c7",
+    "shortSha": "67863af",
+    "url": "https://github.com/felipeflose/startup_flose/commit/67863af4f36df2ec0002ae8e160489a04593a8c7",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7187.md",
+    "committedAt": "2026-07-23T16:56:57.110Z"
+  },
+  "KAN-7208": {
+    "sha": "b73826861a981bb39e7be308d4d84684a9617b2e",
+    "shortSha": "b738268",
+    "url": "https://github.com/felipeflose/startup_flose/commit/b73826861a981bb39e7be308d4d84684a9617b2e",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7208.md",
+    "committedAt": "2026-07-23T16:46:45.175Z"
+  },
+  "KAN-7222": {
+    "sha": "81c9c6813e10ef6404cd998657092a667167ed81",
+    "shortSha": "81c9c68",
+    "url": "https://github.com/felipeflose/startup_flose/commit/81c9c6813e10ef6404cd998657092a667167ed81",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7222.md",
+    "committedAt": "2026-07-23T16:48:31.755Z"
+  },
+  "KAN-7220": {
+    "sha": "28a0784279b06659851f3a113a93da6980c9e687",
+    "shortSha": "28a0784",
+    "url": "https://github.com/felipeflose/startup_flose/commit/28a0784279b06659851f3a113a93da6980c9e687",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7220.md",
+    "committedAt": "2026-07-23T17:14:38.802Z"
+  },
+  "KAN-7221": {
+    "sha": "8f96cdceaa687d4d7cc8ba735270d80a9ddd8742",
+    "shortSha": "8f96cdc",
+    "url": "https://github.com/felipeflose/startup_flose/commit/8f96cdceaa687d4d7cc8ba735270d80a9ddd8742",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7221.md",
+    "committedAt": "2026-07-23T16:48:41.286Z"
+  },
+  "KAN-7225": {
+    "sha": "70cc03329398f96560305156e132c6cdc4f63370",
+    "shortSha": "70cc033",
+    "url": "https://github.com/felipeflose/startup_flose/commit/70cc03329398f96560305156e132c6cdc4f63370",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7225.md",
+    "committedAt": "2026-07-23T16:55:11.495Z"
+  },
+  "KAN-7224": {
+    "sha": "154e03654381c79a844c7dcd1c15344f238dc35a",
+    "shortSha": "154e036",
+    "url": "https://github.com/felipeflose/startup_flose/commit/154e03654381c79a844c7dcd1c15344f238dc35a",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7224.md",
+    "committedAt": "2026-07-23T16:55:15.626Z"
+  },
+  "KAN-7210": {
+    "sha": "a7f6e0740e16264d4df27094db09d2735d96a3cb",
+    "shortSha": "a7f6e07",
+    "url": "https://github.com/felipeflose/startup_flose/commit/a7f6e0740e16264d4df27094db09d2735d96a3cb",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7210.md",
+    "committedAt": "2026-07-23T16:57:10.702Z"
+  },
+  "KAN-7234": {
+    "sha": "a8af0ab18efc6b8c92cbc134306e166f5565f80d",
+    "shortSha": "a8af0ab",
+    "url": "https://github.com/felipeflose/startup_flose/commit/a8af0ab18efc6b8c92cbc134306e166f5565f80d",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7234.md",
+    "committedAt": "2026-07-23T17:31:20.069Z"
+  },
+  "KAN-7233": {
+    "sha": "99f8d59f3c2e2e22da62377983bbfd00227f066a",
+    "shortSha": "99f8d59",
+    "url": "https://github.com/felipeflose/startup_flose/commit/99f8d59f3c2e2e22da62377983bbfd00227f066a",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7233.md",
+    "committedAt": "2026-07-23T16:57:19.597Z"
+  },
+  "KAN-7242": {
+    "sha": "f09801a6c2162955af3ad38e40efb55ccaf13a92",
+    "shortSha": "f09801a",
+    "url": "https://github.com/felipeflose/startup_flose/commit/f09801a6c2162955af3ad38e40efb55ccaf13a92",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7242.md",
+    "committedAt": "2026-07-23T16:59:00.552Z"
+  },
+  "KAN-7245": {
+    "sha": "8f7dc07592749b525a198793ae107ebcab418b1b",
+    "shortSha": "8f7dc07",
+    "url": "https://github.com/felipeflose/startup_flose/commit/8f7dc07592749b525a198793ae107ebcab418b1b",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7245.md",
+    "committedAt": "2026-07-23T17:49:20.931Z"
+  },
+  "KAN-7243": {
+    "sha": "29f42b37ed58acb0eb57b85f559dfd3be04f5f73",
+    "shortSha": "29f42b3",
+    "url": "https://github.com/felipeflose/startup_flose/commit/29f42b37ed58acb0eb57b85f559dfd3be04f5f73",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7243.md",
+    "committedAt": "2026-07-23T16:59:04.743Z"
+  },
+  "KAN-7223": {
+    "sha": "5c8b0afa0101a8ceaeeef89faa4c2c1b3621853f",
+    "shortSha": "5c8b0af",
+    "url": "https://github.com/felipeflose/startup_flose/commit/5c8b0afa0101a8ceaeeef89faa4c2c1b3621853f",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7223.md",
+    "committedAt": "2026-07-23T17:31:25.229Z"
+  },
+  "KAN-7244": {
+    "sha": "7b7fb45a1f558a0f4f937ebe3f1789f22a82abe5",
+    "shortSha": "7b7fb45",
+    "url": "https://github.com/felipeflose/startup_flose/commit/7b7fb45a1f558a0f4f937ebe3f1789f22a82abe5",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7244.md",
+    "committedAt": "2026-07-23T17:49:28.377Z"
+  },
+  "KAN-7230": {
+    "sha": "03d30cc69f1de4c618c453cb346c0206b2d8e7b0",
+    "shortSha": "03d30cc",
+    "url": "https://github.com/felipeflose/startup_flose/commit/03d30cc69f1de4c618c453cb346c0206b2d8e7b0",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7230.md",
+    "committedAt": "2026-07-23T17:14:46.024Z"
+  },
+  "KAN-7251": {
+    "sha": "5cd0c9adb16576dbd7e898a1728b119160a0a829",
+    "shortSha": "5cd0c9a",
+    "url": "https://github.com/felipeflose/startup_flose/commit/5cd0c9adb16576dbd7e898a1728b119160a0a829",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7251.md",
+    "committedAt": "2026-07-23T17:49:24.798Z"
+  },
+  "KAN-7250": {
+    "sha": "49f31f8d1c345ae57b6e2442159c94c8820aa157",
+    "shortSha": "49f31f8",
+    "url": "https://github.com/felipeflose/startup_flose/commit/49f31f8d1c345ae57b6e2442159c94c8820aa157",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7250.md",
+    "committedAt": "2026-07-23T17:14:49.417Z"
+  },
+  "KAN-7259": {
+    "sha": "7caa03d7e3d822770ec4b06cb60c19b0e3a297b3",
+    "shortSha": "7caa03d",
+    "url": "https://github.com/felipeflose/startup_flose/commit/7caa03d7e3d822770ec4b06cb60c19b0e3a297b3",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7259.md",
+    "committedAt": "2026-07-23T17:59:31.232Z"
+  },
+  "KAN-7258": {
+    "sha": "06ba01997ea9854c68ffedd232863f7e6266d45e",
+    "shortSha": "06ba019",
+    "url": "https://github.com/felipeflose/startup_flose/commit/06ba01997ea9854c68ffedd232863f7e6266d45e",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7258.md",
+    "committedAt": "2026-07-23T17:31:33.485Z"
+  },
+  "KAN-7268": {
+    "sha": "2bdb9b69110a32b6dea3d043fa28f80addd5366f",
+    "shortSha": "2bdb9b6",
+    "url": "https://github.com/felipeflose/startup_flose/commit/2bdb9b69110a32b6dea3d043fa28f80addd5366f",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7268.md",
+    "committedAt": "2026-07-23T17:47:25.952Z"
+  },
+  "KAN-7266": {
+    "sha": "9d355e6400ba3c7d2b2c1cac84e1cb3a354b5357",
+    "shortSha": "9d355e6",
+    "url": "https://github.com/felipeflose/startup_flose/commit/9d355e6400ba3c7d2b2c1cac84e1cb3a354b5357",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7266.md",
+    "committedAt": "2026-07-23T17:47:30.138Z"
+  },
+  "KAN-7267": {
+    "sha": "4c5de80bc0409cc6c2bf62dab441543fd1c8c3eb",
+    "shortSha": "4c5de80",
+    "url": "https://github.com/felipeflose/startup_flose/commit/4c5de80bc0409cc6c2bf62dab441543fd1c8c3eb",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7267.md",
+    "committedAt": "2026-07-23T17:58:07.232Z"
+  },
+  "KAN-7277": {
+    "sha": "20fa75c15eb30e3b248905c72b8dce678bbf816b",
+    "shortSha": "20fa75c",
+    "url": "https://github.com/felipeflose/startup_flose/commit/20fa75c15eb30e3b248905c72b8dce678bbf816b",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7277.md",
+    "committedAt": "2026-07-23T17:49:30.813Z"
+  },
+  "KAN-7280": {
+    "sha": "7bf077261336bfe7601bce6bf27cefe68001c24e",
+    "shortSha": "7bf0772",
+    "url": "https://github.com/felipeflose/startup_flose/commit/7bf077261336bfe7601bce6bf27cefe68001c24e",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7280.md",
+    "committedAt": "2026-07-23T18:00:18.144Z"
+  },
+  "KAN-7279": {
+    "sha": "c0407a8c0a17ea6bb1d9b59de5f991a1faa44360",
+    "shortSha": "c0407a8",
+    "url": "https://github.com/felipeflose/startup_flose/commit/c0407a8c0a17ea6bb1d9b59de5f991a1faa44360",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7279.md",
+    "committedAt": "2026-07-23T17:49:36.438Z"
+  },
+  "KAN-7284": {
+    "sha": "02e8dbc20d7439a256fa665dae4a0a5e8387c197",
+    "shortSha": "02e8dbc",
+    "url": "https://github.com/felipeflose/startup_flose/commit/02e8dbc20d7439a256fa665dae4a0a5e8387c197",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7284.md",
+    "committedAt": "2026-07-23T18:01:32.800Z"
+  },
+  "KAN-7283": {
+    "sha": "edb0015bcc87e298353001d724ead4325524eaf9",
+    "shortSha": "edb0015",
+    "url": "https://github.com/felipeflose/startup_flose/commit/edb0015bcc87e298353001d724ead4325524eaf9",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7283.md",
+    "committedAt": "2026-07-23T18:02:49.918Z"
+  },
+  "KAN-7295": {
+    "sha": "25635444626cc1c85cf94a1f1f8b8580a5fd4484",
+    "shortSha": "2563544",
+    "url": "https://github.com/felipeflose/startup_flose/commit/25635444626cc1c85cf94a1f1f8b8580a5fd4484",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7295.md",
+    "committedAt": "2026-07-23T18:00:34.509Z"
+  },
+  "KAN-7324": {
+    "sha": "ced3e078c438376a5e3725aaa74a17fd78ec2a75",
+    "shortSha": "ced3e07",
+    "url": "https://github.com/felipeflose/startup_flose/commit/ced3e078c438376a5e3725aaa74a17fd78ec2a75",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7324.md",
+    "committedAt": "2026-07-23T18:02:15.513Z"
+  },
+  "KAN-7325": {
+    "sha": "29055a57a5e3329e338214eb94bff84c8d937607",
+    "shortSha": "29055a5",
+    "url": "https://github.com/felipeflose/startup_flose/commit/29055a57a5e3329e338214eb94bff84c8d937607",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7325.md",
+    "committedAt": "2026-07-23T17:59:27.882Z"
+  },
+  "KAN-7326": {
+    "sha": "a694ed155db561bcbf4cbddf69cc00a8fd7795a7",
+    "shortSha": "a694ed1",
+    "url": "https://github.com/felipeflose/startup_flose/commit/a694ed155db561bcbf4cbddf69cc00a8fd7795a7",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7326.md",
+    "committedAt": "2026-07-23T18:01:39.798Z"
+  },
+  "KAN-7327": {
+    "sha": "8b681e1aaa0e9e8164e33fa3e2cf7613b50a31e3",
+    "shortSha": "8b681e1",
+    "url": "https://github.com/felipeflose/startup_flose/commit/8b681e1aaa0e9e8164e33fa3e2cf7613b50a31e3",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7327.md",
+    "committedAt": "2026-07-23T17:59:55.599Z"
+  },
+  "KAN-7328": {
+    "sha": "84f3ab5ffc5d8f40c04fdcc2a48a2ca9d138ec3c",
+    "shortSha": "84f3ab5",
+    "url": "https://github.com/felipeflose/startup_flose/commit/84f3ab5ffc5d8f40c04fdcc2a48a2ca9d138ec3c",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7328.md",
+    "committedAt": "2026-07-23T18:02:04.293Z"
+  },
+  "KAN-7334": {
+    "sha": "9d59fd8dad0d7a055032729f06cec190d3813f35",
+    "shortSha": "9d59fd8",
+    "url": "https://github.com/felipeflose/startup_flose/commit/9d59fd8dad0d7a055032729f06cec190d3813f35",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7334.md",
+    "committedAt": "2026-07-23T18:00:36.745Z"
+  },
+  "KAN-7335": {
+    "sha": "a3b349af7115c2dd0052ced4038236af41669b1b",
+    "shortSha": "a3b349a",
+    "url": "https://github.com/felipeflose/startup_flose/commit/a3b349af7115c2dd0052ced4038236af41669b1b",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7335.md",
+    "committedAt": "2026-07-23T18:02:44.162Z"
+  },
+  "KAN-7341": {
+    "sha": "74a733bd388fcb8121666819ba2a8d1ef6fe7311",
+    "shortSha": "74a733b",
+    "url": "https://github.com/felipeflose/startup_flose/commit/74a733bd388fcb8121666819ba2a8d1ef6fe7311",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7341.md",
+    "committedAt": "2026-07-23T18:04:08.913Z"
+  },
+  "KAN-7342": {
+    "sha": "deadc31b75dbed1df8961c5408cc4f6b38bf0d26",
+    "shortSha": "deadc31",
+    "url": "https://github.com/felipeflose/startup_flose/commit/deadc31b75dbed1df8961c5408cc4f6b38bf0d26",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7342.md",
+    "committedAt": "2026-07-23T18:41:58.072Z"
+  },
+  "KAN-7349": {
+    "sha": "75fd437c2f3fcb21c04951ff348efe6b4472afb0",
+    "shortSha": "75fd437",
+    "url": "https://github.com/felipeflose/startup_flose/commit/75fd437c2f3fcb21c04951ff348efe6b4472afb0",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7349.md",
+    "committedAt": "2026-07-23T18:02:28.405Z"
+  },
+  "KAN-7350": {
+    "sha": "5fe9570e54451b50f1e6defb0865920de1e371b3",
+    "shortSha": "5fe9570",
+    "url": "https://github.com/felipeflose/startup_flose/commit/5fe9570e54451b50f1e6defb0865920de1e371b3",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7350.md",
+    "committedAt": "2026-07-23T18:06:44.200Z"
+  },
+  "KAN-7362": {
+    "sha": "febadc06f41b3ef9436ca2450d226ea523eeeb5f",
+    "shortSha": "febadc0",
+    "url": "https://github.com/felipeflose/startup_flose/commit/febadc06f41b3ef9436ca2450d226ea523eeeb5f",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7362.md",
+    "committedAt": "2026-07-23T18:05:37.763Z"
+  },
+  "KAN-7361": {
+    "sha": "f405174b7dcdbce7af51f546b52be449d3160bba",
+    "shortSha": "f405174",
+    "url": "https://github.com/felipeflose/startup_flose/commit/f405174b7dcdbce7af51f546b52be449d3160bba",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7361.md",
+    "committedAt": "2026-07-23T18:03:33.151Z"
+  },
+  "KAN-7369": {
+    "sha": "e01a67e889adce7b45ddecd916a25a839de0e857",
+    "shortSha": "e01a67e",
+    "url": "https://github.com/felipeflose/startup_flose/commit/e01a67e889adce7b45ddecd916a25a839de0e857",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7369.md",
+    "committedAt": "2026-07-23T18:04:29.723Z"
+  },
+  "KAN-7370": {
+    "sha": "27051927c3d9235612ea1bbfd6170bb393f85974",
+    "shortSha": "2705192",
+    "url": "https://github.com/felipeflose/startup_flose/commit/27051927c3d9235612ea1bbfd6170bb393f85974",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7370.md",
+    "committedAt": "2026-07-23T18:06:33.831Z"
+  },
+  "KAN-7379": {
+    "sha": "2d037665c5c34b85e4194084ee8b4f2b29f151de",
+    "shortSha": "2d03766",
+    "url": "https://github.com/felipeflose/startup_flose/commit/2d037665c5c34b85e4194084ee8b4f2b29f151de",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7379.md",
+    "committedAt": "2026-07-23T18:05:27.480Z"
+  },
+  "KAN-7380": {
+    "sha": "6d3c6fb387f375452082a792813ae9674c05d88c",
+    "shortSha": "6d3c6fb",
+    "url": "https://github.com/felipeflose/startup_flose/commit/6d3c6fb387f375452082a792813ae9674c05d88c",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7380.md",
+    "committedAt": "2026-07-23T18:07:45.052Z"
+  },
+  "KAN-7389": {
+    "sha": "8f857bcdd30c63ee7fb678faec196443faa2da84",
+    "shortSha": "8f857bc",
+    "url": "https://github.com/felipeflose/startup_flose/commit/8f857bcdd30c63ee7fb678faec196443faa2da84",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7389.md",
+    "committedAt": "2026-07-23T18:06:29.767Z"
+  },
+  "KAN-7390": {
+    "sha": "3a2859634c36cc3b33536875bfa5de01e7516edd",
+    "shortSha": "3a28596",
+    "url": "https://github.com/felipeflose/startup_flose/commit/3a2859634c36cc3b33536875bfa5de01e7516edd",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7390.md",
+    "committedAt": "2026-07-23T18:10:49.717Z"
+  },
+  "KAN-7392": {
+    "sha": "ca10c174a94c3720801a7ceee45f761b8bd2418a",
+    "shortSha": "ca10c17",
+    "url": "https://github.com/felipeflose/startup_flose/commit/ca10c174a94c3720801a7ceee45f761b8bd2418a",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7392.md",
+    "committedAt": "2026-07-23T18:07:27.722Z"
+  },
+  "KAN-7393": {
+    "sha": "519260e93b7d799a433a57a633d814009ed6ef34",
+    "shortSha": "519260e",
+    "url": "https://github.com/felipeflose/startup_flose/commit/519260e93b7d799a433a57a633d814009ed6ef34",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7393.md",
+    "committedAt": "2026-07-23T18:09:35.885Z"
+  },
+  "KAN-7405": {
+    "sha": "8072ac1d3ecd6f74d6dbc01abc3bfc93e33aef0e",
+    "shortSha": "8072ac1",
+    "url": "https://github.com/felipeflose/startup_flose/commit/8072ac1d3ecd6f74d6dbc01abc3bfc93e33aef0e",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7405.md",
+    "committedAt": "2026-07-23T18:08:28.517Z"
+  },
+  "KAN-7406": {
+    "sha": "cfa0729aa6d7fd3bad63132e25b5aadb1d3e6283",
+    "shortSha": "cfa0729",
+    "url": "https://github.com/felipeflose/startup_flose/commit/cfa0729aa6d7fd3bad63132e25b5aadb1d3e6283",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7406.md",
+    "committedAt": "2026-07-23T18:12:42.986Z"
+  },
+  "KAN-7385": {
+    "sha": "eaad3b475641634055e11043728bb7be387ce8a6",
+    "shortSha": "eaad3b4",
+    "url": "https://github.com/felipeflose/startup_flose/commit/eaad3b475641634055e11043728bb7be387ce8a6",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7385.md",
+    "committedAt": "2026-07-23T18:08:39.169Z"
+  },
+  "KAN-7409": {
+    "sha": "5606536033299832eb3d17415d74eef1432dae73",
+    "shortSha": "5606536",
+    "url": "https://github.com/felipeflose/startup_flose/commit/5606536033299832eb3d17415d74eef1432dae73",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7409.md",
+    "committedAt": "2026-07-23T18:09:28.177Z"
+  },
+  "KAN-7410": {
+    "sha": "ef6e03267e613913a06d94bb255d2a83fcc94cf9",
+    "shortSha": "ef6e032",
+    "url": "https://github.com/felipeflose/startup_flose/commit/ef6e03267e613913a06d94bb255d2a83fcc94cf9",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7410.md",
+    "committedAt": "2026-07-23T18:11:33.184Z"
+  },
+  "KAN-7417": {
+    "sha": "2947858abd57c67d4d25e6dd6871153738c0f392",
+    "shortSha": "2947858",
+    "url": "https://github.com/felipeflose/startup_flose/commit/2947858abd57c67d4d25e6dd6871153738c0f392",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7417.md",
+    "committedAt": "2026-07-23T18:10:27.695Z"
+  },
+  "KAN-7418": {
+    "sha": "9dcf99f005aa8b58dd849b56bceedc29ed38fd11",
+    "shortSha": "9dcf99f",
+    "url": "https://github.com/felipeflose/startup_flose/commit/9dcf99f005aa8b58dd849b56bceedc29ed38fd11",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7418.md",
+    "committedAt": "2026-07-23T18:13:37.343Z"
+  },
+  "KAN-7422": {
+    "sha": "1f425ea78396eab5f6c194d166e329353294ab0f",
+    "shortSha": "1f425ea",
+    "url": "https://github.com/felipeflose/startup_flose/commit/1f425ea78396eab5f6c194d166e329353294ab0f",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7422.md",
+    "committedAt": "2026-07-23T18:11:30.015Z"
+  },
+  "KAN-7423": {
+    "sha": "02d57b2142ce11f9cd40b8dc3d324413debc653f",
+    "shortSha": "02d57b2",
+    "url": "https://github.com/felipeflose/startup_flose/commit/02d57b2142ce11f9cd40b8dc3d324413debc653f",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7423.md",
+    "committedAt": "2026-07-23T18:14:43.300Z"
+  },
+  "KAN-7431": {
+    "sha": "e851b7e6340ec6d8a6a1c40793fb390031c308cb",
+    "shortSha": "e851b7e",
+    "url": "https://github.com/felipeflose/startup_flose/commit/e851b7e6340ec6d8a6a1c40793fb390031c308cb",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7431.md",
+    "committedAt": "2026-07-23T18:15:43.833Z"
+  },
+  "KAN-7430": {
+    "sha": "3dc8bf8182d297cf4c512f94261a20638703f3a3",
+    "shortSha": "3dc8bf8",
+    "url": "https://github.com/felipeflose/startup_flose/commit/3dc8bf8182d297cf4c512f94261a20638703f3a3",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7430.md",
+    "committedAt": "2026-07-23T18:12:37.166Z"
+  },
+  "KAN-7433": {
+    "sha": "04d9b51175cd7ad4819f668fd325aebb77ec7895",
+    "shortSha": "04d9b51",
+    "url": "https://github.com/felipeflose/startup_flose/commit/04d9b51175cd7ad4819f668fd325aebb77ec7895",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7433.md",
+    "committedAt": "2026-07-23T18:13:33.837Z"
+  },
+  "KAN-7434": {
+    "sha": "fbe28e4a3b2dd8e900152b7baa8f1838d09d360e",
+    "shortSha": "fbe28e4",
+    "url": "https://github.com/felipeflose/startup_flose/commit/fbe28e4a3b2dd8e900152b7baa8f1838d09d360e",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7434.md",
+    "committedAt": "2026-07-23T18:15:48.408Z"
+  },
+  "KAN-7442": {
+    "sha": "0c703c09e8634abe5a80bf2f65aa53c295db5372",
+    "shortSha": "0c703c0",
+    "url": "https://github.com/felipeflose/startup_flose/commit/0c703c09e8634abe5a80bf2f65aa53c295db5372",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7442.md",
+    "committedAt": "2026-07-23T18:16:48.721Z"
+  },
+  "KAN-7441": {
+    "sha": "715186f45ce0ea6b0db9dfacd7d05b102d53f92a",
+    "shortSha": "715186f",
+    "url": "https://github.com/felipeflose/startup_flose/commit/715186f45ce0ea6b0db9dfacd7d05b102d53f92a",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7441.md",
+    "committedAt": "2026-07-23T18:14:38.599Z"
+  },
+  "KAN-7444": {
+    "sha": "f2e243f5f6f8d3f4707d4182b9292452b5141ecc",
+    "shortSha": "f2e243f",
+    "url": "https://github.com/felipeflose/startup_flose/commit/f2e243f5f6f8d3f4707d4182b9292452b5141ecc",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7444.md",
+    "committedAt": "2026-07-23T18:15:40.299Z"
+  },
+  "KAN-7445": {
+    "sha": "5099e1649f2d6d70a0e4f5d6fe7a30bbea226bf0",
+    "shortSha": "5099e16",
+    "url": "https://github.com/felipeflose/startup_flose/commit/5099e1649f2d6d70a0e4f5d6fe7a30bbea226bf0",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7445.md",
+    "committedAt": "2026-07-23T18:15:53.334Z"
+  },
+  "KAN-7450": {
+    "sha": "52df8c84f9cd3d0fb5a04fe5057e8409a83377e2",
+    "shortSha": "52df8c8",
+    "url": "https://github.com/felipeflose/startup_flose/commit/52df8c84f9cd3d0fb5a04fe5057e8409a83377e2",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7450.md",
+    "committedAt": "2026-07-23T18:16:35.066Z"
+  },
+  "KAN-7437": {
+    "sha": "1365fde48b4bcc46778005a5bd22c9f2ba615348",
+    "shortSha": "1365fde",
+    "url": "https://github.com/felipeflose/startup_flose/commit/1365fde48b4bcc46778005a5bd22c9f2ba615348",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7437.md",
+    "committedAt": "2026-07-23T18:16:38.364Z"
+  },
+  "KAN-7449": {
+    "sha": "637a1883db78baa69387d02a6308760faaa035ca",
+    "shortSha": "637a188",
+    "url": "https://github.com/felipeflose/startup_flose/commit/637a1883db78baa69387d02a6308760faaa035ca",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7449.md",
+    "committedAt": "2026-07-23T18:16:44.538Z"
+  },
+  "KAN-7459": {
+    "sha": "5f459f90a81317d480619a8b4a349b81da25dd8f",
+    "shortSha": "5f459f9",
+    "url": "https://github.com/felipeflose/startup_flose/commit/5f459f90a81317d480619a8b4a349b81da25dd8f",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7459.md",
+    "committedAt": "2026-07-23T18:19:02.386Z"
+  },
+  "KAN-7460": {
+    "sha": "5f8391462a51d82b33b2ad56becf9f50a0573bb6",
+    "shortSha": "5f83914",
+    "url": "https://github.com/felipeflose/startup_flose/commit/5f8391462a51d82b33b2ad56becf9f50a0573bb6",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7460.md",
+    "committedAt": "2026-07-23T18:19:07.206Z"
+  },
+  "KAN-7490": {
+    "sha": "9ad26936e9c07eb7ebfd9a062da29135f3e57f8c",
+    "shortSha": "9ad2693",
+    "url": "https://github.com/felipeflose/startup_flose/commit/9ad26936e9c07eb7ebfd9a062da29135f3e57f8c",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7490.md",
+    "committedAt": "2026-07-23T18:23:20.417Z"
+  },
+  "KAN-7491": {
+    "sha": "683a0200f5ad7c6e81b7d3fc199f5fbce564e700",
+    "shortSha": "683a020",
+    "url": "https://github.com/felipeflose/startup_flose/commit/683a0200f5ad7c6e81b7d3fc199f5fbce564e700",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7491.md",
+    "committedAt": "2026-07-23T18:25:24.450Z"
+  },
+  "KAN-7525": {
+    "sha": "0022a558ca3fe2db5178c54c15937b028b907749",
+    "shortSha": "0022a55",
+    "url": "https://github.com/felipeflose/startup_flose/commit/0022a558ca3fe2db5178c54c15937b028b907749",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7525.md",
+    "committedAt": "2026-07-23T18:28:38.852Z"
+  },
+  "KAN-7526": {
+    "sha": "8eec44026e061393e4ad3c9a13c6d4bc48ab6af3",
+    "shortSha": "8eec440",
+    "url": "https://github.com/felipeflose/startup_flose/commit/8eec44026e061393e4ad3c9a13c6d4bc48ab6af3",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7526.md",
+    "committedAt": "2026-07-23T18:28:44.073Z"
+  },
+  "KAN-7546": {
+    "sha": "9874a86fe9605bdec182e036491021ba548d0f65",
+    "shortSha": "9874a86",
+    "url": "https://github.com/felipeflose/startup_flose/commit/9874a86fe9605bdec182e036491021ba548d0f65",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7546.md",
+    "committedAt": "2026-07-23T18:31:56.247Z"
+  },
+  "KAN-7547": {
+    "sha": "15628fddb5a7052b01ac0ff9c67ded02e34a3b19",
+    "shortSha": "15628fd",
+    "url": "https://github.com/felipeflose/startup_flose/commit/15628fddb5a7052b01ac0ff9c67ded02e34a3b19",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7547.md",
+    "committedAt": "2026-07-23T18:33:42.294Z"
+  },
+  "KAN-7569": {
+    "sha": "46e65605a451f1b15b50cd9b529078eb41fb1820",
+    "shortSha": "46e6560",
+    "url": "https://github.com/felipeflose/startup_flose/commit/46e65605a451f1b15b50cd9b529078eb41fb1820",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7569.md",
+    "committedAt": "2026-07-23T18:35:07.258Z"
+  },
+  "KAN-7590": {
+    "sha": "832eecf8348512ee19b9be84e2ae56233b3b9860",
+    "shortSha": "832eecf",
+    "url": "https://github.com/felipeflose/startup_flose/commit/832eecf8348512ee19b9be84e2ae56233b3b9860",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7590.md",
+    "committedAt": "2026-07-23T18:37:49.943Z"
+  },
+  "KAN-7591": {
+    "sha": "c49840839894b9efbbf2592c65c5294ff2baeb5e",
+    "shortSha": "c498408",
+    "url": "https://github.com/felipeflose/startup_flose/commit/c49840839894b9efbbf2592c65c5294ff2baeb5e",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7591.md",
+    "committedAt": "2026-07-23T18:39:52.680Z"
+  },
+  "KAN-7611": {
+    "sha": "1ead5d0981bad06a8cfa1b5088fb92cc60d127b2",
+    "shortSha": "1ead5d0",
+    "url": "https://github.com/felipeflose/startup_flose/commit/1ead5d0981bad06a8cfa1b5088fb92cc60d127b2",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7611.md",
+    "committedAt": "2026-07-23T18:40:54.176Z"
+  },
+  "KAN-7619": {
+    "sha": "c6a07d3a27bf0b05783348d42d5ff31e80bfb797",
+    "shortSha": "c6a07d3",
+    "url": "https://github.com/felipeflose/startup_flose/commit/c6a07d3a27bf0b05783348d42d5ff31e80bfb797",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7619.md",
+    "committedAt": "2026-07-23T18:41:15.126Z"
+  },
+  "KAN-7625": {
+    "sha": "e443f2c4b855af83632e63f34b4eb5532d284c7c",
+    "shortSha": "e443f2c",
+    "url": "https://github.com/felipeflose/startup_flose/commit/e443f2c4b855af83632e63f34b4eb5532d284c7c",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7625.md",
+    "committedAt": "2026-07-23T18:44:08.905Z"
+  },
+  "KAN-7626": {
+    "sha": "00502ede9d7bfaadea2da9a9ebcc99cca392c3e3",
+    "shortSha": "00502ed",
+    "url": "https://github.com/felipeflose/startup_flose/commit/00502ede9d7bfaadea2da9a9ebcc99cca392c3e3",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7626.md",
+    "committedAt": "2026-07-23T18:43:03.791Z"
+  },
+  "KAN-7636": {
+    "sha": "e9fc6f54dc380012d351846c9ca4f5c8be483ee7",
+    "shortSha": "e9fc6f5",
+    "url": "https://github.com/felipeflose/startup_flose/commit/e9fc6f54dc380012d351846c9ca4f5c8be483ee7",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7636.md",
+    "committedAt": "2026-07-23T18:44:27.074Z"
+  },
+  "KAN-7645": {
+    "sha": "405e151f0318f96d5182bfe613939816939a938b",
+    "shortSha": "405e151",
+    "url": "https://github.com/felipeflose/startup_flose/commit/405e151f0318f96d5182bfe613939816939a938b",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7645.md",
+    "committedAt": "2026-07-23T18:45:42.448Z"
+  },
+  "KAN-7646": {
+    "sha": "a524ffa6f5acda85c315ec6a8a533eb2686b363f",
+    "shortSha": "a524ffa",
+    "url": "https://github.com/felipeflose/startup_flose/commit/a524ffa6f5acda85c315ec6a8a533eb2686b363f",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7646.md",
+    "committedAt": "2026-07-23T18:46:48.901Z"
+  },
+  "KAN-7653": {
+    "sha": "eb33ebf85671b97c0ce8d6c49d895dec7e309ba6",
+    "shortSha": "eb33ebf",
+    "url": "https://github.com/felipeflose/startup_flose/commit/eb33ebf85671b97c0ce8d6c49d895dec7e309ba6",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7653.md",
+    "committedAt": "2026-07-23T18:46:56.778Z"
+  },
+  "KAN-7654": {
+    "sha": "29e0d5df83d4491002d2a4ea0cbdb188cf78dd48",
+    "shortSha": "29e0d5d",
+    "url": "https://github.com/felipeflose/startup_flose/commit/29e0d5df83d4491002d2a4ea0cbdb188cf78dd48",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7654.md",
+    "committedAt": "2026-07-23T18:49:20.647Z"
+  },
+  "KAN-7667": {
+    "sha": "2c5ad4222812565bf4d4c853c6ab6e8d30760a8d",
+    "shortSha": "2c5ad42",
+    "url": "https://github.com/felipeflose/startup_flose/commit/2c5ad4222812565bf4d4c853c6ab6e8d30760a8d",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7667.md",
+    "committedAt": "2026-07-23T18:48:14.739Z"
+  },
+  "KAN-7669": {
+    "sha": "e281d64a5b1a4a96b194680e2e45d25e67f21440",
+    "shortSha": "e281d64",
+    "url": "https://github.com/felipeflose/startup_flose/commit/e281d64a5b1a4a96b194680e2e45d25e67f21440",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7669.md",
+    "committedAt": "2026-07-23T18:49:53.985Z"
+  },
+  "KAN-7674": {
+    "sha": "12c092fcfea5fef52c87bfae4cce1b825c27d7f5",
+    "shortSha": "12c092f",
+    "url": "https://github.com/felipeflose/startup_flose/commit/12c092fcfea5fef52c87bfae4cce1b825c27d7f5",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7674.md",
+    "committedAt": "2026-07-23T18:49:10.488Z"
+  },
+  "KAN-7675": {
+    "sha": "aac961473faecede8e50b23ef7a3cb9db4aab891",
+    "shortSha": "aac9614",
+    "url": "https://github.com/felipeflose/startup_flose/commit/aac961473faecede8e50b23ef7a3cb9db4aab891",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7675.md",
+    "committedAt": "2026-07-23T18:49:14.603Z"
+  },
+  "KAN-7692": {
+    "sha": "9f14293b25c6193ec8c9cf4f52f201700458c31e",
+    "shortSha": "9f14293",
+    "url": "https://github.com/felipeflose/startup_flose/commit/9f14293b25c6193ec8c9cf4f52f201700458c31e",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7692.md",
+    "committedAt": "2026-07-23T18:51:34.656Z"
+  },
+  "KAN-7693": {
+    "sha": "f736594b8db5db0de3533560b079f5860aac0693",
+    "shortSha": "f736594",
+    "url": "https://github.com/felipeflose/startup_flose/commit/f736594b8db5db0de3533560b079f5860aac0693",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7693.md",
+    "committedAt": "2026-07-23T18:50:42.031Z"
+  },
+  "KAN-7694": {
+    "sha": "95aa36cbec6af33ce62e8957cfc4d2a196c5a157",
+    "shortSha": "95aa36c",
+    "url": "https://github.com/felipeflose/startup_flose/commit/95aa36cbec6af33ce62e8957cfc4d2a196c5a157",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7694.md",
+    "committedAt": "2026-07-23T18:53:03.767Z"
+  },
+  "KAN-7702": {
+    "sha": "8050ef43e5e37dfde113c6cbaf07525bd54bf7b0",
+    "shortSha": "8050ef4",
+    "url": "https://github.com/felipeflose/startup_flose/commit/8050ef43e5e37dfde113c6cbaf07525bd54bf7b0",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7702.md",
+    "committedAt": "2026-07-23T18:53:09.316Z"
+  },
+  "KAN-7704": {
+    "sha": "8f8848ba0f0dad92ae4e94b3aa80e5c46a942937",
+    "shortSha": "8f8848b",
+    "url": "https://github.com/felipeflose/startup_flose/commit/8f8848ba0f0dad92ae4e94b3aa80e5c46a942937",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7704.md",
+    "committedAt": "2026-07-23T18:53:57.587Z"
+  },
+  "KAN-7705": {
+    "sha": "da5637cc5743c835e1a5d8dfb147c26c9382e58c",
+    "shortSha": "da5637c",
+    "url": "https://github.com/felipeflose/startup_flose/commit/da5637cc5743c835e1a5d8dfb147c26c9382e58c",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7705.md",
+    "committedAt": "2026-07-23T18:56:04.903Z"
+  },
+  "KAN-7716": {
+    "sha": "96b8d38a60d16f6eeeb29c991fc4402573ea0baf",
+    "shortSha": "96b8d38",
+    "url": "https://github.com/felipeflose/startup_flose/commit/96b8d38a60d16f6eeeb29c991fc4402573ea0baf",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7716.md",
+    "committedAt": "2026-07-23T18:55:42.305Z"
+  },
+  "KAN-7719": {
+    "sha": "e1234461700dcfbcfa8869973ae11594cfd1a4a9",
+    "shortSha": "e123446",
+    "url": "https://github.com/felipeflose/startup_flose/commit/e1234461700dcfbcfa8869973ae11594cfd1a4a9",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7719.md",
+    "committedAt": "2026-07-23T18:56:28.584Z"
+  },
+  "KAN-7726": {
+    "sha": "6d86cbbbe01978d53f7d15f2a6bc95c4cdd7b515",
+    "shortSha": "6d86cbb",
+    "url": "https://github.com/felipeflose/startup_flose/commit/6d86cbbbe01978d53f7d15f2a6bc95c4cdd7b515",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7726.md",
+    "committedAt": "2026-07-23T18:57:33.160Z"
+  },
+  "KAN-7727": {
+    "sha": "312719ac30fa63e206b4b80a0b807530d0f3cc13",
+    "shortSha": "312719a",
+    "url": "https://github.com/felipeflose/startup_flose/commit/312719ac30fa63e206b4b80a0b807530d0f3cc13",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7727.md",
+    "committedAt": "2026-07-23T18:58:30.430Z"
+  },
+  "KAN-7729": {
+    "sha": "8229d02c53c7b971da6da10f363e8afb0c16fbd8",
+    "shortSha": "8229d02",
+    "url": "https://github.com/felipeflose/startup_flose/commit/8229d02c53c7b971da6da10f363e8afb0c16fbd8",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7729.md",
+    "committedAt": "2026-07-23T18:58:49.571Z"
+  },
+  "KAN-7730": {
+    "sha": "d5bb3e08b3cb81c4b7c4a201117af6f5b42502cb",
+    "shortSha": "d5bb3e0",
+    "url": "https://github.com/felipeflose/startup_flose/commit/d5bb3e08b3cb81c4b7c4a201117af6f5b42502cb",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7730.md",
+    "committedAt": "2026-07-23T19:00:10.798Z"
+  },
+  "KAN-7737": {
+    "sha": "882a1bd73815edb223b0abf0ca9d37ef4109fff1",
+    "shortSha": "882a1bd",
+    "url": "https://github.com/felipeflose/startup_flose/commit/882a1bd73815edb223b0abf0ca9d37ef4109fff1",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7737.md",
+    "committedAt": "2026-07-23T18:59:47.559Z"
+  },
+  "KAN-7738": {
+    "sha": "cf6cb0e1a664ece9c46cdbf25e173e31179bebbb",
+    "shortSha": "cf6cb0e",
+    "url": "https://github.com/felipeflose/startup_flose/commit/cf6cb0e1a664ece9c46cdbf25e173e31179bebbb",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7738.md",
+    "committedAt": "2026-07-23T19:03:33.340Z"
+  },
+  "KAN-7744": {
+    "sha": "62768995283cfdcd0912b30da5fa737812fd2e08",
+    "shortSha": "6276899",
+    "url": "https://github.com/felipeflose/startup_flose/commit/62768995283cfdcd0912b30da5fa737812fd2e08",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7744.md",
+    "committedAt": "2026-07-23T19:00:52.583Z"
+  },
+  "KAN-7749": {
+    "sha": "543e50d18008fac271eadbd20c2773df904ecdcf",
+    "shortSha": "543e50d",
+    "url": "https://github.com/felipeflose/startup_flose/commit/543e50d18008fac271eadbd20c2773df904ecdcf",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7749.md",
+    "committedAt": "2026-07-23T19:02:02.337Z"
+  },
+  "KAN-7765": {
+    "sha": "895449d64b9e7ef284532135437460aff4ab9983",
+    "shortSha": "895449d",
+    "url": "https://github.com/felipeflose/startup_flose/commit/895449d64b9e7ef284532135437460aff4ab9983",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7765.md",
+    "committedAt": "2026-07-23T19:03:21.941Z"
+  },
+  "KAN-7774": {
+    "sha": "099151a4632cecfdaa4cbc6862d7c8997bea42a9",
+    "shortSha": "099151a",
+    "url": "https://github.com/felipeflose/startup_flose/commit/099151a4632cecfdaa4cbc6862d7c8997bea42a9",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7774.md",
+    "committedAt": "2026-07-23T19:04:25.399Z"
+  },
+  "KAN-7775": {
+    "sha": "9c8a082e988485053a83fd54fa9175ad3263c19a",
+    "shortSha": "9c8a082",
+    "url": "https://github.com/felipeflose/startup_flose/commit/9c8a082e988485053a83fd54fa9175ad3263c19a",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7775.md",
+    "committedAt": "2026-07-23T19:04:57.228Z"
+  },
+  "KAN-7776": {
+    "sha": "029fc69a39ac4ca9c1cf7fd3f510f6d87e287f09",
+    "shortSha": "029fc69",
+    "url": "https://github.com/felipeflose/startup_flose/commit/029fc69a39ac4ca9c1cf7fd3f510f6d87e287f09",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7776.md",
+    "committedAt": "2026-07-23T19:05:02.468Z"
+  },
+  "KAN-7777": {
+    "sha": "1bb1e67b6db9b29fe5ab5087a266775761f884f7",
+    "shortSha": "1bb1e67",
+    "url": "https://github.com/felipeflose/startup_flose/commit/1bb1e67b6db9b29fe5ab5087a266775761f884f7",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7777.md",
+    "committedAt": "2026-07-23T19:05:07.550Z"
+  },
+  "KAN-7785": {
+    "sha": "be51d428b5502f16b5aef3863e1f90d91b5524f8",
+    "shortSha": "be51d42",
+    "url": "https://github.com/felipeflose/startup_flose/commit/be51d428b5502f16b5aef3863e1f90d91b5524f8",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7785.md",
+    "committedAt": "2026-07-23T19:06:27.187Z"
+  },
+  "KAN-7786": {
+    "sha": "32d63e8b304a35284b1b33b9ccf81d53a5e3631d",
+    "shortSha": "32d63e8",
+    "url": "https://github.com/felipeflose/startup_flose/commit/32d63e8b304a35284b1b33b9ccf81d53a5e3631d",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7786.md",
+    "committedAt": "2026-07-23T19:12:37.527Z"
+  },
+  "KAN-7835": {
+    "sha": "41271dcfeaf1985da475a40a47c426ee628bf84c",
+    "shortSha": "41271dc",
+    "url": "https://github.com/felipeflose/startup_flose/commit/41271dcfeaf1985da475a40a47c426ee628bf84c",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7835.md",
+    "committedAt": "2026-07-23T19:13:31.276Z"
+  },
+  "KAN-7951": {
+    "sha": "0b5ea5b79fad7ba44986a7fafa5eba946f9e912b",
+    "shortSha": "0b5ea5b",
+    "url": "https://github.com/felipeflose/startup_flose/commit/0b5ea5b79fad7ba44986a7fafa5eba946f9e912b",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7951.md",
+    "committedAt": "2026-07-23T19:31:19.569Z"
+  },
+  "KAN-7952": {
+    "sha": "03665f69b2fc9ab7159a30cbcb074cbd31813f07",
+    "shortSha": "03665f6",
+    "url": "https://github.com/felipeflose/startup_flose/commit/03665f69b2fc9ab7159a30cbcb074cbd31813f07",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7952.md",
+    "committedAt": "2026-07-23T19:32:10.585Z"
+  },
+  "KAN-7958": {
+    "sha": "aa9d18e1b8e50978e9cf80dbfb3c92a9cb5d5e83",
+    "shortSha": "aa9d18e",
+    "url": "https://github.com/felipeflose/startup_flose/commit/aa9d18e1b8e50978e9cf80dbfb3c92a9cb5d5e83",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7958.md",
+    "committedAt": "2026-07-23T19:32:42.020Z"
+  },
+  "KAN-7965": {
+    "sha": "9890873a9bb5b29e8b0d814b0832dc60aadd2bd8",
+    "shortSha": "9890873",
+    "url": "https://github.com/felipeflose/startup_flose/commit/9890873a9bb5b29e8b0d814b0832dc60aadd2bd8",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7965.md",
+    "committedAt": "2026-07-23T19:34:21.240Z"
+  },
+  "KAN-7966": {
+    "sha": "c1af30f0d206765802906f63ab09028dfe575808",
+    "shortSha": "c1af30f",
+    "url": "https://github.com/felipeflose/startup_flose/commit/c1af30f0d206765802906f63ab09028dfe575808",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7966.md",
+    "committedAt": "2026-07-23T19:35:08.785Z"
+  },
+  "KAN-7971": {
+    "sha": "11633248c0b7680bf0f57a3582f259a8cb239b73",
+    "shortSha": "1163324",
+    "url": "https://github.com/felipeflose/startup_flose/commit/11633248c0b7680bf0f57a3582f259a8cb239b73",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7971.md",
+    "committedAt": "2026-07-23T19:38:07.754Z"
+  },
+  "KAN-7972": {
+    "sha": "37f729648b2411c346cce0b78b14e2d87241f85f",
+    "shortSha": "37f7296",
+    "url": "https://github.com/felipeflose/startup_flose/commit/37f729648b2411c346cce0b78b14e2d87241f85f",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7972.md",
+    "committedAt": "2026-07-23T19:35:03.783Z"
+  },
+  "KAN-7986": {
+    "sha": "87585f49a38774e7ced7217f302fe262d4414cbf",
+    "shortSha": "87585f4",
+    "url": "https://github.com/felipeflose/startup_flose/commit/87585f49a38774e7ced7217f302fe262d4414cbf",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7986.md",
+    "committedAt": "2026-07-23T19:42:47.850Z"
+  },
+  "KAN-7994": {
+    "sha": "01594c1529208e9b91e09763813fb31aa1447f76",
+    "shortSha": "01594c1",
+    "url": "https://github.com/felipeflose/startup_flose/commit/01594c1529208e9b91e09763813fb31aa1447f76",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7994.md",
+    "committedAt": "2026-07-23T19:49:46.472Z"
+  },
+  "KAN-7995": {
+    "sha": "79920267a9c82b6ae9168872594efbcd9e5c17eb",
+    "shortSha": "7992026",
+    "url": "https://github.com/felipeflose/startup_flose/commit/79920267a9c82b6ae9168872594efbcd9e5c17eb",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7995.md",
+    "committedAt": "2026-07-23T19:37:43.777Z"
+  },
+  "KAN-7999": {
+    "sha": "66b03656ae31874d15a18d845a6ec793cb5fce7b",
+    "shortSha": "66b0365",
+    "url": "https://github.com/felipeflose/startup_flose/commit/66b03656ae31874d15a18d845a6ec793cb5fce7b",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-7999.md",
+    "committedAt": "2026-07-23T19:40:47.260Z"
+  },
+  "KAN-8011": {
+    "sha": "a839ec22e5910175fec80d8f67c311dd08288310",
+    "shortSha": "a839ec2",
+    "url": "https://github.com/felipeflose/startup_flose/commit/a839ec22e5910175fec80d8f67c311dd08288310",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8011.md",
+    "committedAt": "2026-07-23T19:46:50.124Z"
+  },
+  "KAN-8012": {
+    "sha": "697115721e173e4c0817aa39d64f790fd21617f3",
+    "shortSha": "6971157",
+    "url": "https://github.com/felipeflose/startup_flose/commit/697115721e173e4c0817aa39d64f790fd21617f3",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8012.md",
+    "committedAt": "2026-07-23T19:46:55.411Z"
+  },
+  "KAN-8018": {
+    "sha": "6bb94a01b93b9610438f8be88632bb7a99898c7e",
+    "shortSha": "6bb94a0",
+    "url": "https://github.com/felipeflose/startup_flose/commit/6bb94a01b93b9610438f8be88632bb7a99898c7e",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8018.md",
+    "committedAt": "2026-07-23T19:41:23.737Z"
+  },
+  "KAN-8026": {
+    "sha": "cb47a545e42728219d97c0b9fca2adc76ad0b3b0",
+    "shortSha": "cb47a54",
+    "url": "https://github.com/felipeflose/startup_flose/commit/cb47a545e42728219d97c0b9fca2adc76ad0b3b0",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8026.md",
+    "committedAt": "2026-07-23T19:48:50.953Z"
+  },
+  "KAN-8031": {
+    "sha": "38761a3b0dc4e0c7be24017aebf3fe2185e97a05",
+    "shortSha": "38761a3",
+    "url": "https://github.com/felipeflose/startup_flose/commit/38761a3b0dc4e0c7be24017aebf3fe2185e97a05",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8031.md",
+    "committedAt": "2026-07-23T19:43:23.665Z"
+  },
+  "KAN-8032": {
+    "sha": "80bbc388fc8c4444d1791b888201b741cef59a8f",
+    "shortSha": "80bbc38",
+    "url": "https://github.com/felipeflose/startup_flose/commit/80bbc388fc8c4444d1791b888201b741cef59a8f",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8032.md",
+    "committedAt": "2026-07-23T19:46:00.715Z"
+  },
+  "KAN-8039": {
+    "sha": "b65b2ab49f95b174cc51a84d85b17170970a1d6d",
+    "shortSha": "b65b2ab",
+    "url": "https://github.com/felipeflose/startup_flose/commit/b65b2ab49f95b174cc51a84d85b17170970a1d6d",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8039.md",
+    "committedAt": "2026-07-23T19:52:04.354Z"
+  },
+  "KAN-8044": {
+    "sha": "4384283fceeb0d7d526d01fdcc2d1280e8b3919f",
+    "shortSha": "4384283",
+    "url": "https://github.com/felipeflose/startup_flose/commit/4384283fceeb0d7d526d01fdcc2d1280e8b3919f",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8044.md",
+    "committedAt": "2026-07-23T19:52:19.594Z"
+  },
+  "KAN-8049": {
+    "sha": "0a8e2a4c798fd24d50b59da6a4d8402b9030ca57",
+    "shortSha": "0a8e2a4",
+    "url": "https://github.com/felipeflose/startup_flose/commit/0a8e2a4c798fd24d50b59da6a4d8402b9030ca57",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8049.md",
+    "committedAt": "2026-07-23T19:53:09.936Z"
+  },
+  "KAN-8057": {
+    "sha": "c66ee36e9da99035ea52c68d68e7a7691641dc6d",
+    "shortSha": "c66ee36",
+    "url": "https://github.com/felipeflose/startup_flose/commit/c66ee36e9da99035ea52c68d68e7a7691641dc6d",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8057.md",
+    "committedAt": "2026-07-23T19:53:18.872Z"
+  },
+  "KAN-8058": {
+    "sha": "081bcb2301fc1f612f89866392d67047deae05e6",
+    "shortSha": "081bcb2",
+    "url": "https://github.com/felipeflose/startup_flose/commit/081bcb2301fc1f612f89866392d67047deae05e6",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8058.md",
+    "committedAt": "2026-07-23T19:47:41.122Z"
+  },
+  "KAN-8067": {
+    "sha": "4d21df5724f7d8174b11bbbb7969f05e365fb563",
+    "shortSha": "4d21df5",
+    "url": "https://github.com/felipeflose/startup_flose/commit/4d21df5724f7d8174b11bbbb7969f05e365fb563",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8067.md",
+    "committedAt": "2026-07-23T19:48:23.205Z"
+  },
+  "KAN-8074": {
+    "sha": "225f6d7167790f6d173aab4d6d778833e07c8e5c",
+    "shortSha": "225f6d7",
+    "url": "https://github.com/felipeflose/startup_flose/commit/225f6d7167790f6d173aab4d6d778833e07c8e5c",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8074.md",
+    "committedAt": "2026-07-23T19:55:17.882Z"
+  },
+  "KAN-8075": {
+    "sha": "069fed1c4d2b584945ae7ed64b177d753cba4329",
+    "shortSha": "069fed1",
+    "url": "https://github.com/felipeflose/startup_flose/commit/069fed1c4d2b584945ae7ed64b177d753cba4329",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8075.md",
+    "committedAt": "2026-07-23T19:49:23.704Z"
+  },
+  "KAN-8084": {
+    "sha": "046f0f27ee9925dae1692dd54c19e61164ecd24b",
+    "shortSha": "046f0f2",
+    "url": "https://github.com/felipeflose/startup_flose/commit/046f0f27ee9925dae1692dd54c19e61164ecd24b",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8084.md",
+    "committedAt": "2026-07-23T19:56:17.531Z"
+  },
+  "KAN-8086": {
+    "sha": "384930044d683a9dda3bcce5fdfec11d5205f52b",
+    "shortSha": "3849300",
+    "url": "https://github.com/felipeflose/startup_flose/commit/384930044d683a9dda3bcce5fdfec11d5205f52b",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8086.md",
+    "committedAt": "2026-07-23T19:50:23.558Z"
+  },
+  "KAN-8096": {
+    "sha": "befce5096b13c98c4154a55d5a8eae618cec7581",
+    "shortSha": "befce50",
+    "url": "https://github.com/felipeflose/startup_flose/commit/befce5096b13c98c4154a55d5a8eae618cec7581",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8096.md",
+    "committedAt": "2026-07-23T19:57:17.374Z"
+  },
+  "KAN-8097": {
+    "sha": "3ed766c92e9cd850d1b4d0ff3e175a8af0293d9f",
+    "shortSha": "3ed766c",
+    "url": "https://github.com/felipeflose/startup_flose/commit/3ed766c92e9cd850d1b4d0ff3e175a8af0293d9f",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8097.md",
+    "committedAt": "2026-07-23T19:53:47.682Z"
+  },
+  "KAN-8102": {
+    "sha": "119826632bdd8da9282a3960e873382d3e530d06",
+    "shortSha": "1198266",
+    "url": "https://github.com/felipeflose/startup_flose/commit/119826632bdd8da9282a3960e873382d3e530d06",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8102.md",
+    "committedAt": "2026-07-23T19:54:04.157Z"
+  },
+  "KAN-8103": {
+    "sha": "62017f251a10e4915df594e8f46130e84c56ac42",
+    "shortSha": "62017f2",
+    "url": "https://github.com/felipeflose/startup_flose/commit/62017f251a10e4915df594e8f46130e84c56ac42",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8103.md",
+    "committedAt": "2026-07-23T19:52:23.827Z"
+  },
+  "KAN-8113": {
+    "sha": "b258707860de8231133cb0c2c139c3795cc37dff",
+    "shortSha": "b258707",
+    "url": "https://github.com/felipeflose/startup_flose/commit/b258707860de8231133cb0c2c139c3795cc37dff",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8113.md",
+    "committedAt": "2026-07-23T19:56:34.903Z"
+  },
+  "KAN-8114": {
+    "sha": "07d7c00c9494e05a0467f15e7b9f5c58bccedc28",
+    "shortSha": "07d7c00",
+    "url": "https://github.com/felipeflose/startup_flose/commit/07d7c00c9494e05a0467f15e7b9f5c58bccedc28",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8114.md",
+    "committedAt": "2026-07-23T19:55:23.360Z"
+  },
+  "KAN-8120": {
+    "sha": "8346ae23548a15d6c14cbeb4c7ff0f4378a10aed",
+    "shortSha": "8346ae2",
+    "url": "https://github.com/felipeflose/startup_flose/commit/8346ae23548a15d6c14cbeb4c7ff0f4378a10aed",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8120.md",
+    "committedAt": "2026-07-23T19:56:14.416Z"
+  },
+  "KAN-8121": {
+    "sha": "ed910f10023ec98dec6b002cd5be2869d2c8cd52",
+    "shortSha": "ed910f1",
+    "url": "https://github.com/felipeflose/startup_flose/commit/ed910f10023ec98dec6b002cd5be2869d2c8cd52",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8121.md",
+    "committedAt": "2026-07-23T19:56:22.942Z"
+  },
+  "KAN-8232": {
+    "sha": "e320fbffd6e26e64ee1852c1adac2ddaac6b9e34",
+    "shortSha": "e320fbf",
+    "url": "https://github.com/felipeflose/startup_flose/commit/e320fbffd6e26e64ee1852c1adac2ddaac6b9e34",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8232.md",
+    "committedAt": "2026-07-23T20:12:13.671Z"
+  },
+  "KAN-8234": {
+    "sha": "2600b5dab9e9ac09d03906741046bd523e5b795d",
+    "shortSha": "2600b5d",
+    "url": "https://github.com/felipeflose/startup_flose/commit/2600b5dab9e9ac09d03906741046bd523e5b795d",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8234.md",
+    "committedAt": "2026-07-23T20:13:27.928Z"
+  },
+  "KAN-8240": {
+    "sha": "902b156815c44fe3cc64a7f901a56aa831a00c8c",
+    "shortSha": "902b156",
+    "url": "https://github.com/felipeflose/startup_flose/commit/902b156815c44fe3cc64a7f901a56aa831a00c8c",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8240.md",
+    "committedAt": "2026-07-23T20:14:10.511Z"
+  },
+  "KAN-8250": {
+    "sha": "6f953345905d9b264244c7f3afb4c5da8b82aba8",
+    "shortSha": "6f95334",
+    "url": "https://github.com/felipeflose/startup_flose/commit/6f953345905d9b264244c7f3afb4c5da8b82aba8",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8250.md",
+    "committedAt": "2026-07-23T20:15:07.384Z"
+  },
+  "KAN-8260": {
+    "sha": "a8c2586abbf57e3052ee870d801d938aa1f28d82",
+    "shortSha": "a8c2586",
+    "url": "https://github.com/felipeflose/startup_flose/commit/a8c2586abbf57e3052ee870d801d938aa1f28d82",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8260.md",
+    "committedAt": "2026-07-23T20:16:21.332Z"
+  },
+  "KAN-8261": {
+    "sha": "9b03a56d0dd58a2c59c1209314b5b09a7eb05fd6",
+    "shortSha": "9b03a56",
+    "url": "https://github.com/felipeflose/startup_flose/commit/9b03a56d0dd58a2c59c1209314b5b09a7eb05fd6",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8261.md",
+    "committedAt": "2026-07-23T20:18:40.343Z"
+  },
+  "KAN-8284": {
+    "sha": "6c9779abc429b2266e65d53722d3235b42526ad8",
+    "shortSha": "6c9779a",
+    "url": "https://github.com/felipeflose/startup_flose/commit/6c9779abc429b2266e65d53722d3235b42526ad8",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8284.md",
+    "committedAt": "2026-07-23T20:20:40.971Z"
+  },
+  "KAN-8290": {
+    "sha": "aed911fe872c8e6dac1f73efc4bdad5392c9327e",
+    "shortSha": "aed911f",
+    "url": "https://github.com/felipeflose/startup_flose/commit/aed911fe872c8e6dac1f73efc4bdad5392c9327e",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8290.md",
+    "committedAt": "2026-07-23T20:24:17.922Z"
+  },
+  "KAN-8305": {
+    "sha": "c0ed9394487a018f1eb96dddd00f532ef7920010",
+    "shortSha": "c0ed939",
+    "url": "https://github.com/felipeflose/startup_flose/commit/c0ed9394487a018f1eb96dddd00f532ef7920010",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8305.md",
+    "committedAt": "2026-07-23T20:23:56.071Z"
+  },
+  "KAN-8312": {
+    "sha": "2ace786030d9809a6b9284bb9f4210c45c1a1d20",
+    "shortSha": "2ace786",
+    "url": "https://github.com/felipeflose/startup_flose/commit/2ace786030d9809a6b9284bb9f4210c45c1a1d20",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8312.md",
+    "committedAt": "2026-07-23T20:24:24.655Z"
+  },
+  "KAN-8313": {
+    "sha": "57a85106e9eee16ec96765d2e7571367f3a06f8a",
+    "shortSha": "57a8510",
+    "url": "https://github.com/felipeflose/startup_flose/commit/57a85106e9eee16ec96765d2e7571367f3a06f8a",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8313.md",
+    "committedAt": "2026-07-23T20:24:49.319Z"
+  },
+  "KAN-8319": {
+    "sha": "d42f4d5eb2ee608e2a9675865d00605a94575365",
+    "shortSha": "d42f4d5",
+    "url": "https://github.com/felipeflose/startup_flose/commit/d42f4d5eb2ee608e2a9675865d00605a94575365",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8319.md",
+    "committedAt": "2026-07-23T20:25:14.652Z"
+  },
+  "KAN-8320": {
+    "sha": "d9a3893f33173501f0c5d2fd8366df42e300c032",
+    "shortSha": "d9a3893",
+    "url": "https://github.com/felipeflose/startup_flose/commit/d9a3893f33173501f0c5d2fd8366df42e300c032",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8320.md",
+    "committedAt": "2026-07-23T20:26:24.950Z"
+  },
+  "KAN-8327": {
+    "sha": "477d3f80c715a7f1a0c878fb7b75b399a3f50558",
+    "shortSha": "477d3f8",
+    "url": "https://github.com/felipeflose/startup_flose/commit/477d3f80c715a7f1a0c878fb7b75b399a3f50558",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8327.md",
+    "committedAt": "2026-07-23T20:26:18.938Z"
+  },
+  "KAN-8334": {
+    "sha": "c42d7f545a80583593c0ba46e10acd6e6a1e5c25",
+    "shortSha": "c42d7f5",
+    "url": "https://github.com/felipeflose/startup_flose/commit/c42d7f545a80583593c0ba46e10acd6e6a1e5c25",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8334.md",
+    "committedAt": "2026-07-23T20:27:46.169Z"
+  },
+  "KAN-8341": {
+    "sha": "f2eac74a3279a9acdddd9ea13c322c5e7b05e87f",
+    "shortSha": "f2eac74",
+    "url": "https://github.com/felipeflose/startup_flose/commit/f2eac74a3279a9acdddd9ea13c322c5e7b05e87f",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8341.md",
+    "committedAt": "2026-07-23T20:30:08.963Z"
+  },
+  "KAN-8351": {
+    "sha": "acb79f8bae76490e1a068d7b67888c07e8624e16",
+    "shortSha": "acb79f8",
+    "url": "https://github.com/felipeflose/startup_flose/commit/acb79f8bae76490e1a068d7b67888c07e8624e16",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8351.md",
+    "committedAt": "2026-07-23T20:29:52.093Z"
+  },
+  "KAN-8355": {
+    "sha": "09d3c3824873d110a01f8506890533157d35eb29",
+    "shortSha": "09d3c38",
+    "url": "https://github.com/felipeflose/startup_flose/commit/09d3c3824873d110a01f8506890533157d35eb29",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8355.md",
+    "committedAt": "2026-07-23T20:30:47.747Z"
+  },
+  "KAN-8362": {
+    "sha": "420e6fa0ff5cdcc3d70ffc5269039d51b3bc2450",
+    "shortSha": "420e6fa",
+    "url": "https://github.com/felipeflose/startup_flose/commit/420e6fa0ff5cdcc3d70ffc5269039d51b3bc2450",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8362.md",
+    "committedAt": "2026-07-23T20:31:50.482Z"
+  },
+  "KAN-8363": {
+    "sha": "72d9af653b21876f1b771d4f7df38914ab8fd3a4",
+    "shortSha": "72d9af6",
+    "url": "https://github.com/felipeflose/startup_flose/commit/72d9af653b21876f1b771d4f7df38914ab8fd3a4",
+    "fileUrl": "https://github.com/felipeflose/startup_flose/blob/feature/KAN-5648-implementar-melhorias-continuas/.card-work/KAN-8363.md",
+    "committedAt": "2026-07-23T20:32:04.731Z"
   }
 }
