@@ -3129,12 +3129,13 @@ app.get('/api/card-commits', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Flose Startup Backend running on port ${PORT}`);
 
-  // Start PO Frenetic Code Analyzer Routine (1 card/min goal by non-devs + mandatory GitHub commit)
+  // Start Full 3-Stage Autonomous Gemma 4 Routine (PO Creation -> Dev Execution -> QA Approval)
   try {
-    const { startRoutine } = require('./po_frenetic_analyzer.cjs');
+    const { startRoutine } = require('./gemma4_autonomous_pipeline.cjs');
     startRoutine();
   } catch (e) {
-    console.error('Failed to start PO Frenetic Routine:', e.message);
+    console.error('Failed to start Gemma 4 Autonomous Pipeline:', e.message);
   }
 });
+
 
