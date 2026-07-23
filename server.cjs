@@ -3116,6 +3116,25 @@ app.post('/api/hr/hire', async (req, res) => {
   }
 });
 
+// Endpoint to fetch GitHub commits for all cards
+app.get('/api/card-commits', (req, res) => {
+  const commitsFile = path.join(__dirname, 'card_commits.json');
+  let commits = {};
+  if (fs.existsSync(commitsFile)) {
+    try { commits = JSON.parse(fs.readFileSync(commitsFile, 'utf8')); } catch (e) {}
+  }
+  res.json(commits);
+});
+
 app.listen(PORT, () => {
   console.log(`Flose Startup Backend running on port ${PORT}`);
+
+  // Start PO Frenetic Code Analyzer Routine (1 card/min goal by non-devs + mandatory GitHub commit)
+  try {
+    const { startRoutine } = require('./po_frenetic_analyzer.cjs');
+    startRoutine();
+  } catch (e) {
+    console.error('Failed to start PO Frenetic Routine:', e.message);
+  }
 });
+

@@ -23,6 +23,14 @@ export interface JiraIssue {
   creatorName?: string;
 }
 
+interface CardCommit {
+  sha: string;
+  shortSha: string;
+  url: string;
+  fileUrl?: string;
+  committedAt?: string;
+}
+
 interface JiraDashboardProps {
   onSelectIssue: (issue: { key: string; summary: string; description: string }) => void;
   selectedIssueKey: string | null;
@@ -30,6 +38,7 @@ interface JiraDashboardProps {
 
 export const JiraDashboard: React.FC<JiraDashboardProps> = ({ onSelectIssue, selectedIssueKey }) => {
   const [issues, setIssues] = useState<JiraIssue[]>([]);
+  const [commits, setCommits] = useState<Record<string, CardCommit>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -53,6 +62,14 @@ export const JiraDashboard: React.FC<JiraDashboardProps> = ({ onSelectIssue, sel
     } finally {
       setLoading(false);
     }
+
+    try {
+      const cRes = await fetch('http://localhost:5001/api/card-commits');
+      if (cRes.ok) {
+        const cData = await cRes.json();
+        setCommits(cData || {});
+      }
+    } catch (e) {}
   };
 
   useEffect(() => {
@@ -181,6 +198,23 @@ export const JiraDashboard: React.FC<JiraDashboardProps> = ({ onSelectIssue, sel
                 {issue.executorName && (
                   <div style={{ fontSize: '0.75rem', color: 'var(--color-secondary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', margin: '2px 0' }}>
                     👤 Responsável: {issue.executorName}
+                  </div>
+                )}
+                {commits[issue.key] ? (
+                  <div style={{ fontSize: '0.72rem', marginTop: '4px' }}>
+                    <a
+                      href={commits[issue.key].url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={e => e.stopPropagation()}
+                      style={{ color: '#60a5fa', textDecoration: 'none', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px', background: 'rgba(96, 165, 250, 0.1)', padding: '2px 6px', borderRadius: '4px' }}
+                    >
+                      🐙 Commit: <code>{commits[issue.key].shortSha}</code>
+                    </a>
+                  </div>
+                ) : (
+                  <div style={{ fontSize: '0.70rem', color: '#f59e0b', marginTop: '4px', fontWeight: 500 }}>
+                    ⏳ Gerando commit no GitHub...
                   </div>
                 )}
                 <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }} onClick={e => e.stopPropagation()}>
