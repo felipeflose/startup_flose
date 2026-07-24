@@ -10,6 +10,11 @@ import { EmployeeRanking } from './components/EmployeeRanking';
 import { CardCreator } from './components/CardCreator';
 import { PrototypeViewer } from './components/PrototypeViewer';
 import { OfficeMap } from './components/OfficeMap';
+import { KpiDashboard } from './components/KpiDashboard';
+import { BarChart3 } from 'lucide-react';
+
+import { RecruitmentChamberViewer } from './components/RecruitmentChamberViewer';
+import { UserCheck } from 'lucide-react';
 
 function App() {
   const [agents, setAgents] = useState<Agent[]>([]);
@@ -23,7 +28,7 @@ function App() {
   const [hrSearching, setHrSearching] = useState<boolean>(false);
   const [selectedAgentIds, setSelectedAgentIds] = useState<string[]>([]);
   const [selectedIssue, setSelectedIssue] = useState<{ key: string; summary: string; description: string } | null>(null);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'backlog' | 'agents' | 'docs' | 'decisions' | 'rh' | 'screens' | 'office' | 'ranking'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'backlog' | 'agents' | 'docs' | 'decisions' | 'rh' | 'screens' | 'office' | 'ranking' | 'kpis' | 'chamber'>('dashboard');
   const [decisions, setDecisions] = useState<any[]>([]);
   const [jiraIssues, setJiraIssues] = useState<any[]>([]);
   const [commits, setCommits] = useState<Record<string, any>>({});
@@ -131,6 +136,48 @@ function App() {
         </div>
 
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '20px' }}>
+          <button
+            onClick={() => setActiveTab('kpis')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              padding: '12px 16px',
+              borderRadius: 'var(--radius-sm)',
+              border: 'none',
+              background: activeTab === 'kpis' ? 'var(--bg-tertiary)' : 'transparent',
+              color: activeTab === 'kpis' ? 'var(--color-primary)' : 'var(--text-secondary)',
+              cursor: 'pointer',
+              fontWeight: 600,
+              textAlign: 'left',
+              width: '100%'
+            }}
+          >
+            <BarChart3 size={18} />
+            Métricas & KPIs
+          </button>
+
+          <button
+            onClick={() => setActiveTab('chamber')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              padding: '12px 16px',
+              borderRadius: 'var(--radius-sm)',
+              border: 'none',
+              background: activeTab === 'chamber' ? 'var(--bg-tertiary)' : 'transparent',
+              color: activeTab === 'chamber' ? 'var(--color-primary)' : 'var(--text-secondary)',
+              cursor: 'pointer',
+              fontWeight: 600,
+              textAlign: 'left',
+              width: '100%'
+            }}
+          >
+            <UserCheck size={18} />
+            Entrevistas & Atas
+          </button>
+
           <button
             onClick={() => setActiveTab('dashboard')}
             style={{
@@ -331,6 +378,8 @@ function App() {
 
       {/* Main Panel */}
       <main className="main-content">
+        {activeTab === 'kpis' && <KpiDashboard />}
+
         {activeTab === 'dashboard' && (
           <>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
@@ -1052,6 +1101,9 @@ function App() {
             </div>
           </div>
 
+        )}
+        {activeTab === 'chamber' && (
+          <RecruitmentChamberViewer />
         )}
         {activeTab === 'office' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>

@@ -3653,13 +3653,14 @@ app.listen(PORT, () => {
     console.error('Failed to start Recruitment Engine:', e.message);
   }
 
-  // Start Hierarchical Recruitment Director — Helena Talent (Gemma 4 powered)
-  try {
-    const { startHierarchicalRecruitment } = require('./hierarchical_recruitment_director.cjs');
-    startHierarchicalRecruitment();
-  } catch (e) {
-    console.error('Failed to start Hierarchical Recruitment Director:', e.message);
-  }
+
+  // Start Hierarchical Recruitment Director — (Desativado para evitar sobreposição de papéis do RH na engenharia)
+  // try {
+  //   const { startHierarchicalRecruitment } = require('./hierarchical_recruitment_director.cjs');
+  //   startHierarchicalRecruitment();
+  // } catch (e) {
+  //   console.error('Failed to start Hierarchical Recruitment Director:', e.message);
+  // }
 
   // Start Gemma 4 Company Analyst — reads codebase + Jira, defines real org structure
   try {
@@ -3679,6 +3680,128 @@ app.listen(PORT, () => {
   } catch (e) {
     console.error('Failed to start Gemma 4 Company Analyst:', e.message);
   }
+
+  // ── AUTONOMOUS ENGINE — Motor central unificado (substitui os pipelines antigos) ──
+  try {
+    console.log('🚀 Iniciando Autonomous Engine (motor central unificado)...');
+    require('./autonomous_engine.cjs');
+    console.log('✅ Autonomous Engine rodando em paralelo com o servidor.');
+  } catch (e) {
+    console.error('❌ Falha ao iniciar Autonomous Engine:', e.message);
+  }
 });
 
+// ─── NOVAS ROTAS — KPIs, Saúde Gemma 4, Mensagens Internas ──────────────────
+
+// GET /api/kpis — métricas em tempo real da empresa
+app.get('/api/kpis', (req, res) => {
+  try {
+    const kpisFile = path.join(__dirname, 'kpis_db.json');
+    if (fs.existsSync(kpisFile)) {
+      res.json(JSON.parse(fs.readFileSync(kpisFile, 'utf8')));
+    } else {
+      res.json({ updatedAt: null, company: {}, jira: {}, gemma4: { available: true } });
+    }
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// GET /api/health/gemma4 — status do circuit breaker Gemma 4
+app.get('/api/health/gemma4', async (req, res) => {
+  try {
+    const checkRes = await axios.get('http://localhost:11434/api/tags', { timeout: 3000 });
+    const models = checkRes.data?.models?.map(m => m.name) || [];
+    res.json({ available: true, models, checkedAt: new Date().toISOString() });
+  } catch {
+    res.json({ available: false, models: [], checkedAt: new Date().toISOString() });
+  }
+});
+
+// GET /api/messages — mensagens internas entre agentes
+app.get('/api/messages', (req, res) => {
+  try {
+    const msgFile = path.join(__dirname, 'messages_db.json');
+    const db = fs.existsSync(msgFile) ? JSON.parse(fs.readFileSync(msgFile, 'utf8')) : { messages: [] };
+    const { agentId, limit = 50 } = req.query;
+    let msgs = db.messages || [];
+    if (agentId) msgs = msgs.filter(m => m.to === agentId || m.from === agentId);
+    res.json(msgs.slice(-Number(limit)));
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// POST /api/messages/send — agente envia mensagem para outro agente
+app.post('/api/messages/send', (req, res) => {
+  try {
+    const msgFile = path.join(__dirname, 'messages_db.json');
+    const db = fs.existsSync(msgFile) ? JSON.parse(fs.readFileSync(msgFile, 'utf8')) : { messages: [] };
+    const msg = {
+      id: `msg_${Date.now()}`,
+      from: req.body.from,
+      to: req.body.to,
+      type: req.body.type || 'MESSAGE',
+      card: req.body.card || '',
+      body: req.body.body || '',
+      timestamp: new Date().toISOString(),
+      read: false
+    };
+    db.messages = [...(db.messages || []), msg].slice(-500); // manter últimas 500
+    fs.writeFileSync(msgFile, JSON.stringify(db, null, 2), 'utf8');
+    res.json({ ok: true, message: msg });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// GET /api/company-config — configuração central da empresa
+app.get('/api/company-config', (req, res) => {
+  try {
+    const cfgFile = path.join(__dirname, 'company_config.json');
+    res.json(fs.existsSync(cfgFile) ? JSON.parse(fs.readFileSync(cfgFile, 'utf8')) : {});
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// POST /api/company-config — atualizar configurações e toggles do motor em tempo real
+app.post('/api/company-config', (req, res) => {
+  try {
+    const cfgFile = path.join(__dirname, 'company_config.json');
+    const current = fs.existsSync(cfgFile) ? JSON.parse(fs.readFileSync(cfgFile, 'utf8')) : {};
+    const updated = { ...current, ...req.body };
+    fs.writeFileSync(cfgFile, JSON.stringify(updated, null, 2), 'utf8');
+    res.json({ ok: true, config: updated });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// POST /api/emergency-restore — reativar CEO e diretoria via API
+app.post('/api/emergency-restore', async (req, res) => {
+  try {
+    const agentsFilePath = path.join(__dirname, 'agents_db.json');
+    const agents = JSON.parse(fs.readFileSync(agentsFilePath, 'utf8'));
+    const restored = [];
+    agents.forEach(a => {
+      const role = (a.role || '').toLowerCase();
+      const isCLevel = role.includes('dono') || role.includes('ceo') || role.includes('chief') || role.includes('diretor');
+      if (a.fired && isCLevel) {
+        a.fired = false;
+        a.status = 'Disponível';
+        a.totalScore = 80;
+        a.pip = { active: false, warnings: 0, maxWarnings: 3, reason: null };
+        restored.push(a.name);
+      }
+    });
+    // CEO nunca demitido
+    const ceo = agents.find(a => (a.role || '').toLowerCase().includes('dono') || a.protected);
+    if (ceo) { ceo.fired = false; ceo.protected = true; ceo.totalScore = 100; }
+    fs.writeFileSync(agentsFilePath, JSON.stringify(agents, null, 2), 'utf8');
+    res.json({ ok: true, restored, totalActive: agents.filter(a => !a.fired).length });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
 

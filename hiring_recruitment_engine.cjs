@@ -159,7 +159,7 @@ async function runRecruitmentEngineCycle() {
       const summary = issue.fields?.summary || '';
       const issueKey = issue.key;
 
-      if (summary.includes('[Recrutamento]')) continue;
+      if (summary.includes('[Recrutamento]') || summary.includes('[RH]') || summary.includes('DEMISSÃO') || summary.includes('ONBOARDING')) continue;
 
       const assigneeName = assignments[issueKey];
       const agent = agents.find(a => a.name === assigneeName);

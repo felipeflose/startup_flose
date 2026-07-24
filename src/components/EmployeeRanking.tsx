@@ -403,6 +403,66 @@ export const EmployeeRanking: React.FC = () => {
         </div>
       </div>
 
+      {/* SEÇÃO VISUAL: SALÁRIOS DE TIMEOUT DA IA & FILA DE PRIORIDADE */}
+      <div style={{
+        background: 'rgba(15, 17, 26, 0.8)',
+        border: '1px solid rgba(251, 191, 36, 0.3)',
+        borderRadius: '20px',
+        padding: '24px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '16px'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#fbbf24', fontWeight: 800 }}>
+              ⚡ Matriz de Salários por Timeout de IA & Fila de Prioridade
+            </h3>
+            <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+              Quanto melhor o agente performa e mais rápido resolve, maior o seu "salário de timeout" e mais alta sua prioridade na Fila da IA!
+            </p>
+          </div>
+          <span style={{ background: '#fbbf2422', color: '#fbbf24', border: '1px solid #fbbf2455', padding: '6px 14px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 700 }}>
+            PRIORITY ENGINE ACTIVE
+          </span>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
+          {rankings.slice(0, 6).map((entry, i) => {
+            const isTop = i < 2;
+            const timeoutSec = isTop ? 120 : entry.totalScore >= 80 ? 75 : 45;
+            const priorityLabel = isTop ? 'P1 (C-Level/PO)' : entry.totalScore >= 80 ? 'P2 (Dev SR)' : 'P3 (Dev PL/QA)';
+            const modelLabel = isTop ? 'qwen2.5-coder:32b' : entry.totalScore >= 80 ? 'gemma4:latest' : 'gemma4-fast:latest';
+
+            return (
+              <div key={entry.agentId} style={{
+                background: 'rgba(255, 255, 255, 0.02)',
+                border: '1px solid rgba(255, 255, 255, 0.06)',
+                borderRadius: '14px',
+                padding: '16px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <span style={{ fontSize: '1.5rem' }}>{entry.avatar}</span>
+                  <div>
+                    <div style={{ color: '#fff', fontWeight: 700, fontSize: '0.9rem' }}>{entry.name}</div>
+                    <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>{entry.role}</div>
+                  </div>
+                </div>
+
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ color: '#38bdf8', fontWeight: 800, fontSize: '0.95rem' }}>⌛ {timeoutSec}s Salário</div>
+                  <div style={{ fontSize: '0.7rem', color: '#a78bfa', fontWeight: 600 }}>{priorityLabel}</div>
+                  <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>{modelLabel}</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Control Buttons */}
       <div style={{ textAlign: 'center', marginTop: '12px' }}>
         <button

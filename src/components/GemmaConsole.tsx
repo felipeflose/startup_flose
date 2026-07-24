@@ -36,7 +36,6 @@ export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selec
   const [commitHash, setCommitHash] = useState<string | null>(null);
   const [sprintTickets, setSprintTickets] = useState<any[]>([]);
   const [autoIdeas, setAutoIdeas] = useState<string[]>([]);
-  const [latestIdea, setLatestIdea] = useState<string>('');
   const [ideaPulse, setIdeaPulse] = useState(false);
   const ideaTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -119,7 +118,6 @@ export const GemmaConsole: React.FC<GemmaConsoleProps> = ({ selectedIssue, selec
         if (!res.ok) return;
         const data = await res.json();
         if (data.idea) {
-          setLatestIdea(data.idea);
           setIdeaPulse(true);
           setAutoIdeas(prev => [data.idea, ...prev].slice(0, 5));
           setTimeout(() => setIdeaPulse(false), 800);
