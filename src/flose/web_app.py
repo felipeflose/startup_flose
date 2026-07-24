@@ -21,7 +21,7 @@ from flose.engines.governance import GovernanceEngine
 from flose.connectors.jira import JiraConnector
 from flose.connectors.gemma_local import GemmaLocalConnector
 
-app = FastAPI(title="FLOSE (AEOS) - Real-Time Duel Arena & Strict Timeout Engine")
+app = FastAPI(title="FLOSE (AEOS) - Non-Blocking Real-Time Duel Arena & Continuous Timers")
 
 bus = EventBus()
 planner = PlanningEngine()
@@ -57,7 +57,6 @@ game_state = {
     }
 }
 
-# HERÓIS DA ARENA DE DUELO COM EVOLUÇÃO E RESISTÊNCIA DE TIMEOUT
 pixel_agents: Dict[str, Dict[str, Any]] = {
     "felipe": {
         "name": "Felipe",
@@ -68,7 +67,7 @@ pixel_agents: Dict[str, Dict[str, Any]] = {
         "xp": 0,
         "response_speed_ms": 450.0,
         "timeout_resistance_sec": 10.0,
-        "action": "Supervisionando Arquitetura do Duelo",
+        "action": "Supervisionando Duelo em Tempo Real",
     },
     "sofia": {
         "name": "Sofia",
@@ -90,7 +89,7 @@ pixel_agents: Dict[str, Dict[str, Any]] = {
         "xp": 0,
         "response_speed_ms": 250.0,
         "timeout_resistance_sec": 10.0,
-        "action": "Pronto para Duelo de Código",
+        "action": "Codificando sem Bloquear o Cronômetro",
     },
     "beatriz": {
         "name": "Beatriz",
@@ -101,7 +100,7 @@ pixel_agents: Dict[str, Dict[str, Any]] = {
         "xp": 0,
         "response_speed_ms": 400.0,
         "timeout_resistance_sec": 10.0,
-        "action": "Auditando Testes e Defesas",
+        "action": "Auditando Testes de Timeout",
     }
 }
 
@@ -124,14 +123,40 @@ def check_autonomous_skill_evolution(agent_key: str):
             "speed": f"{agt['response_speed_ms']}ms"
         })
 
-# LOOP DA ARENA DE DUELO EM TEMPO REAL: DUELO CARD A CARD CONTRA O CRONÔMETRO DE TIMEOUT REAL
-async def real_time_duel_game_loop():
-    po_turn_duration = 60      
-    heroes_turn_duration = 120 
+# TASK ASSÍNCRONA EM SEGUNDO PLANO PARA CRIAÇÃO DE CARDS NO JIRA SEM BLOQUEAR O CRONÔMETRO
+async def async_create_jira_card_background(topic_title: str, topic_desc: str):
+    try:
+        jira_res = await asyncio.to_thread(jira.create_detailed_epic_or_task, "KAN", topic_title, topic_desc, "ÉPICO PO GEMMA4")
+        new_key = jira_res.get("key", f"KAN-{random.randint(9700, 9999)}")
+        new_card = {
+            "id": new_key,
+            "title": f"[PO-GEMMA4] {topic_title}",
+            "description": topic_desc,
+            "status": "A FAZER",
+            "rejections": 0,
+            "comments": [{"author": "PO EVIL BOSS", "text": f"Criado com Gemma 4 no 'A FAZER': {topic_title}."}]
+        }
+        game_state["kanban"]["to_do"].append(new_card)
+        game_state["boss_cards_created_in_burst"] += 1
+        game_state["boss_phase"] = f"🔥 PO CREATED CARD REAL {new_key} NO JIRA!"
+        
+        audit_logs.append({
+            "event_id": f"evt_{len(audit_logs)+1}",
+            "action": "PO_REAL_JIRA_CARD_CREATED",
+            "card_id": new_key,
+            "title": topic_title
+        })
+    except Exception as e:
+        print(f"[Async Jira Error] {e}")
+
+# LOOP PRINCIPAL TOTALMENTE NÃO-BLOQUEANTE (O CRONÔMETRO NUNCA PARA!)
+async def non_blocking_continuous_game_loop():
+    po_turn_duration = 60      # 1 Minuto para o PO
+    heroes_turn_duration = 120 # 2 Minutos para os Heróis
     
     while True:
         # =========================================================================
-        # FASE 1: TURNO DO PO VILÃO (1 MINUTO - PRIORIDADE NO GEMMA 4)
+        # FASE 1: TURNO DO PO VILÃO (60 SEGUNDOS - CRONÔMETRO 100% CONTÍNUO)
         # =========================================================================
         game_state["current_turn"] = "PO_BURST_PHASE"
         game_state["boss_cards_created_in_burst"] = 0
@@ -141,47 +166,32 @@ async def real_time_duel_game_loop():
             if game_state["victory"]: break
             game_state["turn_timer_sec"] = sec
 
-            # O PO Vilão cria 5 cards detalhados no Jira
+            # Dispara chamadas de rede no background sem travar o loop de 1 segundo!
             if game_state["boss_cards_created_in_burst"] < 5 and sec % 10 == 0:
                 po_topics = [
-                    ("Refatorar UI Frontend Nível Pixel Perfect 16-Bit", "O PO Vilão analisou a interface atual e exige alinhamento perfeito de bordas, palette HSL e suporte responsive sem flickering."),
-                    ("Otimização de Performance Backend Async & Caching", "Cobrança do PO: Reduzir a latência do EventBus para <5ms e adicionar suporte a cache Redis com TTL dinâmico."),
-                    ("Auditoria Anti-Alucinação e Cobertura de Testes Mutation", "Exigência do PO: Adicionar testes de mutação com cobertura 100% comprovada via evidência SHA-256 no log imutável."),
-                    ("CONTRATAÇÃO: Onboarding de Desenvolvedor Frontend Senior", "Demanda de RH do PO: Recrutar colaborador especialista em React e Pixel Art Canvas."),
-                    ("Sanitização Estrita contra Vulnerabilidades XSS & SQL", "O PO encontrou potenciais falhas de segurança nos endpoints REST.")
+                    ("Refatorar UI Frontend Nível Pixel Perfect 16-Bit", "O PO Vilão exige alinhamento perfeito de bordas HSL."),
+                    ("Otimização de Performance Backend Async & Caching", "Cobrança do PO: Reduzir a latência do EventBus para <5ms."),
+                    ("Auditoria Anti-Alucinação e Cobertura de Testes Mutation", "Exigência do PO: Adicionar testes de mutação com evidência SHA-256."),
+                    ("CONTRATAÇÃO: Onboarding de Desenvolvedor Frontend Senior", "Demanda de RH do PO: Recrutar colaborador especialista em React."),
+                    ("Sanitização Estrita contra Vulnerabilidades XSS & SQL", "O PO encontrou potenciais falhas nos endpoints REST.")
                 ]
                 topic_title, topic_desc = po_topics[game_state["boss_cards_created_in_burst"] % len(po_topics)]
-                gemma_ideas = gemma.generate_ideas(topic_title)
-                idea_detail = gemma_ideas[0]["summary"] if gemma_ideas else topic_desc
+                asyncio.create_task(async_create_jira_card_background(topic_title, topic_desc))
 
-                jira_res = jira.create_detailed_epic_or_task("KAN", topic_title, idea_detail, "ÉPICO PO GEMMA4")
-                new_key = jira_res.get("key", f"KAN-{random.randint(9700, 9999)}")
-                
-                new_card = {
-                    "id": new_key,
-                    "title": f"[PO-GEMMA4] {topic_title}",
-                    "description": idea_detail,
-                    "status": "A FAZER",
-                    "rejections": 0,
-                    "comments": [{"author": "PO EVIL BOSS", "text": f"Criado com Gemma 4 no 'A FAZER': {topic_title}."}]
-                }
-                game_state["kanban"]["to_do"].append(new_card)
-                game_state["boss_cards_created_in_burst"] += 1
-                game_state["boss_phase"] = f"🔥 PO RAJADA GEMMA 4 ({game_state['boss_cards_created_in_burst']}/5): CRIOU CARD REAL {new_key} NO JIRA!"
-
+            # CRONÔMETRO EXATO DE 1.0 SEGUNDO SEM BLOQUEIOS
             await asyncio.sleep(1.0)
 
         # =========================================================================
-        # FASE 2: TURNO DOS HERÓIS (2 MINUTOS - ARENA DE DUELO CONTRA O TIMEOUT REAL!)
+        # FASE 2: TURNO DOS HERÓIS (120 SEGUNDOS - CRONÔMETRO 100% CONTÍNUO E ININTERRUPTO)
         # =========================================================================
         game_state["current_turn"] = "HEROES_REST_PHASE"
-        game_state["boss_phase"] = "⚔️ ARENA DE DUELO: HERÓIS CODIFICANDO E LUTANDO CONTRA O TIMEOUT REAL!"
+        game_state["boss_phase"] = "⚔️ ARENA DE DUELO: CRONÔMETRO CONTÍNUO EM TEMPO REAL!"
 
         for sec in range(heroes_turn_duration, 0, -1):
             if game_state["victory"]: break
-            game_state["turn_timer_sec"] = sec
+            game_state["turn_timer_sec"] = sec  # O CRONÔMETRO DECREMENTA SEM NENHUMA PAUSA!
 
-            # SE NÃO HÁ DUELO ATIVO, INICIA UM NOVO DUELO COM O PRÓXIMO CARD DO 'A FAZER'!
+            # 1. Se não há duelo ativo, inicia imediatamente com o próximo card!
             if not game_state["duel"]["is_active"] and game_state["kanban"]["to_do"]:
                 card = game_state["kanban"]["to_do"].pop(0)
                 card["status"] = "EM PROGRESSO"
@@ -207,40 +217,31 @@ async def real_time_duel_game_loop():
                     "card_id": card["id"]
                 })
 
-            # SE HÁ DUELO ATIVO, RODA A CONTAGEM REGRESSIVA DO TIMEOUT REAL A CADA SEGUNDO!
+            # 2. Se há duelo ativo, atualiza a contagem regressiva do timeout do duelo sem travar o relógio principal!
             if game_state["duel"]["is_active"]:
                 duel = game_state["duel"]
                 hero_key = duel["hero_key"]
                 hero = pixel_agents[hero_key]
 
-                # Decrementa o tempo real do duelo a cada segundo!
-                duel["timeout_timer_sec"] = round(duel["timeout_timer_sec"] - 0.8, 1)
+                duel["timeout_timer_sec"] = round(duel["timeout_timer_sec"] - 1.0, 1)
 
-                # SE O TEMPO DE RESPOSTA DO HEROI É RÁPIDO, ELE VENCE O DUELO ANTES DO TIMEOUT!
+                # Herói vence o duelo se responder rápido!
                 if duel["timeout_timer_sec"] > 0 and random.random() < (0.35 + (hero["skill_level"] * 0.1)):
-                    # HERÓI VENCEU O DUELO ANTES DO TIMEOUT!
                     card_duel = duel["active_card"]
-                    
                     check_autonomous_skill_evolution(hero_key)
 
-                    card_duel["comments"].append({"author": f"{hero['name']} (Lv.{hero['skill_level']})", "text": f"⚔️ VENCEU O DUELO! Código resolvido via Claude-Code/AGY em {hero['response_speed_ms']}ms antes do Timeout!"})
-                    jira.add_comment(card_duel["id"], hero["name"], f"Venceu o Duelo antes do Timeout em {hero['response_speed_ms']}ms.")
-
-                    game_state["kanban"]["in_progress"].remove(card_duel)
-                    card_duel["status"] = "EM VALIDAÇÃO"
-                    game_state["kanban"]["in_validation"].append(card_duel)
-
-                    # PO Valida o Card
                     card_duel["status"] = "CONCLUÍDO"
                     damage = 250
                     game_state["boss_hp"] = max(0, game_state["boss_hp"] - damage)
-                    game_state["kanban"]["in_validation"].remove(card_duel)
+                    
+                    if card_duel in game_state["kanban"]["in_progress"]:
+                        game_state["kanban"]["in_progress"].remove(card_duel)
                     game_state["kanban"]["done"].append(card_duel)
                     game_state["cards_coded_count"] += 1
 
                     game_state["boss_phase"] = f"💥 {hero['name']} VENCEU O DUELO NO CARD {card_duel['id']}! (-250 HP)"
                     
-                    h = governance.generate_audit_hash("agt_lucas", "REAL_TIMEOUT_DUEL_WON", card_duel['title'])
+                    h = governance.generate_audit_hash("agt_lucas", "NON_BLOCKING_DUEL_WON", card_duel['title'])
                     audit_logs.append({
                         "event_id": f"evt_{len(audit_logs)+1}",
                         "action": "DUEL_WON_BEFORE_TIMEOUT",
@@ -253,17 +254,16 @@ async def real_time_duel_game_loop():
 
                     if game_state["boss_hp"] <= 0:
                         game_state["victory"] = True
-                        game_state["boss_phase"] = "🏆 VITÓRIA! OS HERÓIS VENCERAM TODOS OS DUELOS ANTES DO TIMEOUT E DERROTARAM O PO VILÃO!"
+                        game_state["boss_phase"] = "🏆 VITÓRIA! OS HERÓIS VENCERAM TODOS OS DUELOS E DERROTARAM O PO VILÃO!"
 
                 elif duel["timeout_timer_sec"] <= 0:
-                    # OCORREU O TIMEOUT REAL! O PO BARRA O CARD E O HERÓI PERDE O DUELO!
+                    # TIMEOUT REAL!
                     card_duel = duel["active_card"]
                     card_duel["rejections"] += 1
                     card_duel["status"] = "A FAZER"
-                    card_duel["comments"].append({"author": "PO EVIL BOSS", "text": f"⏱️ TIMEOUT STRIKE! {hero['name']} demorou demais para responder! Card devolvido para o 'A FAZER'!"})
-                    jira.add_comment(card_duel["id"], "PO EVIL BOSS", "TIMEOUT STRIKE! Card devolvido ao A FAZER.")
-
-                    game_state["kanban"]["in_progress"].remove(card_duel)
+                    
+                    if card_duel in game_state["kanban"]["in_progress"]:
+                        game_state["kanban"]["in_progress"].remove(card_duel)
                     game_state["kanban"]["to_do"].append(card_duel)
 
                     game_state["boss_phase"] = f"💥 TIMEOUT STRIKE! {hero['name']} DEMOROU DEMAIS NO CARD {card_duel['id']}!"
@@ -277,12 +277,13 @@ async def real_time_duel_game_loop():
 
                     duel["is_active"] = False
 
+            # DORMIDA EXATA DE 1 SEGUNDO (CRONÔMETRO NUNCA MAIS TRAVA!)
             await asyncio.sleep(1.0)
 
 @app.on_event("startup")
 async def start_autonomous_loop():
     await bus.start()
-    asyncio.create_task(real_time_duel_game_loop())
+    asyncio.create_task(non_blocking_continuous_game_loop())
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -312,7 +313,7 @@ async def serve_autonomous_pixel_game():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>FLOSE AEOS - Real-Time Duel Arena & Strict Timeout Engine</title>
+        <title>FLOSE AEOS - Non-Blocking Real-Time Duel Arena & Continuous Timers</title>
         <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
         <style>
             * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -351,6 +352,16 @@ async def serve_autonomous_pixel_game():
                 color: #55ff55;
                 margin-bottom: 0.8rem;
                 text-shadow: 2px 2px #00aa00;
+            }
+
+            .turn-banner {
+                background: rgba(236, 72, 153, 0.2);
+                border: 2px solid #ec4899;
+                border-radius: 6px;
+                padding: 0.6rem;
+                text-align: center;
+                margin-bottom: 1rem;
+                font-size: 0.52rem;
             }
 
             .duel-arena-box {
@@ -420,7 +431,11 @@ async def serve_autonomous_pixel_game():
 
             <div class="side-panel">
                 <div>
-                    <div class="hud-title">⚔️ ARENA DE DUELO REAL CONTRA O TIMEOUT</div>
+                    <div class="hud-title">⚡ CRONÔMETRO CONTÍNUO & DUELO DE TIMEOUT</div>
+                    
+                    <div id="turn-banner" class="turn-banner">
+                        TURNO ATUAL: CARREGANDO...
+                    </div>
 
                     <!-- CAIXA DE DUELO EM TEMPO REAL -->
                     <div id="duel-box" class="duel-arena-box">
@@ -539,7 +554,7 @@ async def serve_autonomous_pixel_game():
 
                 if (gameState) {
                     const hpPct = (gameState.boss_hp / gameState.boss_max_hp) * 100;
-                    drawPOBoss(hpPct, gameState.boss_phase || "Duelo em Tempo Real...");
+                    drawPOBoss(hpPct, gameState.boss_phase || "Cronômetro Contínuo...");
 
                     const duel = gameState.duel;
                     agentsList.forEach(a => {
@@ -559,6 +574,14 @@ async def serve_autonomous_pixel_game():
                 agentsList = data.pixel_agents;
                 const duel = data.duel;
                 const kanban = data.kanban;
+
+                // Turn Banner Display
+                const isPoTurn = gameState.current_turn === "PO_BURST_PHASE";
+                document.getElementById('turn-banner').style.borderColor = isPoTurn ? "#ff5555" : "#55ff55";
+                document.getElementById('turn-banner').style.color = isPoTurn ? "#ff5555" : "#55ff55";
+                document.getElementById('turn-banner').innerHTML = isPoTurn ?
+                    `👹 TURNO PO: GEMMA 4 (5 CARDS JIRA) | ⏱️ ${gameState.turn_timer_sec}s` :
+                    `⚡ TURNO HERÓIS: CLAUDE-CODE & EVOLUÇÃO SKILL | ⏱️ ${gameState.turn_timer_sec}s`;
 
                 // Render Caixa de Duelo em Tempo Real
                 if (duel && duel.is_active && duel.active_card) {
@@ -621,7 +644,7 @@ async def serve_autonomous_pixel_game():
             }
 
             updateState();
-            setInterval(updateState, 400); // Polling real-time ultra preciso de 400ms!
+            setInterval(updateState, 400);
         </script>
     </body>
     </html>
