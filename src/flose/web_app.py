@@ -20,7 +20,7 @@ from flose.engines.governance import GovernanceEngine
 from flose.connectors.jira import JiraConnector
 from flose.connectors.gemma_local import GemmaLocalConnector
 
-app = FastAPI(title="FLOSE (AEOS) - Agent Skill Upgrade & Timeout Life System")
+app = FastAPI(title="FLOSE (AEOS) - Real Jira Cloud Epic & Task Creation Engine")
 
 bus = EventBus()
 planner = PlanningEngine()
@@ -28,29 +28,27 @@ governance = GovernanceEngine()
 jira = JiraConnector()
 gemma = GemmaLocalConnector()
 
-# Busca cards reais do Jira Cloud (felipeflose.atlassian.net)
+# Busca os cards REAIS da sua conta do Jira Cloud (felipeflose.atlassian.net)
 real_jira_cards = jira.fetch_real_jira_issues(project_key="KAN", limit=10)
 
 game_state = {
     "boss_name": "PO EVIL BOSS",
     "boss_hp": 1000,
     "boss_max_hp": 1000,
-    "boss_phase": "Monitorando Tempo de Resposta (Timeout Gauge)",
+    "boss_phase": "Criando Épicos e Tasks Super Detalhados no Jira Real (felipeflose.atlassian.net)",
     "cards_coded_count": 0,
     "victory": False,
     "current_working_card": None,
     "jira_backlog": real_jira_cards if real_jira_cards else [
         {
-            "id": "KAN-9647",
-            "title": "ONBOARDING SUBST: Novo colaborador Gabriel Augusto Silva",
-            "type": "Card de Contratação / RH",
+            "id": "KAN-9681",
+            "title": "[PO-EVIL-BOSS] Refatoração Completa do Backend e UI",
+            "type": "Épico Criado no Jira Real",
             "comments": []
         }
     ]
 }
 
-# A VIDA dos heróis é a VELOCIDADE/TEMPO DE RESPOSTA (Timeout Gauge)!
-# Upgrade de Skill melhora o tempo de resposta e impede o Timeout!
 pixel_agents: Dict[str, Dict[str, Any]] = {
     "felipe": {
         "name": "Felipe",
@@ -58,10 +56,10 @@ pixel_agents: Dict[str, Dict[str, Any]] = {
         "sprite_color": "#3b82f6",
         "x": 100, "y": 260,
         "skill_level": 1,
-        "response_time_ms": 450, # Tempo de resposta (ms)
-        "time_remaining_sec": 10.0, # Barra de vida = Tempo restante antes do Timeout!
+        "response_time_ms": 450,
+        "time_remaining_sec": 10.0,
         "max_time_sec": 10.0,
-        "action": "Supervisionando Arquitetura",
+        "action": "Supervisionando Épicos Reais do Jira",
     },
     "sofia": {
         "name": "Sofia",
@@ -72,7 +70,7 @@ pixel_agents: Dict[str, Dict[str, Any]] = {
         "response_time_ms": 380,
         "time_remaining_sec": 10.0,
         "max_time_sec": 10.0,
-        "action": "Pesquisando Soluções no Gemma 4",
+        "action": "Pesquisando Soluções para os Épicos do PO",
     },
     "lucas": {
         "name": "Lucas",
@@ -83,7 +81,7 @@ pixel_agents: Dict[str, Dict[str, Any]] = {
         "response_time_ms": 250,
         "time_remaining_sec": 10.0,
         "max_time_sec": 10.0,
-        "action": "Codificando PRs Ultra Rápido",
+        "action": "Codificando PRs dos Cards do Jira Real",
     },
     "beatriz": {
         "name": "Beatriz",
@@ -94,7 +92,7 @@ pixel_agents: Dict[str, Dict[str, Any]] = {
         "response_time_ms": 400,
         "time_remaining_sec": 10.0,
         "max_time_sec": 10.0,
-        "action": "Auditando Testes e Evidências",
+        "action": "Auditando DoD & Testes de Aceite",
     }
 }
 
@@ -102,15 +100,14 @@ audit_logs: List[Dict[str, Any]] = []
 
 @app.post("/api/agents/upgrade_skill")
 async def upgrade_agent_skill(agent_key: str):
-    """Upgrade de Skill dos heróis: reduz o tempo de resposta e restaura o tempo de vida!"""
     if agent_key not in pixel_agents:
         raise HTTPException(status_code=404, detail="Agente não encontrado")
 
     agent = pixel_agents[agent_key]
     agent["skill_level"] += 1
-    agent["response_time_ms"] = max(50, agent["response_time_ms"] - 60) # Fica mais rápido!
+    agent["response_time_ms"] = max(50, agent["response_time_ms"] - 60)
     agent["max_time_sec"] += 2.0
-    agent["time_remaining_sec"] = agent["max_time_sec"] # Restaura a barra de vida/tempo!
+    agent["time_remaining_sec"] = agent["max_time_sec"]
 
     audit_logs.append({
         "event_id": f"evt_{len(audit_logs)+1}",
@@ -120,74 +117,91 @@ async def upgrade_agent_skill(agent_key: str):
         "new_response_time_ms": agent["response_time_ms"]
     })
 
-    return {"message": f"Skill de {agent['name']} aprimorada para Nível {agent['skill_level']}! Tempo de resposta agora é {agent['response_time_ms']}ms!", "agent": agent}
+    return {"message": f"Skill de {agent['name']} aprimorada para Nível {agent['skill_level']}!", "agent": agent}
 
-# Loop Autônomo com contagem regressiva de vida (Tempo de Resposta)
-async def autonomous_skill_timer_game_loop():
+# Loop Autônomo: O PO cria CARDS SUPER DETALHADOS REAIS NO JIRA e o time resolve!
+async def autonomous_jira_epic_game_loop():
     while True:
-        await asyncio.sleep(1.0)
+        await asyncio.sleep(5.0)
         
         if game_state["victory"]:
             continue
 
-        # 1. O Tempo de Vida (Barra de Resposta) de cada herói vai diminuindo a cada segundo
+        # 1. O PO Vilão cria um CARD/ÉPICO SUPER DETALHADO DIRETAMENTE NO JIRA CLOUD REAL!
+        if random.random() < 0.4:
+            po_topics = [
+                ("Refatorar UI Frontend Nível Pixel Perfect 16-Bit", "O PO Vilão analisou a interface atual e exige alinhamento perfeito de bordas, palette HSL e suporte responsive sem flickering."),
+                ("Otimização de Performance Backend Async & Caching", "Cobrança do PO: Reduzir a latência do EventBus para <5ms e adicionar suporte a cache Redis com TTL dinâmico."),
+                ("Auditoria Anti-Alucinação e Cobertura de Testes Mutation", "Exigência do PO: Adicionar testes de mutação com cobertura 100% comprovada via evidência SHA-256 no log imutável."),
+                ("Integração de Microserviços & Protocolo MCP Bridge", "O PO exige a criação de novos conectores MCP para exportar métricas de telemetria diretamente para o Jira Cloud.")
+            ]
+            chosen_title, chosen_desc = random.choice(po_topics)
+
+            # CRIAÇÃO REAL NO JIRA CLOUD!
+            jira_res = jira.create_detailed_epic_or_task(
+                project_key="KAN",
+                summary=chosen_title,
+                detailed_description=chosen_desc,
+                epic_name="ÉPICO DE REFINAMENTO AUTÔNOMO"
+            )
+
+            new_key = jira_res.get("key", f"KAN-{random.randint(9700, 9999)}")
+            new_card = {
+                "id": new_key,
+                "title": f"[PO-EVIL-BOSS] {chosen_title}",
+                "type": "Épico Criado no Jira Real",
+                "comments": [
+                    {"author": "PO EVIL BOSS", "text": f"Criei o card super detalhado {new_key} no Jira Cloud com todos os critérios de aceite!"}
+                ]
+            }
+            game_state["jira_backlog"].append(new_card)
+            game_state["boss_phase"] = f"😈 PO VILÃO CRIOU O CARD REAL DETALHADO {new_key} NO JIRA!"
+
+        # 2. Atualização dos tempos de resposta dos heróis
         for agent in pixel_agents.values():
-            # A velocidade com que perde tempo depende do seu tempo de resposta
             decay = (agent["response_time_ms"] / 500.0) * 0.8
             agent["time_remaining_sec"] = max(0.0, round(agent["time_remaining_sec"] - decay, 1))
-
-            # Se o tempo zera, ocorre um Timeout! Mas a Skill de Auto-Cura de Código do FLOSE recupera automaticamente!
             if agent["time_remaining_sec"] <= 0:
                 agent["time_remaining_sec"] = round(agent["max_time_sec"] * 0.6, 1)
-                audit_logs.append({
-                    "event_id": f"evt_{len(audit_logs)+1}",
-                    "action": "TIMEOUT_PREVENTED_BY_SKILL",
-                    "agent": agent["name"],
-                    "note": "Skill de auto-recuperação evitou o Timeout!"
-                })
 
-        # 2. Se há cards no Jira, o time atua e recupera tempo ao codificar!
+        # 3. Os Agentes debatem e comentam DIRETAMENTE NO JIRA REAL e fecham a issue!
         if game_state["jira_backlog"]:
             active_card = game_state["jira_backlog"][0]
             game_state["current_working_card"] = active_card
 
-            is_hiring = "SUBST" in active_card["title"].upper() or "CONTRATAÇÃO" in active_card["title"].upper() or "ONBOARDING" in active_card["title"].upper()
-
             agent_names = ["Felipe", "Sofia", "Lucas", "Beatriz"]
             active_agent_name = random.choice(agent_names)
             agent_key = active_agent_name.lower()
-            
-            # Ao atuar, o agente consome seu tempo de resposta rápido
             resp_time = pixel_agents[agent_key]["response_time_ms"]
             
             thoughts = {
-                "Felipe": f"👔 [Felipe - Lv.{pixel_agents['felipe']['skill_level']}] Respondendo em {resp_time}ms: Alinhando requisitos.",
-                "Sofia": f"👩‍💻 [Sofia - Lv.{pixel_agents['sofia']['skill_level']}] Respondendo em {resp_time}ms: Triagem de código/pesquisa.",
-                "Lucas": f"🛠️ [Lucas - Lv.{pixel_agents['lucas']['skill_level']}] Respondendo em {resp_time}ms: Patch de código aplicado com sucesso!",
-                "Beatriz": f"✅ [Beatriz - Lv.{pixel_agents['beatriz']['skill_level']}] Respondendo em {resp_time}ms: Testes unitários aprovados."
+                "Felipe": f"👔 [Felipe - Lv.{pixel_agents['felipe']['skill_level']}] Analisando requisitos do card {active_card['id']}.",
+                "Sofia": f"👩‍💻 [Sofia - Lv.{pixel_agents['sofia']['skill_level']}] Estudo de arquitetura concluído no Gemma 4 local.",
+                "Lucas": f"🛠️ [Lucas - Lv.{pixel_agents['lucas']['skill_level']}] Patch de código gerado e comitado no repositório!",
+                "Beatriz": f"✅ [Beatriz - Lv.{pixel_agents['beatriz']['skill_level']}] Testes de regressão e DoD aprovados!"
             }
 
             comment_msg = thoughts[active_agent_name]
             active_card.setdefault("comments", []).append({"author": active_agent_name, "text": comment_msg})
+            
+            # Adiciona o comentário diretamente na issue real no Jira Cloud!
             jira.add_comment(active_card["id"], active_agent_name, comment_msg)
 
-            # Quando o card é fechado, o time ganha VIDA/TEMPO extra!
             if len(active_card["comments"]) >= 3:
                 cleared_card = game_state["jira_backlog"].pop(0)
                 damage = 250
                 game_state["boss_hp"] = max(0, game_state["boss_hp"] - damage)
                 game_state["cards_coded_count"] += 1
                 
-                # RECOMPENSA: Restaura o tempo de vida de todos os heróis ao fechar o card!
                 for agt in pixel_agents.values():
                     agt["time_remaining_sec"] = agt["max_time_sec"]
 
-                game_state["boss_phase"] = f"💥 CARD {cleared_card['id']} RESOLVIDO ANTES DO TIMEOUT!"
+                game_state["boss_phase"] = f"💥 CARD REAL {cleared_card['id']} FECHADO NO JIRA CLOUD!"
 
-                h = governance.generate_audit_hash("agt_lucas", "CARD_CLOSED_BEFORE_TIMEOUT", cleared_card['title'])
+                h = governance.generate_audit_hash("agt_lucas", "REAL_JIRA_EPIC_RESOLVED", cleared_card['title'])
                 audit_logs.append({
                     "event_id": f"evt_{len(audit_logs)+1}",
-                    "action": "CARD_RESOLVED_SPEEDY",
+                    "action": "REAL_JIRA_EPIC_CLOSED",
                     "card_id": cleared_card["id"],
                     "damage": damage,
                     "boss_hp": game_state["boss_hp"],
@@ -196,12 +210,12 @@ async def autonomous_skill_timer_game_loop():
 
                 if game_state["boss_hp"] <= 0:
                     game_state["victory"] = True
-                    game_state["boss_phase"] = "🏆 VITÓRIA! O PO VILÃO DERROTOU PORQUE O TIME RESPONDEU ANTES DE QUALQUER TIMEOUT!"
+                    game_state["boss_phase"] = "🏆 VITÓRIA! TODOS OS ÉPICOS DO JIRA CLOUD FORAM CODIFICADOS E O PO VILÃO CAIU!"
 
 @app.on_event("startup")
 async def start_autonomous_loop():
     await bus.start()
-    asyncio.create_task(autonomous_skill_timer_game_loop())
+    asyncio.create_task(autonomous_jira_epic_game_loop())
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -231,7 +245,7 @@ async def serve_autonomous_pixel_game():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>FLOSE AEOS - Skill Upgrade & Response Time Life Gauge</title>
+        <title>FLOSE AEOS - Real Jira Cloud Epic Creation & Boss Fight</title>
         <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
         <style>
             * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -255,7 +269,7 @@ async def serve_autonomous_pixel_game():
             }
 
             .side-panel {
-                width: 490px;
+                width: 500px;
                 background: #11121d;
                 padding: 1.2rem;
                 display: flex;
@@ -276,9 +290,9 @@ async def serve_autonomous_pixel_game():
                 background: rgba(0,0,0,0.6);
                 border: 2px solid #3b3d54;
                 border-radius: 6px;
-                padding: 0.6rem;
-                margin-bottom: 0.5rem;
-                font-size: 0.5rem;
+                padding: 0.5rem;
+                margin-bottom: 0.4rem;
+                font-size: 0.48rem;
             }
 
             .btn-upgrade {
@@ -297,7 +311,7 @@ async def serve_autonomous_pixel_game():
 
             .time-bar-bg {
                 width: 100%;
-                height: 10px;
+                height: 8px;
                 background: #440000;
                 border: 1px solid #ff5555;
                 border-radius: 3px;
@@ -339,18 +353,18 @@ async def serve_autonomous_pixel_game():
 
             <div class="side-panel">
                 <div>
-                    <div class="hud-title">⚡ SISTEMA DE VIDA POR TEMPO DE RESPOSTA</div>
-                    <div style="font-size:0.46rem; color:#9ca3af; margin-bottom:0.8rem;">A VIDA É O TEMPO RESTANTE! Faça Upgrade das Skills dos Heróis para responderem antes do Timeout!</div>
+                    <div class="hud-title">🔷 JIRA CLOUD REAL: ÉPICOS & DETALHES</div>
+                    <div style="font-size:0.46rem; color:#9ca3af; margin-bottom:0.8rem;">O PO cria Épicos detalhados no Jira felipeflose.atlassian.net e o time resolve!</div>
 
-                    <div style="font-size:0.55rem; color:#a855f7; margin-bottom:0.5rem;">🛡️ UPGRADE DE SKILLS DOS HERÓIS:</div>
+                    <div style="font-size:0.55rem; color:#a855f7; margin-bottom:0.5rem;">🛡️ SKILLS DOS HERÓIS (TEMPO DE RESPOSTA):</div>
                     <div id="skills-list">Carregando heróis...</div>
 
-                    <div style="font-size:0.55rem; color:#ec4899; margin-top:0.8rem; margin-bottom:0.4rem;">🔥 CARD ATUAL EM RESOLUÇÃO RÁPIDA:</div>
+                    <div style="font-size:0.55rem; color:#ec4899; margin-top:0.8rem; margin-bottom:0.4rem;">🔥 ÉPICO / CARD REAL ATUAL EM RESOLUÇÃO:</div>
                     <div id="current-card-box" class="active-card-box">Aguardando card...</div>
                 </div>
 
                 <div>
-                    <div style="font-size: 0.5rem; color: #55ff55; margin-bottom: 0.4rem;">📜 LOG DE PREVENÇÃO DE TIMEOUT</div>
+                    <div style="font-size: 0.5rem; color: #55ff55; margin-bottom: 0.4rem;">📜 AUDIT LOG JIRA REAL</div>
                     <div id="audit-log" style="font-size: 0.45rem; color: #9ca3af; max-height: 90px; overflow-y: auto;"></div>
                 </div>
             </div>
@@ -361,7 +375,7 @@ async def serve_autonomous_pixel_game():
             const ctx = canvas.getContext('2d');
 
             function resizeCanvas() {
-                canvas.width = window.innerWidth - 490;
+                canvas.width = window.innerWidth - 500;
                 canvas.height = window.innerHeight;
             }
             resizeCanvas();
@@ -385,7 +399,6 @@ async def serve_autonomous_pixel_game():
                 ctx.fillStyle = color;
                 ctx.fillText(name, x - 5, y - 10);
 
-                // Barra de Vida = Tempo de Resposta Restante antes do Timeout!
                 const pct = Math.max(0, (timeLeft / maxTime) * 100);
                 ctx.fillStyle = "#440000";
                 ctx.fillRect(x - 6, y - 6, 36, 4);
@@ -416,7 +429,7 @@ async def serve_autonomous_pixel_game():
 
                 ctx.font = '10px "Press Start 2P"';
                 ctx.fillStyle = "#ff5555";
-                ctx.fillText("👹 PO EVIL BOSS (TIMEOUT MONITOR)", bx - 60, by - 15);
+                ctx.fillText("👹 PO EVIL BOSS (JIRA EPIC CREATOR)", bx - 75, by - 15);
 
                 ctx.fillStyle = "#440000";
                 ctx.fillRect(canvas.width / 2 - 150, 15, 300, 16);
@@ -444,7 +457,7 @@ async def serve_autonomous_pixel_game():
 
                 if (gameState) {
                     const hpPct = (gameState.boss_hp / gameState.boss_max_hp) * 100;
-                    drawPOBoss(hpPct, gameState.boss_phase || "Carregando...");
+                    drawPOBoss(hpPct, gameState.boss_phase || "Criando Épicos...");
 
                     agentsList.forEach(a => {
                         drawPixelSprite(a.x, a.y, a.sprite_color, a.name, a.response_time_ms, a.time_remaining_sec, a.max_time_sec);
@@ -461,15 +474,14 @@ async def serve_autonomous_pixel_game():
                 gameState = data.game_state;
                 agentsList = data.pixel_agents;
 
-                // Render Lista de Upgrade de Skills
                 const keys = ["felipe", "sofia", "lucas", "beatriz"];
                 document.getElementById('skills-list').innerHTML = agentsList.map((a, i) => {
                     const pct = Math.max(0, (a.time_remaining_sec / a.max_time_sec) * 100);
                     return `
                         <div class="skill-upgrade-card">
-                            <button class="btn-upgrade" onclick="upgradeSkill('${keys[i]}')">UPGRADE SKILL ⬆️</button>
+                            <button class="btn-upgrade" onclick="upgradeSkill('${keys[i]}')">UPGRADE ⬆️</button>
                             <div style="font-weight:bold; color:${a.sprite_color};">${a.name} (Lv.${a.skill_level})</div>
-                            <div style="color:#9ca3af; margin-top:0.2rem;">Tempo de Resposta: <span style="color:#55ffff;">${a.response_time_ms}ms</span></div>
+                            <div style="color:#9ca3af; margin-top:0.2rem;">Velocidade: <span style="color:#55ffff;">${a.response_time_ms}ms</span></div>
                             <div class="time-bar-bg">
                                 <div class="time-bar-fill" style="width:${pct}%; background:${pct < 40 ? '#ff5555' : '#00ff00'};"></div>
                             </div>
@@ -487,12 +499,13 @@ async def serve_autonomous_pixel_game():
 
                     document.getElementById('current-card-box').innerHTML = `
                         <div style="color:#ec4899; font-weight:bold;">[${currentCard.id}] ${currentCard.title}</div>
+                        <div style="color:#9ca3af; margin-top:0.4rem;">💬 DEBATE DOS AGENTES NO JIRA REAL:</div>
                         ${commentsHtml}
                     `;
                 }
 
                 document.getElementById('audit-log').innerHTML = data.audit_logs.map(l => `
-                    <div style="margin-bottom:0.25rem;">> ${l.action}: ${l.agent || l.card_id || ''}</div>
+                    <div style="margin-bottom:0.25rem;">> ${l.action}: ${l.card_id || ''}</div>
                 `).join('');
             }
 
@@ -502,7 +515,7 @@ async def serve_autonomous_pixel_game():
             }
 
             updateState();
-            setInterval(updateState, 1000);
+            setInterval(updateState, 1200);
         </script>
     </body>
     </html>

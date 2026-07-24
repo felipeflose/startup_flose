@@ -24,7 +24,7 @@ ssl_context.check_hostname = False
 ssl_context.verify_mode = ssl.CERT_NONE
 
 class JiraConnector:
-    """Connector for REAL Jira Cloud API with Comments & Issue Creation."""
+    """Connector for REAL Jira Cloud API with Detailed Epic/Task Creation."""
 
     def __init__(self):
         load_env_file()
@@ -51,7 +51,7 @@ class JiraConnector:
         }
 
     def fetch_real_jira_issues(self, project_key: str = "KAN", limit: int = 10) -> List[Dict[str, Any]]:
-        """Busca os cards REAIS e seus comentários diretamente no Jira Cloud."""
+        """Busca as issues REAIS e seus detalhes na conta felipeflose.atlassian.net do Jira."""
         if not self.is_configured:
             return []
 
@@ -81,7 +81,7 @@ class JiraConnector:
                                 "id": d_data.get("key"),
                                 "title": d_data.get("fields", {}).get("summary", "Card sem título"),
                                 "status": d_data.get("fields", {}).get("status", {}).get("name", "In Progress"),
-                                "type": "Card Real Jira",
+                                "type": "Card Real Jira Cloud",
                                 "comments": comments
                             })
                     except Exception:
@@ -91,8 +91,59 @@ class JiraConnector:
             
         return issues_result
 
+    def create_detailed_epic_or_task(self, project_key: str, summary: str, detailed_description: str, epic_name: str = "ÉPICO PO VILÃO") -> Dict[str, Any]:
+        """Cria um Card REAL e EXTREMAMENTE DETALHADO no Jira Cloud da sua conta!"""
+        if not self.is_configured:
+            return {"mock": True, "summary": summary}
+
+        url = f"https://{self.domain}.atlassian.net/rest/api/3/issue"
+        payload = {
+            "fields": {
+                "project": {"key": project_key},
+                "summary": f"[PO-EVIL-BOSS] {summary}",
+                "description": {
+                    "type": "doc",
+                    "version": 1,
+                    "content": [
+                        {
+                            "type": "heading",
+                            "attrs": {"level": 2},
+                            "content": [{"type": "text", "text": f"🎯 Épico do PO Vilão: {epic_name}"}]
+                        },
+                        {
+                            "type": "paragraph",
+                            "content": [{"type": "text", "text": detailed_description}]
+                        },
+                        {
+                            "type": "heading",
+                            "attrs": {"level": 3},
+                            "content": [{"type": "text", "text": "📋 Critérios de Aceite & DoD (Definition of Done):"}]
+                        },
+                        {
+                            "type": "bulletList",
+                            "content": [
+                                {"type": "listItem", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Alinhamento Pixel Perfect 100% verificado em 2D/3D Canvas."}]}]},
+                                {"type": "listItem", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Refatoração Backend Async sem estouro de janela de contexto."}]}]},
+                                {"type": "listItem", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Resposta do time antes do limite de Timeout do PO."}]}]}
+                            ]
+                        }
+                    ]
+                },
+                "issuetype": {"name": "Task"}
+            }
+        }
+
+        req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=self._get_headers(), method="POST")
+        try:
+            with urllib.request.urlopen(req, context=ssl_context, timeout=10) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                print(f"[Jira Success] Issue Criada no Jira Real com Sucesso! Key: {data.get('key')}")
+                return data
+        except Exception as e:
+            print(f"[Jira Create Error] {e}")
+            return {"error": str(e)}
+
     def add_comment(self, issue_key: str, author_name: str, comment_text: str) -> Dict[str, Any]:
-        """Adiciona um comentário real do agente (Felipe, Sofia, Lucas, Beatriz) na issue do Jira."""
         if not self.is_configured:
             return {"mock": True, "comment": comment_text}
 
@@ -107,34 +158,6 @@ class JiraConnector:
                 }]
             }
         }
-        req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=self._get_headers(), method="POST")
-        try:
-            with urllib.request.urlopen(req, context=ssl_context, timeout=10) as resp:
-                return json.loads(resp.read().decode("utf-8"))
-        except Exception as e:
-            return {"error": str(e)}
-
-    def create_issue(self, project_key: str, summary: str, description: str, issue_type: str = "Task") -> Dict[str, Any]:
-        if not self.is_configured:
-            return {"mock": True, "summary": summary}
-        
-        url = f"https://{self.domain}.atlassian.net/rest/api/3/issue"
-        payload = {
-            "fields": {
-                "project": {"key": project_key},
-                "summary": summary,
-                "description": {
-                    "type": "doc",
-                    "version": 1,
-                    "content": [{
-                        "type": "paragraph",
-                        "content": [{"type": "text", "text": description}]
-                    }]
-                },
-                "issuetype": {"name": issue_type}
-            }
-        }
-        
         req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=self._get_headers(), method="POST")
         try:
             with urllib.request.urlopen(req, context=ssl_context, timeout=10) as resp:
