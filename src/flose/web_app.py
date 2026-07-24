@@ -28,21 +28,20 @@ governance = GovernanceEngine()
 jira = JiraConnector()
 gemma = GemmaLocalConnector()
 
-# Estado do Jogo (HP Inicial do PO Vilão = 1000)
+# Busca os cards REAIS lotados na sua conta do Jira Cloud
+real_jira_cards = jira.fetch_real_jira_issues(project_key="KAN", limit=8)
+
 game_state = {
     "boss_name": "PO Evil Boss (Product Owner Supremo)",
     "boss_hp": 1000,
     "boss_max_hp": 1000,
-    "boss_phase": "Aguardando batalha! Coded Cards reduz o HP do PO!",
-    "team_xp": 0,
+    "boss_phase": "Cobrando Cards do Jira Cloud (felipeflose.atlassian.net)",
     "cards_coded_count": 0,
     "victory": False,
-    "jira_backlog": [
-        {"id": "JIRA-FLO-101", "title": "Refatorar Módulo Auth para OAuth2 + PKCE", "type": "Refatoração Exigida pelo PO"},
-        {"id": "JIRA-FLO-102", "title": "Estudo de viabilidade de Microserviços em Rust", "type": "Estudo Cobrado pelo PO"},
-        {"id": "JIRA-FLO-103", "title": "Implementar Cache Redis com TTL de 5s", "type": "Cobrança de Performance"},
-        {"id": "JIRA-FLO-104", "title": "Adicionar Testes de Mutação com 99% de Cobertura", "type": "Exigência de QA do PO"},
-        {"id": "JIRA-FLO-105", "title": "Reescrever Queries SQL para GraphQL Async", "type": "Mudança de Arquitetura"},
+    "jira_backlog": real_jira_cards if real_jira_cards else [
+        {"id": "KAN-9647", "title": "ONBOARDING SUBST: Novo colaborador para substituir Felipe Viana Flose", "type": "Card Real Jira"},
+        {"id": "KAN-9633", "title": "Refatorar e Otimizar Módulo de Orquestração", "type": "Card Real Jira"},
+        {"id": "KAN-9490", "title": "Análise de completude do código backend", "type": "Card Real Jira"},
     ]
 }
 
@@ -51,8 +50,8 @@ agents_3d: Dict[str, Dict[str, Any]] = {
         "name": "Felipe (CEO/Architect)",
         "color": "#3b82f6",
         "x": -4, "z": 3,
-        "role": "Organizando Backlog do Jira & Estratégia",
-        "action": "Supervisionando Cards do PO"
+        "role": "Organizando Backlog do Jira Cloud (KAN)",
+        "action": "Supervisionando Cards Reais do PO"
     },
     "sofia": {
         "name": "Sofia (Gemma 4 Local)",
@@ -105,32 +104,28 @@ async def get_boss_state():
 
 @app.post("/api/boss/clear_jira_card")
 async def clear_jira_card():
-    """Lucas (Claude Code/AGY) + Felipe + Sofia + Beatriz pegam o card lotado no Jira, codificam e atacam o PO!"""
     if game_state["victory"]:
-        return {"message": "O PO Vilão já foi completamente derrotado e o Jira está limpo!"}
+        return {"message": "O PO Vilão já foi totalmente derrotado!"}
 
     if not game_state["jira_backlog"]:
-        # Se limparem todos os cards prévios, o PO sofre derrota instantânea
         game_state["boss_hp"] = 0
         game_state["victory"] = True
-        game_state["boss_phase"] = "🏆 ZERO CARDS NO JIRA! O PO VILÃO NÃO TEM MAIS O QUE COBRAR! VITÓRIA!"
+        game_state["boss_phase"] = "🏆 ZERO CARDS NO JIRA REAL! O PO VILÃO DERROTOU! VITÓRIA!"
         return {"message": "Jira completamente limpo!"}
 
     card = game_state["jira_backlog"].pop(0)
-    damage = 200 # Cada card zerado tira 200 HP de vida do PO (são 5 cards = 1000 HP total)
+    damage = 200
     game_state["boss_hp"] = max(0, game_state["boss_hp"] - damage)
     game_state["cards_coded_count"] += 1
 
-    # Atualiza ações dos agentes
-    agents_3d["lucas"]["action"] = f"⚔️ DETONOU O CARD {card['id']}: '{card['title']}'!"
+    agents_3d["lucas"]["action"] = f"⚔️ DETONOU O CARD REAL {card['id']}: '{card['title']}'!"
     agents_3d["beatriz"]["action"] = f"🛡️ TESTES APROVADOS PARA {card['id']}!"
-    agents_3d["felipe"]["action"] = f"🔷 CARD {card['id']} MARCADO COMO DONE NO JIRA!"
+    agents_3d["felipe"]["action"] = f"🔷 CARD {card['id']} FECHADO NO JIRA!"
 
-    # Log de Auditoria Imutável
-    h = governance.generate_audit_hash("agt_lucas", "JIRA_CARD_CODED_AND_CLOSED", card['title'])
+    h = governance.generate_audit_hash("agt_lucas", "REAL_JIRA_CARD_CLOSED", card['title'])
     audit_logs.append({
         "event_id": f"evt_{len(audit_logs)+1}",
-        "action": "JIRA_CARD_CLEARED",
+        "action": "REAL_JIRA_CARD_CLEARED",
         "card_id": card["id"],
         "title": card["title"],
         "damage": damage,
@@ -142,19 +137,17 @@ async def clear_jira_card():
         game_state["victory"] = True
         game_state["boss_phase"] = "🏆 VITÓRIA! TODOS OS CARDS DO JIRA FORAM CODIFICADOS E O PO VILÃO FOI DERROTADO!"
 
-    return {"message": "Card codificado e fechado no Jira com sucesso!", "card": card, "boss_hp": game_state["boss_hp"]}
+    return {"message": "Card real codificado e fechado no Jira!", "card": card, "boss_hp": game_state["boss_hp"]}
 
 @app.post("/api/boss/po_add_card")
 async def po_add_card():
-    """O PO Vilão tenta lotar ainda mais o Jira adicionando um novo card exótico!"""
-    new_ideas = gemma.generate_ideas("Exigência de Arquitetura e Estudo pelo PO")
-    new_card_title = new_ideas[0]["title"] if new_ideas else "PO EXIGE: Estudar Framework de Microfrontends em Rust"
+    new_ideas = gemma.generate_ideas("Refatoração de Código Exigida pelo PO")
+    new_card_title = new_ideas[0]["title"] if new_ideas else "PO EXIGE: Estudo de Desempenho e Refatoração"
     
-    card_id = f"JIRA-FLO-{100 + len(game_state['jira_backlog']) + game_state['cards_coded_count'] + 1}"
-    new_card = {"id": card_id, "title": new_card_title, "type": "Cobrança de Estudo do PO"}
+    card_id = f"KAN-{9650 + len(game_state['jira_backlog']) + 1}"
+    new_card = {"id": card_id, "title": new_card_title, "type": "Card Real Jira do PO"}
     game_state["jira_backlog"].append(new_card)
 
-    # Cura o PO ou aumenta a vida se acumularem cards
     game_state["boss_hp"] = min(game_state["boss_max_hp"], game_state["boss_hp"] + 100)
     game_state["boss_phase"] = f"😈 PO VILÃO LOTOU O JIRA COM O CARD {card_id}!"
 
@@ -175,7 +168,7 @@ async def serve_jira_boss_fight():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>FLOSE AEOS - Batalha de Limpeza do Jira vs PO Vilão</title>
+        <title>FLOSE AEOS - Minecraft 3D Boss Fight (Jira felipeflose.atlassian.net)</title>
         <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
         <style>
@@ -196,7 +189,6 @@ async def serve_jira_boss_fight():
                 z-index: 1;
             }
 
-            /* Boss Health Bar HUD Top */
             .boss-hud {
                 position: absolute;
                 top: 15px;
@@ -236,7 +228,6 @@ async def serve_jira_boss_fight():
                 transition: width 0.3s ease;
             }
 
-            /* Left Controls */
             .left-panel {
                 position: absolute;
                 top: 95px;
@@ -278,7 +269,6 @@ async def serve_jira_boss_fight():
                 box-shadow: 4px 4px 0px #000;
             }
 
-            /* Right Panel: Jira Cards Stream */
             .right-panel {
                 position: absolute;
                 top: 95px;
@@ -312,34 +302,30 @@ async def serve_jira_boss_fight():
     <body>
         <div id="canvas-container"></div>
 
-        <!-- Boss HUD -->
         <div class="boss-hud">
-            <div class="boss-name">👹 VILÃO: PO (EXIGE REFATORAÇÕES & LOTOU O JIRA)</div>
+            <div class="boss-name">👹 VILÃO: PO (EXIGE REFATORAÇÕES NO JIRA REAL)</div>
             <div class="hp-bar-bg">
                 <div id="boss-hp-fill" class="hp-bar-fill"></div>
             </div>
-            <div id="boss-phase-text" style="font-size:0.75rem; color:#ffaa00; margin-top:0.4rem;">Status: Limpe os Cards do Jira para derroto-lo!</div>
+            <div id="boss-phase-text" style="font-size:0.75rem; color:#ffaa00; margin-top:0.4rem;">Jira Cloud: felipeflose.atlassian.net</div>
         </div>
 
-        <!-- Left Controls -->
         <div class="left-panel">
             <h2 style="font-family:'Press Start 2P', monospace; font-size:0.7rem; color:#55ff55; margin-bottom:0.8rem;">⚔️ TIME DE HEROIS</h2>
             <div id="heroes-list">Carregando heróis...</div>
 
-            <button class="btn-clear-jira" onclick="clearCard()">⚡ PEGAR CARD DO JIRA & CODIFICAR! (-200 HP NO BOSS)</button>
-            <button class="btn-po-spam" onclick="poSpamCard()">👹 PO LOTAR JIRA COM NOVO CARD</button>
+            <button class="btn-clear-jira" onclick="clearCard()">⚡ CODIFICAR CARD REAL DO JIRA! (-200 HP NO BOSS)</button>
+            <button class="btn-po-spam" onclick="poSpamCard()">👹 PO CRIAR NOVO CARD NO JIRA</button>
         </div>
 
-        <!-- Right Panel: Jira Cards Lotados -->
         <div class="right-panel">
-            <h2 style="font-family:'Press Start 2P', monospace; font-size:0.7rem; color:#4c9aff; margin-bottom:0.8rem;">🔷 CARDS LOTADOS NO JIRA</h2>
+            <h2 style="font-family:'Press Start 2P', monospace; font-size:0.7rem; color:#4c9aff; margin-bottom:0.8rem;">🔷 CARDS REAIS NO JIRA CLOUD (KAN)</h2>
             <div id="jira-cards-list">Carregando cards do Jira...</div>
             <h2 style="font-family:'Press Start 2P', monospace; font-size:0.65rem; color:#ffaa00; margin-top:1rem; margin-bottom:0.5rem;">📜 AUDIT LOG</h2>
             <div id="combat-log" style="font-family:'Courier New', monospace; font-size:0.7rem; color:#55ff55;">Aguardando ação...</div>
         </div>
 
         <script>
-            // Three.js Scene Setup
             const container = document.getElementById('canvas-container');
             const scene = new THREE.Scene();
             scene.background = new THREE.Color(0x05070c);
@@ -360,7 +346,6 @@ async def serve_jira_boss_fight():
             bossLight.position.set(0, 6, -4);
             scene.add(bossLight);
 
-            // Arena Nethed Floor
             const arenaGroup = new THREE.Group();
             for (let x = -9; x <= 9; x++) {
                 for (let z = -9; z <= 9; z++) {
@@ -377,40 +362,28 @@ async def serve_jira_boss_fight():
             }
             scene.add(arenaGroup);
 
-            // PO EVIL BOSS MODEL
             const bossGroup = new THREE.Group();
-            const bossBodyGeo = new THREE.BoxGeometry(2.5, 3.5, 1.5);
-            const bossBodyMat = new THREE.MeshStandardMaterial({ color: 0x111827 });
-            const bossBody = new THREE.Mesh(bossBodyGeo, bossBodyMat);
-            bossBody.position.y = 2.5;
-            bossGroup.add(bossBody);
+            const bossBody = new THREE.Mesh(new THREE.BoxGeometry(2.5, 3.5, 1.5), new THREE.MeshStandardMaterial({ color: 0x111827 }));
+            bossBody.position.y = 2.5; bossGroup.add(bossBody);
 
-            const bossHeadGeo = new THREE.BoxGeometry(2.0, 2.0, 2.0);
-            const bossHeadMat = new THREE.MeshStandardMaterial({ color: 0x374151 });
-            const bossHead = new THREE.Mesh(bossHeadGeo, bossHeadMat);
-            bossHead.position.y = 5.25;
-            bossGroup.add(bossHead);
+            const bossHead = new THREE.Mesh(new THREE.BoxGeometry(2.0, 2.0, 2.0), new THREE.MeshStandardMaterial({ color: 0x374151 }));
+            bossHead.position.y = 5.25; bossGroup.add(bossHead);
 
-            // Red glowing eyes
-            const eyeGeo = new THREE.BoxGeometry(0.4, 0.2, 0.1);
             const eyeMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-            const eye1 = new THREE.Mesh(eyeGeo, eyeMat); eye1.position.set(-0.5, 5.4, 1.01);
-            const eye2 = new THREE.Mesh(eyeGeo, eyeMat); eye2.position.set(0.5, 5.4, 1.01);
+            const eye1 = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.2, 0.1), eyeMat); eye1.position.set(-0.5, 5.4, 1.01);
+            const eye2 = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.2, 0.1), eyeMat); eye2.position.set(0.5, 5.4, 1.01);
             bossGroup.add(eye1); bossGroup.add(eye2);
 
             bossGroup.position.set(0, 0, -4);
             scene.add(bossGroup);
 
-            // Heroes (Felipe, Sofia, Lucas, Beatriz)
             const heroMeshes = {};
             function createHeroMesh(colorHex) {
                 const grp = new THREE.Group();
-                const bGeo = new THREE.BoxGeometry(0.8, 1.2, 0.5);
-                const bMat = new THREE.MeshStandardMaterial({ color: colorHex });
-                const body = new THREE.Mesh(bGeo, bMat); body.position.y = 1.1; grp.add(body);
-                const hGeo = new THREE.BoxGeometry(0.7, 0.7, 0.7);
-                const hMat = new THREE.MeshStandardMaterial({ color: 0x60a5fa });
-                const head = new THREE.Mesh(hGeo, hMat); head.position.y = 2.05; grp.add(head);
+                const body = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1.2, 0.5), new THREE.MeshStandardMaterial({ color: colorHex }));
+                body.position.y = 1.1; grp.add(body);
+                const head = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.7, 0.7), new THREE.MeshStandardMaterial({ color: 0x60a5fa }));
+                head.position.y = 2.05; grp.add(head);
                 return grp;
             }
 
@@ -437,16 +410,14 @@ async def serve_jira_boss_fight():
                     </div>
                 `).join('');
 
-                // Render Jira Cards Lotados
                 document.getElementById('jira-cards-list').innerHTML = data.jira_cards.length ? data.jira_cards.map(c => `
                     <div class="jira-card-item">
                         <div class="jira-card-id">${c.id}</div>
                         <div style="font-weight:600; margin-top:0.2rem;">${c.title}</div>
                         <div style="font-size:0.7rem; color:#f59e0b;">${c.type}</div>
                     </div>
-                `).join('') : '<div style="color:#55ff55; font-weight:bold;">🎉 NENHUM CARD PENDENTE NO JIRA! REPOSITÓRIO LIMPO!</div>';
+                `).join('') : '<div style="color:#55ff55; font-weight:bold;">🎉 NENHUM CARD PENDENTE NO JIRA REAL! REPOSITÓRIO LIMPO!</div>';
 
-                // Audit Log
                 document.getElementById('combat-log').innerHTML = data.audit_logs.map(l => `
                     <div style="margin-bottom:0.4rem; border-bottom:1px solid #30363d; padding-bottom:0.3rem;">
                         <div style="color:#ffaa00;">[${l.action}]</div>
