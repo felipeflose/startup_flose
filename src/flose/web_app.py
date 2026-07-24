@@ -21,7 +21,7 @@ from flose.engines.governance import GovernanceEngine
 from flose.connectors.jira import JiraConnector
 from flose.connectors.gemma_local import GemmaLocalConnector
 
-app = FastAPI(title="FLOSE (AEOS) - Real-Time Kanban & Autonomous Skill Evolution")
+app = FastAPI(title="FLOSE (AEOS) - Real-Time Duel Arena & Strict Timeout Engine")
 
 bus = EventBus()
 planner = PlanningEngine()
@@ -41,7 +41,14 @@ game_state = {
     "boss_cards_created_in_burst": 0,
     "cards_coded_count": 0,
     "victory": False,
-    "current_working_card": None,
+    "duel": {
+        "is_active": False,
+        "active_hero": None,
+        "active_card": None,
+        "timeout_timer_sec": 10.0,
+        "max_timeout_sec": 10.0,
+        "damage_dealt": 0
+    },
     "kanban": {
         "to_do": real_jira_cards if real_jira_cards else [],
         "in_progress": [],
@@ -50,7 +57,7 @@ game_state = {
     }
 }
 
-# HERÓIS COM EVOLUÇÃO AUTÔNOMA DE SKILL E GAUGE DE VIDA/TIMEOUT!
+# HERÓIS DA ARENA DE DUELO COM EVOLUÇÃO E RESISTÊNCIA DE TIMEOUT
 pixel_agents: Dict[str, Dict[str, Any]] = {
     "felipe": {
         "name": "Felipe",
@@ -59,11 +66,9 @@ pixel_agents: Dict[str, Dict[str, Any]] = {
         "x": 100, "y": 260,
         "skill_level": 1,
         "xp": 0,
-        "response_time_ms": 500.0,    # Tempo de resposta (ms) que diminui com evolução!
-        "time_remaining_sec": 12.0,   # BARRA DE VIDA = TEMPO ANTES DO TIMEOUT
-        "max_time_sec": 12.0,
-        "can_use_gemma": False,
-        "action": "Evoluindo Skill Autonomamente",
+        "response_speed_ms": 450.0,
+        "timeout_resistance_sec": 10.0,
+        "action": "Supervisionando Arquitetura do Duelo",
     },
     "sofia": {
         "name": "Sofia",
@@ -72,11 +77,9 @@ pixel_agents: Dict[str, Dict[str, Any]] = {
         "x": 220, "y": 220,
         "skill_level": 1,
         "xp": 0,
-        "response_time_ms": 420.0,
-        "time_remaining_sec": 12.0,
-        "max_time_sec": 12.0,
-        "can_use_gemma": False,
-        "action": "Aprendendo Padrões de Código no Gemma 4",
+        "response_speed_ms": 380.0,
+        "timeout_resistance_sec": 10.0,
+        "action": "Minerando Soluções no Gemma 4",
     },
     "lucas": {
         "name": "Lucas",
@@ -85,11 +88,9 @@ pixel_agents: Dict[str, Dict[str, Any]] = {
         "x": 350, "y": 270,
         "skill_level": 1,
         "xp": 0,
-        "response_time_ms": 300.0,
-        "time_remaining_sec": 12.0,
-        "max_time_sec": 12.0,
-        "can_use_gemma": False,
-        "action": "Codificando e Otimizando Latência",
+        "response_speed_ms": 250.0,
+        "timeout_resistance_sec": 10.0,
+        "action": "Pronto para Duelo de Código",
     },
     "beatriz": {
         "name": "Beatriz",
@@ -98,38 +99,33 @@ pixel_agents: Dict[str, Dict[str, Any]] = {
         "x": 480, "y": 230,
         "skill_level": 1,
         "xp": 0,
-        "response_time_ms": 450.0,
-        "time_remaining_sec": 12.0,
-        "max_time_sec": 12.0,
-        "can_use_gemma": False,
-        "action": "Auditando Testes antes do Timeout",
+        "response_speed_ms": 400.0,
+        "timeout_resistance_sec": 10.0,
+        "action": "Auditando Testes e Defesas",
     }
 }
 
 audit_logs: List[Dict[str, Any]] = []
 
 def check_autonomous_skill_evolution(agent_key: str):
-    """Evolui autonomamente a skill do agente quando atinge XP suficiente!"""
     agt = pixel_agents[agent_key]
     agt["xp"] += 35
     if agt["xp"] >= 100:
         agt["xp"] = 0
         agt["skill_level"] += 1
-        # Diminui o tempo de resposta (fica mais rápido) e aumenta a resistência a Timeout!
-        agt["response_time_ms"] = max(30.0, round(agt["response_time_ms"] * 0.75, 1))
-        agt["max_time_sec"] += 1.5
-        agt["time_remaining_sec"] = agt["max_time_sec"]
+        agt["response_speed_ms"] = max(30.0, round(agt["response_speed_ms"] * 0.75, 1))
+        agt["timeout_resistance_sec"] += 2.0
         
         audit_logs.append({
             "event_id": f"evt_{len(audit_logs)+1}",
-            "action": "AUTONOMOUS_SKILL_EVOLUTION",
+            "action": "HERO_SKILL_LEVEL_UP",
             "agent": agt["name"],
             "new_level": agt["skill_level"],
-            "new_response_time_ms": agt["response_time_ms"]
+            "speed": f"{agt['response_speed_ms']}ms"
         })
 
-# LOOP AUTÔNOMO: EVOLUÇÃO AUTÔNOMA DE SKILLS + BARRA DE VIDA/TIMEOUT + ATUALIZAÇÃO KANBAN
-async def autonomous_orchestration_game_loop():
+# LOOP DA ARENA DE DUELO EM TEMPO REAL: DUELO CARD A CARD CONTRA O CRONÔMETRO DE TIMEOUT REAL
+async def real_time_duel_game_loop():
     po_turn_duration = 60      
     heroes_turn_duration = 120 
     
@@ -139,31 +135,13 @@ async def autonomous_orchestration_game_loop():
         # =========================================================================
         game_state["current_turn"] = "PO_BURST_PHASE"
         game_state["boss_cards_created_in_burst"] = 0
-        
-        for agt in pixel_agents.values():
-            agt["can_use_gemma"] = False
-            agt["action"] = "🔒 PO com Prioridade no Gemma 4 (Aguardando...)"
+        game_state["duel"]["is_active"] = False
 
         for sec in range(po_turn_duration, 0, -1):
             if game_state["victory"]: break
             game_state["turn_timer_sec"] = sec
-            
-            # Atualiza o decaimento do tempo de resposta (VIDA/TIMEOUT) dos heróis a cada segundo
-            for agt_key, agt in pixel_agents.items():
-                decay = (agt["response_time_ms"] / 400.0) * 0.6
-                agt["time_remaining_sec"] = max(0.0, round(agt["time_remaining_sec"] - decay, 1))
-                
-                # Se o tempo zera, ocorre o Timeout, mas a Skill Auto-Heal recupera!
-                if agt["time_remaining_sec"] <= 0:
-                    agt["time_remaining_sec"] = round(agt["max_time_sec"] * 0.5, 1)
-                    audit_logs.append({
-                        "event_id": f"evt_{len(audit_logs)+1}",
-                        "action": "TIMEOUT_AUTO_HEAL",
-                        "agent": agt["name"],
-                        "note": "Skill autônoma evitou o Timeout!"
-                    })
 
-            # PO cria os 5 cards no 'A FAZER'
+            # O PO Vilão cria 5 cards detalhados no Jira
             if game_state["boss_cards_created_in_burst"] < 5 and sec % 10 == 0:
                 po_topics = [
                     ("Refatorar UI Frontend Nível Pixel Perfect 16-Bit", "O PO Vilão analisou a interface atual e exige alinhamento perfeito de bordas, palette HSL e suporte responsive sem flickering."),
@@ -173,7 +151,6 @@ async def autonomous_orchestration_game_loop():
                     ("Sanitização Estrita contra Vulnerabilidades XSS & SQL", "O PO encontrou potenciais falhas de segurança nos endpoints REST.")
                 ]
                 topic_title, topic_desc = po_topics[game_state["boss_cards_created_in_burst"] % len(po_topics)]
-                
                 gemma_ideas = gemma.generate_ideas(topic_title)
                 idea_detail = gemma_ideas[0]["summary"] if gemma_ideas else topic_desc
 
@@ -195,92 +172,117 @@ async def autonomous_orchestration_game_loop():
             await asyncio.sleep(1.0)
 
         # =========================================================================
-        # FASE 2: TURNO DOS HERÓIS (2 MINUTOS - CLAUDE-CODE OLLAMA & AGY CLI & EVOLUÇÃO AUTÔNOMA)
+        # FASE 2: TURNO DOS HERÓIS (2 MINUTOS - ARENA DE DUELO CONTRA O TIMEOUT REAL!)
         # =========================================================================
         game_state["current_turn"] = "HEROES_REST_PHASE"
-        game_state["boss_phase"] = "😴 PO DESCANSA! HERÓIS OPERANDO CLAUDE-CODE OLLAMA E EVOLUINDO SKILLS!"
-
-        for agt in pixel_agents.values():
-            agt["can_use_gemma"] = True
-            agt["action"] = f"⚡ Evoluindo Skill (Nível {agt['skill_level']} - {agt['response_time_ms']}ms)"
+        game_state["boss_phase"] = "⚔️ ARENA DE DUELO: HERÓIS CODIFICANDO E LUTANDO CONTRA O TIMEOUT REAL!"
 
         for sec in range(heroes_turn_duration, 0, -1):
             if game_state["victory"]: break
             game_state["turn_timer_sec"] = sec
 
-            # Decaimento do tempo de vida / timeout
-            for agt in pixel_agents.values():
-                decay = (agt["response_time_ms"] / 400.0) * 0.5
-                agt["time_remaining_sec"] = max(0.0, round(agt["time_remaining_sec"] - decay, 1))
-                if agt["time_remaining_sec"] <= 0:
-                    agt["time_remaining_sec"] = round(agt["max_time_sec"] * 0.5, 1)
-
-            # PASSO A: Mover do 'A Fazer' para 'Em Validação'
-            if game_state["kanban"]["to_do"] and not game_state["kanban"]["in_progress"]:
+            # SE NÃO HÁ DUELO ATIVO, INICIA UM NOVO DUELO COM O PRÓXIMO CARD DO 'A FAZER'!
+            if not game_state["duel"]["is_active"] and game_state["kanban"]["to_do"]:
                 card = game_state["kanban"]["to_do"].pop(0)
                 card["status"] = "EM PROGRESSO"
                 game_state["kanban"]["in_progress"].append(card)
-                game_state["current_working_card"] = card
 
-                # Heróis usam Claude-Code Ollama & AGY e evoluem a skill autonomamente!
-                active_agent_key = random.choice(["felipe", "sofia", "lucas", "beatriz"])
-                check_autonomous_skill_evolution(active_agent_key)
-                active_agt = pixel_agents[active_agent_key]
+                hero_key = random.choice(["felipe", "sofia", "lucas", "beatriz"])
+                hero = pixel_agents[hero_key]
 
-                solutions = gemma.generate_ideas(card["title"])
-                sol_text = solutions[0]["summary"] if solutions else "Análise de alta velocidade via Ollama."
+                game_state["duel"] = {
+                    "is_active": True,
+                    "active_hero": hero["name"],
+                    "hero_key": hero_key,
+                    "active_card": card,
+                    "timeout_timer_sec": hero["timeout_resistance_sec"],
+                    "max_timeout_sec": hero["timeout_resistance_sec"],
+                    "damage_dealt": 0
+                }
 
-                card["comments"].append({"author": f"{active_agt['name']} (Lv.{active_agt['skill_level']})", "text": f"🛠️ Executou patch via Claude-Code Ollama & AGY em {active_agt['response_time_ms']}ms. Movendo para 'EM VALIDAÇÃO'!"})
-                jira.add_comment(card["id"], active_agt['name'], f"Patch de velocidade {active_agt['response_time_ms']}ms aplicado. Movendo para Em Validação.")
+                audit_logs.append({
+                    "event_id": f"evt_{len(audit_logs)+1}",
+                    "action": "DUEL_STARTED",
+                    "hero": hero["name"],
+                    "card_id": card["id"]
+                })
 
-                game_state["kanban"]["in_progress"].remove(card)
-                card["status"] = "EM VALIDAÇÃO"
-                game_state["kanban"]["in_validation"].append(card)
+            # SE HÁ DUELO ATIVO, RODA A CONTAGEM REGRESSIVA DO TIMEOUT REAL A CADA SEGUNDO!
+            if game_state["duel"]["is_active"]:
+                duel = game_state["duel"]
+                hero_key = duel["hero_key"]
+                hero = pixel_agents[hero_key]
 
-            # PASSO B: Validação do PO
-            if game_state["kanban"]["in_validation"]:
-                card_val = game_state["kanban"]["in_validation"].pop(0)
-                
-                if random.random() < 0.20 and card_val["rejections"] == 0:
-                    card_val["rejections"] += 1
-                    card_val["status"] = "A FAZER"
-                    card_val["comments"].append({"author": "PO EVIL BOSS", "text": "❌ BARRADO! Volte para o 'A FAZER'!"})
-                    jira.add_comment(card_val["id"], "PO EVIL BOSS", "Barrado na Validação.")
-                    game_state["kanban"]["to_do"].append(card_val)
-                else:
-                    card_val["status"] = "CONCLUÍDO"
-                    card_val["comments"].append({"author": "PO EVIL BOSS", "text": "✅ Aprovado na Validação Rígida!"})
-                    jira.add_comment(card_val["id"], "PO EVIL BOSS", "Card Aprovado.")
+                # Decrementa o tempo real do duelo a cada segundo!
+                duel["timeout_timer_sec"] = round(duel["timeout_timer_sec"] - 0.8, 1)
 
+                # SE O TEMPO DE RESPOSTA DO HEROI É RÁPIDO, ELE VENCE O DUELO ANTES DO TIMEOUT!
+                if duel["timeout_timer_sec"] > 0 and random.random() < (0.35 + (hero["skill_level"] * 0.1)):
+                    # HERÓI VENCEU O DUELO ANTES DO TIMEOUT!
+                    card_duel = duel["active_card"]
+                    
+                    check_autonomous_skill_evolution(hero_key)
+
+                    card_duel["comments"].append({"author": f"{hero['name']} (Lv.{hero['skill_level']})", "text": f"⚔️ VENCEU O DUELO! Código resolvido via Claude-Code/AGY em {hero['response_speed_ms']}ms antes do Timeout!"})
+                    jira.add_comment(card_duel["id"], hero["name"], f"Venceu o Duelo antes do Timeout em {hero['response_speed_ms']}ms.")
+
+                    game_state["kanban"]["in_progress"].remove(card_duel)
+                    card_duel["status"] = "EM VALIDAÇÃO"
+                    game_state["kanban"]["in_validation"].append(card_duel)
+
+                    # PO Valida o Card
+                    card_duel["status"] = "CONCLUÍDO"
                     damage = 250
                     game_state["boss_hp"] = max(0, game_state["boss_hp"] - damage)
-                    game_state["kanban"]["done"].append(card_val)
+                    game_state["kanban"]["in_validation"].remove(card_duel)
+                    game_state["kanban"]["done"].append(card_duel)
                     game_state["cards_coded_count"] += 1
 
-                    # Restaura o tempo de vida/timeout dos heróis ao resolver o card!
-                    for agt in pixel_agents.values():
-                        agt["time_remaining_sec"] = agt["max_time_sec"]
-
-                    h = governance.generate_audit_hash("agt_lucas", "AUTONOMOUS_EVOLVED_CARD_APPROVED", card_val['title'])
+                    game_state["boss_phase"] = f"💥 {hero['name']} VENCEU O DUELO NO CARD {card_duel['id']}! (-250 HP)"
+                    
+                    h = governance.generate_audit_hash("agt_lucas", "REAL_TIMEOUT_DUEL_WON", card_duel['title'])
                     audit_logs.append({
                         "event_id": f"evt_{len(audit_logs)+1}",
-                        "action": "AUTONOMOUS_CARD_CLOSED",
-                        "card_id": card_val["id"],
-                        "damage": damage,
-                        "boss_hp": game_state["boss_hp"],
-                        "hash": h,
+                        "action": "DUEL_WON_BEFORE_TIMEOUT",
+                        "hero": hero["name"],
+                        "card_id": card_duel["id"],
+                        "hash": h
                     })
+
+                    duel["is_active"] = False
 
                     if game_state["boss_hp"] <= 0:
                         game_state["victory"] = True
-                        game_state["boss_phase"] = "🏆 VITÓRIA! OS HERÓIS EVOLUÍRAM SUAS SKILLS E DERROTARAM O PO VILÃO!"
+                        game_state["boss_phase"] = "🏆 VITÓRIA! OS HERÓIS VENCERAM TODOS OS DUELOS ANTES DO TIMEOUT E DERROTARAM O PO VILÃO!"
+
+                elif duel["timeout_timer_sec"] <= 0:
+                    # OCORREU O TIMEOUT REAL! O PO BARRA O CARD E O HERÓI PERDE O DUELO!
+                    card_duel = duel["active_card"]
+                    card_duel["rejections"] += 1
+                    card_duel["status"] = "A FAZER"
+                    card_duel["comments"].append({"author": "PO EVIL BOSS", "text": f"⏱️ TIMEOUT STRIKE! {hero['name']} demorou demais para responder! Card devolvido para o 'A FAZER'!"})
+                    jira.add_comment(card_duel["id"], "PO EVIL BOSS", "TIMEOUT STRIKE! Card devolvido ao A FAZER.")
+
+                    game_state["kanban"]["in_progress"].remove(card_duel)
+                    game_state["kanban"]["to_do"].append(card_duel)
+
+                    game_state["boss_phase"] = f"💥 TIMEOUT STRIKE! {hero['name']} DEMOROU DEMAIS NO CARD {card_duel['id']}!"
+
+                    audit_logs.append({
+                        "event_id": f"evt_{len(audit_logs)+1}",
+                        "action": "REAL_TIMEOUT_STRIKE",
+                        "hero": hero["name"],
+                        "card_id": card_duel["id"]
+                    })
+
+                    duel["is_active"] = False
 
             await asyncio.sleep(1.0)
 
 @app.on_event("startup")
 async def start_autonomous_loop():
     await bus.start()
-    asyncio.create_task(autonomous_orchestration_game_loop())
+    asyncio.create_task(real_time_duel_game_loop())
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -297,8 +299,8 @@ async def get_boss_state():
     return {
         "game_state": game_state,
         "pixel_agents": list(pixel_agents.values()),
+        "duel": game_state["duel"],
         "kanban": game_state["kanban"],
-        "current_card": game_state["current_working_card"],
         "audit_logs": audit_logs[-6:],
     }
 
@@ -310,7 +312,7 @@ async def serve_autonomous_pixel_game():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>FLOSE AEOS - Real-Time Kanban & Autonomous Skill Evolution</title>
+        <title>FLOSE AEOS - Real-Time Duel Arena & Strict Timeout Engine</title>
         <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
         <style>
             * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -334,7 +336,7 @@ async def serve_autonomous_pixel_game():
             }
 
             .side-panel {
-                width: 550px;
+                width: 560px;
                 background: #11121d;
                 padding: 1.2rem;
                 display: flex;
@@ -351,14 +353,28 @@ async def serve_autonomous_pixel_game():
                 text-shadow: 2px 2px #00aa00;
             }
 
-            .turn-banner {
-                background: rgba(236, 72, 153, 0.2);
+            .duel-arena-box {
+                background: rgba(236, 72, 153, 0.15);
                 border: 2px solid #ec4899;
-                border-radius: 6px;
-                padding: 0.6rem;
-                text-align: center;
+                border-radius: 8px;
+                padding: 0.8rem;
                 margin-bottom: 1rem;
-                font-size: 0.52rem;
+            }
+
+            .duel-timer-bg {
+                width: 100%;
+                height: 14px;
+                background: #440000;
+                border: 2px solid #ff5555;
+                border-radius: 4px;
+                margin-top: 0.5rem;
+                overflow: hidden;
+            }
+
+            .duel-timer-fill {
+                height: 100%;
+                background: #00ff00;
+                transition: width 0.3s linear;
             }
 
             .kanban-grid {
@@ -373,11 +389,11 @@ async def serve_autonomous_pixel_game():
                 border: 2px solid #30363d;
                 border-radius: 6px;
                 padding: 0.5rem;
-                min-height: 120px;
+                min-height: 100px;
             }
 
             .kanban-col-title {
-                font-size: 0.42rem;
+                font-size: 0.4rem;
                 font-weight: bold;
                 margin-bottom: 0.4rem;
                 text-align: center;
@@ -393,24 +409,8 @@ async def serve_autonomous_pixel_game():
                 border-radius: 4px;
                 padding: 0.4rem;
                 margin-bottom: 0.4rem;
-                font-size: 0.4rem;
+                font-size: 0.38rem;
                 line-height: 1.3;
-            }
-
-            .time-bar-bg {
-                width: 100%;
-                height: 8px;
-                background: #440000;
-                border: 1px solid #ff5555;
-                border-radius: 3px;
-                margin-top: 0.2rem;
-                overflow: hidden;
-            }
-
-            .time-bar-fill {
-                height: 100%;
-                background: #00ff00;
-                transition: width 0.3s linear;
             }
         </style>
     </head>
@@ -420,13 +420,14 @@ async def serve_autonomous_pixel_game():
 
             <div class="side-panel">
                 <div>
-                    <div class="hud-title">⚡ REAL-TIME KANBAN & EVOLUÇÃO AUTÔNOMA</div>
-                    
-                    <div id="turn-banner" class="turn-banner">
-                        TURNO ATUAL: CARREGANDO...
+                    <div class="hud-title">⚔️ ARENA DE DUELO REAL CONTRA O TIMEOUT</div>
+
+                    <!-- CAIXA DE DUELO EM TEMPO REAL -->
+                    <div id="duel-box" class="duel-arena-box">
+                        <div style="font-size:0.5rem; color:#ec4899; text-align:center;">AGUARDANDO DUELO...</div>
                     </div>
 
-                    <!-- QUADRO KANBAN ATUALIZANDO EM TEMPO REAL -->
+                    <!-- QUADRO KANBAN EM TEMPO REAL -->
                     <div class="kanban-grid">
                         <div class="kanban-col">
                             <div class="kanban-col-title card-todo">🔴 A FAZER</div>
@@ -442,13 +443,13 @@ async def serve_autonomous_pixel_game():
                         </div>
                     </div>
 
-                    <div style="font-size:0.48rem; color:#a855f7; margin-bottom:0.4rem;">🛡️ EVOLUÇÃO AUTÔNOMA DE SKILL & VIDA (TIMEOUT):</div>
+                    <div style="font-size:0.48rem; color:#a855f7; margin-bottom:0.4rem;">🛡️ EVOLUÇÃO AUTÔNOMA DOS DUELISTAS:</div>
                     <div id="skills-list">Carregando heróis...</div>
                 </div>
 
                 <div>
                     <div style="font-size: 0.45rem; color: #55ff55; margin-bottom: 0.3rem;">📜 AUDIT LOG JIRA REAL</div>
-                    <div id="audit-log" style="font-size: 0.4rem; color: #9ca3af; max-height: 80px; overflow-y: auto;"></div>
+                    <div id="audit-log" style="font-size: 0.4rem; color: #9ca3af; max-height: 70px; overflow-y: auto;"></div>
                 </div>
             </div>
         </div>
@@ -458,7 +459,7 @@ async def serve_autonomous_pixel_game():
             const ctx = canvas.getContext('2d');
 
             function resizeCanvas() {
-                canvas.width = window.innerWidth - 550;
+                canvas.width = window.innerWidth - 560;
                 canvas.height = window.innerHeight;
             }
             resizeCanvas();
@@ -467,7 +468,7 @@ async def serve_autonomous_pixel_game():
             let gameState = {};
             let agentsList = [];
 
-            function drawPixelSprite(x, y, color, name, respMs, timeLeft, maxTime, lvl) {
+            function drawPixelSprite(x, y, color, name, isDuelist, lvl) {
                 ctx.fillStyle = color;
                 ctx.fillRect(x, y + 10, 24, 20);
 
@@ -482,16 +483,13 @@ async def serve_autonomous_pixel_game():
                 ctx.fillStyle = color;
                 ctx.fillText(`${name} (Lv.${lvl})`, x - 10, y - 10);
 
-                // Barra de Vida = Tempo Restante antes do Timeout!
-                const pct = Math.max(0, (timeLeft / maxTime) * 100);
-                ctx.fillStyle = "#440000";
-                ctx.fillRect(x - 6, y - 6, 36, 4);
-                ctx.fillStyle = pct > 40 ? "#00ff00" : "#ff5555";
-                ctx.fillRect(x - 6, y - 6, (36 * pct) / 100, 4);
-
-                ctx.font = '5px "Press Start 2P"';
-                ctx.fillStyle = "#55ffff";
-                ctx.fillText(`${respMs.toFixed(0)}ms | ${timeLeft.toFixed(1)}s`, x - 15, y + 38);
+                if (isDuelist) {
+                    ctx.fillStyle = "#ffaa00";
+                    ctx.fillRect(x - 2, y - 22, 28, 8);
+                    ctx.font = '5px "Press Start 2P"';
+                    ctx.fillStyle = "#000";
+                    ctx.fillText("⚔️ DUELO", x, y - 16);
+                }
             }
 
             function drawPOBoss(hpPercent, phaseText) {
@@ -541,10 +539,12 @@ async def serve_autonomous_pixel_game():
 
                 if (gameState) {
                     const hpPct = (gameState.boss_hp / gameState.boss_max_hp) * 100;
-                    drawPOBoss(hpPct, gameState.boss_phase || "Atualizando Quadro...");
+                    drawPOBoss(hpPct, gameState.boss_phase || "Duelo em Tempo Real...");
 
+                    const duel = gameState.duel;
                     agentsList.forEach(a => {
-                        drawPixelSprite(a.x, a.y, a.sprite_color, a.name, a.response_time_ms, a.time_remaining_sec, a.max_time_sec, a.skill_level);
+                        const isDuelist = duel && duel.is_active && duel.active_hero === a.name;
+                        drawPixelSprite(a.x, a.y, a.sprite_color, a.name, isDuelist, a.skill_level);
                     });
                 }
 
@@ -557,58 +557,71 @@ async def serve_autonomous_pixel_game():
                 const data = await res.json();
                 gameState = data.game_state;
                 agentsList = data.pixel_agents;
+                const duel = data.duel;
                 const kanban = data.kanban;
 
-                const isPoTurn = gameState.current_turn === "PO_BURST_PHASE";
-                document.getElementById('turn-banner').style.borderColor = isPoTurn ? "#ff5555" : "#55ff55";
-                document.getElementById('turn-banner').style.color = isPoTurn ? "#ff5555" : "#55ff55";
-                document.getElementById('turn-banner').innerHTML = isPoTurn ?
-                    `👹 TURNO PO: GEMMA 4 (5 CARDS JIRA) | ⏱️ ${gameState.turn_timer_sec}s` :
-                    `⚡ TURNO HERÓIS: CLAUDE-CODE & EVOLUÇÃO SKILL | ⏱️ ${gameState.turn_timer_sec}s`;
+                // Render Caixa de Duelo em Tempo Real
+                if (duel && duel.is_active && duel.active_card) {
+                    const pct = Math.max(0, (duel.timeout_timer_sec / duel.max_timeout_sec) * 100);
+                    document.getElementById('duel-box').innerHTML = `
+                        <div style="font-size:0.55rem; color:#f59e0b; font-weight:bold; margin-bottom:0.4rem;">
+                            ⚔️ DUELO EM ANDAMENTO: <span style="color:#60a5fa;">${duel.active_hero}</span> VS PO!
+                        </div>
+                        <div style="font-size:0.48rem; color:#ec4899; margin-bottom:0.4rem;">
+                            🎴 CARD EM CODIFICAÇÃO: [${duel.active_card.id}] ${duel.active_card.title}
+                        </div>
+                        <div style="font-size:0.45rem; color:#9ca3af;">
+                            ⏱️ CRONÔMETRO DE TIMEOUT REAL: <span style="color:${pct < 40 ? '#ff5555' : '#00ff00'}; font-weight:bold;">${duel.timeout_timer_sec.toFixed(1)}s</span>
+                        </div>
+                        <div class="duel-timer-bg">
+                            <div class="duel-timer-fill" style="width:${pct}%; background:${pct < 40 ? '#ff5555' : '#00ff00'};"></div>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('duel-box').innerHTML = `
+                        <div style="font-size:0.48rem; color:#9ca3af; text-align:center;">
+                            😴 NENHUM DUELO ATIVO NO MOMENTO. O PO ESTÁ GERANDO CARDS NO 'A FAZER'...
+                        </div>
+                    `;
+                }
 
-                // Render Quadro Kanban em Tempo Real
+                // Render Kanban
                 document.getElementById('col-todo').innerHTML = kanban.to_do.map(c => `
                     <div class="kanban-card-item">
                         <div style="color:#ff5555; font-weight:bold;">${c.id}</div>
-                        <div>${c.title.substring(0, 16)}...</div>
+                        <div>${c.title.substring(0, 15)}...</div>
                     </div>
                 `).join('');
 
                 document.getElementById('col-validation').innerHTML = kanban.in_validation.map(c => `
                     <div class="kanban-card-item">
                         <div style="color:#ffaa00; font-weight:bold;">${c.id}</div>
-                        <div>${c.title.substring(0, 16)}...</div>
+                        <div>${c.title.substring(0, 15)}...</div>
                     </div>
                 `).join('');
 
                 document.getElementById('col-done').innerHTML = kanban.done.map(c => `
                     <div class="kanban-card-item">
                         <div style="color:#55ff55; font-weight:bold;">${c.id}</div>
-                        <div>${c.title.substring(0, 16)}...</div>
+                        <div>${c.title.substring(0, 15)}...</div>
                     </div>
                 `).join('');
 
-                // Render Evolução Autônoma das Skills e Vida/Timeout dos Agentes
-                document.getElementById('skills-list').innerHTML = agentsList.map(a => {
-                    const pct = Math.max(0, (a.time_remaining_sec / a.max_time_sec) * 100);
-                    return `
-                        <div style="background:rgba(0,0,0,0.5); border:1px solid #30363d; padding:0.4rem; border-radius:4px; margin-bottom:0.3rem; font-size:0.42rem;">
-                            <div style="color:${a.sprite_color}; font-weight:bold;">${a.name} (Lv.${a.skill_level}) <span style="float:right; color:#a855f7;">XP: ${a.xp}%</span></div>
-                            <div style="color:#9ca3af; margin-top:0.2rem;">Latência: <span style="color:#55ffff;">${a.response_time_ms.toFixed(0)}ms</span> | Timeout: ${a.time_remaining_sec.toFixed(1)}s</div>
-                            <div class="time-bar-bg">
-                                <div class="time-bar-fill" style="width:${pct}%; background:${pct < 40 ? '#ff5555' : '#00ff00'};"></div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
+                // Render Lista de Heróis
+                document.getElementById('skills-list').innerHTML = agentsList.map(a => `
+                    <div style="background:rgba(0,0,0,0.5); border:1px solid #30363d; padding:0.4rem; border-radius:4px; margin-bottom:0.3rem; font-size:0.42rem;">
+                        <div style="color:${a.sprite_color}; font-weight:bold;">${a.name} (Lv.${a.skill_level}) <span style="float:right; color:#a855f7;">XP: ${a.xp}%</span></div>
+                        <div style="color:#9ca3af; margin-top:0.2rem;">Velocidade: <span style="color:#55ffff;">${a.response_speed_ms.toFixed(0)}ms</span> | Resistência Timeout: ${a.timeout_resistance_sec.toFixed(1)}s</div>
+                    </div>
+                `).join('');
 
                 document.getElementById('audit-log').innerHTML = data.audit_logs.map(l => `
-                    <div style="margin-bottom:0.2rem;">> ${l.action}: ${l.agent || l.card_id || ''}</div>
+                    <div style="margin-bottom:0.2rem;">> ${l.action}: ${l.hero || l.card_id || ''}</div>
                 `).join('');
             }
 
             updateState();
-            setInterval(updateState, 500); // Polling ultra-rápido de 500ms para tempo real perfeito!
+            setInterval(updateState, 400); // Polling real-time ultra preciso de 400ms!
         </script>
     </body>
     </html>
