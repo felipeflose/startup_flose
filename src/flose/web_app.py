@@ -20,62 +20,62 @@ from flose.engines.governance import GovernanceEngine
 from flose.connectors.jira import JiraConnector
 from flose.connectors.gemma_local import GemmaLocalConnector
 
-app = FastAPI(title="FLOSE (AEOS) - Interactive Minecraft 3D Agent Simulator")
+app = FastAPI(title="FLOSE (AEOS) - Minecraft 3D Boss Fight vs PO Evil Boss")
 
-# Core System Instances
 bus = EventBus()
 planner = PlanningEngine()
 governance = GovernanceEngine()
 jira = JiraConnector()
 gemma = GemmaLocalConnector()
 
-# Agentes com posições 3D no mundo Voxel Minecraft
+# Estado da Batalha contra o PO Vilão (Boss HP = 1000)
+game_state = {
+    "boss_name": "PO Evil Boss (Product Owner Supremo)",
+    "boss_hp": 1000,
+    "boss_max_hp": 1000,
+    "boss_phase": "Analisando Código Atual & Gerando Refatorações Impossíveis",
+    "team_xp": 0,
+    "victory": False,
+    "attack_cards": []
+}
+
 agents_3d: Dict[str, Dict[str, Any]] = {
     "felipe": {
-        "id": "agt_felipe",
-        "name": "Felipe",
-        "role": "CEO & Architect Leader",
+        "name": "Felipe (CEO/Architect)",
         "color": "#3b82f6",
-        "x": -4, "y": 1, "z": 2,
-        "action": "Supervisionando a Vila FLOSE",
-        "hp": 100,
-        "holding": "Diamond Sword"
+        "x": -4, "z": 3,
+        "role": "Líder de Defesa & Orquestrador",
+        "dps": 45,
+        "action": "Estratégia de Defesa contra Cards do PO"
     },
     "sofia": {
-        "id": "agt_sofia",
-        "name": "Sofia",
-        "role": "Gemma 4 Local Idea Engine",
+        "name": "Sofia (Gemma 4 Local)",
         "color": "#ec4899",
-        "x": 4, "y": 1, "z": -3,
-        "action": "Minerando Blocos de Ideias",
-        "hp": 98,
-        "holding": "Enchanted Pickaxe"
+        "x": 4, "z": -2,
+        "role": "Engenheira de Ideias Anti-Refatoração",
+        "dps": 50,
+        "action": "Pesquisando Tecnologias para Contra-Atacar o PO"
     },
     "lucas": {
-        "id": "agt_lucas",
-        "name": "Lucas",
-        "role": "Claude Code & AGY Master Coder",
+        "name": "Lucas (Claude Code/AGY)",
         "color": "#f97316",
-        "x": 0, "y": 1, "z": 4,
-        "action": "Construindo Estrutura de Código Python",
-        "hp": 99,
-        "holding": "Crafting Table"
+        "x": 1, "z": 4,
+        "role": "Master Coder (Codifica Cards Super Rápido)",
+        "dps": 65,
+        "action": "Codificando PRs para Zerar a Fila de Cards"
     },
     "beatriz": {
-        "id": "agt_beatriz",
-        "name": "Beatriz",
-        "role": "QA & Security Guardian",
+        "name": "Beatriz (QA/Security)",
         "color": "#10b981",
-        "x": -2, "y": 1, "z": -4,
-        "action": "Auditando Redstone Hashes & Testes",
-        "hp": 97,
-        "holding": "Redstone Torch"
+        "x": -3, "z": -3,
+        "role": "Escudo de Testes & Anti-Alucinação",
+        "dps": 40,
+        "action": "Auditando Testes e Destruindo Cards Inválidos"
     }
 }
 
 tasks_db: Dict[str, TaskSpecification] = {}
 audit_logs: List[Dict[str, Any]] = []
-ideas_db: List[Dict[str, Any]] = []
 
 @app.on_event("startup")
 async def startup_event():
@@ -85,95 +85,123 @@ async def startup_event():
 async def shutdown_event():
     await bus.stop()
 
-class IdeaGenerateRequest(BaseModel):
-    domain_prompt: str = "Inovação Multiagente 3D"
-    sync_jira: bool = True
-
-@app.get("/api/world/state")
-async def get_world_state():
-    # Simula pequena movimentação 3D dos agentes minerando/trabalhando
+@app.get("/api/boss/state")
+async def get_boss_state():
+    # Movimentação 3D na arena do Boss
     for agent in agents_3d.values():
-        agent["x"] += random.choice([-0.2, 0, 0.2])
-        agent["z"] += random.choice([-0.2, 0, 0.2])
-        # Mantém dentro dos limites do mapa 3D
-        agent["x"] = max(-8, min(8, agent["x"]))
-        agent["z"] = max(-8, min(8, agent["z"]))
+        agent["x"] += random.choice([-0.3, 0, 0.3])
+        agent["z"] += random.choice([-0.3, 0, 0.3])
+        agent["x"] = max(-7, min(7, agent["x"]))
+        agent["z"] = max(-7, min(7, agent["z"]))
 
     return {
+        "game_state": game_state,
         "agents": list(agents_3d.values()),
+        "cards_pending": game_state["attack_cards"],
         "tasks": list(tasks_db.values()),
-        "ideas": ideas_db,
-        "audit_logs": audit_logs[-5:], # últimos 5 logs
+        "audit_logs": audit_logs[-5:],
     }
 
-@app.post("/api/ideas/generate")
-async def generate_ideas_and_code(req: IdeaGenerateRequest):
-    # Sofia minera novas ideias
-    agents_3d["sofia"]["action"] = "🔥 MINERANDO NOVAS IDEIAS VIA GEMMA 4!"
-    generated = gemma.generate_ideas(req.domain_prompt)
-    jira_created = []
+@app.post("/api/boss/po_attack")
+async def po_boss_attack():
+    """O PO Vilão analisa o código e ataca a equipe lançando novos Cards/Refatorações difíceis!"""
+    if game_state["victory"]:
+        return {"message": "O PO Vilão já foi derrotado!"}
+
+    # Ataque do PO via Gemma 4 Local (Simula o PO pesquisando melhorias e cobrando o time)
+    attack_ideas = gemma.generate_ideas("Refatoração Crítica de Arquitetura e Estudos de Performance")
+    new_card = attack_ideas[0] if attack_ideas else {
+        "title": "CARD VILÃO: Refatorar Todo o Sistema para Microserviços Async",
+        "summary": "O PO achou o código atual lento e exige estudo completo!",
+        "jira_priority": "Highest"
+    }
+
+    game_state["attack_cards"].append(new_card)
+    game_state["boss_phase"] = f"🔥 ATAQUE DO PO: Lançou '{new_card['title']}'!"
     
-    for idx, idea in enumerate(generated, start=1):
-        ideas_db.append(idea)
+    # Registra o Card do PO no Jira
+    j_res = jira.create_issue(
+        project_key="FLO",
+        summary=f"[PO-BOSS-ATTACK] {new_card['title']}",
+        description=f"Card lançado pelo PO Vilão! Exige refatoração: {new_card['summary']}"
+    )
+
+    audit_logs.append({
+        "event_id": f"evt_{len(audit_logs)+1}",
+        "action": "PO_BOSS_ATTACKED",
+        "title": new_card["title"],
+        "jira": j_res.get("key", "FLO-PO-BOSS"),
+    })
+
+    return {"message": "Ataque do PO executado!", "card": new_card}
+
+@app.post("/api/boss/code_and_fight")
+async def code_and_fight_boss():
+    """O time (Felipe, Sofia, Lucas e Beatriz) pega os cards, codifica e ataca o PO Vilão para ganhar a partida!"""
+    if game_state["victory"]:
+        return {"message": "Vitória já conquistada!"}
+
+    if not game_state["attack_cards"]:
+        # Se não há cards, o time ataca diretamente
+        damage = 150
+        game_state["boss_hp"] = max(0, game_state["boss_hp"] - damage)
+    else:
+        # Pega o card da fila e codifica
+        card = game_state["attack_cards"].pop(0)
         
-        # Lucas programa o código
-        agents_3d["lucas"]["action"] = f"🛠️ CODIFICANDO: {idea['title']}"
-        steps = [
-            f"Felipe & Sofia: Projetar {idea['title']}",
-            f"Lucas: Escrever código Python via Claude Code & AGY",
-            f"Beatriz: Executar testes unitários e auditar evidências"
-        ]
-        created_tasks = planner.decompose_goal(f"IDEA_{idx}", idea["title"], steps)
+        # Decompõe e codifica o card do PO
+        created_tasks = planner.decompose_goal("BOSS_FIGHT", card["title"], [
+            f"Felipe & Sofia: Estudar refatoração exótica do PO",
+            f"Lucas: Codificar a solução em recorde de tempo via Claude Code & AGY",
+            f"Beatriz: Aplicar suíte de testes e fechar o card no Jira"
+        ])
         
         for task in created_tasks:
             tasks_db[task.task_id] = task
-            
-            # Felipe registra no Jira
-            agents_3d["felipe"]["action"] = f"🔷 REGISTRANDO TASK {task.task_id} NO JIRA"
-            if req.sync_jira:
-                j_res = jira.create_issue(
-                    project_key="FLO",
-                    summary=f"[FLOSE-Minecraft3D] {task.title}",
-                    description=f"Ideia minerada pela Sofia no mundo Voxel Minecraft.\n\nCodificada por Lucas (Claude Code & AGY).\nAuditada por Beatriz."
-                )
-                jira_created.append(j_res)
-            
-            # Beatriz audita o hash
-            agents_3d["beatriz"]["action"] = "🛡️ VALIDANDO AXIOMA 1 (EVIDÊNCIA EMPÍRICA)"
-            payload_str = task.model_dump_json()
-            h = governance.generate_audit_hash("agt_sofia", "MINECRAFT_VOXEL_IDEA_CODED", payload_str)
-            audit_logs.append({
-                "event_id": f"evt_{len(audit_logs)+1}",
-                "agent": "Sofia",
-                "coder": "Lucas",
-                "auditor": "Beatriz",
-                "action": "VOXEL_MINING_COMPLETE",
-                "title": idea["title"],
-                "hash": h,
-            })
-            
+        
+        # Dano massivo no Boss ao codificar o card!
+        damage = 250
+        game_state["boss_hp"] = max(0, game_state["boss_hp"] - damage)
+        game_state["team_xp"] += 100
+
+        # Atualiza status dos heróis
+        agents_3d["lucas"]["action"] = f"⚔️ DESTRUIU O CARD '{card['title']}' CODIFICANDO TUDO!"
+        agents_3d["beatriz"]["action"] = "🛡️ TESTES APROVADOS! EVIDÊNCIA ANEXADA!"
+        agents_3d["felipe"]["action"] = "🎯 CARD FECHADO NO JIRA! BOSS SOFREU CRITICAL HIT!"
+
+        audit_logs.append({
+            "event_id": f"evt_{len(audit_logs)+1}",
+            "action": "TEAM_CODED_CARD_AND_HIT_BOSS",
+            "card_cleared": card["title"],
+            "damage_dealt": damage,
+            "boss_hp_remaining": game_state["boss_hp"]
+        })
+
+    if game_state["boss_hp"] <= 0:
+        game_state["victory"] = True
+        game_state["boss_phase"] = "🏆 VITÓRIA ABSOLUTA! O PO VILÃO FOI DERROTADO PELO TIME DE ENGENHARIA!"
+
     return {
-        "status": "SUCCESS",
-        "ideas_generated": generated,
-        "jira_issues_created": jira_created,
+        "boss_hp": game_state["boss_hp"],
+        "damage_dealt": damage,
+        "victory": game_state["victory"]
     }
 
 @app.get("/", response_class=HTMLResponse)
-async def serve_interactive_minecraft_world():
+async def serve_boss_fight_game():
     return """
     <!DOCTYPE html>
     <html lang="pt-BR">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>FLOSE AEOS - 3D Minecraft Agent World</title>
+        <title>FLOSE AEOS - Minecraft 3D Boss Fight vs PO</title>
         <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-        <!-- Three.js CDN para Renderização 3D em Tempo Real -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
         <style>
             * { box-sizing: border-box; margin: 0; padding: 0; }
             body {
-                background: #090d16;
+                background: #05070c;
                 color: #fff;
                 font-family: 'Outfit', sans-serif;
                 overflow: hidden;
@@ -188,13 +216,53 @@ async def serve_interactive_minecraft_world():
                 z-index: 1;
             }
 
-            .ui-overlay {
+            /* Boss Health Bar HUD Top */
+            .boss-hud {
                 position: absolute;
                 top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 10;
+                width: 60%;
+                background: rgba(0,0,0,0.85);
+                border: 3px solid #ff5555;
+                border-radius: 12px;
+                padding: 1rem;
+                text-align: center;
+                box-shadow: 0 0 20px rgba(255, 85, 85, 0.4);
+            }
+
+            .boss-name {
+                font-family: 'Press Start 2P', monospace;
+                font-size: 0.9rem;
+                color: #ff5555;
+                margin-bottom: 0.5rem;
+                text-shadow: 2px 2px #550000;
+            }
+
+            .hp-bar-bg {
+                width: 100%;
+                height: 24px;
+                background: #220000;
+                border: 2px solid #ff5555;
+                border-radius: 6px;
+                overflow: hidden;
+            }
+
+            .hp-bar-fill {
+                height: 100%;
+                width: 100%;
+                background: linear-gradient(90deg, #ff5555, #ffaa00);
+                transition: width 0.3s ease;
+            }
+
+            /* Left Actions Menu */
+            .left-panel {
+                position: absolute;
+                top: 100px;
                 left: 20px;
                 z-index: 10;
-                background: rgba(13, 17, 23, 0.85);
-                backdrop-filter: blur(10px);
+                background: rgba(13, 17, 23, 0.9);
                 border: 2px solid #30363d;
                 border-radius: 12px;
                 padding: 1.2rem;
@@ -202,63 +270,46 @@ async def serve_interactive_minecraft_world():
                 box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             }
 
-            h1 {
-                font-family: 'Press Start 2P', monospace;
-                font-size: 0.95rem;
-                color: #55ff55;
-                margin-bottom: 0.8rem;
-                text-shadow: 2px 2px #00aa00;
-            }
-
-            .agent-status-card {
-                background: rgba(0,0,0,0.5);
-                border: 1px solid #30363d;
-                border-radius: 8px;
-                padding: 0.6rem;
-                margin-bottom: 0.5rem;
-                font-size: 0.85rem;
-            }
-
-            .agent-name {
-                font-weight: 700;
-                display: flex;
-                justify-content: space-between;
-            }
-
-            .agent-action {
-                font-size: 0.75rem;
-                color: #9ca3af;
-                margin-top: 0.2rem;
-            }
-
-            .btn-action {
+            .btn-code {
                 font-family: 'Press Start 2P', monospace;
                 background: #55ff55;
                 color: #000;
-                border: 2px solid #00aa00;
-                padding: 0.75rem;
-                font-size: 0.65rem;
+                border: 3px solid #00aa00;
+                padding: 1rem;
+                font-size: 0.7rem;
                 cursor: pointer;
                 width: 100%;
                 margin-top: 0.8rem;
-                border-radius: 6px;
-                box-shadow: 3px 3px 0px #000;
+                border-radius: 8px;
+                box-shadow: 4px 4px 0px #000;
             }
 
-            .btn-action:hover { background: #88ff88; }
+            .btn-po-attack {
+                font-family: 'Press Start 2P', monospace;
+                background: #ff5555;
+                color: #fff;
+                border: 3px solid #aa0000;
+                padding: 0.8rem;
+                font-size: 0.65rem;
+                cursor: pointer;
+                width: 100%;
+                margin-top: 0.5rem;
+                border-radius: 8px;
+                box-shadow: 4px 4px 0px #000;
+            }
 
-            .right-overlay {
+            /* Right Logs */
+            .right-panel {
                 position: absolute;
-                top: 20px;
+                top: 100px;
                 right: 20px;
                 z-index: 10;
-                background: rgba(13, 17, 23, 0.85);
-                backdrop-filter: blur(10px);
+                background: rgba(13, 17, 23, 0.9);
                 border: 2px solid #30363d;
                 border-radius: 12px;
                 padding: 1.2rem;
                 width: 360px;
-                max-height: 90vh;
+                max-height: 80vh;
                 overflow-y: auto;
             }
         </style>
@@ -266,166 +317,200 @@ async def serve_interactive_minecraft_world():
     <body>
         <div id="canvas-container"></div>
 
-        <!-- Left Controls -->
-        <div class="ui-overlay">
-            <h1>⛏️ FLOSE MINECRAFT 3D WORLD</h1>
-            <p style="font-size:0.8rem; color:#9ca3af; margin-bottom:1rem;">Agentes Trabalhando em Tempo Real no Mundo Voxel</p>
-
-            <div id="agents-status-container">Carregando agentes 3D...</div>
-
-            <button class="btn-action" onclick="mineNewIdea()">⛏️ MANDAR SOFIA & LUCAS MINERAR CODIGO</button>
+        <!-- Boss HUD -->
+        <div class="boss-hud">
+            <div class="boss-name">👹 VILÃO: PO (PRODUCT OWNER SUPREMO)</div>
+            <div class="hp-bar-bg">
+                <div id="boss-hp-fill" class="hp-bar-fill"></div>
+            </div>
+            <div id="boss-phase-text" style="font-size:0.8rem; color:#ffaa00; margin-top:0.4rem;">Fase: Cobrando Refatoração & Estudos</div>
         </div>
 
-        <!-- Right Audit Log -->
-        <div class="right-overlay">
-            <h2 style="font-family:'Press Start 2P', monospace; font-size:0.75rem; color:#ffaa00; margin-bottom:0.8rem;">📜 AUDIT LOG & JIRA SYNC</h2>
-            <div id="log-container" style="font-family:'Courier New', monospace; font-size:0.75rem; color:#55ff55;">Aguardando eventos...</div>
+        <!-- Left Controls -->
+        <div class="left-panel">
+            <h2 style="font-family:'Press Start 2P', monospace; font-size:0.75rem; color:#55ff55; margin-bottom:0.8rem;">⚔️ HERÓIS DA ENGENHARIA</h2>
+            <div id="heroes-list">Carregando heróis...</div>
+
+            <button class="btn-code" onclick="codeAndFight()">💻 PEGAR CARD DO PO & CODIFICAR! (ATACAR BOSS)</button>
+            <button class="btn-po-attack" onclick="poAttack()">👹 PO LANÇAR NOVO CARD / ESTUDO</button>
+        </div>
+
+        <!-- Right Logs -->
+        <div class="right-panel">
+            <h2 style="font-family:'Press Start 2P', monospace; font-size:0.75rem; color:#ffaa00; margin-bottom:0.8rem;">📜 AUDIT LOG & COMBATE</h2>
+            <div id="cards-pending-container" style="margin-bottom:1rem;"></div>
+            <div id="combat-log" style="font-family:'Courier New', monospace; font-size:0.75rem; color:#55ff55;">Batalha iniciada!</div>
         </div>
 
         <script>
-            // Setup Three.js Minecraft Voxel World
+            // Setup Three.js Boss Arena 3D
             const container = document.getElementById('canvas-container');
             const scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x0d1117);
+            scene.background = new THREE.Color(0x05070c);
 
             const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(15, 18, 20);
-            camera.lookAt(0, 0, 0);
+            camera.position.set(0, 18, 24);
+            camera.lookAt(0, 2, 0);
 
             const renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.shadowMap.enabled = true;
             container.appendChild(renderer.domElement);
 
-            // Lighting
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            // Arena Lighting (Reddish Boss Atmosphere)
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
             scene.add(ambientLight);
 
-            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            dirLight.position.set(20, 40, 20);
-            dirLight.castShadow = true;
-            scene.add(dirLight);
+            const bossLight = new THREE.PointLight(0xff0000, 2, 30);
+            bossLight.position.set(0, 6, 0);
+            scene.add(bossLight);
 
-            // Create Minecraft Voxel Ground Grid
-            const gridGroup = new THREE.Group();
-            for (let x = -8; x <= 8; x++) {
-                for (let z = -8; z <= 8; z++) {
+            // Nether / Lava Voxel Arena Floor
+            const arenaGroup = new THREE.Group();
+            for (let x = -9; x <= 9; x++) {
+                for (let z = -9; z <= 9; z++) {
                     const geometry = new THREE.BoxGeometry(0.95, 0.95, 0.95);
-                    const isGrass = (x + z) % 2 === 0;
+                    const isBorder = Math.abs(x) === 9 || Math.abs(z) === 9;
                     const material = new THREE.MeshStandardMaterial({
-                        color: isGrass ? 0x2e7d32 : 0x1b5e20,
+                        color: isBorder ? 0xff3300 : 0x111827,
+                        emissive: isBorder ? 0x990000 : 0x000000,
                         roughness: 0.8
                     });
                     const cube = new THREE.Mesh(geometry, material);
                     cube.position.set(x, 0, z);
-                    cube.receiveShadow = true;
-                    gridGroup.add(cube);
+                    arenaGroup.add(cube);
                 }
             }
-            scene.add(gridGroup);
+            scene.add(arenaGroup);
 
-            // Add Command Tower in the center
-            const towerGeo = new THREE.BoxGeometry(2, 6, 2);
-            const towerMat = new THREE.MeshStandardMaterial({ color: 0x6366f1, emissive: 0x312e81, roughness: 0.3 });
-            const tower = new THREE.Mesh(towerGeo, towerMat);
-            tower.position.set(0, 3, 0);
-            scene.add(tower);
+            // CREATE PO EVIL BOSS (Giant 3D Character with Glowing Red Eyes & Suit)
+            const bossGroup = new THREE.Group();
+            
+            // Giant Body
+            const bossBodyGeo = new THREE.BoxGeometry(2.5, 3.5, 1.5);
+            const bossBodyMat = new THREE.MeshStandardMaterial({ color: 0x1f2937 }); // Dark suit
+            const bossBody = new THREE.Mesh(bossBodyGeo, bossBodyMat);
+            bossBody.position.y = 2.5;
+            bossGroup.add(bossBody);
 
-            // Render 3D Minecraft Blocky Characters (Felipe, Sofia, Lucas, Beatriz)
-            const agentMeshes = {};
+            // Giant Head
+            const bossHeadGeo = new THREE.BoxGeometry(2.0, 2.0, 2.0);
+            const bossHeadMat = new THREE.MeshStandardMaterial({ color: 0x374151 });
+            const bossHead = new THREE.Mesh(bossHeadGeo, bossHeadMat);
+            bossHead.position.y = 5.25;
+            bossGroup.add(bossHead);
 
-            function createMinecraftCharacter(colorHex, name) {
+            // Glowing Red Eyes
+            const eyeGeo = new THREE.BoxGeometry(0.4, 0.2, 0.1);
+            const eyeMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+            const eyeLeft = new THREE.Mesh(eyeGeo, eyeMat);
+            eyeLeft.position.set(-0.5, 5.4, 1.01);
+            const eyeRight = new THREE.Mesh(eyeGeo, eyeMat);
+            eyeRight.position.set(0.5, 5.4, 1.01);
+            bossGroup.add(eyeLeft);
+            bossGroup.add(eyeRight);
+
+            // Giant Clipboard (Attack Tool)
+            const boardGeo = new THREE.BoxGeometry(1.5, 2.0, 0.2);
+            const boardMat = new THREE.MeshStandardMaterial({ color: 0xb91c1c, emissive: 0x7f1d1d });
+            const board = new THREE.Mesh(boardGeo, boardMat);
+            board.position.set(1.8, 3.5, 0.5);
+            bossGroup.add(board);
+
+            bossGroup.position.set(0, 0, -4);
+            scene.add(bossGroup);
+
+            // Hero Avatars (Felipe, Sofia, Lucas, Beatriz)
+            const heroMeshes = {};
+
+            function createHero3D(colorHex) {
                 const group = new THREE.Group();
-
-                // Body
                 const bodyGeo = new THREE.BoxGeometry(0.8, 1.2, 0.5);
-                const bodyMat = new THREE.MeshStandardMaterial({ color: colorHex });
+                const bodyMat = new THREE.MeshStandardMaterial({ color: colorHex, roughness: 0.3 });
                 const body = new THREE.Mesh(bodyGeo, bodyMat);
                 body.position.y = 1.1;
-                body.castShadow = true;
                 group.add(body);
 
-                // Head
                 const headGeo = new THREE.BoxGeometry(0.7, 0.7, 0.7);
-                const headMat = new THREE.MeshStandardMaterial({ color: 0xffcc99 });
+                const headMat = new THREE.MeshStandardMaterial({ color: 0x60a5fa }); // Diamond helmet look
                 const head = new THREE.Mesh(headGeo, headMat);
                 head.position.y = 2.05;
-                head.castShadow = true;
                 group.add(head);
-
-                // Holding Item (Block/Sword)
-                const itemGeo = new THREE.BoxGeometry(0.3, 0.3, 0.3);
-                const itemMat = new THREE.MeshStandardMaterial({ color: 0xffaa00, emissive: 0xff5500 });
-                const item = new THREE.Mesh(itemGeo, itemMat);
-                item.position.set(0.5, 1.2, 0.3);
-                group.add(item);
 
                 return group;
             }
 
-            // Animation Loop
             function animate() {
                 requestAnimationFrame(animate);
-
-                // Rotate central tower light
-                tower.rotation.y += 0.01;
+                
+                // PO Boss Levitation & Float animation
+                bossGroup.position.y = Math.sin(Date.now() * 0.003) * 0.4;
+                bossHead.rotation.y = Math.sin(Date.now() * 0.002) * 0.2;
 
                 renderer.render(scene, camera);
             }
             animate();
 
-            // Fetch and Sync 3D World State
-            async function updateWorld() {
-                const res = await fetch('/api/world/state');
+            async function updateGame() {
+                const res = await fetch('/api/boss/state');
                 const data = await res.json();
+                const state = data.game_state;
 
-                // Render Agents UI
-                document.getElementById('agents-status-container').innerHTML = data.agents.map(a => `
-                    <div class="agent-status-card">
-                        <div class="agent-name" style="color:${a.color};">
-                            <span>⛏️ ${a.name}</span>
-                            <span>${a.hp}% HP</span>
-                        </div>
-                        <div style="font-size:0.75rem; color:#e5e7eb;">${a.role}</div>
-                        <div class="agent-action">📍 Pos: (${a.x.toFixed(1)}, ${a.z.toFixed(1)}) | ${a.action}</div>
+                // Boss HP Bar
+                const hpPercent = (state.boss_hp / state.boss_max_hp) * 100;
+                document.getElementById('boss-hp-fill').style.width = `${hpPercent}%`;
+                document.getElementById('boss-phase-text').innerText = state.boss_phase;
+
+                // Heroes List
+                document.getElementById('heroes-list').innerHTML = data.agents.map(a => `
+                    <div style="background:rgba(0,0,0,0.5); border:1px solid #30363d; padding:0.6rem; border-radius:6px; margin-bottom:0.4rem;">
+                        <div style="font-weight:bold; color:${a.color};">🛡️ ${a.name}</div>
+                        <div style="font-size:0.75rem; color:#9ca3af;">${a.action}</div>
                     </div>
                 `).join('');
 
-                // Render 3D Agent Positions
-                data.agents.forEach(a => {
-                    if (!agentMeshes[a.name]) {
-                        const charMesh = createMinecraftCharacter(a.color, a.name);
-                        scene.add(charMesh);
-                        agentMeshes[a.name] = charMesh;
-                    }
-                    // Animate position
-                    agentMeshes[a.name].position.x = a.x;
-                    agentMeshes[a.name].position.z = a.z;
-                });
-
-                // Render Logs
-                document.getElementById('log-container').innerHTML = data.audit_logs.length ? data.audit_logs.map(l => `
-                    <div style="margin-bottom:0.6rem; border-bottom:1px solid #30363d; padding-bottom:0.4rem;">
-                        <div>[${l.action}]</div>
-                        <div style="color:#ffaa00;">${l.title || 'Task'}</div>
-                        <div style="font-size:0.65rem; color:#8b949e;">Audit Hash: ${l.hash ? l.hash.substring(0, 16) : ''}...</div>
+                // Cards Pending
+                document.getElementById('cards-pending-container').innerHTML = data.cards_pending.length ? `
+                    <div style="background:rgba(185,28,28,0.2); border:1px solid #b91c1c; padding:0.6rem; border-radius:6px;">
+                        <div style="color:#ff5555; font-size:0.75rem; font-weight:bold;">📋 CARDS DO PO NA FILA: ${data.cards_pending.length}</div>
+                        <div style="font-size:0.7rem; color:#fca5a5;">Topo: ${data.cards_pending[0].title}</div>
                     </div>
-                `).join('') : 'Sem eventos registrados.';
-            }
+                ` : '<div style="color:#55ff55; font-size:0.75rem;">✅ Nenhum card pendente! O PO está sem ataques!</div>';
 
-            async function mineNewIdea() {
-                await fetch('/api/ideas/generate', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ domain_prompt: "Multiagent Mining", sync_jira: true })
+                // Combat Log
+                document.getElementById('combat-log').innerHTML = data.audit_logs.map(l => `
+                    <div style="margin-bottom:0.5rem; border-bottom:1px solid #30363d; padding-bottom:0.3rem;">
+                        <div style="color:#ffaa00;">[${l.action}]</div>
+                        <div>${l.title || l.card_cleared || ''}</div>
+                        ${l.damage_dealt ? `<div style="color:#55ff55;">💥 Dano no PO: -${l.damage_dealt} HP</div>` : ''}
+                    </div>
+                `).join('');
+
+                // Update 3D Positions
+                data.agents.forEach(a => {
+                    if (!heroMeshes[a.name]) {
+                        const mesh = createHero3D(a.color);
+                        scene.add(mesh);
+                        heroMeshes[a.name] = mesh;
+                    }
+                    heroMeshes[a.name].position.x = a.x;
+                    heroMeshes[a.name].position.z = a.z;
                 });
-                updateWorld();
             }
 
-            updateWorld();
-            setInterval(updateWorld, 2000);
+            async function codeAndFight() {
+                await fetch('/api/boss/code_and_fight', { method: 'POST' });
+                updateGame();
+            }
 
-            // Responsive Window
+            async function poAttack() {
+                await fetch('/api/boss/po_attack', { method: 'POST' });
+                updateGame();
+            }
+
+            updateGame();
+            setInterval(updateGame, 2000);
+
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
