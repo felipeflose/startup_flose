@@ -32,6 +32,10 @@ gemma = GemmaLocalConnector()
 # Busca os cards REAIS do Jira Cloud da sua conta (felipeflose.atlassian.net)
 real_jira_cards = jira.fetch_real_jira_issues(project_key="KAN", limit=10)
 
+# Garantir que todos os cards possuem a chave 'rejections'
+for c in real_jira_cards:
+    c.setdefault("rejections", 0)
+
 game_state = {
     "boss_name": "PO EVIL BOSS",
     "boss_hp": 1000,
@@ -166,7 +170,6 @@ async def non_blocking_continuous_game_loop():
             if game_state["victory"]: break
             game_state["turn_timer_sec"] = sec
 
-            # Dispara chamadas de rede no background sem travar o loop de 1 segundo!
             if game_state["boss_cards_created_in_burst"] < 5 and sec % 10 == 0:
                 po_topics = [
                     ("Refatorar UI Frontend Nível Pixel Perfect 16-Bit", "O PO Vilão exige alinhamento perfeito de bordas HSL."),
@@ -178,7 +181,6 @@ async def non_blocking_continuous_game_loop():
                 topic_title, topic_desc = po_topics[game_state["boss_cards_created_in_burst"] % len(po_topics)]
                 asyncio.create_task(async_create_jira_card_background(topic_title, topic_desc))
 
-            # CRONÔMETRO EXATO DE 1.0 SEGUNDO SEM BLOQUEIOS
             await asyncio.sleep(1.0)
 
         # =========================================================================
@@ -189,11 +191,12 @@ async def non_blocking_continuous_game_loop():
 
         for sec in range(heroes_turn_duration, 0, -1):
             if game_state["victory"]: break
-            game_state["turn_timer_sec"] = sec  # O CRONÔMETRO DECREMENTA SEM NENHUMA PAUSA!
+            game_state["turn_timer_sec"] = sec  # O CRONÔMETRO DECREMENTA ININTERRUPTAMENTE!
 
             # 1. Se não há duelo ativo, inicia imediatamente com o próximo card!
             if not game_state["duel"]["is_active"] and game_state["kanban"]["to_do"]:
                 card = game_state["kanban"]["to_do"].pop(0)
+                card.setdefault("rejections", 0)
                 card["status"] = "EM PROGRESSO"
                 game_state["kanban"]["in_progress"].append(card)
 
@@ -259,6 +262,7 @@ async def non_blocking_continuous_game_loop():
                 elif duel["timeout_timer_sec"] <= 0:
                     # TIMEOUT REAL!
                     card_duel = duel["active_card"]
+                    card_duel.setdefault("rejections", 0)
                     card_duel["rejections"] += 1
                     card_duel["status"] = "A FAZER"
                     
@@ -277,7 +281,6 @@ async def non_blocking_continuous_game_loop():
 
                     duel["is_active"] = False
 
-            # DORMIDA EXATA DE 1 SEGUNDO (CRONÔMETRO NUNCA MAIS TRAVA!)
             await asyncio.sleep(1.0)
 
 @app.on_event("startup")
