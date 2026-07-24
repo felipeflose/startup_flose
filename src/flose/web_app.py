@@ -21,7 +21,7 @@ from flose.engines.governance import GovernanceEngine
 from flose.connectors.jira import JiraConnector
 from flose.connectors.gemma_local import GemmaLocalConnector
 
-app = FastAPI(title="FLOSE (AEOS) - Fair Real-Time Latency & Skill System")
+app = FastAPI(title="FLOSE (AEOS) - Strict PO Validation Lifecycle Game Loop")
 
 bus = EventBus()
 planner = PlanningEngine()
@@ -29,29 +29,24 @@ governance = GovernanceEngine()
 jira = JiraConnector()
 gemma = GemmaLocalConnector()
 
-# Busca os cards REAIS do Jira Cloud (felipeflose.atlassian.net)
-real_jira_cards = jira.fetch_real_jira_issues(project_key="KAN", limit=10)
-
+# Regra estrita de Kanban Workflow:
+# [1. A Fazer (To Do)] -> [2. Em Progresso] -> [3. Em Validação] -> [4. Validação PO (Aprovado/Barrado)] -> [5. Concluído (Done)]
 game_state = {
     "boss_name": "PO EVIL BOSS",
     "boss_hp": 1000,
     "boss_max_hp": 1000,
-    "boss_phase": "Monitorando o Tempo Exato de Resposta dos Agentes em Milissegundos",
+    "boss_phase": "Auditando Cards 'Em Validação' (Barrando Qualquer Problema)",
     "cards_coded_count": 0,
     "victory": False,
     "current_working_card": None,
-    "jira_backlog": real_jira_cards if real_jira_cards else [
-        {
-            "id": "KAN-9681",
-            "title": "[PO-EVIL-BOSS] Refatoração Completa do Backend e UI",
-            "type": "Épico Criado no Jira Real",
-            "comments": []
-        }
-    ]
+    "kanban": {
+        "to_do": [],
+        "in_progress": [],
+        "in_validation": [],
+        "done": []
+    }
 }
 
-# A VIDA É A MEDIÇÃO JUSTA EM TEMPO REAL DA LATÊNCIA DE CADA AGENTE!
-# Se o tempo real medido ultrapassar o Timeout Max (ex: 800ms), a vida do agente cai!
 pixel_agents: Dict[str, Dict[str, Any]] = {
     "felipe": {
         "name": "Felipe",
@@ -59,10 +54,10 @@ pixel_agents: Dict[str, Dict[str, Any]] = {
         "sprite_color": "#3b82f6",
         "x": 100, "y": 260,
         "skill_level": 1,
-        "actual_latency_ms": 120.0, # Latência real medida da última execução
-        "target_max_ms": 600.0,    # Limite justo máximo permitido pelo PO
-        "health_pct": 100.0,       # Porcentagem de vida baseada na justiça da latência
-        "action": "Supervisionando Arquitetura",
+        "actual_latency_ms": 120.0,
+        "target_max_ms": 600.0,
+        "health_pct": 100.0,
+        "action": "Supervisionando Mover de Cards para 'Em Validação'",
     },
     "sofia": {
         "name": "Sofia",
@@ -73,7 +68,7 @@ pixel_agents: Dict[str, Dict[str, Any]] = {
         "actual_latency_ms": 180.0,
         "target_max_ms": 600.0,
         "health_pct": 100.0,
-        "action": "Pesquisando Soluções no Gemma 4",
+        "action": "Minerando Requisitos para o Card no 'A Fazer'",
     },
     "lucas": {
         "name": "Lucas",
@@ -84,7 +79,7 @@ pixel_agents: Dict[str, Dict[str, Any]] = {
         "actual_latency_ms": 90.0,
         "target_max_ms": 600.0,
         "health_pct": 100.0,
-        "action": "Codificando PRs Ultra Rápido",
+        "action": "Codificando e Movendo Card para 'Em Validação'",
     },
     "beatriz": {
         "name": "Beatriz",
@@ -95,7 +90,7 @@ pixel_agents: Dict[str, Dict[str, Any]] = {
         "actual_latency_ms": 140.0,
         "target_max_ms": 600.0,
         "health_pct": 100.0,
-        "action": "Auditando Testes e Evidências",
+        "action": "Auditando Testes antes da Validação do PO",
     }
 }
 
@@ -108,105 +103,126 @@ async def upgrade_agent_skill(agent_key: str):
 
     agent = pixel_agents[agent_key]
     agent["skill_level"] += 1
-    # Upgrade reduz o limite de latência máxima permitida e melhora a velocidade real!
     agent["target_max_ms"] = max(200.0, agent["target_max_ms"] - 50.0)
     agent["actual_latency_ms"] = max(20.0, agent["actual_latency_ms"] * 0.75)
-    agent["health_pct"] = 100.0 # Restaura totalmente a vida ao aprimorar a skill!
-
-    audit_logs.append({
-        "event_id": f"evt_{len(audit_logs)+1}",
-        "action": "FAIR_SKILL_UPGRADE",
-        "agent": agent["name"],
-        "new_level": agent["skill_level"],
-        "actual_latency": f"{agent['actual_latency_ms']:.1f}ms"
-    })
+    agent["health_pct"] = 100.0
 
     return {"message": f"Skill de {agent['name']} aprimorada para Nível {agent['skill_level']}!", "agent": agent}
 
-# Loop Autônomo com Medição Justa do Tempo de Resposta em Milissegundos
-async def autonomous_fair_timer_game_loop():
+# LOOP AUTÔNOMO SEGUINDO A REGRA ESTRITA DO PO VILÃO
+async def strict_po_lifecycle_game_loop():
     while True:
-        await asyncio.sleep(4.0)
+        await asyncio.sleep(3.5)
         
         if game_state["victory"]:
             continue
 
-        # 1. PO Vilão pode criar novo card real no Jira
-        if random.random() < 0.35:
+        # -------------------------------------------------------------
+        # PASSO 1: O PO VILÃO CRIA O CARD NO 'A FAZER' (TO DO) NO JIRA REAL
+        # -------------------------------------------------------------
+        if random.random() < 0.4 and len(game_state["kanban"]["to_do"]) < 4:
             po_topics = [
-                ("Refatorar UI Frontend Nível Pixel Perfect 16-Bit", "Análise de latência do DOM e alinhamento Pixel Perfect."),
-                ("Otimização de Performance Backend Async & Caching", "Reduzir tempo de resposta do EventBus para <5ms."),
-                ("Auditoria Anti-Alucinação e Cobertura de Testes Mutation", "Testes de mutação com evidência SHA-256 no log.")
+                ("Refatoração Frontend Pixel Perfect nos Botões", "PO exige alinhamento perfeito de bordas HSL no CSS."),
+                ("Otimizar Queries Backend para <5ms", "PO exige reescrita Async ORM com verificação de latência estrita."),
+                ("Corrigir Sanitização de Inputs XSS", "PO encontrou potencial vulnerabilidade na entrada de dados."),
+                ("Adicionar Suíte de Testes de Mutação", "PO exige cobertura comprovada de 100% no log imutável.")
             ]
-            chosen_title, chosen_desc = random.choice(po_topics)
-            jira_res = jira.create_detailed_epic_or_task("KAN", chosen_title, chosen_desc, "ÉPICO REFINAMENTO")
+            title, desc = random.choice(po_topics)
+            jira_res = jira.create_detailed_epic_or_task("KAN", title, desc, "ÉPICO VILÃO PO")
             new_key = jira_res.get("key", f"KAN-{random.randint(9700, 9999)}")
+            
             new_card = {
                 "id": new_key,
-                "title": f"[PO-EVIL-BOSS] {chosen_title}",
-                "type": "Épico Criado no Jira Real",
-                "comments": []
+                "title": title,
+                "description": desc,
+                "status": "A FAZER",
+                "rejections": 0,
+                "comments": [{"author": "PO EVIL BOSS", "text": f"Criado no 'A FAZER': {title}. Quero ver se conseguem passar na minha validação!"}]
             }
-            game_state["jira_backlog"].append(new_card)
+            game_state["kanban"]["to_do"].append(new_card)
+            game_state["boss_phase"] = f"😈 PO VILÃO CRIOU O CARD {new_key} NO 'A FAZER'!"
+            
+            audit_logs.append({
+                "event_id": f"evt_{len(audit_logs)+1}",
+                "action": "PO_CREATED_CARD_IN_TO_DO",
+                "card_id": new_key,
+                "title": title
+            })
 
-        # 2. Execução dos Agentes com MEDIÇÃO JUSTA EM TEMPO REAL
-        if game_state["jira_backlog"]:
-            active_card = game_state["jira_backlog"][0]
-            game_state["current_working_card"] = active_card
-
-            agent_names = ["Felipe", "Sofia", "Lucas", "Beatriz"]
-            active_agent_name = random.choice(agent_names)
-            agent_key = active_agent_name.lower()
-            agent = pixel_agents[agent_key]
-
-            # MEDIÇÃO PRECISA DE TEMPO DE RESPOSTA (timer inicial)
+        # -------------------------------------------------------------
+        # PASSO 2: OS AGENTES PEGAM O CARD DO 'A FAZER', AJUSTAM E MOVEM PARA 'EM VALIDAÇÃO'
+        # -------------------------------------------------------------
+        if game_state["kanban"]["to_do"] and not game_state["kanban"]["in_progress"] and not game_state["kanban"]["in_validation"]:
+            card = game_state["kanban"]["to_do"].pop(0)
+            card["status"] = "EM PROGRESSO"
+            game_state["kanban"]["in_progress"].append(card)
+            game_state["current_working_card"] = card
+            
+            # Agentes atuam e ajustam o código
             t_start = time.perf_counter()
-            
-            # Simula a resposta computacional de processamento do agente
-            await asyncio.sleep(0.05 + random.uniform(0.01, 0.08))
-            
+            await asyncio.sleep(0.1)
             t_end = time.perf_counter()
-            # Latência real calculada em milissegundos
-            measured_latency = (t_end - t_start) * 1000.0 + (100.0 / agent["skill_level"])
-            agent["actual_latency_ms"] = round(measured_latency, 1)
+            
+            lucas = pixel_agents["lucas"]
+            lucas["actual_latency_ms"] = round((t_end - t_start) * 1000.0 + (90.0 / lucas["skill_level"]), 1)
+            
+            card["comments"].append({"author": "Lucas", "text": f"Ajustei o código para {card['id']}. Movendo para 'EM VALIDAÇÃO'!"})
+            jira.add_comment(card["id"], "Lucas", f"Ajuste concluído em {lucas['actual_latency_ms']}ms. Movendo para Em Validação.")
 
-            # CÁLCULO JUSTO DA VIDA DO AGENTE:
-            # Se Latência Medida < Limite Máximo -> Ganha Vida/Mantém 100%
-            # Se Latência Medida >= Limite Máximo -> Perde Vida por Demora!
-            if agent["actual_latency_ms"] <= agent["target_max_ms"]:
-                agent["health_pct"] = min(100.0, agent["health_pct"] + 5.0)
-                status_note = "EFICIENTE (Dentro do Limite)"
-            else:
-                overdue = agent["actual_latency_ms"] - agent["target_max_ms"]
-                agent["health_pct"] = max(0.0, agent["health_pct"] - (overdue * 0.2))
-                status_note = f"LENTO (+{overdue:.1f}ms de atraso)"
+            # Mover para Em Validação
+            game_state["kanban"]["in_progress"].remove(card)
+            card["status"] = "EM VALIDAÇÃO"
+            game_state["kanban"]["in_validation"].append(card)
+            game_state["boss_phase"] = f"🛠️ AGENTES MOVERAM O CARD {card['id']} PARA 'EM VALIDAÇÃO'!"
 
-            thoughts = {
-                "Felipe": f"👔 [Felipe - Lv.{agent['skill_level']}] Resposta Medida: {agent['actual_latency_ms']}ms ({status_note})",
-                "Sofia": f"👩‍💻 [Sofia - Lv.{agent['skill_level']}] Resposta Medida: {agent['actual_latency_ms']}ms ({status_note})",
-                "Lucas": f"🛠️ [Lucas - Lv.{agent['skill_level']}] Resposta Medida: {agent['actual_latency_ms']}ms ({status_note})",
-                "Beatriz": f"✅ [Beatriz - Lv.{agent['skill_level']}] Resposta Medida: {agent['actual_latency_ms']}ms ({status_note})"
-            }
+        # -------------------------------------------------------------
+        # PASSO 3: O PO VILÃO VÊ O CARD EM 'EM VALIDAÇÃO' E AUDITA (BEM CHATO!)
+        # -------------------------------------------------------------
+        if game_state["kanban"]["in_validation"]:
+            card_val = game_state["kanban"]["in_validation"].pop(0)
+            
+            # O PO Vilão é super chato! Se a latência de qualquer herói for alta ou tiver poucas habilidades, ele BARRA!
+            lucas_lat = pixel_agents["lucas"]["actual_latency_ms"]
+            po_rejection_chance = 0.5 if lucas_lat > 120.0 or card_val["rejections"] == 0 else 0.15
 
-            comment_msg = thoughts[active_agent_name]
-            active_card.setdefault("comments", []).append({"author": active_agent_name, "text": comment_msg})
-            jira.add_comment(active_card["id"], active_agent_name, comment_msg)
-
-            # Se completam o card com boa latência, fecham a issue e causam dano no PO!
-            if len(active_card["comments"]) >= 3:
-                cleared_card = game_state["jira_backlog"].pop(0)
-                damage = 250
-                game_state["boss_hp"] = max(0, game_state["boss_hp"] - damage)
-                game_state["cards_coded_count"] += 1
-
-                game_state["boss_phase"] = f"💥 CARD REAL {cleared_card['id']} RESOLVIDO COM LATÊNCIA JUSTA!"
-
-                h = governance.generate_audit_hash("agt_lucas", "FAIR_LATENCY_CARD_CLOSED", cleared_card['title'])
+            if random.random() < po_rejection_chance:
+                # PO BARRA O CARD E MANDAR DE VOLTA PRO 'A FAZER'!
+                card_val["rejections"] += 1
+                card_val["status"] = "A FAZER"
+                card_val["comments"].append({"author": "PO EVIL BOSS", "text": f"❌ CARD BARRADO! Encontrei detalhes no código! Volte para o 'A FAZER' e refaça!"})
+                jira.add_comment(card_val["id"], "PO EVIL BOSS", f"CARD BARRADO NA VALIDAÇÃO! Refazer requisitos de qualidade.")
+                
+                game_state["kanban"]["to_do"].append(card_val)
+                game_state["boss_phase"] = f"🚫 PO VILÃO BARROU O CARD {card_val['id']}! VOLTOU PRO 'A FAZER'!"
+                
                 audit_logs.append({
                     "event_id": f"evt_{len(audit_logs)+1}",
-                    "action": "FAIR_LATENCY_CARD_CLOSED",
-                    "card_id": cleared_card["id"],
-                    "measured_latency": f"{agent['actual_latency_ms']}ms",
+                    "action": "PO_REJECTED_CARD",
+                    "card_id": card_val["id"],
+                    "rejections": card_val["rejections"]
+                })
+            else:
+                # PO APROVA O CARD! CARD VAI PRO 'CONCLUÍDO (DONE)' E CAUSA DANO NO VILÃO!
+                card_val["status"] = "CONCLUÍDO"
+                card_val["comments"].append({"author": "PO EVIL BOSS", "text": "✅ Incrivelmente o código passou na minha validação rígida. Aprovado!"})
+                jira.add_comment(card_val["id"], "PO EVIL BOSS", "Aprovado na Validação Rígida do PO.")
+
+                damage = 250
+                game_state["boss_hp"] = max(0, game_state["boss_hp"] - damage)
+                game_state["kanban"]["done"].append(card_val)
+                game_state["cards_coded_count"] += 1
+
+                # Heróis recuperam vida ao passar na validação do PO!
+                for agt in pixel_agents.values():
+                    agt["health_pct"] = 100.0
+
+                game_state["boss_phase"] = f"💥 PO VILÃO TEVE QUE APROVAR O CARD {card_val['id']}! (-250 HP)"
+
+                h = governance.generate_audit_hash("agt_lucas", "CARD_APPROVED_BY_STRICT_PO", card_val['title'])
+                audit_logs.append({
+                    "event_id": f"evt_{len(audit_logs)+1}",
+                    "action": "PO_APPROVED_CARD_TO_DONE",
+                    "card_id": card_val["id"],
                     "damage": damage,
                     "boss_hp": game_state["boss_hp"],
                     "hash": h,
@@ -214,12 +230,12 @@ async def autonomous_fair_timer_game_loop():
 
                 if game_state["boss_hp"] <= 0:
                     game_state["victory"] = True
-                    game_state["boss_phase"] = "🏆 VITÓRIA! O PO VILÃO CAIU PORQUE O TIME TEVE UMA LATÊNCIA PERFEITA E JUSTA!"
+                    game_state["boss_phase"] = "🏆 VITÓRIA! O TIME DE HEROIS VENCEU A VALIDAÇÃO RÍGIDA E DERROTOU O PO VILÃO!"
 
 @app.on_event("startup")
 async def start_autonomous_loop():
     await bus.start()
-    asyncio.create_task(autonomous_fair_timer_game_loop())
+    asyncio.create_task(strict_po_lifecycle_game_loop())
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -236,7 +252,7 @@ async def get_boss_state():
     return {
         "game_state": game_state,
         "pixel_agents": list(pixel_agents.values()),
-        "jira_cards": game_state["jira_backlog"],
+        "kanban": game_state["kanban"],
         "current_card": game_state["current_working_card"],
         "audit_logs": audit_logs[-6:],
     }
@@ -249,7 +265,7 @@ async def serve_autonomous_pixel_game():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>FLOSE AEOS - Medição Justa de Tempo de Resposta em Milissegundos</title>
+        <title>FLOSE AEOS - Strict PO Validation Kanban Workflow</title>
         <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
         <style>
             * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -273,7 +289,7 @@ async def serve_autonomous_pixel_game():
             }
 
             .side-panel {
-                width: 520px;
+                width: 540px;
                 background: #11121d;
                 padding: 1.2rem;
                 display: flex;
@@ -290,13 +306,49 @@ async def serve_autonomous_pixel_game():
                 text-shadow: 2px 2px #00aa00;
             }
 
+            .kanban-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .kanban-col {
+                background: rgba(0,0,0,0.5);
+                border: 2px solid #30363d;
+                border-radius: 6px;
+                padding: 0.5rem;
+                min-height: 120px;
+            }
+
+            .kanban-col-title {
+                font-size: 0.45rem;
+                font-weight: bold;
+                margin-bottom: 0.4rem;
+                text-align: center;
+            }
+
+            .card-todo { color: #ff5555; }
+            .card-validation { color: #ffaa00; }
+            .card-done { color: #55ff55; }
+
+            .kanban-card-item {
+                background: rgba(255,255,255,0.05);
+                border: 1px solid #30363d;
+                border-radius: 4px;
+                padding: 0.4rem;
+                margin-bottom: 0.4rem;
+                font-size: 0.42rem;
+                line-height: 1.3;
+            }
+
             .skill-upgrade-card {
                 background: rgba(0,0,0,0.6);
                 border: 2px solid #3b3d54;
                 border-radius: 6px;
-                padding: 0.5rem;
-                margin-bottom: 0.4rem;
-                font-size: 0.48rem;
+                padding: 0.4rem;
+                margin-bottom: 0.3rem;
+                font-size: 0.45rem;
             }
 
             .btn-upgrade {
@@ -304,51 +356,14 @@ async def serve_autonomous_pixel_game():
                 background: #a855f7;
                 color: #fff;
                 border: 2px solid #7e22ce;
-                padding: 0.4rem 0.6rem;
-                font-size: 0.45rem;
+                padding: 0.3rem 0.5rem;
+                font-size: 0.4rem;
                 cursor: pointer;
                 border-radius: 4px;
                 float: right;
             }
 
             .btn-upgrade:hover { background: #c084fc; }
-
-            .time-bar-bg {
-                width: 100%;
-                height: 10px;
-                background: #440000;
-                border: 1px solid #ff5555;
-                border-radius: 3px;
-                margin-top: 0.3rem;
-                overflow: hidden;
-            }
-
-            .time-bar-fill {
-                height: 100%;
-                background: #00ff00;
-                transition: width 0.3s linear;
-            }
-
-            .active-card-box {
-                background: rgba(236, 72, 153, 0.15);
-                border: 2px solid #ec4899;
-                border-radius: 6px;
-                padding: 0.8rem;
-                margin-bottom: 1rem;
-                font-size: 0.55rem;
-                line-height: 1.5;
-            }
-
-            .comment-item {
-                background: rgba(0,0,0,0.5);
-                border-left: 3px solid #60a5fa;
-                padding: 0.4rem 0.6rem;
-                margin-top: 0.4rem;
-                font-size: 0.5rem;
-                color: #e5e7eb;
-            }
-
-            .comment-author { color: #f59e0b; font-weight: bold; }
         </style>
     </head>
     <body>
@@ -357,19 +372,32 @@ async def serve_autonomous_pixel_game():
 
             <div class="side-panel">
                 <div>
-                    <div class="hud-title">⏱️ MEDIÇÃO JUSTA DE LATÊNCIA (ms)</div>
-                    <div style="font-size:0.46rem; color:#9ca3af; margin-bottom:0.8rem;">A vida do agente é mantida se ele responder DENTRO do tempo máximo em milissegundos!</div>
+                    <div class="hud-title">📋 KANBAN DO PO CHATO: A FAZER ➔ VALIDAÇÃO ➔ DONE</div>
+                    <div style="font-size:0.45rem; color:#9ca3af; margin-bottom:0.8rem;">O PO cria no 'A FAZER', heróis ajustam para 'EM VALIDAÇÃO', PO valida estritamente!</div>
 
-                    <div style="font-size:0.55rem; color:#a855f7; margin-bottom:0.5rem;">🛡️ SKILLS & LATÊNCIA REAL DOS AGENTES:</div>
+                    <!-- KANBAN BOARD 3 COLUNAS -->
+                    <div class="kanban-grid">
+                        <div class="kanban-col">
+                            <div class="kanban-col-title card-todo">🔴 A FAZER</div>
+                            <div id="col-todo"></div>
+                        </div>
+                        <div class="kanban-col">
+                            <div class="kanban-col-title card-validation">🟡 EM VALIDAÇÃO</div>
+                            <div id="col-validation"></div>
+                        </div>
+                        <div class="kanban-col">
+                            <div class="kanban-col-title card-done">🟢 CONCLUÍDO</div>
+                            <div id="col-done"></div>
+                        </div>
+                    </div>
+
+                    <div style="font-size:0.5rem; color:#a855f7; margin-bottom:0.4rem;">🛡️ SKILLS DOS HERÓIS:</div>
                     <div id="skills-list">Carregando heróis...</div>
-
-                    <div style="font-size:0.55rem; color:#ec4899; margin-top:0.8rem; margin-bottom:0.4rem;">🔥 ÉPICO / CARD REAL ATUAL EM RESOLUÇÃO:</div>
-                    <div id="current-card-box" class="active-card-box">Aguardando card...</div>
                 </div>
 
                 <div>
-                    <div style="font-size: 0.5rem; color: #55ff55; margin-bottom: 0.4rem;">📜 AUDIT LOG JIRA REAL</div>
-                    <div id="audit-log" style="font-size: 0.45rem; color: #9ca3af; max-height: 90px; overflow-y: auto;"></div>
+                    <div style="font-size: 0.45rem; color: #55ff55; margin-bottom: 0.3rem;">📜 AUDIT LOG DE VALIDAÇÕES DO PO</div>
+                    <div id="audit-log" style="font-size: 0.4rem; color: #9ca3af; max-height: 80px; overflow-y: auto;"></div>
                 </div>
             </div>
         </div>
@@ -379,7 +407,7 @@ async def serve_autonomous_pixel_game():
             const ctx = canvas.getContext('2d');
 
             function resizeCanvas() {
-                canvas.width = window.innerWidth - 520;
+                canvas.width = window.innerWidth - 540;
                 canvas.height = window.innerHeight;
             }
             resizeCanvas();
@@ -388,7 +416,7 @@ async def serve_autonomous_pixel_game():
             let gameState = {};
             let agentsList = [];
 
-            function drawPixelSprite(x, y, color, name, respMs, targetMaxMs, healthPct) {
+            function drawPixelSprite(x, y, color, name, respMs, healthPct) {
                 ctx.fillStyle = color;
                 ctx.fillRect(x, y + 10, 24, 20);
 
@@ -403,15 +431,14 @@ async def serve_autonomous_pixel_game():
                 ctx.fillStyle = color;
                 ctx.fillText(name, x - 5, y - 10);
 
-                // Barra de Vida Baseada na Justiça do Tempo de Resposta em Milissegundos
                 ctx.fillStyle = "#440000";
                 ctx.fillRect(x - 6, y - 6, 36, 4);
                 ctx.fillStyle = healthPct > 50 ? "#00ff00" : "#ff5555";
                 ctx.fillRect(x - 6, y - 6, (36 * healthPct) / 100, 4);
 
                 ctx.font = '5px "Press Start 2P"';
-                ctx.fillStyle = respMs <= targetMaxMs ? "#55ffff" : "#ff5555";
-                ctx.fillText(`${respMs.toFixed(1)}ms / Max ${targetMaxMs.toFixed(0)}ms`, x - 20, y + 38);
+                ctx.fillStyle = "#55ffff";
+                ctx.fillText(`${respMs.toFixed(1)}ms`, x - 5, y + 38);
             }
 
             function drawPOBoss(hpPercent, phaseText) {
@@ -433,7 +460,7 @@ async def serve_autonomous_pixel_game():
 
                 ctx.font = '10px "Press Start 2P"';
                 ctx.fillStyle = "#ff5555";
-                ctx.fillText("👹 PO EVIL BOSS (LATENCY GAUGE)", bx - 75, by - 15);
+                ctx.fillText("👹 PO CHATO (AUDITOR DE VALIDAÇÃO)", bx - 85, by - 15);
 
                 ctx.fillStyle = "#440000";
                 ctx.fillRect(canvas.width / 2 - 150, 15, 300, 16);
@@ -442,9 +469,9 @@ async def serve_autonomous_pixel_game():
                 ctx.strokeStyle = "#ffffff";
                 ctx.strokeRect(canvas.width / 2 - 150, 15, 300, 16);
 
-                ctx.font = '7px "Press Start 2P"';
+                ctx.font = '6px "Press Start 2P"';
                 ctx.fillStyle = "#ffaa00";
-                ctx.fillText(phaseText.substring(0, 45), canvas.width / 2 - 140, 42);
+                ctx.fillText(phaseText.substring(0, 50), canvas.width / 2 - 140, 42);
             }
 
             function render() {
@@ -461,10 +488,10 @@ async def serve_autonomous_pixel_game():
 
                 if (gameState) {
                     const hpPct = (gameState.boss_hp / gameState.boss_max_hp) * 100;
-                    drawPOBoss(hpPct, gameState.boss_phase || "Monitorando Latência...");
+                    drawPOBoss(hpPct, gameState.boss_phase || "Auditando Cards...");
 
                     agentsList.forEach(a => {
-                        drawPixelSprite(a.x, a.y, a.sprite_color, a.name, a.actual_latency_ms, a.target_max_ms, a.health_pct);
+                        drawPixelSprite(a.x, a.y, a.sprite_color, a.name, a.actual_latency_ms, a.health_pct);
                     });
                 }
 
@@ -477,38 +504,42 @@ async def serve_autonomous_pixel_game():
                 const data = await res.json();
                 gameState = data.game_state;
                 agentsList = data.pixel_agents;
+                const kanban = data.kanban;
+
+                // Render Colunas Kanban
+                document.getElementById('col-todo').innerHTML = kanban.to_do.map(c => `
+                    <div class="kanban-card-item">
+                        <div style="color:#ff5555; font-weight:bold;">${c.id}</div>
+                        <div>${c.title.substring(0, 20)}...</div>
+                        ${c.rejections > 0 ? `<div style="color:#ff0000; font-size:0.38rem;">⚠️ Barrado ${c.rejections}x!</div>` : ''}
+                    </div>
+                `).join('');
+
+                document.getElementById('col-validation').innerHTML = kanban.in_validation.map(c => `
+                    <div class="kanban-card-item">
+                        <div style="color:#ffaa00; font-weight:bold;">${c.id}</div>
+                        <div>${c.title.substring(0, 20)}...</div>
+                    </div>
+                `).join('');
+
+                document.getElementById('col-done').innerHTML = kanban.done.map(c => `
+                    <div class="kanban-card-item">
+                        <div style="color:#55ff55; font-weight:bold;">${c.id}</div>
+                        <div>${c.title.substring(0, 20)}...</div>
+                    </div>
+                `).join('');
 
                 const keys = ["felipe", "sofia", "lucas", "beatriz"];
-                document.getElementById('skills-list').innerHTML = agentsList.map((a, i) => {
-                    return `
-                        <div class="skill-upgrade-card">
-                            <button class="btn-upgrade" onclick="upgradeSkill('${keys[i]}')">UPGRADE ⬆️</button>
-                            <div style="font-weight:bold; color:${a.sprite_color};">${a.name} (Lv.${a.skill_level})</div>
-                            <div style="color:#9ca3af; margin-top:0.2rem;">Latência Real: <span style="color:${a.actual_latency_ms <= a.target_max_ms ? '#55ffff' : '#ff5555'};">${a.actual_latency_ms.toFixed(1)}ms</span> (Max: ${a.target_max_ms.toFixed(0)}ms)</div>
-                            <div class="time-bar-bg">
-                                <div class="time-bar-fill" style="width:${a.health_pct}%; background:${a.health_pct < 40 ? '#ff5555' : '#00ff00'};"></div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-
-                const currentCard = data.current_card;
-                if (currentCard) {
-                    const commentsHtml = currentCard.comments ? currentCard.comments.map(c => `
-                        <div class="comment-item">
-                            <span class="comment-author">${c.author}:</span> ${c.text}
-                        </div>
-                    `).join('') : '';
-
-                    document.getElementById('current-card-box').innerHTML = `
-                        <div style="color:#ec4899; font-weight:bold;">[${currentCard.id}] ${currentCard.title}</div>
-                        <div style="color:#9ca3af; margin-top:0.4rem;">💬 DEBATE COM MEDIÇÃO DE TEMPO REAL:</div>
-                        ${commentsHtml}
-                    `;
-                }
+                document.getElementById('skills-list').innerHTML = agentsList.map((a, i) => `
+                    <div class="skill-upgrade-card">
+                        <button class="btn-upgrade" onclick="upgradeSkill('${keys[i]}')">UPGRADE ⬆️</button>
+                        <div style="font-weight:bold; color:${a.sprite_color};">${a.name} (Lv.${a.skill_level})</div>
+                        <div style="color:#9ca3af; margin-top:0.2rem;">Latência: <span style="color:#55ffff;">${a.actual_latency_ms.toFixed(1)}ms</span></div>
+                    </div>
+                `).join('');
 
                 document.getElementById('audit-log').innerHTML = data.audit_logs.map(l => `
-                    <div style="margin-bottom:0.25rem;">> ${l.action}: ${l.measured_latency || l.card_id || ''}</div>
+                    <div style="margin-bottom:0.2rem;">> ${l.action}: ${l.card_id || ''}</div>
                 `).join('');
             }
 
