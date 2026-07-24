@@ -20,7 +20,7 @@ from flose.engines.governance import GovernanceEngine
 from flose.connectors.jira import JiraConnector
 from flose.connectors.gemma_local import GemmaLocalConnector
 
-app = FastAPI(title="FLOSE (AEOS) - Fully Autonomous Game Loop & Jira Discussions")
+app = FastAPI(title="FLOSE (AEOS) - Autonomous Recruitment & Game Loop")
 
 bus = EventBus()
 planner = PlanningEngine()
@@ -28,150 +28,143 @@ governance = GovernanceEngine()
 jira = JiraConnector()
 gemma = GemmaLocalConnector()
 
-# Busca cards reais do Jira Cloud
-real_jira_cards = jira.fetch_real_jira_issues(project_key="KAN", limit=8)
+# Busca cards reais do Jira Cloud (felipeflose.atlassian.net)
+real_jira_cards = jira.fetch_real_jira_issues(project_key="KAN", limit=10)
 
 game_state = {
     "boss_name": "PO EVIL BOSS",
     "boss_hp": 1000,
     "boss_max_hp": 1000,
-    "boss_phase": "Analisando Código Atual Backend & Frontend (Pixel Perfect)",
+    "boss_phase": "Cobrando Contratações e Refatorações no Jira",
     "cards_coded_count": 0,
     "victory": False,
     "current_working_card": None,
     "jira_backlog": real_jira_cards if real_jira_cards else [
         {
             "id": "KAN-9647",
-            "title": "Refatorar Frontend: Ajustar Grid Pixel Perfect & Cores Glassmorphism",
-            "type": "Exigência Frontend PO",
+            "title": "ONBOARDING SUBST: Novo colaborador Gabriel Augusto Silva para substituir Felipe Viana Flose",
+            "type": "Card de Contratação / RH",
             "comments": [
-                {"author": "Felipe", "text": "Entendi o escopo do PO. Precisamos alinhar os limites do container pixel a pixel."},
-                {"author": "Sofia", "text": "Pesquisei a solução com CSS Grid 16-bit e HSL tailored colors."},
-                {"author": "Lucas", "text": "Estou codificando a solução no web_app.py agora via Claude Code & AGY!"},
-                {"author": "Beatriz", "text": "Aguardando testes de regressão visual para aprovação do DoD."}
-            ]
-        },
-        {
-            "id": "KAN-9633",
-            "title": "Otimizar Backend: Reduzir Latência do EventBus para <5ms",
-            "type": "Cobrança Backend PO",
-            "comments": [
-                {"author": "Felipe", "text": "PO exige latência ultra baixa. Vamos otimizar a fila de prioridades do asyncio."},
-                {"author": "Lucas", "text": "Implementando estrutura de deque de alta performance no event_bus.py."},
+                {"author": "Felipe", "text": "Identifiquei a demanda de contratação para a equipe. Iniciando processo de onboarding autônomo."},
+                {"author": "Sofia", "text": "Validando perfil técnico do candidato Gabriel Augusto Silva via Engine de Recrutamento."},
+                {"author": "Lucas", "text": "Provisionando chaves de acesso, ambiente local e credenciais de desenvolvedor."},
+                {"author": "Beatriz", "text": "Contratação aprovada! Novo colaborador Gabriel integrado com 100% de sucesso!"}
             ]
         }
     ]
 }
 
-# Inicializar o primeiro card em trabalho pelos agentes
-if game_state["jira_backlog"]:
-    game_state["current_working_card"] = game_state["jira_backlog"][0]
-
+# Agentes 2D Pixel Art
 pixel_agents: Dict[str, Dict[str, Any]] = {
     "felipe": {
-        "name": "Felipe (CEO/Architect)",
-        "class": "Líder de Arquitetura",
+        "name": "Felipe",
+        "class": "Líder de Arquitetura & RH",
         "sprite_color": "#3b82f6",
         "x": 100, "y": 260,
-        "action": "Supervisionando o Card em Progresso no Jira",
-        "current_thought": "Entendendo os requisitos do PO para o card atual..."
+        "action": "Supervisionando Contratações do Jira",
     },
     "sofia": {
-        "name": "Sofia (Gemma 4)",
-        "class": "Idea & Tech Analyst",
+        "name": "Sofia",
+        "class": "Gemma 4 Idea Miner",
         "sprite_color": "#ec4899",
         "x": 220, "y": 220,
-        "action": "Estudando Melhorias de Frontend Pixel Perfect",
-        "current_thought": "Pesquisando arquiteturas no Gemma 4 local..."
+        "action": "Triando Candidatos & Currículos",
     },
     "lucas": {
-        "name": "Lucas (Claude Code/AGY)",
-        "class": "Master Coder",
+        "name": "Lucas",
+        "class": "Claude Code Coder",
         "sprite_color": "#f97316",
         "x": 350, "y": 270,
-        "action": "Codificando Solução Python/CSS em Tempo Real",
-        "current_thought": "Escrevendo código limpo para zerar o card!"
+        "action": "Provisionando Acessos do Novo Contratado",
     },
     "beatriz": {
-        "name": "Beatriz (QA/Security)",
-        "class": "Shield & Tester",
+        "name": "Beatriz",
+        "class": "QA & Security Shield",
         "sprite_color": "#10b981",
         "x": 480, "y": 230,
-        "action": "Validando Cobertura de Testes & Anti-Alucinação",
-        "current_thought": "Auditando evidências de execução..."
+        "action": "Auditando Onboarding & Segurança",
     }
 }
 
 audit_logs: List[Dict[str, Any]] = []
 
-# Automação de Fundo: O Loop Continuo Autônomo da Batalha!
-async def autonomous_game_loop():
-    """Loop 100% autônomo: O PO cria cards continuamente, os agentes debatem e codificam sozinhos!"""
+# Loop Autônomo que processa e CONTRATA os novos colaboradores do Jira!
+async def autonomous_recruitment_game_loop():
     while True:
-        await asyncio.sleep(4.0) # Ciclo de ação a cada 4 segundos
+        await asyncio.sleep(4.0)
         
         if game_state["victory"]:
             continue
 
-        # 1. PO Vilão tenta criar um novo Card aleatoriamente analisando o código atual
-        if random.random() < 0.4:
-            po_topics = [
-                "Refatoração Frontend: Ajustar alinhamento Pixel Perfect nos botões",
-                "Otimização Backend: Reescrever queries SQL para Async ORM",
-                "Estudo de Desempenho: Adicionar Caching Redis para a API de Status",
-                "Segurança Frontend: Sanitizar todos os inputs contra XSS e Injeção",
-                "Melhoria UI: Implementar Dark Mode Voxel com HSL tailored palette"
+        # 1. PO Vilão gera ocasionalmente novos cards de Contratação / Refatoração
+        if random.random() < 0.35:
+            recruitment_topics = [
+                "CONTRATAÇÃO: Onboarding de Engenheiro de Dados Senior",
+                "CONTRATAÇÃO: Efetivar Dev Frontend especialista em React/Pixel Art",
+                "CONTRATAÇÃO: Substituição de Dev Backend para módulo de microserviços",
+                "Refatoração Frontend: Ajustar Grid Pixel Perfect no Dashboard"
             ]
-            chosen_topic = random.choice(po_topics)
+            chosen_topic = random.choice(recruitment_topics)
             new_id = f"KAN-{random.randint(9650, 9999)}"
             new_card = {
                 "id": new_id,
                 "title": chosen_topic,
-                "type": "Ataque do PO (Refatoração Exigida)",
+                "type": "Card de Contratação / RH" if "CONTRATAÇÃO" in chosen_topic else "Ataque do PO",
                 "comments": [
-                    {"author": "PO Vilão", "text": f"Analisei o código atual e exijo melhoria imediata em: {chosen_topic}!"}
+                    {"author": "PO Vilão", "text": f"Nova demanda criada no Jira: {chosen_topic}!"}
                 ]
             }
             game_state["jira_backlog"].append(new_card)
-            game_state["boss_phase"] = f"😈 PO VILÃO ADICIONOU NOVO CARD {new_id} NO JIRA!"
+            game_state["boss_phase"] = f"📋 NOVA DEMANDA DE CONTRATAÇÃO: {new_id}!"
+            jira.create_issue("KAN", f"[RECRUITMENT] {chosen_topic}", f"Demanda de Contratação: {chosen_topic}")
 
-            # Envia para o Jira Real se configurado
-            jira.create_issue("KAN", f"[PO-ATTACK] {chosen_topic}", f"Exigência do PO Vilão: {chosen_topic}")
-
-        # 2. Se há cards no backlog, os agentes debatem e codificam automaticamente!
+        # 2. Processamento autônomo dos cards pelo Time
         if game_state["jira_backlog"]:
             active_card = game_state["jira_backlog"][0]
             game_state["current_working_card"] = active_card
 
-            # Simula debate dos agentes sobre o card
+            is_hiring = "SUBST" in active_card["title"].upper() or "CONTRATAÇÃO" in active_card["title"].upper() or "ONBOARDING" in active_card["title"].upper()
+
             agent_names = ["Felipe", "Sofia", "Lucas", "Beatriz"]
             active_agent = random.choice(agent_names)
             
-            thoughts = {
-                "Felipe": f"Analisando arquitetura para resolver {active_card['id']}.",
-                "Sofia": f"Gemma 4 sugeriu padrão otimizado para {active_card['title']}.",
-                "Lucas": f"Claude Code & AGY aplicaram o patch de código para {active_card['id']}!",
-                "Beatriz": f"Suíte de testes aprovada com 100% de evidência para {active_card['id']}."
-            }
+            if is_hiring:
+                thoughts = {
+                    "Felipe": f"👔 [RH Engine] Analisando requisitos de Contratação para {active_card['id']}.",
+                    "Sofia": f"👩‍💻 [Gemma 4] Triando currículo e perfil técnico do novo colaborador para {active_card['id']}.",
+                    "Lucas": f"🛠️ [AGY Coder] Criando contas, repositórios e acessos de desenvolvimento para {active_card['id']}.",
+                    "Beatriz": f"✅ [Audit QA] Onboarding concluído! Novo colaborador CONTRATADO com sucesso para {active_card['id']}!"
+                }
+            else:
+                thoughts = {
+                    "Felipe": f"Analisando requisitos do card {active_card['id']}.",
+                    "Sofia": f"Gemma 4 pesquisou a melhor arquitetura para {active_card['id']}.",
+                    "Lucas": f"Claude Code codificou a solução técnica para {active_card['id']}.",
+                    "Beatriz": f"Testes unitários validados para {active_card['id']}."
+                }
 
             comment_msg = thoughts[active_agent]
             active_card.setdefault("comments", []).append({"author": active_agent, "text": comment_msg})
-            
-            # Adiciona o comentário no Jira Cloud Real se configurado!
             jira.add_comment(active_card["id"], active_agent, comment_msg)
 
-            # 3. Quando o card atinge 3 comentários de entendimento, ele é codificado e resolvido!
+            # Quando tem debate/onboarding suficiente, CONTRATA e fecha a issue!
             if len(active_card["comments"]) >= 3:
                 cleared_card = game_state["jira_backlog"].pop(0)
-                damage = 200
+                damage = 250
                 game_state["boss_hp"] = max(0, game_state["boss_hp"] - damage)
                 game_state["cards_coded_count"] += 1
-                game_state["boss_phase"] = f"💥 AGENTES CODIFICARAM E FECHARAM O CARD {cleared_card['id']}!"
+                
+                if is_hiring:
+                    game_state["boss_phase"] = f"🎉 CONTRATAÇÃO CONCLUÍDA NO JIRA! {cleared_card['id']} EFETIVADO!"
+                    action_log = "NEW_EMPLOYEE_HIRED_AND_ONBOARDED"
+                else:
+                    game_state["boss_phase"] = f"💥 CARD {cleared_card['id']} CODIFICADO E RESOLVIDO!"
+                    action_log = "CARD_AUTOMATICALLY_CODED"
 
-                h = governance.generate_audit_hash("agt_lucas", "AUTONOMOUS_CARD_CODED", cleared_card['title'])
+                h = governance.generate_audit_hash("agt_felipe", action_log, cleared_card['title'])
                 audit_logs.append({
                     "event_id": f"evt_{len(audit_logs)+1}",
-                    "action": "CARD_AUTOMATICALLY_CODED",
+                    "action": action_log,
                     "card_id": cleared_card["id"],
                     "title": cleared_card["title"],
                     "damage": damage,
@@ -181,11 +174,11 @@ async def autonomous_game_loop():
 
                 if game_state["boss_hp"] <= 0:
                     game_state["victory"] = True
-                    game_state["boss_phase"] = "🏆 VITÓRIA! O TIME DE ENGENHARIA CODIFICOU TUDO E DERROTOU O PO VILÃO!"
+                    game_state["boss_phase"] = "🏆 VITÓRIA! TODOS OS CARDS E CONTRATAÇÕES FORAM EXECUTADOS COM SUCESSO!"
 
 @app.on_event("startup")
 async def start_autonomous_loop():
-    asyncio.create_task(autonomous_game_loop())
+    asyncio.create_task(autonomous_recruitment_game_loop())
 
 @app.get("/api/boss/state")
 async def get_boss_state():
@@ -211,7 +204,7 @@ async def serve_autonomous_pixel_game():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>FLOSE AEOS - Continuous Autonomous Pixel Agents vs PO Boss</title>
+        <title>FLOSE AEOS - Engine de Contratações & JOGO RPG Autônomo</title>
         <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
         <style>
             * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -235,7 +228,7 @@ async def serve_autonomous_pixel_game():
             }
 
             .side-panel {
-                width: 460px;
+                width: 480px;
                 background: #11121d;
                 padding: 1.2rem;
                 display: flex;
@@ -281,6 +274,14 @@ async def serve_autonomous_pixel_game():
                 margin-bottom: 0.4rem;
                 font-size: 0.5rem;
             }
+
+            .badge-hiring {
+                background: #a855f7;
+                color: white;
+                padding: 0.2rem 0.4rem;
+                font-size: 0.45rem;
+                border-radius: 3px;
+            }
         </style>
     </head>
     <body>
@@ -289,18 +290,18 @@ async def serve_autonomous_pixel_game():
 
             <div class="side-panel">
                 <div>
-                    <div class="hud-title">🤖 100% LOOP AUTÔNOMO DE BATALHA</div>
-                    <div style="font-size:0.5rem; color:#9ca3af; margin-bottom:1rem;">O PO cria cards sozinho e o time debate & codifica sem precisar apertar botões!</div>
+                    <div class="hud-title">👔 ENGINE DE CONTRATAÇÃO & BATALHA</div>
+                    <div style="font-size:0.48rem; color:#9ca3af; margin-bottom:1rem;">Processando Onboardings e Cards de RH do Jira autônomamente!</div>
 
-                    <div style="font-size:0.6rem; color:#ec4899; margin-bottom:0.5rem;">🔥 CARD ATUAL EM DEBATE & CODIFICAÇÃO:</div>
-                    <div id="current-card-box" class="active-card-box">Aguardando card...</div>
+                    <div style="font-size:0.55rem; color:#ec4899; margin-bottom:0.5rem;">🔥 DEMANDA ATUAL EM ONBOARDING / CODIFICAÇÃO:</div>
+                    <div id="current-card-box" class="active-card-box">Aguardando card de contratação...</div>
 
-                    <div style="font-size:0.6rem; color:#4c9aff; margin-bottom:0.5rem;">🔷 CARDS PENDENTES NO JIRA</div>
+                    <div style="font-size:0.55rem; color:#4c9aff; margin-bottom:0.5rem;">🔷 CARDS PENDENTES NO JIRA CLOUD</div>
                     <div id="cards-list">Carregando backlog...</div>
                 </div>
 
                 <div>
-                    <div style="font-size: 0.55rem; color: #55ff55; margin-bottom: 0.4rem;">📜 LOG DE EVIDÊNCIAS</div>
+                    <div style="font-size: 0.5rem; color: #55ff55; margin-bottom: 0.4rem;">📜 LOG DE HISTÓRICO DE AUDITORIA</div>
                     <div id="audit-log" style="font-size: 0.45rem; color: #9ca3af; max-height: 100px; overflow-y: auto;"></div>
                 </div>
             </div>
@@ -311,7 +312,7 @@ async def serve_autonomous_pixel_game():
             const ctx = canvas.getContext('2d');
 
             function resizeCanvas() {
-                canvas.width = window.innerWidth - 460;
+                canvas.width = window.innerWidth - 480;
                 canvas.height = window.innerHeight;
             }
             resizeCanvas();
@@ -357,9 +358,9 @@ async def serve_autonomous_pixel_game():
                 ctx.fillRect(bx + 20, by + 12, 12, 8);
                 ctx.fillRect(bx + 48, by + 12, 12, 8);
 
-                ctx.font = '11px "Press Start 2P"';
+                ctx.font = '10px "Press Start 2P"';
                 ctx.fillStyle = "#ff5555";
-                ctx.fillText("👹 PO EVIL BOSS (GERANDO CARDS)", bx - 50, by - 15);
+                ctx.fillText("👹 PO EVIL BOSS", bx - 30, by - 15);
 
                 ctx.fillStyle = "#440000";
                 ctx.fillRect(canvas.width / 2 - 150, 15, 300, 16);
@@ -387,7 +388,7 @@ async def serve_autonomous_pixel_game():
 
                 if (gameState) {
                     const hpPct = (gameState.boss_hp / gameState.boss_max_hp) * 100;
-                    drawPOBoss(hpPct, gameState.boss_phase || "Carregando...");
+                    drawPOBoss(hpPct, gameState.boss_phase || "Processando...");
 
                     agentsList.forEach(a => {
                         drawPixelSprite(a.x, a.y, a.sprite_color, a.name, a.action);
@@ -404,32 +405,32 @@ async def serve_autonomous_pixel_game():
                 gameState = data.game_state;
                 agentsList = data.pixel_agents;
 
-                // Card Atual em Trabalho e Seus Comentários
                 const currentCard = data.current_card;
                 if (currentCard) {
+                    const isHiring = currentCard.title.includes("SUBST") || currentCard.title.includes("CONTRATAÇÃO") || currentCard.title.includes("ONBOARDING");
                     const commentsHtml = currentCard.comments ? currentCard.comments.map(c => `
                         <div class="comment-item">
                             <span class="comment-author">${c.author}:</span> ${c.text}
                         </div>
-                    `).join('') : '<div style="color:#9ca3af;">Sem comentários ainda...</div>';
+                    `).join('') : '<div style="color:#9ca3af;">Iniciando onboarding...</div>';
 
                     document.getElementById('current-card-box').innerHTML = `
-                        <div style="color:#ec4899; font-weight:bold;">[${currentCard.id}] ${currentCard.title}</div>
-                        <div style="color:#9ca3af; margin-top:0.4rem;">💬 DEBATE DOS AGENTES NO JIRA:</div>
+                        <div style="color:${isHiring ? '#a855f7' : '#ec4899'}; font-weight:bold;">
+                            ${isHiring ? '<span class="badge-hiring">👔 CONTRATAÇÃO</span> ' : ''}[${currentCard.id}] ${currentCard.title}
+                        </div>
+                        <div style="color:#9ca3af; margin-top:0.4rem;">💬 PROCESSO DE ONBOARDING & DEBATE NO JIRA:</div>
                         ${commentsHtml}
                     `;
                 } else {
-                    document.getElementById('current-card-box').innerHTML = 'Nenhum card em trabalho.';
+                    document.getElementById('current-card-box').innerHTML = 'Nenhum card em processamento.';
                 }
 
-                // Backlog Jira
                 document.getElementById('cards-list').innerHTML = data.jira_cards.length ? data.jira_cards.map(c => `
                     <div class="jira-card">
                         <span style="color:#60a5fa; font-weight:bold;">${c.id}</span>: ${c.title}
                     </div>
-                `).join('') : '<div style="color:#55ff55; font-size:0.55rem;">🎉 JIRA LIMPO! REPOSITÓRIO 100% OK!</div>';
+                `).join('') : '<div style="color:#55ff55; font-size:0.55rem;">🎉 TODAS AS CONTRATAÇÕES E CARDS FORAM EXECUTADOS!</div>';
 
-                // Audit Log
                 document.getElementById('audit-log').innerHTML = data.audit_logs.map(l => `
                     <div style="margin-bottom:0.25rem;">> ${l.action}: ${l.title || ''}</div>
                 `).join('');
