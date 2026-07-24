@@ -1,4 +1,5 @@
 import asyncio
+import random
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel
@@ -19,7 +20,7 @@ from flose.engines.governance import GovernanceEngine
 from flose.connectors.jira import JiraConnector
 from flose.connectors.gemma_local import GemmaLocalConnector
 
-app = FastAPI(title="FLOSE (AEOS) - Minecraft 3D Control Tower")
+app = FastAPI(title="FLOSE (AEOS) - Interactive Minecraft 3D Agent Simulator")
 
 # Core System Instances
 bus = EventBus()
@@ -28,12 +29,48 @@ governance = GovernanceEngine()
 jira = JiraConnector()
 gemma = GemmaLocalConnector()
 
-# Organograma com Nomes de Pessoas Reais (Estilo Minecraft Voxel)
-agents_db: Dict[str, AgentIdentity] = {
-    "agt_felipe": AgentIdentity(agent_id="agt_felipe", role_name="Felipe (CEO & Architect Leader)", tier=AgentTier.EXECUTIVE, reputation_score=1.0),
-    "agt_gemma_sofia": AgentIdentity(agent_id="agt_gemma_sofia", role_name="Sofia (Gemma 4 Local Idea Engine)", tier=AgentTier.EXECUTIVE, reputation_score=0.98),
-    "agt_claude_lucas": AgentIdentity(agent_id="agt_claude_lucas", role_name="Lucas (Claude Code & AGY Master Coder)", tier=AgentTier.ENGINEERING, reputation_score=0.99),
-    "agt_beatriz_qa": AgentIdentity(agent_id="agt_beatriz_qa", role_name="Beatriz (QA & Security Guardian)", tier=AgentTier.QA_SECURITY, reputation_score=0.97),
+# Agentes com posições 3D no mundo Voxel Minecraft
+agents_3d: Dict[str, Dict[str, Any]] = {
+    "felipe": {
+        "id": "agt_felipe",
+        "name": "Felipe",
+        "role": "CEO & Architect Leader",
+        "color": "#3b82f6",
+        "x": -4, "y": 1, "z": 2,
+        "action": "Supervisionando a Vila FLOSE",
+        "hp": 100,
+        "holding": "Diamond Sword"
+    },
+    "sofia": {
+        "id": "agt_sofia",
+        "name": "Sofia",
+        "role": "Gemma 4 Local Idea Engine",
+        "color": "#ec4899",
+        "x": 4, "y": 1, "z": -3,
+        "action": "Minerando Blocos de Ideias",
+        "hp": 98,
+        "holding": "Enchanted Pickaxe"
+    },
+    "lucas": {
+        "id": "agt_lucas",
+        "name": "Lucas",
+        "role": "Claude Code & AGY Master Coder",
+        "color": "#f97316",
+        "x": 0, "y": 1, "z": 4,
+        "action": "Construindo Estrutura de Código Python",
+        "hp": 99,
+        "holding": "Crafting Table"
+    },
+    "beatriz": {
+        "id": "agt_beatriz",
+        "name": "Beatriz",
+        "role": "QA & Security Guardian",
+        "color": "#10b981",
+        "x": -2, "y": 1, "z": -4,
+        "action": "Auditando Redstone Hashes & Testes",
+        "hp": 97,
+        "holding": "Redstone Torch"
+    }
 }
 
 tasks_db: Dict[str, TaskSpecification] = {}
@@ -49,66 +86,69 @@ async def shutdown_event():
     await bus.stop()
 
 class IdeaGenerateRequest(BaseModel):
-    domain_prompt: str = "Inovação Multiagente e Governança de Tokens"
+    domain_prompt: str = "Inovação Multiagente 3D"
     sync_jira: bool = True
 
-@app.get("/api/status")
-async def get_status():
+@app.get("/api/world/state")
+async def get_world_state():
+    # Simula pequena movimentação 3D dos agentes minerando/trabalhando
+    for agent in agents_3d.values():
+        agent["x"] += random.choice([-0.2, 0, 0.2])
+        agent["z"] += random.choice([-0.2, 0, 0.2])
+        # Mantém dentro dos limites do mapa 3D
+        agent["x"] = max(-8, min(8, agent["x"]))
+        agent["z"] = max(-8, min(8, agent["z"]))
+
     return {
-        "status": "OPERATIONAL",
-        "system": "FLOSE AEOS v0.1.0 (Minecraft 3D Edition)",
-        "gemma_local_engine": "ACTIVE (Sofia)",
-        "claude_coder": "ACTIVE (Lucas)",
-        "qa_security": "ACTIVE (Beatriz)",
-        "ceo_architect": "ACTIVE (Felipe)",
-        "jira_status": "CONNECTED" if jira.is_configured else "SIMULATION_MODE",
-        "active_agents": len(agents_db),
-        "total_ideas": len(ideas_db),
-        "total_tasks": len(tasks_db),
+        "agents": list(agents_3d.values()),
+        "tasks": list(tasks_db.values()),
+        "ideas": ideas_db,
+        "audit_logs": audit_logs[-5:], # últimos 5 logs
     }
-
-@app.get("/api/agents")
-async def get_agents():
-    return list(agents_db.values())
-
-@app.get("/api/ideas")
-async def get_ideas():
-    return ideas_db
 
 @app.post("/api/ideas/generate")
 async def generate_ideas_and_code(req: IdeaGenerateRequest):
+    # Sofia minera novas ideias
+    agents_3d["sofia"]["action"] = "🔥 MINERANDO NOVAS IDEIAS VIA GEMMA 4!"
     generated = gemma.generate_ideas(req.domain_prompt)
     jira_created = []
     
     for idx, idea in enumerate(generated, start=1):
         ideas_db.append(idea)
         
+        # Lucas programa o código
+        agents_3d["lucas"]["action"] = f"🛠️ CODIFICANDO: {idea['title']}"
         steps = [
-            f"Conceituar {idea['title']} no modelo Pydantic (por Sofia & Felipe)",
-            f"Codificar {idea['title']} em Python (por Lucas via Claude Code & AGY)",
-            f"Validar testes e evidências (por Beatriz QA)"
+            f"Felipe & Sofia: Projetar {idea['title']}",
+            f"Lucas: Escrever código Python via Claude Code & AGY",
+            f"Beatriz: Executar testes unitários e auditar evidências"
         ]
         created_tasks = planner.decompose_goal(f"IDEA_{idx}", idea["title"], steps)
         
         for task in created_tasks:
             tasks_db[task.task_id] = task
             
+            # Felipe registra no Jira
+            agents_3d["felipe"]["action"] = f"🔷 REGISTRANDO TASK {task.task_id} NO JIRA"
             if req.sync_jira:
                 j_res = jira.create_issue(
                     project_key="FLO",
-                    summary=f"[FLOSE-Gemma4] {task.title}",
-                    description=f"Ideia gerada pela agente Sofia (Gemma 4 Local).\n\nResumo: {idea['summary']}\nResponsável por codificar: Lucas (Claude Code & AGY).\nAuditora: Beatriz (QA)."
+                    summary=f"[FLOSE-Minecraft3D] {task.title}",
+                    description=f"Ideia minerada pela Sofia no mundo Voxel Minecraft.\n\nCodificada por Lucas (Claude Code & AGY).\nAuditada por Beatriz."
                 )
                 jira_created.append(j_res)
             
+            # Beatriz audita o hash
+            agents_3d["beatriz"]["action"] = "🛡️ VALIDANDO AXIOMA 1 (EVIDÊNCIA EMPÍRICA)"
             payload_str = task.model_dump_json()
-            h = governance.generate_audit_hash("agt_gemma_sofia", "IDEA_GENERATED_AND_CODED", payload_str)
+            h = governance.generate_audit_hash("agt_sofia", "MINECRAFT_VOXEL_IDEA_CODED", payload_str)
             audit_logs.append({
                 "event_id": f"evt_{len(audit_logs)+1}",
-                "agent_id": "agt_gemma_sofia (Sofia)",
-                "coder_agent": "agt_claude_lucas (Lucas)",
-                "action": "MINECRAFT_VOXEL_IDEA_REGISTERED_IN_JIRA",
-                "idea_title": idea["title"],
+                "agent": "Sofia",
+                "coder": "Lucas",
+                "auditor": "Beatriz",
+                "action": "VOXEL_MINING_COMPLETE",
+                "title": idea["title"],
                 "hash": h,
             })
             
@@ -116,231 +156,281 @@ async def generate_ideas_and_code(req: IdeaGenerateRequest):
         "status": "SUCCESS",
         "ideas_generated": generated,
         "jira_issues_created": jira_created,
-        "tasks_in_queue": len(created_tasks)
     }
 
 @app.get("/", response_class=HTMLResponse)
-async def serve_dashboard():
+async def serve_interactive_minecraft_world():
     return """
     <!DOCTYPE html>
     <html lang="pt-BR">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>FLOSE (AEOS) - Minecraft 3D Voxel World</title>
+        <title>FLOSE AEOS - 3D Minecraft Agent World</title>
         <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+        <!-- Three.js CDN para Renderização 3D em Tempo Real -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
         <style>
-            :root {
-                --bg: #0d1117;
-                --card-bg: rgba(22, 27, 34, 0.85);
-                --mc-green: #55ff55;
-                --mc-aqua: #55ffff;
-                --mc-gold: #ffaa00;
-                --mc-red: #ff5555;
-                --mc-purple: #aa00aa;
-                --border: #30363d;
-            }
-
             * { box-sizing: border-box; margin: 0; padding: 0; }
             body {
+                background: #090d16;
+                color: #fff;
                 font-family: 'Outfit', sans-serif;
-                background-color: var(--bg);
-                color: #c9d1d9;
-                padding: 2rem;
-                min-height: 100vh;
-                background-image: radial-gradient(#21262d 1px, transparent 1px);
-                background-size: 16px 16px;
+                overflow: hidden;
             }
 
-            header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 2rem;
-                padding-bottom: 1rem;
-                border-bottom: 2px dashed var(--border);
+            #canvas-container {
+                width: 100vw;
+                height: 100vh;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 1;
             }
 
-            .logo {
+            .ui-overlay {
+                position: absolute;
+                top: 20px;
+                left: 20px;
+                z-index: 10;
+                background: rgba(13, 17, 23, 0.85);
+                backdrop-filter: blur(10px);
+                border: 2px solid #30363d;
+                border-radius: 12px;
+                padding: 1.2rem;
+                width: 380px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            }
+
+            h1 {
                 font-family: 'Press Start 2P', monospace;
-                font-size: 1.4rem;
-                color: var(--mc-green);
-                text-shadow: 3px 3px #00aa00;
+                font-size: 0.95rem;
+                color: #55ff55;
+                margin-bottom: 0.8rem;
+                text-shadow: 2px 2px #00aa00;
             }
 
-            .badges { display: flex; gap: 0.5rem; }
-
-            .badge {
-                font-family: 'Press Start 2P', monospace;
-                padding: 0.5rem 0.8rem;
-                border-radius: 4px;
-                font-size: 0.65rem;
-                box-shadow: 3px 3px 0px #000;
-            }
-
-            .badge-felipe { background: #00a; color: #fff; }
-            .badge-sofia { background: #a0a; color: #fff; }
-            .badge-lucas { background: #f50; color: #fff; }
-            .badge-beatriz { background: #0a0; color: #fff; }
-
-            .grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-                gap: 1.5rem;
-                margin-bottom: 2rem;
-            }
-
-            .card {
-                background: var(--card-bg);
-                border: 3px solid var(--border);
+            .agent-status-card {
+                background: rgba(0,0,0,0.5);
+                border: 1px solid #30363d;
                 border-radius: 8px;
-                padding: 1.5rem;
-                box-shadow: 6px 6px 0px #000;
-            }
-
-            .card h3 {
-                font-family: 'Press Start 2P', monospace;
+                padding: 0.6rem;
+                margin-bottom: 0.5rem;
                 font-size: 0.85rem;
-                margin-bottom: 1rem;
-                color: var(--mc-gold);
-                text-shadow: 2px 2px #553300;
             }
 
-            .agent-item {
+            .agent-name {
+                font-weight: 700;
                 display: flex;
                 justify-content: space-between;
-                align-items: center;
-                padding: 0.75rem;
-                background: rgba(0,0,0,0.4);
-                border: 2px solid #21262d;
-                border-radius: 4px;
-                margin-bottom: 0.5rem;
             }
 
-            .agent-name { font-weight: 700; color: var(--mc-aqua); }
-            .agent-role { font-size: 0.85rem; color: #8b949e; }
+            .agent-action {
+                font-size: 0.75rem;
+                color: #9ca3af;
+                margin-top: 0.2rem;
+            }
 
-            .btn {
+            .btn-action {
                 font-family: 'Press Start 2P', monospace;
                 background: #55ff55;
                 color: #000;
-                border: 3px solid #00aa00;
-                padding: 0.85rem;
-                font-size: 0.7rem;
-                cursor: pointer;
-                box-shadow: 4px 4px 0px #000;
-                width: 100%;
-                margin-top: 1rem;
-                transition: transform 0.1s;
-            }
-
-            .btn:active {
-                transform: translate(2px, 2px);
-                box-shadow: 2px 2px 0px #000;
-            }
-
-            input {
-                width: 100%;
+                border: 2px solid #00aa00;
                 padding: 0.75rem;
-                background: #000;
-                border: 2px solid var(--border);
-                color: var(--mc-green);
-                font-family: 'Press Start 2P', monospace;
-                font-size: 0.7rem;
-                margin-bottom: 0.75rem;
-                border-radius: 4px;
+                font-size: 0.65rem;
+                cursor: pointer;
+                width: 100%;
+                margin-top: 0.8rem;
+                border-radius: 6px;
+                box-shadow: 3px 3px 0px #000;
             }
 
-            pre {
-                font-family: 'Courier New', monospace;
-                background: #000;
-                padding: 1rem;
-                border: 2px solid var(--border);
-                color: var(--mc-green);
-                max-height: 250px;
-                overflow-x: auto;
-                font-size: 0.8rem;
+            .btn-action:hover { background: #88ff88; }
+
+            .right-overlay {
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                z-index: 10;
+                background: rgba(13, 17, 23, 0.85);
+                backdrop-filter: blur(10px);
+                border: 2px solid #30363d;
+                border-radius: 12px;
+                padding: 1.2rem;
+                width: 360px;
+                max-height: 90vh;
+                overflow-y: auto;
             }
         </style>
     </head>
     <body>
-        <header>
-            <div>
-                <div class="logo">⛏️ FLOSE MINECRAFT 3D</div>
-                <div style="color: #8b949e; font-size: 0.9rem; margin-top:0.4rem;">Voxel Agents: Felipe | Sofia | Lucas | Beatriz</div>
-            </div>
-            <div class="badges">
-                <div class="badge badge-felipe">FELIPE (CEO)</div>
-                <div class="badge badge-sofia">SOFIA (GEMMA4)</div>
-                <div class="badge badge-lucas">LUCAS (CLAUDE/AGY)</div>
-                <div class="badge badge-beatriz">BEATRIZ (QA)</div>
-            </div>
-        </header>
+        <div id="canvas-container"></div>
 
-        <div class="grid">
-            <div class="card">
-                <h3>👥 1. Time de Agentes Voxel</h3>
-                <div id="agents-list">Carregando pessoas...</div>
-            </div>
+        <!-- Left Controls -->
+        <div class="ui-overlay">
+            <h1>⛏️ FLOSE MINECRAFT 3D WORLD</h1>
+            <p style="font-size:0.8rem; color:#9ca3af; margin-bottom:1rem;">Agentes Trabalhando em Tempo Real no Mundo Voxel</p>
 
-            <div class="card">
-                <h3>⚡ 2. Criar Ideias (Gemma 4 Local)</h3>
-                <input type="text" id="domain-prompt" value="Inovacao Multiagente 3D">
-                <button class="btn" onclick="triggerPipeline()">⛏️ MINAR IDEIAS & GERAR CODIGO</button>
-            </div>
+            <div id="agents-status-container">Carregando agentes 3D...</div>
 
-            <div class="card">
-                <h3>📜 3. Audit Log (Redstone Hashes)</h3>
-                <pre id="audit-log">Aguardando mineração...</pre>
-            </div>
+            <button class="btn-action" onclick="mineNewIdea()">⛏️ MANDAR SOFIA & LUCAS MINERAR CODIGO</button>
         </div>
 
-        <div class="card">
-            <h3>💡 4. Ideias Produzidas & Registradas no Jira</h3>
-            <div id="ideas-list">Nenhuma ideia minerada ainda.</div>
+        <!-- Right Audit Log -->
+        <div class="right-overlay">
+            <h2 style="font-family:'Press Start 2P', monospace; font-size:0.75rem; color:#ffaa00; margin-bottom:0.8rem;">📜 AUDIT LOG & JIRA SYNC</h2>
+            <div id="log-container" style="font-family:'Courier New', monospace; font-size:0.75rem; color:#55ff55;">Aguardando eventos...</div>
         </div>
 
         <script>
-            async function loadData() {
-                const agentsRes = await fetch('/api/agents');
-                const agents = await agentsRes.json();
-                document.getElementById('agents-list').innerHTML = agents.map(a => `
-                    <div class="agent-item">
-                        <div>
-                            <div class="agent-name">⛏️ ${a.role_name}</div>
-                            <div class="agent-role">Tier: ${a.tier}</div>
+            // Setup Three.js Minecraft Voxel World
+            const container = document.getElementById('canvas-container');
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0d1117);
+
+            const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(15, 18, 20);
+            camera.lookAt(0, 0, 0);
+
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            container.appendChild(renderer.domElement);
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            dirLight.position.set(20, 40, 20);
+            dirLight.castShadow = true;
+            scene.add(dirLight);
+
+            // Create Minecraft Voxel Ground Grid
+            const gridGroup = new THREE.Group();
+            for (let x = -8; x <= 8; x++) {
+                for (let z = -8; z <= 8; z++) {
+                    const geometry = new THREE.BoxGeometry(0.95, 0.95, 0.95);
+                    const isGrass = (x + z) % 2 === 0;
+                    const material = new THREE.MeshStandardMaterial({
+                        color: isGrass ? 0x2e7d32 : 0x1b5e20,
+                        roughness: 0.8
+                    });
+                    const cube = new THREE.Mesh(geometry, material);
+                    cube.position.set(x, 0, z);
+                    cube.receiveShadow = true;
+                    gridGroup.add(cube);
+                }
+            }
+            scene.add(gridGroup);
+
+            // Add Command Tower in the center
+            const towerGeo = new THREE.BoxGeometry(2, 6, 2);
+            const towerMat = new THREE.MeshStandardMaterial({ color: 0x6366f1, emissive: 0x312e81, roughness: 0.3 });
+            const tower = new THREE.Mesh(towerGeo, towerMat);
+            tower.position.set(0, 3, 0);
+            scene.add(tower);
+
+            // Render 3D Minecraft Blocky Characters (Felipe, Sofia, Lucas, Beatriz)
+            const agentMeshes = {};
+
+            function createMinecraftCharacter(colorHex, name) {
+                const group = new THREE.Group();
+
+                // Body
+                const bodyGeo = new THREE.BoxGeometry(0.8, 1.2, 0.5);
+                const bodyMat = new THREE.MeshStandardMaterial({ color: colorHex });
+                const body = new THREE.Mesh(bodyGeo, bodyMat);
+                body.position.y = 1.1;
+                body.castShadow = true;
+                group.add(body);
+
+                // Head
+                const headGeo = new THREE.BoxGeometry(0.7, 0.7, 0.7);
+                const headMat = new THREE.MeshStandardMaterial({ color: 0xffcc99 });
+                const head = new THREE.Mesh(headGeo, headMat);
+                head.position.y = 2.05;
+                head.castShadow = true;
+                group.add(head);
+
+                // Holding Item (Block/Sword)
+                const itemGeo = new THREE.BoxGeometry(0.3, 0.3, 0.3);
+                const itemMat = new THREE.MeshStandardMaterial({ color: 0xffaa00, emissive: 0xff5500 });
+                const item = new THREE.Mesh(itemGeo, itemMat);
+                item.position.set(0.5, 1.2, 0.3);
+                group.add(item);
+
+                return group;
+            }
+
+            // Animation Loop
+            function animate() {
+                requestAnimationFrame(animate);
+
+                // Rotate central tower light
+                tower.rotation.y += 0.01;
+
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            // Fetch and Sync 3D World State
+            async function updateWorld() {
+                const res = await fetch('/api/world/state');
+                const data = await res.json();
+
+                // Render Agents UI
+                document.getElementById('agents-status-container').innerHTML = data.agents.map(a => `
+                    <div class="agent-status-card">
+                        <div class="agent-name" style="color:${a.color};">
+                            <span>⛏️ ${a.name}</span>
+                            <span>${a.hp}% HP</span>
                         </div>
-                        <div style="color: var(--mc-gold); font-weight:700;">${a.reputation_score * 100}% HP</div>
+                        <div style="font-size:0.75rem; color:#e5e7eb;">${a.role}</div>
+                        <div class="agent-action">📍 Pos: (${a.x.toFixed(1)}, ${a.z.toFixed(1)}) | ${a.action}</div>
                     </div>
                 `).join('');
 
-                const ideasRes = await fetch('/api/ideas');
-                const ideas = await ideasRes.json();
-                document.getElementById('ideas-list').innerHTML = ideas.length ? ideas.map(i => `
-                    <div class="agent-item">
-                        <div>
-                            <div class="agent-name" style="color:var(--mc-gold);">${i.title}</div>
-                            <div class="agent-role">${i.summary}</div>
-                        </div>
-                        <div style="color: var(--mc-aqua); font-weight:bold;">[Jira: ${i.jira_priority || 'High'}]</div>
+                // Render 3D Agent Positions
+                data.agents.forEach(a => {
+                    if (!agentMeshes[a.name]) {
+                        const charMesh = createMinecraftCharacter(a.color, a.name);
+                        scene.add(charMesh);
+                        agentMeshes[a.name] = charMesh;
+                    }
+                    // Animate position
+                    agentMeshes[a.name].position.x = a.x;
+                    agentMeshes[a.name].position.z = a.z;
+                });
+
+                // Render Logs
+                document.getElementById('log-container').innerHTML = data.audit_logs.length ? data.audit_logs.map(l => `
+                    <div style="margin-bottom:0.6rem; border-bottom:1px solid #30363d; padding-bottom:0.4rem;">
+                        <div>[${l.action}]</div>
+                        <div style="color:#ffaa00;">${l.title || 'Task'}</div>
+                        <div style="font-size:0.65rem; color:#8b949e;">Audit Hash: ${l.hash ? l.hash.substring(0, 16) : ''}...</div>
                     </div>
-                `).join('') : '<div style="color: #8b949e; padding: 1rem 0;">Nenhuma ideia minerada.</div>';
+                `).join('') : 'Sem eventos registrados.';
             }
 
-            async function triggerPipeline() {
-                const domain_prompt = document.getElementById('domain-prompt').value;
-                const res = await fetch('/api/ideas/generate', {
+            async function mineNewIdea() {
+                await fetch('/api/ideas/generate', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ domain_prompt, sync_jira: true })
+                    body: JSON.stringify({ domain_prompt: "Multiagent Mining", sync_jira: true })
                 });
-                const data = await res.json();
-                document.getElementById('audit-log').innerText = JSON.stringify(data, null, 2);
-                loadData();
+                updateWorld();
             }
 
-            loadData();
-            setInterval(loadData, 4000);
+            updateWorld();
+            setInterval(updateWorld, 2000);
+
+            // Responsive Window
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
         </script>
     </body>
     </html>
