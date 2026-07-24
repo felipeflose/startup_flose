@@ -21,7 +21,7 @@ from flose.engines.governance import GovernanceEngine
 from flose.connectors.jira import JiraConnector
 from flose.connectors.gemma_local import GemmaLocalConnector
 
-app = FastAPI(title="FLOSE (AEOS) - Strict PO Validation Lifecycle Game Loop")
+app = FastAPI(title="FLOSE (AEOS) - Perfectly Orchestrated Gemma 4 Turn-Based Game Loop")
 
 bus = EventBus()
 planner = PlanningEngine()
@@ -29,18 +29,21 @@ governance = GovernanceEngine()
 jira = JiraConnector()
 gemma = GemmaLocalConnector()
 
-# Regra estrita de Kanban Workflow:
-# [1. A Fazer (To Do)] -> [2. Em Progresso] -> [3. Em Validação] -> [4. Validação PO (Aprovado/Barrado)] -> [5. Concluído (Done)]
+# Busca os cards REAIS do Jira Cloud da sua conta (felipeflose.atlassian.net)
+real_jira_cards = jira.fetch_real_jira_issues(project_key="KAN", limit=10)
+
 game_state = {
     "boss_name": "PO EVIL BOSS",
     "boss_hp": 1000,
     "boss_max_hp": 1000,
-    "boss_phase": "Auditando Cards 'Em Validação' (Barrando Qualquer Problema)",
+    "current_turn": "PO_BURST_PHASE", # PO_BURST_PHASE (1 min - 5 cards) ou HEROES_REST_PHASE (2 min)
+    "turn_timer_sec": 60,            # Cronômetro da fase atual
+    "boss_cards_created_in_burst": 0,
     "cards_coded_count": 0,
     "victory": False,
     "current_working_card": None,
     "kanban": {
-        "to_do": [],
+        "to_do": real_jira_cards if real_jira_cards else [],
         "in_progress": [],
         "in_validation": [],
         "done": []
@@ -50,36 +53,39 @@ game_state = {
 pixel_agents: Dict[str, Dict[str, Any]] = {
     "felipe": {
         "name": "Felipe",
-        "class": "Líder de Arquitetura & RH",
+        "class": "Líder de Arquitetura",
         "sprite_color": "#3b82f6",
         "x": 100, "y": 260,
         "skill_level": 1,
         "actual_latency_ms": 120.0,
         "target_max_ms": 600.0,
         "health_pct": 100.0,
-        "action": "Supervisionando Mover de Cards para 'Em Validação'",
+        "can_use_gemma": False,
+        "action": "Aguardando Turno dos Heróis para Usar Gemma 4",
     },
     "sofia": {
         "name": "Sofia",
-        "class": "Gemma 4 Idea Miner",
+        "class": "Gemma 4 Specialist",
         "sprite_color": "#ec4899",
         "x": 220, "y": 220,
         "skill_level": 1,
         "actual_latency_ms": 180.0,
         "target_max_ms": 600.0,
         "health_pct": 100.0,
-        "action": "Minerando Requisitos para o Card no 'A Fazer'",
+        "can_use_gemma": False,
+        "action": "Gemma 4 Bloqueado (PO com Prioridade)",
     },
     "lucas": {
         "name": "Lucas",
-        "class": "Claude Code Master Coder",
+        "class": "Claude Code Coder",
         "sprite_color": "#f97316",
         "x": 350, "y": 270,
         "skill_level": 1,
         "actual_latency_ms": 90.0,
         "target_max_ms": 600.0,
         "health_pct": 100.0,
-        "action": "Codificando e Movendo Card para 'Em Validação'",
+        "can_use_gemma": False,
+        "action": "Pronto para Codificar PRs do Jira",
     },
     "beatriz": {
         "name": "Beatriz",
@@ -90,152 +96,157 @@ pixel_agents: Dict[str, Dict[str, Any]] = {
         "actual_latency_ms": 140.0,
         "target_max_ms": 600.0,
         "health_pct": 100.0,
-        "action": "Auditando Testes antes da Validação do PO",
+        "can_use_gemma": False,
+        "action": "Auditando Testes e Validação do PO",
     }
 }
 
 audit_logs: List[Dict[str, Any]] = []
 
-@app.post("/api/agents/upgrade_skill")
-async def upgrade_agent_skill(agent_key: str):
-    if agent_key not in pixel_agents:
-        raise HTTPException(status_code=404, detail="Agente não encontrado")
-
-    agent = pixel_agents[agent_key]
-    agent["skill_level"] += 1
-    agent["target_max_ms"] = max(200.0, agent["target_max_ms"] - 50.0)
-    agent["actual_latency_ms"] = max(20.0, agent["actual_latency_ms"] * 0.75)
-    agent["health_pct"] = 100.0
-
-    return {"message": f"Skill de {agent['name']} aprimorada para Nível {agent['skill_level']}!", "agent": agent}
-
-# LOOP AUTÔNOMO SEGUINDO A REGRA ESTRITA DO PO VILÃO
-async def strict_po_lifecycle_game_loop():
+# LOOP AUTÔNOMO PERFEITO: 1 MINUTO ATAQUE DO PO (5 CARDS VIA GEMMA 4) + 2 MINUTOS TURNO DOS HERÓIS (USO LIBERADO DO GEMMA 4)
+async def perfect_orchestrated_game_loop():
+    po_turn_duration = 60    # 1 Minuto (PO com prioridade no Gemma 4)
+    heroes_turn_duration = 120 # 2 Minutos (PO descansa, Heróis usam Gemma 4)
+    
     while True:
-        await asyncio.sleep(3.5)
+        # =========================================================================
+        # FASE 1: TURNO DO PO VILÃO (1 MINUTO - PRIORIDADE TOTAL NO GEMMA 4)
+        # =========================================================================
+        game_state["current_turn"] = "PO_BURST_PHASE"
+        game_state["boss_cards_created_in_burst"] = 0
         
-        if game_state["victory"]:
-            continue
+        # Bloqueia uso do Gemma 4 para os heróis durante a rajada do PO
+        for agt in pixel_agents.values():
+            agt["can_use_gemma"] = False
+            agt["action"] = "🔒 PO usando Gemma 4 com Prioridade (Aguardando...)"
 
-        # -------------------------------------------------------------
-        # PASSO 1: O PO VILÃO CRIA O CARD NO 'A FAZER' (TO DO) NO JIRA REAL
-        # -------------------------------------------------------------
-        if random.random() < 0.4 and len(game_state["kanban"]["to_do"]) < 4:
-            po_topics = [
-                ("Refatoração Frontend Pixel Perfect nos Botões", "PO exige alinhamento perfeito de bordas HSL no CSS."),
-                ("Otimizar Queries Backend para <5ms", "PO exige reescrita Async ORM com verificação de latência estrita."),
-                ("Corrigir Sanitização de Inputs XSS", "PO encontrou potencial vulnerabilidade na entrada de dados."),
-                ("Adicionar Suíte de Testes de Mutação", "PO exige cobertura comprovada de 100% no log imutável.")
-            ]
-            title, desc = random.choice(po_topics)
-            jira_res = jira.create_detailed_epic_or_task("KAN", title, desc, "ÉPICO VILÃO PO")
-            new_key = jira_res.get("key", f"KAN-{random.randint(9700, 9999)}")
+        for sec in range(po_turn_duration, 0, -1):
+            if game_state["victory"]: break
+            game_state["turn_timer_sec"] = sec
             
-            new_card = {
-                "id": new_key,
-                "title": title,
-                "description": desc,
-                "status": "A FAZER",
-                "rejections": 0,
-                "comments": [{"author": "PO EVIL BOSS", "text": f"Criado no 'A FAZER': {title}. Quero ver se conseguem passar na minha validação!"}]
-            }
-            game_state["kanban"]["to_do"].append(new_card)
-            game_state["boss_phase"] = f"😈 PO VILÃO CRIOU O CARD {new_key} NO 'A FAZER'!"
-            
-            audit_logs.append({
-                "event_id": f"evt_{len(audit_logs)+1}",
-                "action": "PO_CREATED_CARD_IN_TO_DO",
-                "card_id": new_key,
-                "title": title
-            })
-
-        # -------------------------------------------------------------
-        # PASSO 2: OS AGENTES PEGAM O CARD DO 'A FAZER', AJUSTAM E MOVEM PARA 'EM VALIDAÇÃO'
-        # -------------------------------------------------------------
-        if game_state["kanban"]["to_do"] and not game_state["kanban"]["in_progress"] and not game_state["kanban"]["in_validation"]:
-            card = game_state["kanban"]["to_do"].pop(0)
-            card["status"] = "EM PROGRESSO"
-            game_state["kanban"]["in_progress"].append(card)
-            game_state["current_working_card"] = card
-            
-            # Agentes atuam e ajustam o código
-            t_start = time.perf_counter()
-            await asyncio.sleep(0.1)
-            t_end = time.perf_counter()
-            
-            lucas = pixel_agents["lucas"]
-            lucas["actual_latency_ms"] = round((t_end - t_start) * 1000.0 + (90.0 / lucas["skill_level"]), 1)
-            
-            card["comments"].append({"author": "Lucas", "text": f"Ajustei o código para {card['id']}. Movendo para 'EM VALIDAÇÃO'!"})
-            jira.add_comment(card["id"], "Lucas", f"Ajuste concluído em {lucas['actual_latency_ms']}ms. Movendo para Em Validação.")
-
-            # Mover para Em Validação
-            game_state["kanban"]["in_progress"].remove(card)
-            card["status"] = "EM VALIDAÇÃO"
-            game_state["kanban"]["in_validation"].append(card)
-            game_state["boss_phase"] = f"🛠️ AGENTES MOVERAM O CARD {card['id']} PARA 'EM VALIDAÇÃO'!"
-
-        # -------------------------------------------------------------
-        # PASSO 3: O PO VILÃO VÊ O CARD EM 'EM VALIDAÇÃO' E AUDITA (BEM CHATO!)
-        # -------------------------------------------------------------
-        if game_state["kanban"]["in_validation"]:
-            card_val = game_state["kanban"]["in_validation"].pop(0)
-            
-            # O PO Vilão é super chato! Se a latência de qualquer herói for alta ou tiver poucas habilidades, ele BARRA!
-            lucas_lat = pixel_agents["lucas"]["actual_latency_ms"]
-            po_rejection_chance = 0.5 if lucas_lat > 120.0 or card_val["rejections"] == 0 else 0.15
-
-            if random.random() < po_rejection_chance:
-                # PO BARRA O CARD E MANDAR DE VOLTA PRO 'A FAZER'!
-                card_val["rejections"] += 1
-                card_val["status"] = "A FAZER"
-                card_val["comments"].append({"author": "PO EVIL BOSS", "text": f"❌ CARD BARRADO! Encontrei detalhes no código! Volte para o 'A FAZER' e refaça!"})
-                jira.add_comment(card_val["id"], "PO EVIL BOSS", f"CARD BARRADO NA VALIDAÇÃO! Refazer requisitos de qualidade.")
+            # O PO Vilão dispara no mínimo 5 CARDS DETALHADOS REAIS NO JIRA usando o Gemma 4 Local!
+            if game_state["boss_cards_created_in_burst"] < 5 and sec % 10 == 0:
+                po_topics = [
+                    ("Refatorar UI Frontend Nível Pixel Perfect 16-Bit", "O PO Vilão analisou a interface atual e exige alinhamento perfeito de bordas, palette HSL e suporte responsive sem flickering."),
+                    ("Otimização de Performance Backend Async & Caching", "Cobrança do PO: Reduzir a latência do EventBus para <5ms e adicionar suporte a cache Redis com TTL dinâmico."),
+                    ("Auditoria Anti-Alucinação e Cobertura de Testes Mutation", "Exigência do PO: Adicionar testes de mutação com cobertura 100% comprovada via evidência SHA-256 no log imutável."),
+                    ("CONTRATAÇÃO: Onboarding de Desenvolvedor Frontend Senior", "Demanda de RH do PO: Recrutar colaborador especialista em React e Pixel Art Canvas."),
+                    ("Sanitização Estrita contra Vulnerabilidades XSS & SQL", "O PO encontrou potenciais falhas de segurança nos endpoints REST.")
+                ]
+                topic_title, topic_desc = po_topics[game_state["boss_cards_created_in_burst"] % len(po_topics)]
                 
-                game_state["kanban"]["to_do"].append(card_val)
-                game_state["boss_phase"] = f"🚫 PO VILÃO BARROU O CARD {card_val['id']}! VOLTOU PRO 'A FAZER'!"
+                # Gera detalhes via Gemma 4 (PO com prioridade)
+                gemma_ideas = gemma.generate_ideas(topic_title)
+                idea_detail = gemma_ideas[0]["summary"] if gemma_ideas else topic_desc
+
+                # CRIAÇÃO REAL NO JIRA CLOUD!
+                jira_res = jira.create_detailed_epic_or_task("KAN", topic_title, idea_detail, "ÉPICO PO GEMMA4")
+                new_key = jira_res.get("key", f"KAN-{random.randint(9700, 9999)}")
                 
+                new_card = {
+                    "id": new_key,
+                    "title": f"[PO-GEMMA4] {topic_title}",
+                    "description": idea_detail,
+                    "status": "A FAZER",
+                    "rejections": 0,
+                    "comments": [{"author": "PO EVIL BOSS", "text": f"Criado com Gemma 4 no 'A FAZER': {topic_title}."}]
+                }
+                game_state["kanban"]["to_do"].append(new_card)
+                game_state["boss_cards_created_in_burst"] += 1
+                game_state["boss_phase"] = f"🔥 PO RAJADA GEMMA 4 ({game_state['boss_cards_created_in_burst']}/5): CRIOU CARD {new_key} NO JIRA!"
+
                 audit_logs.append({
                     "event_id": f"evt_{len(audit_logs)+1}",
-                    "action": "PO_REJECTED_CARD",
-                    "card_id": card_val["id"],
-                    "rejections": card_val["rejections"]
-                })
-            else:
-                # PO APROVA O CARD! CARD VAI PRO 'CONCLUÍDO (DONE)' E CAUSA DANO NO VILÃO!
-                card_val["status"] = "CONCLUÍDO"
-                card_val["comments"].append({"author": "PO EVIL BOSS", "text": "✅ Incrivelmente o código passou na minha validação rígida. Aprovado!"})
-                jira.add_comment(card_val["id"], "PO EVIL BOSS", "Aprovado na Validação Rígida do PO.")
-
-                damage = 250
-                game_state["boss_hp"] = max(0, game_state["boss_hp"] - damage)
-                game_state["kanban"]["done"].append(card_val)
-                game_state["cards_coded_count"] += 1
-
-                # Heróis recuperam vida ao passar na validação do PO!
-                for agt in pixel_agents.values():
-                    agt["health_pct"] = 100.0
-
-                game_state["boss_phase"] = f"💥 PO VILÃO TEVE QUE APROVAR O CARD {card_val['id']}! (-250 HP)"
-
-                h = governance.generate_audit_hash("agt_lucas", "CARD_APPROVED_BY_STRICT_PO", card_val['title'])
-                audit_logs.append({
-                    "event_id": f"evt_{len(audit_logs)+1}",
-                    "action": "PO_APPROVED_CARD_TO_DONE",
-                    "card_id": card_val["id"],
-                    "damage": damage,
-                    "boss_hp": game_state["boss_hp"],
-                    "hash": h,
+                    "action": "PO_GEMMA4_BURST_CARD_CREATED",
+                    "card_id": new_key,
+                    "title": topic_title
                 })
 
-                if game_state["boss_hp"] <= 0:
-                    game_state["victory"] = True
-                    game_state["boss_phase"] = "🏆 VITÓRIA! O TIME DE HEROIS VENCEU A VALIDAÇÃO RÍGIDA E DERROTOU O PO VILÃO!"
+            await asyncio.sleep(1.0)
+
+        # =========================================================================
+        # FASE 2: TURNO DOS HERÓIS (2 MINUTOS - PO DESCANSA, HERÓIS USAM GEMMA 4)
+        # =========================================================================
+        game_state["current_turn"] = "HEROES_REST_PHASE"
+        game_state["boss_phase"] = "😴 PO DESCANSA! HERÓIS COM ACESSO LIBERADO AO GEMMA 4 PARA CODIFICAR!"
+
+        # Libera uso do Gemma 4 para Sofia, Lucas, Felipe e Beatriz
+        for agt in pixel_agents.values():
+            agt["can_use_gemma"] = True
+            agt["action"] = "⚡ GEMMA 4 LIBERADO! Codificando e Limpando o Jira!"
+
+        for sec in range(heroes_turn_duration, 0, -1):
+            if game_state["victory"]: break
+            game_state["turn_timer_sec"] = sec
+
+            # Heróis atuam no Kanban: Pega do 'A Fazer' -> Ajusta -> Move pra 'Em Validação' -> PO valida
+            
+            # PASSO A: Mover do 'A Fazer' para 'Em Validação' usando o Gemma 4 para pesquisar soluções!
+            if game_state["kanban"]["to_do"] and not game_state["kanban"]["in_progress"]:
+                card = game_state["kanban"]["to_do"].pop(0)
+                card["status"] = "EM PROGRESSO"
+                game_state["kanban"]["in_progress"].append(card)
+                game_state["current_working_card"] = card
+
+                # Sofia usa o Gemma 4 liberado para gerar a melhor solução técnica!
+                solutions = gemma.generate_ideas(card["title"])
+                sol_text = solutions[0]["summary"] if solutions else "Solução otimizada em Python/CSS."
+
+                # Lucas codifica
+                card["comments"].append({"author": "Sofia (Gemma 4)", "text": f"Pesquisei com Gemma 4: {sol_text}"})
+                card["comments"].append({"author": "Lucas", "text": f"Codifiquei o patch para {card['id']}. Movendo para 'EM VALIDAÇÃO'!"})
+                
+                jira.add_comment(card["id"], "Sofia (Gemma 4)", f"Solução Gemma 4: {sol_text}")
+                jira.add_comment(card["id"], "Lucas", f"Patch codificado. Movendo para Em Validação.")
+
+                game_state["kanban"]["in_progress"].remove(card)
+                card["status"] = "EM VALIDAÇÃO"
+                game_state["kanban"]["in_validation"].append(card)
+
+            # PASSO B: PO (mesmo descansando) valida estritamente o card em 'Em Validação'!
+            if game_state["kanban"]["in_validation"]:
+                card_val = game_state["kanban"]["in_validation"].pop(0)
+                
+                # PO barra se não tiver perfeito
+                if random.random() < 0.25 and card_val["rejections"] == 0:
+                    card_val["rejections"] += 1
+                    card_val["status"] = "A FAZER"
+                    card_val["comments"].append({"author": "PO EVIL BOSS", "text": "❌ BARRADO! Ajuste os detalhes do código e volte para o 'A FAZER'!"})
+                    jira.add_comment(card_val["id"], "PO EVIL BOSS", "Barrado na Validação.")
+                    game_state["kanban"]["to_do"].append(card_val)
+                else:
+                    card_val["status"] = "CONCLUÍDO"
+                    card_val["comments"].append({"author": "PO EVIL BOSS", "text": "✅ Aprovado na Validação!"})
+                    jira.add_comment(card_val["id"], "PO EVIL BOSS", "Card Aprovado.")
+
+                    damage = 250
+                    game_state["boss_hp"] = max(0, game_state["boss_hp"] - damage)
+                    game_state["kanban"]["done"].append(card_val)
+                    game_state["cards_coded_count"] += 1
+
+                    for agt in pixel_agents.values():
+                        agt["health_pct"] = 100.0
+
+                    h = governance.generate_audit_hash("agt_lucas", "HEROES_GEMMA4_CARD_APPROVED", card_val['title'])
+                    audit_logs.append({
+                        "event_id": f"evt_{len(audit_logs)+1}",
+                        "action": "HEROES_GEMMA4_CARD_CLOSED",
+                        "card_id": card_val["id"],
+                        "damage": damage,
+                        "boss_hp": game_state["boss_hp"],
+                        "hash": h,
+                    })
+
+                    if game_state["boss_hp"] <= 0:
+                        game_state["victory"] = True
+                        game_state["boss_phase"] = "🏆 VITÓRIA! OS HERÓIS USARAM O GEMMA 4 PERFEITAMENTE E DERROTARAM O PO!"
+
+            await asyncio.sleep(1.0)
 
 @app.on_event("startup")
 async def start_autonomous_loop():
     await bus.start()
-    asyncio.create_task(strict_po_lifecycle_game_loop())
+    asyncio.create_task(perfect_orchestrated_game_loop())
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -265,7 +276,7 @@ async def serve_autonomous_pixel_game():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>FLOSE AEOS - Strict PO Validation Kanban Workflow</title>
+        <title>FLOSE AEOS - Perfect Gemma 4 Turn-Based Orchestration</title>
         <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
         <style>
             * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -300,10 +311,20 @@ async def serve_autonomous_pixel_game():
             }
 
             .hud-title {
-                font-size: 0.7rem;
+                font-size: 0.65rem;
                 color: #55ff55;
                 margin-bottom: 0.8rem;
                 text-shadow: 2px 2px #00aa00;
+            }
+
+            .turn-banner {
+                background: rgba(236, 72, 153, 0.2);
+                border: 2px solid #ec4899;
+                border-radius: 6px;
+                padding: 0.6rem;
+                text-align: center;
+                margin-bottom: 1rem;
+                font-size: 0.55rem;
             }
 
             .kanban-grid {
@@ -322,7 +343,7 @@ async def serve_autonomous_pixel_game():
             }
 
             .kanban-col-title {
-                font-size: 0.45rem;
+                font-size: 0.42rem;
                 font-weight: bold;
                 margin-bottom: 0.4rem;
                 text-align: center;
@@ -338,32 +359,9 @@ async def serve_autonomous_pixel_game():
                 border-radius: 4px;
                 padding: 0.4rem;
                 margin-bottom: 0.4rem;
-                font-size: 0.42rem;
+                font-size: 0.4rem;
                 line-height: 1.3;
             }
-
-            .skill-upgrade-card {
-                background: rgba(0,0,0,0.6);
-                border: 2px solid #3b3d54;
-                border-radius: 6px;
-                padding: 0.4rem;
-                margin-bottom: 0.3rem;
-                font-size: 0.45rem;
-            }
-
-            .btn-upgrade {
-                font-family: 'Press Start 2P', monospace;
-                background: #a855f7;
-                color: #fff;
-                border: 2px solid #7e22ce;
-                padding: 0.3rem 0.5rem;
-                font-size: 0.4rem;
-                cursor: pointer;
-                border-radius: 4px;
-                float: right;
-            }
-
-            .btn-upgrade:hover { background: #c084fc; }
         </style>
     </head>
     <body>
@@ -372,13 +370,15 @@ async def serve_autonomous_pixel_game():
 
             <div class="side-panel">
                 <div>
-                    <div class="hud-title">📋 KANBAN DO PO CHATO: A FAZER ➔ VALIDAÇÃO ➔ DONE</div>
-                    <div style="font-size:0.45rem; color:#9ca3af; margin-bottom:0.8rem;">O PO cria no 'A FAZER', heróis ajustam para 'EM VALIDAÇÃO', PO valida estritamente!</div>
+                    <div class="hud-title">⚡ ORQUESTRACÃO GEMMA 4 POR TURNOS</div>
+                    
+                    <div id="turn-banner" class="turn-banner">
+                        TURNO ATUAL: CARREGANDO...
+                    </div>
 
-                    <!-- KANBAN BOARD 3 COLUNAS -->
                     <div class="kanban-grid">
                         <div class="kanban-col">
-                            <div class="kanban-col-title card-todo">🔴 A FAZER</div>
+                            <div class="kanban-col-title card-todo">🔴 A FAZER (JIRA)</div>
                             <div id="col-todo"></div>
                         </div>
                         <div class="kanban-col">
@@ -391,12 +391,12 @@ async def serve_autonomous_pixel_game():
                         </div>
                     </div>
 
-                    <div style="font-size:0.5rem; color:#a855f7; margin-bottom:0.4rem;">🛡️ SKILLS DOS HERÓIS:</div>
+                    <div style="font-size:0.5rem; color:#a855f7; margin-bottom:0.4rem;">🛡️ STATUS DOS HERÓIS DA ENGENHARIA:</div>
                     <div id="skills-list">Carregando heróis...</div>
                 </div>
 
                 <div>
-                    <div style="font-size: 0.45rem; color: #55ff55; margin-bottom: 0.3rem;">📜 AUDIT LOG DE VALIDAÇÕES DO PO</div>
+                    <div style="font-size: 0.45rem; color: #55ff55; margin-bottom: 0.3rem;">📜 AUDIT LOG JIRA REAL</div>
                     <div id="audit-log" style="font-size: 0.4rem; color: #9ca3af; max-height: 80px; overflow-y: auto;"></div>
                 </div>
             </div>
@@ -416,7 +416,7 @@ async def serve_autonomous_pixel_game():
             let gameState = {};
             let agentsList = [];
 
-            function drawPixelSprite(x, y, color, name, respMs, healthPct) {
+            function drawPixelSprite(x, y, color, name, canGemma, action) {
                 ctx.fillStyle = color;
                 ctx.fillRect(x, y + 10, 24, 20);
 
@@ -431,14 +431,9 @@ async def serve_autonomous_pixel_game():
                 ctx.fillStyle = color;
                 ctx.fillText(name, x - 5, y - 10);
 
-                ctx.fillStyle = "#440000";
-                ctx.fillRect(x - 6, y - 6, 36, 4);
-                ctx.fillStyle = healthPct > 50 ? "#00ff00" : "#ff5555";
-                ctx.fillRect(x - 6, y - 6, (36 * healthPct) / 100, 4);
-
                 ctx.font = '5px "Press Start 2P"';
-                ctx.fillStyle = "#55ffff";
-                ctx.fillText(`${respMs.toFixed(1)}ms`, x - 5, y + 38);
+                ctx.fillStyle = canGemma ? "#55ff55" : "#ff5555";
+                ctx.fillText(canGemma ? "⚡ GEMMA 4 READY" : "🔒 GEMMA 4 BUSY", x - 15, y + 38);
             }
 
             function drawPOBoss(hpPercent, phaseText) {
@@ -460,7 +455,7 @@ async def serve_autonomous_pixel_game():
 
                 ctx.font = '10px "Press Start 2P"';
                 ctx.fillStyle = "#ff5555";
-                ctx.fillText("👹 PO CHATO (AUDITOR DE VALIDAÇÃO)", bx - 85, by - 15);
+                ctx.fillText("👹 PO EVIL BOSS", bx - 30, by - 15);
 
                 ctx.fillStyle = "#440000";
                 ctx.fillRect(canvas.width / 2 - 150, 15, 300, 16);
@@ -488,10 +483,10 @@ async def serve_autonomous_pixel_game():
 
                 if (gameState) {
                     const hpPct = (gameState.boss_hp / gameState.boss_max_hp) * 100;
-                    drawPOBoss(hpPct, gameState.boss_phase || "Auditando Cards...");
+                    drawPOBoss(hpPct, gameState.boss_phase || "Orquestrando Turnos...");
 
                     agentsList.forEach(a => {
-                        drawPixelSprite(a.x, a.y, a.sprite_color, a.name, a.actual_latency_ms, a.health_pct);
+                        drawPixelSprite(a.x, a.y, a.sprite_color, a.name, a.can_use_gemma, a.action);
                     });
                 }
 
@@ -506,35 +501,39 @@ async def serve_autonomous_pixel_game():
                 agentsList = data.pixel_agents;
                 const kanban = data.kanban;
 
-                // Render Colunas Kanban
+                // Turn Banner Display
+                const isPoTurn = gameState.current_turn === "PO_BURST_PHASE";
+                document.getElementById('turn-banner').style.borderColor = isPoTurn ? "#ff5555" : "#55ff55";
+                document.getElementById('turn-banner').style.color = isPoTurn ? "#ff5555" : "#55ff55";
+                document.getElementById('turn-banner').innerHTML = isPoTurn ?
+                    `👹 TURNO PO: GEMMA 4 (5 CARDS) | ⏱️ ${gameState.turn_timer_sec}s` :
+                    `⚡ TURNO HERÓIS: USO GEMMA 4 LIBERADO | ⏱️ ${gameState.turn_timer_sec}s`;
+
                 document.getElementById('col-todo').innerHTML = kanban.to_do.map(c => `
                     <div class="kanban-card-item">
                         <div style="color:#ff5555; font-weight:bold;">${c.id}</div>
-                        <div>${c.title.substring(0, 20)}...</div>
-                        ${c.rejections > 0 ? `<div style="color:#ff0000; font-size:0.38rem;">⚠️ Barrado ${c.rejections}x!</div>` : ''}
+                        <div>${c.title.substring(0, 18)}...</div>
                     </div>
                 `).join('');
 
                 document.getElementById('col-validation').innerHTML = kanban.in_validation.map(c => `
                     <div class="kanban-card-item">
                         <div style="color:#ffaa00; font-weight:bold;">${c.id}</div>
-                        <div>${c.title.substring(0, 20)}...</div>
+                        <div>${c.title.substring(0, 18)}...</div>
                     </div>
                 `).join('');
 
                 document.getElementById('col-done').innerHTML = kanban.done.map(c => `
                     <div class="kanban-card-item">
                         <div style="color:#55ff55; font-weight:bold;">${c.id}</div>
-                        <div>${c.title.substring(0, 20)}...</div>
+                        <div>${c.title.substring(0, 18)}...</div>
                     </div>
                 `).join('');
 
-                const keys = ["felipe", "sofia", "lucas", "beatriz"];
-                document.getElementById('skills-list').innerHTML = agentsList.map((a, i) => `
-                    <div class="skill-upgrade-card">
-                        <button class="btn-upgrade" onclick="upgradeSkill('${keys[i]}')">UPGRADE ⬆️</button>
-                        <div style="font-weight:bold; color:${a.sprite_color};">${a.name} (Lv.${a.skill_level})</div>
-                        <div style="color:#9ca3af; margin-top:0.2rem;">Latência: <span style="color:#55ffff;">${a.actual_latency_ms.toFixed(1)}ms</span></div>
+                document.getElementById('skills-list').innerHTML = agentsList.map(a => `
+                    <div style="background:rgba(0,0,0,0.5); border:1px solid #30363d; padding:0.4rem; border-radius:4px; margin-bottom:0.3rem; font-size:0.45rem;">
+                        <div style="color:${a.sprite_color}; font-weight:bold;">${a.name}</div>
+                        <div style="color:#9ca3af; margin-top:0.2rem;">${a.action}</div>
                     </div>
                 `).join('');
 
@@ -543,13 +542,8 @@ async def serve_autonomous_pixel_game():
                 `).join('');
             }
 
-            async function upgradeSkill(key) {
-                await fetch(`/api/agents/upgrade_skill?agent_key=${key}`, { method: 'POST' });
-                updateState();
-            }
-
             updateState();
-            setInterval(updateState, 1200);
+            setInterval(updateState, 1000);
         </script>
     </body>
     </html>
