@@ -24,7 +24,7 @@ ssl_context.check_hostname = False
 ssl_context.verify_mode = ssl.CERT_NONE
 
 class JiraConnector:
-    """Connector for REAL Jira Cloud API integration into FLOSE AEOS."""
+    """Connector for REAL Jira Cloud API with Comments & Issue Creation."""
 
     def __init__(self):
         load_env_file()
@@ -51,11 +51,10 @@ class JiraConnector:
         }
 
     def fetch_real_jira_issues(self, project_key: str = "KAN", limit: int = 10) -> List[Dict[str, Any]]:
-        """Busca os cards REAIS lotados na sua conta do Jira Cloud (felipeflose.atlassian.net)!"""
+        """Busca os cards REAIS e seus comentários diretamente no Jira Cloud."""
         if not self.is_configured:
             return []
 
-        # Nova API do Atlassian Cloud /rest/api/3/search/jql
         url = f"https://{self.domain}.atlassian.net/rest/api/3/search/jql?jql=project={project_key}"
         req = urllib.request.Request(url, headers=self._get_headers(), method="GET")
         issues_result = []
@@ -64,28 +63,58 @@ class JiraConnector:
                 data = json.loads(resp.read().decode("utf-8"))
                 raw_issues = data.get("issues", [])[:limit]
                 
-                # Busca detalhes de cada card real
                 for item in raw_issues:
                     issue_id = item.get("id")
-                    detail_url = f"https://{self.domain}.atlassian.net/rest/api/3/issue/{issue_id}"
+                    detail_url = f"https://{self.domain}.atlassian.net/rest/api/3/issue/{issue_id}?expand=renderedFields,comments"
                     d_req = urllib.request.Request(detail_url, headers=self._get_headers(), method="GET")
                     try:
                         with urllib.request.urlopen(d_req, context=ssl_context, timeout=5) as d_resp:
                             d_data = json.loads(d_resp.read().decode("utf-8"))
+                            comments = []
+                            c_data = d_data.get("fields", {}).get("comment", {}).get("comments", [])
+                            for c in c_data:
+                                author = c.get("author", {}).get("displayName", "Agente")
+                                body = c.get("body", {}).get("content", [{}])[0].get("content", [{}])[0].get("text", "Comentário") if isinstance(c.get("body"), dict) else str(c.get("body"))
+                                comments.append({"author": author, "text": body})
+
                             issues_result.append({
                                 "id": d_data.get("key"),
                                 "title": d_data.get("fields", {}).get("summary", "Card sem título"),
-                                "type": "Card Real do PO no Jira"
+                                "status": d_data.get("fields", {}).get("status", {}).get("name", "In Progress"),
+                                "type": "Card Real Jira",
+                                "comments": comments
                             })
                     except Exception:
                         continue
         except Exception as e:
-            print(f"[Jira Real Fetch Error] {e}")
+            print(f"[Jira Fetch Error] {e}")
             
         return issues_result
 
+    def add_comment(self, issue_key: str, author_name: str, comment_text: str) -> Dict[str, Any]:
+        """Adiciona um comentário real do agente (Felipe, Sofia, Lucas, Beatriz) na issue do Jira."""
+        if not self.is_configured:
+            return {"mock": True, "comment": comment_text}
+
+        url = f"https://{self.domain}.atlassian.net/rest/api/3/issue/{issue_key}/comment"
+        payload = {
+            "body": {
+                "type": "doc",
+                "version": 1,
+                "content": [{
+                    "type": "paragraph",
+                    "content": [{"type": "text", "text": f"[{author_name}]: {comment_text}"}]
+                }]
+            }
+        }
+        req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=self._get_headers(), method="POST")
+        try:
+            with urllib.request.urlopen(req, context=ssl_context, timeout=10) as resp:
+                return json.loads(resp.read().decode("utf-8"))
+        except Exception as e:
+            return {"error": str(e)}
+
     def create_issue(self, project_key: str, summary: str, description: str, issue_type: str = "Task") -> Dict[str, Any]:
-        """Cria uma nova issue no Jira Cloud REAL."""
         if not self.is_configured:
             return {"mock": True, "summary": summary}
         
