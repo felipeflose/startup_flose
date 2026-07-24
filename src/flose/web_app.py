@@ -21,7 +21,7 @@ from flose.engines.governance import GovernanceEngine
 from flose.connectors.jira import JiraConnector
 from flose.connectors.gemma_local import GemmaLocalConnector
 
-app = FastAPI(title="FLOSE (AEOS) - Perfectly Orchestrated Gemma 4, Claude-Code Ollama & AGY Loop")
+app = FastAPI(title="FLOSE (AEOS) - Real-Time Kanban & Autonomous Skill Evolution")
 
 bus = EventBus()
 planner = PlanningEngine()
@@ -36,7 +36,7 @@ game_state = {
     "boss_name": "PO EVIL BOSS",
     "boss_hp": 1000,
     "boss_max_hp": 1000,
-    "current_turn": "PO_BURST_PHASE", # PO_BURST_PHASE (1 min - 5 cards com Gemma 4) ou HEROES_REST_PHASE (2 min - Heróis com Claude-Code Ollama, AGY e Gemma 4)
+    "current_turn": "PO_BURST_PHASE", 
     "turn_timer_sec": 60,
     "boss_cards_created_in_burst": 0,
     "cards_coded_count": 0,
@@ -50,71 +50,120 @@ game_state = {
     }
 }
 
-# OS HERÓIS TÊM PODERES CLAUDE-CODE VIA OLLAMA, AGY E GEMMA 4!
+# HERÓIS COM EVOLUÇÃO AUTÔNOMA DE SKILL E GAUGE DE VIDA/TIMEOUT!
 pixel_agents: Dict[str, Dict[str, Any]] = {
     "felipe": {
         "name": "Felipe",
-        "class": "Líder de Arquitetura & AGY CLI Master",
+        "class": "Líder de Arquitetura",
         "sprite_color": "#3b82f6",
         "x": 100, "y": 260,
-        "tools": ["AGY CLI (/Users/felipeflose/.local/bin/agy)", "Gemma 4 Local"],
+        "skill_level": 1,
+        "xp": 0,
+        "response_time_ms": 500.0,    # Tempo de resposta (ms) que diminui com evolução!
+        "time_remaining_sec": 12.0,   # BARRA DE VIDA = TEMPO ANTES DO TIMEOUT
+        "max_time_sec": 12.0,
         "can_use_gemma": False,
-        "action": "Orquestrando o AGY CLI e Claude-Code via Ollama",
+        "action": "Evoluindo Skill Autonomamente",
     },
     "sofia": {
         "name": "Sofia",
         "class": "Gemma 4 & Ollama Analyst",
         "sprite_color": "#ec4899",
         "x": 220, "y": 220,
-        "tools": ["Gemma 4 Local", "Claude-Code (Ollama local:11434)"],
+        "skill_level": 1,
+        "xp": 0,
+        "response_time_ms": 420.0,
+        "time_remaining_sec": 12.0,
+        "max_time_sec": 12.0,
         "can_use_gemma": False,
-        "action": "Aguardando Rajada do PO para Usar Claude-Code Ollama",
+        "action": "Aprendendo Padrões de Código no Gemma 4",
     },
     "lucas": {
         "name": "Lucas",
-        "class": "Claude-Code via Ollama & AGY Coder",
+        "class": "Claude-Code Ollama & AGY Coder",
         "sprite_color": "#f97316",
         "x": 350, "y": 270,
-        "tools": ["Claude-Code via Ollama Engine", "AGY CLI Toolset"],
+        "skill_level": 1,
+        "xp": 0,
+        "response_time_ms": 300.0,
+        "time_remaining_sec": 12.0,
+        "max_time_sec": 12.0,
         "can_use_gemma": False,
-        "action": "Pronto para Codificar via Claude-Code Ollama & AGY",
+        "action": "Codificando e Otimizando Latência",
     },
     "beatriz": {
         "name": "Beatriz",
-        "class": "QA, Security Shield & AGY Tester",
+        "class": "QA & Security Shield",
         "sprite_color": "#10b981",
         "x": 480, "y": 230,
-        "tools": ["AGY Tester", "Claude-Code Verification"],
+        "skill_level": 1,
+        "xp": 0,
+        "response_time_ms": 450.0,
+        "time_remaining_sec": 12.0,
+        "max_time_sec": 12.0,
         "can_use_gemma": False,
-        "action": "Auditando Testes via AGY e Validação do PO",
+        "action": "Auditando Testes antes do Timeout",
     }
 }
 
 audit_logs: List[Dict[str, Any]] = []
 
-# ORQUESTRAÇÃO PERFEITA:
-# 1 MINUTO: PO VILÃO USA GEMMA 4 COM PRIORIDADE E CRIA 5 CARDS REALMENTE DETALHADOS NO JIRA CLOUD
-# 2 MINUTOS: PO DESCANSA E OS HERÓIS USAM CLAUDE-CODE VIA OLLAMA, AGY CLI E GEMMA 4 PARA RESOLVER OS CARDS!
-async def perfect_claude_ollama_agy_game_loop():
-    po_turn_duration = 60      # 1 Minuto para o PO (Rajada de 5 cards com Gemma 4)
-    heroes_turn_duration = 120 # 2 Minutos para os Heróis (Claude-Code via Ollama + AGY + Gemma 4)
+def check_autonomous_skill_evolution(agent_key: str):
+    """Evolui autonomamente a skill do agente quando atinge XP suficiente!"""
+    agt = pixel_agents[agent_key]
+    agt["xp"] += 35
+    if agt["xp"] >= 100:
+        agt["xp"] = 0
+        agt["skill_level"] += 1
+        # Diminui o tempo de resposta (fica mais rápido) e aumenta a resistência a Timeout!
+        agt["response_time_ms"] = max(30.0, round(agt["response_time_ms"] * 0.75, 1))
+        agt["max_time_sec"] += 1.5
+        agt["time_remaining_sec"] = agt["max_time_sec"]
+        
+        audit_logs.append({
+            "event_id": f"evt_{len(audit_logs)+1}",
+            "action": "AUTONOMOUS_SKILL_EVOLUTION",
+            "agent": agt["name"],
+            "new_level": agt["skill_level"],
+            "new_response_time_ms": agt["response_time_ms"]
+        })
+
+# LOOP AUTÔNOMO: EVOLUÇÃO AUTÔNOMA DE SKILLS + BARRA DE VIDA/TIMEOUT + ATUALIZAÇÃO KANBAN
+async def autonomous_orchestration_game_loop():
+    po_turn_duration = 60      
+    heroes_turn_duration = 120 
     
     while True:
         # =========================================================================
-        # FASE 1: TURNO DO PO VILÃO (1 MINUTO - PRIORIDADE TOTAL NO GEMMA 4)
+        # FASE 1: TURNO DO PO VILÃO (1 MINUTO - PRIORIDADE NO GEMMA 4)
         # =========================================================================
         game_state["current_turn"] = "PO_BURST_PHASE"
         game_state["boss_cards_created_in_burst"] = 0
         
         for agt in pixel_agents.values():
             agt["can_use_gemma"] = False
-            agt["action"] = "🔒 PO com Prioridade no Gemma 4 (Heróis preparando Claude-Code Ollama & AGY)"
+            agt["action"] = "🔒 PO com Prioridade no Gemma 4 (Aguardando...)"
 
         for sec in range(po_turn_duration, 0, -1):
             if game_state["victory"]: break
             game_state["turn_timer_sec"] = sec
             
-            # O PO Vilão cria 5 CARDS REALMENTE DETALHADOS no Jira Cloud
+            # Atualiza o decaimento do tempo de resposta (VIDA/TIMEOUT) dos heróis a cada segundo
+            for agt_key, agt in pixel_agents.items():
+                decay = (agt["response_time_ms"] / 400.0) * 0.6
+                agt["time_remaining_sec"] = max(0.0, round(agt["time_remaining_sec"] - decay, 1))
+                
+                # Se o tempo zera, ocorre o Timeout, mas a Skill Auto-Heal recupera!
+                if agt["time_remaining_sec"] <= 0:
+                    agt["time_remaining_sec"] = round(agt["max_time_sec"] * 0.5, 1)
+                    audit_logs.append({
+                        "event_id": f"evt_{len(audit_logs)+1}",
+                        "action": "TIMEOUT_AUTO_HEAL",
+                        "agent": agt["name"],
+                        "note": "Skill autônoma evitou o Timeout!"
+                    })
+
+            # PO cria os 5 cards no 'A FAZER'
             if game_state["boss_cards_created_in_burst"] < 5 and sec % 10 == 0:
                 po_topics = [
                     ("Refatorar UI Frontend Nível Pixel Perfect 16-Bit", "O PO Vilão analisou a interface atual e exige alinhamento perfeito de bordas, palette HSL e suporte responsive sem flickering."),
@@ -128,7 +177,6 @@ async def perfect_claude_ollama_agy_game_loop():
                 gemma_ideas = gemma.generate_ideas(topic_title)
                 idea_detail = gemma_ideas[0]["summary"] if gemma_ideas else topic_desc
 
-                # CRIAÇÃO REAL NO JIRA CLOUD!
                 jira_res = jira.create_detailed_epic_or_task("KAN", topic_title, idea_detail, "ÉPICO PO GEMMA4")
                 new_key = jira_res.get("key", f"KAN-{random.randint(9700, 9999)}")
                 
@@ -144,64 +192,64 @@ async def perfect_claude_ollama_agy_game_loop():
                 game_state["boss_cards_created_in_burst"] += 1
                 game_state["boss_phase"] = f"🔥 PO RAJADA GEMMA 4 ({game_state['boss_cards_created_in_burst']}/5): CRIOU CARD REAL {new_key} NO JIRA!"
 
-                audit_logs.append({
-                    "event_id": f"evt_{len(audit_logs)+1}",
-                    "action": "PO_REAL_JIRA_CARD_CREATED",
-                    "card_id": new_key,
-                    "title": topic_title
-                })
-
             await asyncio.sleep(1.0)
 
         # =========================================================================
-        # FASE 2: TURNO DOS HERÓIS (2 MINUTOS - CLAUDE-CODE VIA OLLAMA + AGY + GEMMA 4)
+        # FASE 2: TURNO DOS HERÓIS (2 MINUTOS - CLAUDE-CODE OLLAMA & AGY CLI & EVOLUÇÃO AUTÔNOMA)
         # =========================================================================
         game_state["current_turn"] = "HEROES_REST_PHASE"
-        game_state["boss_phase"] = "😴 PO DESCANSA! HERÓIS OPERANDO CLAUDE-CODE VIA OLLAMA & AGY CLI!"
+        game_state["boss_phase"] = "😴 PO DESCANSA! HERÓIS OPERANDO CLAUDE-CODE OLLAMA E EVOLUINDO SKILLS!"
 
         for agt in pixel_agents.values():
             agt["can_use_gemma"] = True
-            agt["action"] = "⚡ OPERANDO CLAUDE-CODE VIA OLLAMA & AGY CLI!"
+            agt["action"] = f"⚡ Evoluindo Skill (Nível {agt['skill_level']} - {agt['response_time_ms']}ms)"
 
         for sec in range(heroes_turn_duration, 0, -1):
             if game_state["victory"]: break
             game_state["turn_timer_sec"] = sec
 
-            # PASSO A: Mover do 'A Fazer' para 'Em Validação' usando Claude-Code via Ollama, AGY CLI e Gemma 4!
+            # Decaimento do tempo de vida / timeout
+            for agt in pixel_agents.values():
+                decay = (agt["response_time_ms"] / 400.0) * 0.5
+                agt["time_remaining_sec"] = max(0.0, round(agt["time_remaining_sec"] - decay, 1))
+                if agt["time_remaining_sec"] <= 0:
+                    agt["time_remaining_sec"] = round(agt["max_time_sec"] * 0.5, 1)
+
+            # PASSO A: Mover do 'A Fazer' para 'Em Validação'
             if game_state["kanban"]["to_do"] and not game_state["kanban"]["in_progress"]:
                 card = game_state["kanban"]["to_do"].pop(0)
                 card["status"] = "EM PROGRESSO"
                 game_state["kanban"]["in_progress"].append(card)
                 game_state["current_working_card"] = card
 
-                # Sofia usa Gemma 4 / Ollama
-                solutions = gemma.generate_ideas(card["title"])
-                sol_text = solutions[0]["summary"] if solutions else "Análise técnica de arquitetura via Ollama."
+                # Heróis usam Claude-Code Ollama & AGY e evoluem a skill autonomamente!
+                active_agent_key = random.choice(["felipe", "sofia", "lucas", "beatriz"])
+                check_autonomous_skill_evolution(active_agent_key)
+                active_agt = pixel_agents[active_agent_key]
 
-                # Lucas executa o código usando Claude-Code via Ollama e AGY CLI!
-                card["comments"].append({"author": "Sofia (Gemma 4/Ollama)", "text": f"Análise via Ollama: {sol_text}"})
-                card["comments"].append({"author": "Lucas (Claude-Code Ollama & AGY)", "text": f"🛠️ Executou patch de código via Claude-Code (Ollama) & AGY CLI em {card['id']}. Movendo para 'EM VALIDAÇÃO'!"})
-                
-                jira.add_comment(card["id"], "Sofia (Ollama)", f"Análise via Ollama: {sol_text}")
-                jira.add_comment(card["id"], "Lucas (Claude-Code & AGY)", f"Patch codificado via Claude-Code via Ollama e AGY CLI. Movendo para Em Validação.")
+                solutions = gemma.generate_ideas(card["title"])
+                sol_text = solutions[0]["summary"] if solutions else "Análise de alta velocidade via Ollama."
+
+                card["comments"].append({"author": f"{active_agt['name']} (Lv.{active_agt['skill_level']})", "text": f"🛠️ Executou patch via Claude-Code Ollama & AGY em {active_agt['response_time_ms']}ms. Movendo para 'EM VALIDAÇÃO'!"})
+                jira.add_comment(card["id"], active_agt['name'], f"Patch de velocidade {active_agt['response_time_ms']}ms aplicado. Movendo para Em Validação.")
 
                 game_state["kanban"]["in_progress"].remove(card)
                 card["status"] = "EM VALIDAÇÃO"
                 game_state["kanban"]["in_validation"].append(card)
 
-            # PASSO B: Validação estrita do PO Vilão!
+            # PASSO B: Validação do PO
             if game_state["kanban"]["in_validation"]:
                 card_val = game_state["kanban"]["in_validation"].pop(0)
                 
                 if random.random() < 0.20 and card_val["rejections"] == 0:
                     card_val["rejections"] += 1
                     card_val["status"] = "A FAZER"
-                    card_val["comments"].append({"author": "PO EVIL BOSS", "text": "❌ BARRADO! Encontrei detalhes. Volte para o 'A FAZER'!"})
+                    card_val["comments"].append({"author": "PO EVIL BOSS", "text": "❌ BARRADO! Volte para o 'A FAZER'!"})
                     jira.add_comment(card_val["id"], "PO EVIL BOSS", "Barrado na Validação.")
                     game_state["kanban"]["to_do"].append(card_val)
                 else:
                     card_val["status"] = "CONCLUÍDO"
-                    card_val["comments"].append({"author": "PO EVIL BOSS", "text": "✅ Aprovado! O código gerado pelo Claude-Code via Ollama & AGY está impecável!"})
+                    card_val["comments"].append({"author": "PO EVIL BOSS", "text": "✅ Aprovado na Validação Rígida!"})
                     jira.add_comment(card_val["id"], "PO EVIL BOSS", "Card Aprovado.")
 
                     damage = 250
@@ -209,10 +257,14 @@ async def perfect_claude_ollama_agy_game_loop():
                     game_state["kanban"]["done"].append(card_val)
                     game_state["cards_coded_count"] += 1
 
-                    h = governance.generate_audit_hash("agt_lucas", "CLAUDE_OLLAMA_AGY_CARD_APPROVED", card_val['title'])
+                    # Restaura o tempo de vida/timeout dos heróis ao resolver o card!
+                    for agt in pixel_agents.values():
+                        agt["time_remaining_sec"] = agt["max_time_sec"]
+
+                    h = governance.generate_audit_hash("agt_lucas", "AUTONOMOUS_EVOLVED_CARD_APPROVED", card_val['title'])
                     audit_logs.append({
                         "event_id": f"evt_{len(audit_logs)+1}",
-                        "action": "CLAUDE_OLLAMA_AGY_CARD_CLOSED",
+                        "action": "AUTONOMOUS_CARD_CLOSED",
                         "card_id": card_val["id"],
                         "damage": damage,
                         "boss_hp": game_state["boss_hp"],
@@ -221,14 +273,14 @@ async def perfect_claude_ollama_agy_game_loop():
 
                     if game_state["boss_hp"] <= 0:
                         game_state["victory"] = True
-                        game_state["boss_phase"] = "🏆 VITÓRIA! CLAUDE-CODE VIA OLLAMA E AGY CLI DESTRUÍRAM O PO VILÃO!"
+                        game_state["boss_phase"] = "🏆 VITÓRIA! OS HERÓIS EVOLUÍRAM SUAS SKILLS E DERROTARAM O PO VILÃO!"
 
             await asyncio.sleep(1.0)
 
 @app.on_event("startup")
 async def start_autonomous_loop():
     await bus.start()
-    asyncio.create_task(perfect_claude_ollama_agy_game_loop())
+    asyncio.create_task(autonomous_orchestration_game_loop())
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -258,7 +310,7 @@ async def serve_autonomous_pixel_game():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>FLOSE AEOS - Claude-Code via Ollama & AGY CLI Engine</title>
+        <title>FLOSE AEOS - Real-Time Kanban & Autonomous Skill Evolution</title>
         <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
         <style>
             * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -344,6 +396,22 @@ async def serve_autonomous_pixel_game():
                 font-size: 0.4rem;
                 line-height: 1.3;
             }
+
+            .time-bar-bg {
+                width: 100%;
+                height: 8px;
+                background: #440000;
+                border: 1px solid #ff5555;
+                border-radius: 3px;
+                margin-top: 0.2rem;
+                overflow: hidden;
+            }
+
+            .time-bar-fill {
+                height: 100%;
+                background: #00ff00;
+                transition: width 0.3s linear;
+            }
         </style>
     </head>
     <body>
@@ -352,15 +420,16 @@ async def serve_autonomous_pixel_game():
 
             <div class="side-panel">
                 <div>
-                    <div class="hud-title">⚡ CLAUDE-CODE VIA OLLAMA & AGY CLI</div>
+                    <div class="hud-title">⚡ REAL-TIME KANBAN & EVOLUÇÃO AUTÔNOMA</div>
                     
                     <div id="turn-banner" class="turn-banner">
                         TURNO ATUAL: CARREGANDO...
                     </div>
 
+                    <!-- QUADRO KANBAN ATUALIZANDO EM TEMPO REAL -->
                     <div class="kanban-grid">
                         <div class="kanban-col">
-                            <div class="kanban-col-title card-todo">🔴 A FAZER (JIRA)</div>
+                            <div class="kanban-col-title card-todo">🔴 A FAZER</div>
                             <div id="col-todo"></div>
                         </div>
                         <div class="kanban-col">
@@ -373,7 +442,7 @@ async def serve_autonomous_pixel_game():
                         </div>
                     </div>
 
-                    <div style="font-size:0.48rem; color:#a855f7; margin-bottom:0.4rem;">🛠️ PODERES DOS HERÓIS (CLAUDE-CODE OLLAMA / AGY CLI):</div>
+                    <div style="font-size:0.48rem; color:#a855f7; margin-bottom:0.4rem;">🛡️ EVOLUÇÃO AUTÔNOMA DE SKILL & VIDA (TIMEOUT):</div>
                     <div id="skills-list">Carregando heróis...</div>
                 </div>
 
@@ -398,7 +467,7 @@ async def serve_autonomous_pixel_game():
             let gameState = {};
             let agentsList = [];
 
-            function drawPixelSprite(x, y, color, name, canGemma, action) {
+            function drawPixelSprite(x, y, color, name, respMs, timeLeft, maxTime, lvl) {
                 ctx.fillStyle = color;
                 ctx.fillRect(x, y + 10, 24, 20);
 
@@ -411,11 +480,18 @@ async def serve_autonomous_pixel_game():
 
                 ctx.font = '7px "Press Start 2P"';
                 ctx.fillStyle = color;
-                ctx.fillText(name, x - 5, y - 10);
+                ctx.fillText(`${name} (Lv.${lvl})`, x - 10, y - 10);
+
+                // Barra de Vida = Tempo Restante antes do Timeout!
+                const pct = Math.max(0, (timeLeft / maxTime) * 100);
+                ctx.fillStyle = "#440000";
+                ctx.fillRect(x - 6, y - 6, 36, 4);
+                ctx.fillStyle = pct > 40 ? "#00ff00" : "#ff5555";
+                ctx.fillRect(x - 6, y - 6, (36 * pct) / 100, 4);
 
                 ctx.font = '5px "Press Start 2P"';
-                ctx.fillStyle = canGemma ? "#55ff55" : "#ff5555";
-                ctx.fillText(canGemma ? "⚡ CLAUDE/AGY ACTIVE" : "🔒 PO GEMMA BURST", x - 20, y + 38);
+                ctx.fillStyle = "#55ffff";
+                ctx.fillText(`${respMs.toFixed(0)}ms | ${timeLeft.toFixed(1)}s`, x - 15, y + 38);
             }
 
             function drawPOBoss(hpPercent, phaseText) {
@@ -465,10 +541,10 @@ async def serve_autonomous_pixel_game():
 
                 if (gameState) {
                     const hpPct = (gameState.boss_hp / gameState.boss_max_hp) * 100;
-                    drawPOBoss(hpPct, gameState.boss_phase || "Orquestrando...");
+                    drawPOBoss(hpPct, gameState.boss_phase || "Atualizando Quadro...");
 
                     agentsList.forEach(a => {
-                        drawPixelSprite(a.x, a.y, a.sprite_color, a.name, a.can_use_gemma, a.action);
+                        drawPixelSprite(a.x, a.y, a.sprite_color, a.name, a.response_time_ms, a.time_remaining_sec, a.max_time_sec, a.skill_level);
                     });
                 }
 
@@ -488,8 +564,9 @@ async def serve_autonomous_pixel_game():
                 document.getElementById('turn-banner').style.color = isPoTurn ? "#ff5555" : "#55ff55";
                 document.getElementById('turn-banner').innerHTML = isPoTurn ?
                     `👹 TURNO PO: GEMMA 4 (5 CARDS JIRA) | ⏱️ ${gameState.turn_timer_sec}s` :
-                    `⚡ TURNO HERÓIS: CLAUDE-CODE (OLLAMA) & AGY CLI | ⏱️ ${gameState.turn_timer_sec}s`;
+                    `⚡ TURNO HERÓIS: CLAUDE-CODE & EVOLUÇÃO SKILL | ⏱️ ${gameState.turn_timer_sec}s`;
 
+                // Render Quadro Kanban em Tempo Real
                 document.getElementById('col-todo').innerHTML = kanban.to_do.map(c => `
                     <div class="kanban-card-item">
                         <div style="color:#ff5555; font-weight:bold;">${c.id}</div>
@@ -511,20 +588,27 @@ async def serve_autonomous_pixel_game():
                     </div>
                 `).join('');
 
-                document.getElementById('skills-list').innerHTML = agentsList.map(a => `
-                    <div style="background:rgba(0,0,0,0.5); border:1px solid #30363d; padding:0.4rem; border-radius:4px; margin-bottom:0.3rem; font-size:0.42rem;">
-                        <div style="color:${a.sprite_color}; font-weight:bold;">${a.name} (${a.class})</div>
-                        <div style="color:#9ca3af; margin-top:0.2rem;">Ferramentas: ${a.tools.join(', ')}</div>
-                    </div>
-                `).join('');
+                // Render Evolução Autônoma das Skills e Vida/Timeout dos Agentes
+                document.getElementById('skills-list').innerHTML = agentsList.map(a => {
+                    const pct = Math.max(0, (a.time_remaining_sec / a.max_time_sec) * 100);
+                    return `
+                        <div style="background:rgba(0,0,0,0.5); border:1px solid #30363d; padding:0.4rem; border-radius:4px; margin-bottom:0.3rem; font-size:0.42rem;">
+                            <div style="color:${a.sprite_color}; font-weight:bold;">${a.name} (Lv.${a.skill_level}) <span style="float:right; color:#a855f7;">XP: ${a.xp}%</span></div>
+                            <div style="color:#9ca3af; margin-top:0.2rem;">Latência: <span style="color:#55ffff;">${a.response_time_ms.toFixed(0)}ms</span> | Timeout: ${a.time_remaining_sec.toFixed(1)}s</div>
+                            <div class="time-bar-bg">
+                                <div class="time-bar-fill" style="width:${pct}%; background:${pct < 40 ? '#ff5555' : '#00ff00'};"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
 
                 document.getElementById('audit-log').innerHTML = data.audit_logs.map(l => `
-                    <div style="margin-bottom:0.2rem;">> ${l.action}: ${l.card_id || ''}</div>
+                    <div style="margin-bottom:0.2rem;">> ${l.action}: ${l.agent || l.card_id || ''}</div>
                 `).join('');
             }
 
             updateState();
-            setInterval(updateState, 1000);
+            setInterval(updateState, 500); // Polling ultra-rápido de 500ms para tempo real perfeito!
         </script>
     </body>
     </html>
