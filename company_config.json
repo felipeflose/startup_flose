@@ -1,0 +1,97 @@
+{
+  "company": "Flose",
+  "mission": "Construir software de ponta com IA autônoma — o futuro do trabalho é agora.",
+  "ceoId": "felipe_viana_flose",
+  "ceoName": "Felipe Viana Flose",
+  "ceoProtected": true,
+  "maxAgentsTotal": 1000,
+  "maxAgentsPerArea": 250,
+  "pipThreshold": 3,
+  "firingRequiresCEOApproval": true,
+  "allowProjectBasedHiringAndFiring": true,
+  "auditWarningOnly": true,
+  "autoHiringEnabled": true,
+  "autoCardCreationEnabled": true,
+  "autoDevExecutionEnabled": true,
+  "migrationGoal": "Migrar 100% da arquitetura da empresa para Python (FastAPI + Asyncio) com dupla convivência e descomissionamento dos scripts .cjs legados",
+  "maxBoardCardsLimit": 5000,
+  "batchDeliverySize": 15,
+  "workingHours": {
+    "start": 0,
+    "end": 24
+  },
+  "sprintDurationDays": 7,
+  "cycleIntervalMs": 15000,
+  "models": {
+    "devModel": "qwen2.5-coder:32b",
+    "poModel": "gemma4-fast:latest",
+    "qaModel": "gemma4-fast:latest",
+    "useAgyCli": false
+  },
+  "gemma4": {
+    "model": "gemma4-fast:latest",
+    "host": "http://localhost:11434",
+    "timeoutMs": 120000,
+    "retries": 2,
+    "backoffMs": [
+      2000,
+      5000
+    ]
+  },
+  "jira": {
+    "project": "KAN",
+    "statusTodo": "A fazer",
+    "statusInProgress": "Em andamento",
+    "statusReview": "Em análise",
+    "statusDone": "Concluído"
+  },
+  "github": {
+    "branch": "main",
+    "workBranch": "feature/"
+  },
+  "areas": [
+    {
+      "id": "engenharia",
+      "name": "Engenharia",
+      "color": "#6366f1"
+    },
+    {
+      "id": "produto",
+      "name": "Produto & Design",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "dados_ia",
+      "name": "Dados & IA",
+      "color": "#ec4899"
+    },
+    {
+      "id": "qa",
+      "name": "Qualidade (QA)",
+      "color": "#f59e0b"
+    },
+    {
+      "id": "people",
+      "name": "People & Cultura",
+      "color": "#10b981"
+    },
+    {
+      "id": "financeiro",
+      "name": "Financeiro",
+      "color": "#3b82f6"
+    }
+  ],
+  "hiringTrigger": {
+    "loadThresholdPct": 80,
+    "checkIntervalCycles": 5
+  },
+  "standupTime": "09:00",
+  "permanentEpics": [
+    "Motor de Agentes",
+    "Dashboard & UX",
+    "Infraestrutura & DevOps",
+    "Dados & IA",
+    "People & Cultura",
+    "Produto & Design"
+  ]
+}

@@ -1,42 +1,68 @@
 {
-  "company_summary": "A empresa opera em um ambiente ágil de desenvolvimento de software, focando na integração de funcionalidades complexas com IA/LLM e gestão robusta do backlog via metodologias Scrum. Há um foco intenso em garantir a qualidade do código (testes, segurança) e a otimização da arquitetura de dados.",
-  "areas": [
+  "company_vision": "A visão da empresa não foi explicitamente fornecida no contexto fornecido, mas o contexto sugere um foco em desenvolvimento de software, gestão de projetos, e otimização de processos através de ferramentas e análise de dados.",
+  "suggested_structure": [
     {
-      "name": "Gestão de Produto e Backlog",
-      "purpose": "Definir a visão do produto, gerenciar o fluxo de trabalho das funcionalidades e equilibrar o lançamento de novas features com a estabilização do sistema existente.",
-      "open_positions": [
+      "area": "Produto e Engenharia (Product & Engineering)",
+      "roles": [
         {
-          "title": "Gerente de Produto (PM)",
-          "level": "Gerente",
-          "why_needed": "Para liderar a estratégia de desenvolvimento, priorizar o backlog e gerenciar o dilema entre novas funcionalidades e estabilização.",
-          "skills_needed": "Product Discovery, análise qualitativa, gestão de jornada do usuário.",
-          "priority": "alta"
+          "title": "CTO/VP de Engenharia",
+          "level": "Executivo",
+          "description": "Liderança técnica e arquitetura de sistemas."
+        },
+        {
+          "title": "Gerente de Produto",
+          "level": "Gerencial",
+          "description": "Definição da visão do produto e priorização de funcionalidades."
+        },
+        {
+          "title": "Engenheiros de Software (Backend/Frontend/DevOps)",
+          "level": "Técnico",
+          "description": "Desenvolvimento e manutenção das soluções."
         }
       ]
     },
     {
-      "name": "Engenharia de Software e Qualidade (DevOps)",
-      "purpose": "Garantir a qualidade, segurança e reprodutibilidade do código através de testes automatizados, práticas de desenvolvimento seguro (CSRF, validação de entrada) e otimização da arquitetura.",
-      "open_positions": [
+      "area": "Gestão de Projetos e Operações (Project & Operations Management)",
+      "roles": [
         {
-          "title": "Engenheiro(a) de Software/Backend",
-          "level": "Pleno | Sênior",
-          "why_needed": "Para implementar correções de segurança (CSRF), refatorar código (extração de módulos), otimizar a arquitetura de dados e implementar testes unitários.",
-          "skills_needed": "TypeScript/React, Python (para lógica de backend), segurança de API, testes unitários, CI/CD (GitHub Actions).",
-          "priority": "alta"
+          "title": "Gerente de Projetos (PMO)",
+          "level": "Gerencial",
+          "description": "Coordenação de entregas, cronogramas e recursos."
+        },
+        {
+          "title": "Analista de Processos / Otimização (Process Analyst)",
+          "level": "Tático",
+          "description": "Identificação e implementação de melhorias nos fluxos de trabalho (baseado nas análises de backlog)."
         }
       ]
     },
     {
-      "name": "Coordenação Ágil e Processos",
-      "purpose": "Assegurar a fluidez do processo de desenvolvimento, remover bloqueios organizacionais e aplicar governança sobre o fluxo de trabalho.",
-      "open_positions": [
+      "area": "Qualidade e Análise de Dados (Quality & Data Analysis)",
+      "roles": [
         {
-          "title": "Scrum Master / Coordenador Agile",
-          "level": "Coordenador | Gerente",
-          "why_needed": "Para otimizar as retrospectivas, remover impedimentos e aplicar a governança necessária para manter o ritmo das entregas.",
-          "skills_needed": "Agilidade (Scrum), facilitação, gestão de fluxo, comunicação organizacional.",
-          "priority": "média"
+          "title": "Especialista em Qualidade (QA/Analista de Qualidade)",
+          "level": "Tático",
+          "description": "Garantia da qualidade do código e dos entregáveis."
+        },
+        {
+          "title": "Cientista de Dados / Analista de Negócios",
+          "level": "Tático/Estratégico",
+          "description": "Análise de métricas para informar decisões de produto e operação."
+        }
+      ]
+    },
+    {
+      "area": "Liderança e Estratégia (Leadership & Strategy)",
+      "roles": [
+        {
+          "title": "Diretor de Operações (COO)",
+          "level": "Executivo",
+          "description": "Supervisão da eficiência operacional e alinhamento estratégico."
+        },
+        {
+          "title": "Gerente de Operações (COO)",
+          "level": "Gerencial",
+          "description": "Gerenciamento da execução diária dos processos."
         }
       ]
     }

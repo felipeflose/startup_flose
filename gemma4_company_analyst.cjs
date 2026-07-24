@@ -143,20 +143,23 @@ ${evidence.activity.substring(0, 1500)}
 === SCRIPTS/SISTEMAS EM EXECUÇÃO ===
 ${evidence.scripts}
 
-Com base exclusivamente nestas evidências, responda em JSON puro (sem markdown, sem texto extra):
+Com base nestas evidências e visando a expansão acelerada da empresa, mapeie as ÁREAS EXISTENTES e PROPONHA NOVAS ÁREAS E CARGOS ELEVADOS (VPs, Diretores, Gerentes de Área, POs Sênior e Especialistas).
+Ganta que a hierarquia contenha posições de liderança para gerenciar os times que serão contratados.
+
+Responda em JSON puro (sem markdown, sem texto extra):
 {
-  "company_summary": "O que esta empresa faz em 2-3 frases objetivas, baseado nos arquivos e problemas reais",
+  "company_summary": "O que esta empresa faz e qual a visão de expansão estrutural",
   "areas": [
     {
-      "name": "Nome da Área",
-      "purpose": "Para que serve esta área, baseado em problemas reais encontrados",
+      "name": "Nome da Área (Existente ou Nova Área Proposta)",
+      "purpose": "Para que serve esta área na visão de longo prazo da empresa",
       "open_positions": [
         {
-          "title": "Cargo exato",
-          "level": "Estagiário | Júnior | Pleno | Sênior | Coordenador | Gerente | Diretor",
-          "why_needed": "Por que este cargo é necessário baseado nos problemas/código acima",
-          "skills_needed": "Habilidades específicas baseadas nos problemas reais",
-          "priority": "alta | média | baixa"
+          "title": "Cargo (ex: Diretor de Produto, Gerente de Engenharia, VP de IA, PO Sênior, etc)",
+          "level": "Diretor | VP | Gerente | Coordenador | Sênior | Pleno",
+          "why_needed": "Por que esta posição de liderança/planejamento é crucial para a escala",
+          "skills_needed": "Habilidades estratégicas e técnicas exigidas",
+          "priority": "alta | média"
         }
       ]
     }
@@ -279,9 +282,9 @@ async function runCompanyAnalysis() {
   try {
     await axios.post('http://localhost:5001/api/activity', {
       agentId: 'gemma4_analyst',
-      agentName: 'Gemma 4 (Analista Organizacional)',
+      agentName: 'Gabriel Silva (Head de Arquitetura Organizacional)',
       agentAvatar: '🧠',
-      action: `Analisou o código, backlog e logs da empresa. Identificou ${companyMap.areas?.length} áreas e ${companyMap.areas?.reduce((s, a) => s + (a.open_positions?.length || 0), 0)} vagas necessárias. Empresa: ${companyMap.company_summary}`,
+      action: `Gabriel Silva analisou a empresa, mapeou ${companyMap.areas?.length} áreas e identificou ${companyMap.areas?.reduce((s, a) => s + (a.open_positions?.length || 0), 0)} posições de liderança e execução necessárias.`,
       ticketKey: '',
       ticketSummary: ''
     });
@@ -325,6 +328,7 @@ async function runCompanyAnalysis() {
 
       if (profile) {
         const agentId = `gemma_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+        const deskNumber = Math.floor(Math.random() * 50) + 1;
         const newAgent = {
           id: agentId,
           name: profile.name,
@@ -332,28 +336,32 @@ async function runCompanyAnalysis() {
           level: position.level,
           avatar: profile.avatar || '👤',
           area: area.name,
+          workstation: `Estação de Trabalho ${area.name.toUpperCase().slice(0, 3)}-${deskNumber.toString().padStart(2, '0')}`,
+          workPolicy: `Política ${area.name} — Jornada 09:00 - 18:00 (Foco em Escala)`,
           advantage: profile.advantage,
           disadvantage: profile.disadvantage,
           dilemma: profile.dilemma,
           personality: profile.personality,
-          status: 'Aguardando Contratação',
+          status: 'Disponível',
           schedule: '09:00 - 18:00',
-          fired: true, // starts as candidate, not hired yet
+          fired: false, // Entra ativo e alocado na sua mesa de trabalho
           hireLevel: position.level,
           whyNeeded: position.why_needed,
-          feedbacks: []
+          feedbacks: [],
+          memory: [],
+          hiredAt: new Date().toISOString()
         };
 
         newAgents.push(newAgent);
-        console.log(`  👤 Candidato criado pelo Gemma 4: ${profile.name} (${position.title})`);
+        console.log(`  🏢 [ALOCAÇÃO DE ESTAÇÃO & ÁREA] ${profile.name} (${position.title}) alocado na ${newAgent.workstation} em ${area.name}!`);
 
         // Log activity
         try {
           await axios.post('http://localhost:5001/api/activity', {
             agentId: 'gemma4_analyst',
-            agentName: 'Gemma 4 (Analista Organizacional)',
+            agentName: 'Gabriel Silva (Head de Arquitetura Organizacional)',
             agentAvatar: '🧠',
-            action: `Identificou necessidade de "${position.title}" na área ${area.name}: ${position.why_needed}. Criou candidato ${profile.name} no pool.`,
+            action: `Gabriel Silva identificou necessidade de "${position.title}" na área ${area.name}: ${position.why_needed}. Criou candidato ${profile.name} no pool.`,
             ticketKey: '',
             ticketSummary: ''
           });

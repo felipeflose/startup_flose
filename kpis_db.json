@@ -1,0 +1,55 @@
+{
+  "updatedAt": "2026-07-24T17:16:10.785Z",
+  "cycle": 156,
+  "company": {
+    "totalAgents": 6,
+    "activeAgents": 6,
+    "firedAgents": 0,
+    "pipActive": 0,
+    "averageScore": 87,
+    "totalTasksCompleted": 176
+  },
+  "jira": {
+    "todo": 1,
+    "inProgress": 0,
+    "doneLast7Days": 1
+  },
+  "gemma4": {
+    "available": false,
+    "totalCalls": 179,
+    "totalFailures": 129,
+    "lastFailure": "2026-07-24T17:16:08.990Z"
+  },
+  "areas": {
+    "Engenharia": {
+      "agents": 3,
+      "load": 0,
+      "capacity": 9
+    },
+    "Produto & Design": {
+      "agents": 0,
+      "load": 0,
+      "capacity": 0
+    },
+    "Dados & IA": {
+      "agents": 0,
+      "load": 0,
+      "capacity": 0
+    },
+    "Qualidade (QA)": {
+      "agents": 0,
+      "load": 0,
+      "capacity": 0
+    },
+    "People & Cultura": {
+      "agents": 0,
+      "load": 0,
+      "capacity": 0
+    },
+    "Financeiro": {
+      "agents": 0,
+      "load": 0,
+      "capacity": 0
+    }
+  }
+}
