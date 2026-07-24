@@ -20,7 +20,7 @@ from flose.engines.governance import GovernanceEngine
 from flose.connectors.jira import JiraConnector
 from flose.connectors.gemma_local import GemmaLocalConnector
 
-app = FastAPI(title="FLOSE (AEOS) - Minecraft 3D Boss Fight vs PO")
+app = FastAPI(title="FLOSE (AEOS) - 2D Pixel Agents RPG Boss Fight vs PO")
 
 bus = EventBus()
 planner = PlanningEngine()
@@ -28,14 +28,14 @@ governance = GovernanceEngine()
 jira = JiraConnector()
 gemma = GemmaLocalConnector()
 
-# Busca os cards REAIS lotados na sua conta do Jira Cloud
+# Busca os cards REAIS do Jira Cloud (felipeflose.atlassian.net)
 real_jira_cards = jira.fetch_real_jira_issues(project_key="KAN", limit=8)
 
 game_state = {
-    "boss_name": "PO Evil Boss (Product Owner Supremo)",
+    "boss_name": "PO EVIL BOSS",
     "boss_hp": 1000,
     "boss_max_hp": 1000,
-    "boss_phase": "Cobrando Cards do Jira Cloud (felipeflose.atlassian.net)",
+    "boss_phase": "Exigindo Refatorações no Jira Cloud",
     "cards_coded_count": 0,
     "victory": False,
     "jira_backlog": real_jira_cards if real_jira_cards else [
@@ -45,38 +45,42 @@ game_state = {
     ]
 }
 
-agents_3d: Dict[str, Dict[str, Any]] = {
+# Pixel Agents com posições na tela 2D Canvas (Pixel Art Style)
+pixel_agents: Dict[str, Dict[str, Any]] = {
     "felipe": {
-        "name": "Felipe (CEO/Architect)",
-        "color": "#3b82f6",
-        "x": -4, "z": 3,
-        "role": "Organizando Backlog do Jira Cloud (KAN)",
-        "action": "Supervisionando Cards Reais do PO"
+        "name": "Felipe",
+        "class": "Pixel Architect Leader",
+        "sprite_color": "#3b82f6",
+        "x": 80, "y": 280,
+        "action": "Supervisionando o Backlog",
+        "hp": 100
     },
     "sofia": {
-        "name": "Sofia (Gemma 4 Local)",
-        "color": "#ec4899",
-        "x": 4, "z": -2,
-        "role": "Pesquisando Soluções para os Cards do PO",
-        "action": "Minerando Soluções Técnicas"
+        "name": "Sofia",
+        "class": "Gemma 4 Idea Miner",
+        "sprite_color": "#ec4899",
+        "x": 220, "y": 240,
+        "action": "Pesquisando Soluções Pixel",
+        "hp": 98
     },
     "lucas": {
-        "name": "Lucas (Claude Code/AGY)",
-        "color": "#f97316",
-        "x": 1, "z": 4,
-        "role": "Master Coder (Detonador de Cards)",
-        "action": "Codificando PRs e Fechando Issues no Jira"
+        "name": "Lucas",
+        "class": "Claude Code Coder",
+        "sprite_color": "#f97316",
+        "x": 360, "y": 280,
+        "action": "Codificando PRs Super Rápido",
+        "hp": 99
     },
     "beatriz": {
-        "name": "Beatriz (QA/Security)",
-        "color": "#10b981",
-        "x": -3, "z": -3,
-        "role": "Auditora de Evidências & Testes",
-        "action": "Aprovando DoR/DoD dos Cards"
+        "name": "Beatriz",
+        "class": "QA & Security Shield",
+        "sprite_color": "#10b981",
+        "x": 500, "y": 240,
+        "action": "Auditando Testes e Evidências",
+        "hp": 97
     }
 }
 
-tasks_db: Dict[str, TaskSpecification] = {}
 audit_logs: List[Dict[str, Any]] = []
 
 @app.on_event("startup")
@@ -89,15 +93,16 @@ async def shutdown_event():
 
 @app.get("/api/boss/state")
 async def get_boss_state():
-    for agent in agents_3d.values():
-        agent["x"] += random.choice([-0.2, 0, 0.2])
-        agent["z"] += random.choice([-0.2, 0, 0.2])
-        agent["x"] = max(-7, min(7, agent["x"]))
-        agent["z"] = max(-7, min(7, agent["z"]))
+    # Animação suave dos Pixel Agents no canvas 2D
+    for agent in pixel_agents.values():
+        agent["x"] += random.choice([-2, 0, 2])
+        agent["y"] += random.choice([-2, 0, 2])
+        agent["x"] = max(50, min(550, agent["x"]))
+        agent["y"] = max(200, min(320, agent["y"]))
 
     return {
         "game_state": game_state,
-        "agents": list(agents_3d.values()),
+        "pixel_agents": list(pixel_agents.values()),
         "jira_cards": game_state["jira_backlog"],
         "audit_logs": audit_logs[-6:],
     }
@@ -105,12 +110,12 @@ async def get_boss_state():
 @app.post("/api/boss/clear_jira_card")
 async def clear_jira_card():
     if game_state["victory"]:
-        return {"message": "O PO Vilão já foi totalmente derrotado!"}
+        return {"message": "O PO Vilão já foi derrotado!"}
 
     if not game_state["jira_backlog"]:
         game_state["boss_hp"] = 0
         game_state["victory"] = True
-        game_state["boss_phase"] = "🏆 ZERO CARDS NO JIRA REAL! O PO VILÃO DERROTOU! VITÓRIA!"
+        game_state["boss_phase"] = "🏆 ZERO CARDS NO JIRA REAL! VITÓRIA DOS PIXEL AGENTES!"
         return {"message": "Jira completamente limpo!"}
 
     card = game_state["jira_backlog"].pop(0)
@@ -118,14 +123,14 @@ async def clear_jira_card():
     game_state["boss_hp"] = max(0, game_state["boss_hp"] - damage)
     game_state["cards_coded_count"] += 1
 
-    agents_3d["lucas"]["action"] = f"⚔️ DETONOU O CARD REAL {card['id']}: '{card['title']}'!"
-    agents_3d["beatriz"]["action"] = f"🛡️ TESTES APROVADOS PARA {card['id']}!"
-    agents_3d["felipe"]["action"] = f"🔷 CARD {card['id']} FECHADO NO JIRA!"
+    pixel_agents["lucas"]["action"] = f"⚔️ PIXEL ATTACK! Codificou {card['id']}!"
+    pixel_agents["beatriz"]["action"] = f"🛡️ TESTES APROVADOS PARA {card['id']}!"
+    pixel_agents["felipe"]["action"] = f"🔷 CARD {card['id']} FECHADO NO JIRA!"
 
-    h = governance.generate_audit_hash("agt_lucas", "REAL_JIRA_CARD_CLOSED", card['title'])
+    h = governance.generate_audit_hash("agt_lucas", "PIXEL_CARD_CLOSED", card['title'])
     audit_logs.append({
         "event_id": f"evt_{len(audit_logs)+1}",
-        "action": "REAL_JIRA_CARD_CLEARED",
+        "action": "PIXEL_AGENT_CLEARED_CARD",
         "card_id": card["id"],
         "title": card["title"],
         "damage": damage,
@@ -135,21 +140,21 @@ async def clear_jira_card():
 
     if game_state["boss_hp"] <= 0:
         game_state["victory"] = True
-        game_state["boss_phase"] = "🏆 VITÓRIA! TODOS OS CARDS DO JIRA FORAM CODIFICADOS E O PO VILÃO FOI DERROTADO!"
+        game_state["boss_phase"] = "🏆 VITÓRIA! TODOS OS CARDS FORAM CODIFICADOS E O PO VILÃO CAIU!"
 
-    return {"message": "Card real codificado e fechado no Jira!", "card": card, "boss_hp": game_state["boss_hp"]}
+    return {"message": "Card codificado pelos Pixel Agentes!", "card": card, "boss_hp": game_state["boss_hp"]}
 
 @app.post("/api/boss/po_add_card")
 async def po_add_card():
-    new_ideas = gemma.generate_ideas("Refatoração de Código Exigida pelo PO")
-    new_card_title = new_ideas[0]["title"] if new_ideas else "PO EXIGE: Estudo de Desempenho e Refatoração"
+    new_ideas = gemma.generate_ideas("Refatoração Pixel Exigida pelo PO")
+    new_card_title = new_ideas[0]["title"] if new_ideas else "PO EXIGE: Otimizar Sprites Pixel em Assembly"
     
     card_id = f"KAN-{9650 + len(game_state['jira_backlog']) + 1}"
     new_card = {"id": card_id, "title": new_card_title, "type": "Card Real Jira do PO"}
     game_state["jira_backlog"].append(new_card)
 
     game_state["boss_hp"] = min(game_state["boss_max_hp"], game_state["boss_hp"] + 100)
-    game_state["boss_phase"] = f"😈 PO VILÃO LOTOU O JIRA COM O CARD {card_id}!"
+    game_state["boss_phase"] = f"😈 PO VILÃO ADICIONOU CARD {card_id}!"
 
     audit_logs.append({
         "event_id": f"evt_{len(audit_logs)+1}",
@@ -161,300 +166,269 @@ async def po_add_card():
     return {"message": "PO adicionou um novo card ao Jira!", "card": new_card}
 
 @app.get("/", response_class=HTMLResponse)
-async def serve_jira_boss_fight():
+async def serve_pixel_agents_game():
     return """
     <!DOCTYPE html>
     <html lang="pt-BR">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>FLOSE AEOS - Minecraft 3D Boss Fight (Jira felipeflose.atlassian.net)</title>
-        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+        <title>FLOSE AEOS - Pixel Agents 16-Bit RPG vs PO Boss</title>
+        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
         <style>
             * { box-sizing: border-box; margin: 0; padding: 0; }
             body {
-                background: #05070c;
+                background: #0d0e15;
                 color: #fff;
-                font-family: 'Outfit', sans-serif;
+                font-family: 'Press Start 2P', monospace;
                 overflow: hidden;
             }
 
-            #canvas-container {
+            /* Container Principal do Jogo Pixel Art */
+            #game-container {
+                display: flex;
                 width: 100vw;
                 height: 100vh;
-                position: absolute;
-                top: 0;
-                left: 0;
-                z-index: 1;
             }
 
-            .boss-hud {
-                position: absolute;
-                top: 15px;
-                left: 50%;
-                transform: translateX(-50%);
-                z-index: 10;
-                width: 65%;
-                background: rgba(0,0,0,0.85);
-                border: 3px solid #ff5555;
-                border-radius: 12px;
-                padding: 0.8rem 1.2rem;
-                text-align: center;
-                box-shadow: 0 0 20px rgba(255, 85, 85, 0.4);
+            /* Canvas da Arena Pixel Art */
+            #pixel-canvas {
+                background: #181926;
+                border-right: 4px solid #3b3d54;
+                image-rendering: pixelated;
+                image-rendering: crisp-edges;
             }
 
-            .boss-name {
-                font-family: 'Press Start 2P', monospace;
-                font-size: 0.85rem;
-                color: #ff5555;
-                margin-bottom: 0.4rem;
-                text-shadow: 2px 2px #550000;
-            }
-
-            .hp-bar-bg {
-                width: 100%;
-                height: 22px;
-                background: #220000;
-                border: 2px solid #ff5555;
-                border-radius: 6px;
-                overflow: hidden;
-            }
-
-            .hp-bar-fill {
-                height: 100%;
-                width: 100%;
-                background: linear-gradient(90deg, #ff5555, #ffaa00);
-                transition: width 0.3s ease;
-            }
-
-            .left-panel {
-                position: absolute;
-                top: 95px;
-                left: 20px;
-                z-index: 10;
-                background: rgba(13, 17, 23, 0.9);
-                border: 2px solid #30363d;
-                border-radius: 12px;
+            /* Side Panel Direita (Jira Cards & Controles) */
+            .side-panel {
+                width: 420px;
+                background: #11121d;
                 padding: 1.2rem;
-                width: 380px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                border-left: 4px solid #3b3d54;
+                overflow-y: auto;
             }
 
-            .btn-clear-jira {
-                font-family: 'Press Start 2P', monospace;
+            .hud-title {
+                font-size: 0.8rem;
+                color: #55ff55;
+                margin-bottom: 0.8rem;
+                text-shadow: 2px 2px #00aa00;
+            }
+
+            .btn-pixel-attack {
                 background: #55ff55;
                 color: #000;
                 border: 3px solid #00aa00;
                 padding: 1rem;
-                font-size: 0.7rem;
+                font-size: 0.65rem;
                 cursor: pointer;
                 width: 100%;
-                margin-top: 0.8rem;
-                border-radius: 8px;
+                margin-bottom: 0.6rem;
                 box-shadow: 4px 4px 0px #000;
+                font-family: 'Press Start 2P', monospace;
             }
 
-            .btn-po-spam {
-                font-family: 'Press Start 2P', monospace;
+            .btn-pixel-attack:active {
+                transform: translate(2px, 2px);
+                box-shadow: 2px 2px 0px #000;
+            }
+
+            .btn-po-attack {
                 background: #ff5555;
                 color: #fff;
                 border: 3px solid #aa0000;
                 padding: 0.75rem;
-                font-size: 0.65rem;
+                font-size: 0.6rem;
                 cursor: pointer;
                 width: 100%;
-                margin-top: 0.5rem;
-                border-radius: 8px;
+                margin-bottom: 1rem;
                 box-shadow: 4px 4px 0px #000;
+                font-family: 'Press Start 2P', monospace;
             }
 
-            .right-panel {
-                position: absolute;
-                top: 95px;
-                right: 20px;
-                z-index: 10;
-                background: rgba(13, 17, 23, 0.9);
-                border: 2px solid #30363d;
-                border-radius: 12px;
-                padding: 1.2rem;
-                width: 380px;
-                max-height: 82vh;
-                overflow-y: auto;
-            }
-
-            .jira-card-item {
-                background: rgba(0, 82, 204, 0.15);
-                border: 1px solid rgba(0, 82, 204, 0.4);
-                border-radius: 6px;
+            .jira-card {
+                background: rgba(59, 130, 246, 0.15);
+                border: 2px solid #3b82f6;
+                border-radius: 4px;
                 padding: 0.6rem;
                 margin-bottom: 0.5rem;
-                font-size: 0.8rem;
+                font-size: 0.55rem;
+                line-height: 1.4;
             }
 
-            .jira-card-id {
-                font-family: 'Press Start 2P', monospace;
-                font-size: 0.6rem;
-                color: #4c9aff;
-            }
+            .card-id { color: #60a5fa; font-weight: bold; }
         </style>
     </head>
     <body>
-        <div id="canvas-container"></div>
+        <div id="game-container">
+            <canvas id="pixel-canvas"></canvas>
 
-        <div class="boss-hud">
-            <div class="boss-name">👹 VILÃO: PO (EXIGE REFATORAÇÕES NO JIRA REAL)</div>
-            <div class="hp-bar-bg">
-                <div id="boss-hp-fill" class="hp-bar-fill"></div>
+            <div class="side-panel">
+                <div>
+                    <div class="hud-title">👾 PIXEL AGENTS vs PO BOSS</div>
+                    <div style="font-size: 0.55rem; color: #9ca3af; margin-bottom: 1rem;">Conta: felipeflose.atlassian.net</div>
+
+                    <button class="btn-pixel-attack" onclick="clearCard()">⚡ CODIFICAR CARD (-200 HP PO)</button>
+                    <button class="btn-po-attack" onclick="poAttack()">👹 PO LOTAR JIRA COM NOVO CARD</button>
+
+                    <div style="font-size: 0.65rem; color: #ffaa00; margin-top: 1rem; margin-bottom: 0.6rem;">🔷 CARDS NO JIRA CLOUD</div>
+                    <div id="cards-list">Carregando cards...</div>
+                </div>
+
+                <div>
+                    <div style="font-size: 0.6rem; color: #55ff55; margin-bottom: 0.5rem;">📜 AUDIT LOG HASHS</div>
+                    <div id="audit-log" style="font-size: 0.5rem; color: #9ca3af; max-height: 120px; overflow-y: auto;"></div>
+                </div>
             </div>
-            <div id="boss-phase-text" style="font-size:0.75rem; color:#ffaa00; margin-top:0.4rem;">Jira Cloud: felipeflose.atlassian.net</div>
-        </div>
-
-        <div class="left-panel">
-            <h2 style="font-family:'Press Start 2P', monospace; font-size:0.7rem; color:#55ff55; margin-bottom:0.8rem;">⚔️ TIME DE HEROIS</h2>
-            <div id="heroes-list">Carregando heróis...</div>
-
-            <button class="btn-clear-jira" onclick="clearCard()">⚡ CODIFICAR CARD REAL DO JIRA! (-200 HP NO BOSS)</button>
-            <button class="btn-po-spam" onclick="poSpamCard()">👹 PO CRIAR NOVO CARD NO JIRA</button>
-        </div>
-
-        <div class="right-panel">
-            <h2 style="font-family:'Press Start 2P', monospace; font-size:0.7rem; color:#4c9aff; margin-bottom:0.8rem;">🔷 CARDS REAIS NO JIRA CLOUD (KAN)</h2>
-            <div id="jira-cards-list">Carregando cards do Jira...</div>
-            <h2 style="font-family:'Press Start 2P', monospace; font-size:0.65rem; color:#ffaa00; margin-top:1rem; margin-bottom:0.5rem;">📜 AUDIT LOG</h2>
-            <div id="combat-log" style="font-family:'Courier New', monospace; font-size:0.7rem; color:#55ff55;">Aguardando ação...</div>
         </div>
 
         <script>
-            const container = document.getElementById('canvas-container');
-            const scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x05070c);
+            const canvas = document.getElementById('pixel-canvas');
+            const ctx = canvas.getContext('2d');
 
-            const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 18, 24);
-            camera.lookAt(0, 2, 0);
+            function resizeCanvas() {
+                canvas.width = window.innerWidth - 420;
+                canvas.height = window.innerHeight;
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
 
-            const renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.shadowMap.enabled = true;
-            container.appendChild(renderer.domElement);
+            let gameState = {};
+            let agentsList = [];
 
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-            scene.add(ambientLight);
+            // Desenhar Sprite Pixel Art 16-Bit dos Agentes
+            function drawPixelSprite(x, y, color, name, role) {
+                // Corpo do Agente Pixel (16x24 pixels)
+                ctx.fillStyle = color;
+                ctx.fillRect(x, y + 10, 24, 20);
 
-            const bossLight = new THREE.PointLight(0xff0000, 2.5, 30);
-            bossLight.position.set(0, 6, -4);
-            scene.add(bossLight);
+                // Cabeça Pixel
+                ctx.fillStyle = "#ffcc99";
+                ctx.fillRect(x + 4, y, 16, 14);
 
-            const arenaGroup = new THREE.Group();
-            for (let x = -9; x <= 9; x++) {
-                for (let z = -9; z <= 9; z++) {
-                    const geometry = new THREE.BoxGeometry(0.95, 0.95, 0.95);
-                    const isBorder = Math.abs(x) === 9 || Math.abs(z) === 9;
-                    const material = new THREE.MeshStandardMaterial({
-                        color: isBorder ? 0xd97706 : 0x111827,
-                        roughness: 0.8
-                    });
-                    const cube = new THREE.Mesh(geometry, material);
-                    cube.position.set(x, 0, z);
-                    arenaGroup.add(cube);
+                // Olhos Pixel
+                ctx.fillStyle = "#000";
+                ctx.fillRect(x + 7, y + 4, 3, 3);
+                ctx.fillRect(x + 14, y + 4, 3, 3);
+
+                // Nome do Agente por cima do Sprite
+                ctx.font = '8px "Press Start 2P"';
+                ctx.fillStyle = color;
+                ctx.fillText(name, x - 5, y - 8);
+
+                // Barra de Vida Mini
+                ctx.fillStyle = "#ff0000";
+                ctx.fillRect(x - 4, y - 4, 30, 3);
+                ctx.fillStyle = "#00ff00";
+                ctx.fillRect(x - 4, y - 4, 28, 3);
+            }
+
+            // Desenhar PO EVIL BOSS Giant Pixel Sprite
+            function drawPOBoss(hpPercent, phaseText) {
+                const bx = canvas.width / 2 - 40;
+                const by = 40;
+
+                // Corpo do PO Vilão (Terno Escuro)
+                ctx.fillStyle = "#1e1e2e";
+                ctx.fillRect(bx, by + 30, 80, 70);
+
+                // Gravata Vermelha
+                ctx.fillStyle = "#ff0000";
+                ctx.fillRect(bx + 36, by + 35, 8, 35);
+
+                // Cabeça Gigante do Boss
+                ctx.fillStyle = "#313244";
+                ctx.fillRect(bx + 10, by, 60, 40);
+
+                // Olhos de Laser Vermelhos
+                ctx.fillStyle = "#ff0000";
+                ctx.fillRect(bx + 20, by + 12, 12, 8);
+                ctx.fillRect(bx + 48, by + 12, 12, 8);
+
+                // Nome do Boss
+                ctx.font = '12px "Press Start 2P"';
+                ctx.fillStyle = "#ff5555";
+                ctx.fillText("👹 PO EVIL BOSS", bx - 30, by - 15);
+
+                // Barra de Vida Gigante do Boss
+                ctx.fillStyle = "#440000";
+                ctx.fillRect(canvas.width / 2 - 150, 15, 300, 16);
+                ctx.fillStyle = "#ff3333";
+                ctx.fillRect(canvas.width / 2 - 150, 15, (300 * hpPercent) / 100, 16);
+                ctx.strokeStyle = "#ffffff";
+                ctx.strokeRect(canvas.width / 2 - 150, 15, 300, 16);
+
+                // Texto de Status da Fase
+                ctx.font = '8px "Press Start 2P"';
+                ctx.fillStyle = "#ffaa00";
+                ctx.fillText(phaseText, canvas.width / 2 - 140, 42);
+            }
+
+            // Loop de Renderização do Canvas 2D
+            function render() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Desenhar chão da Arena Pixel (Grid 16-bit)
+                ctx.fillStyle = "#11111b";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                for (let i = 0; i < canvas.width; i += 40) {
+                    ctx.strokeStyle = "#1e1e2e";
+                    ctx.beginPath();
+                    ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height);
+                    ctx.stroke();
                 }
+
+                if (gameState) {
+                    const hpPct = (gameState.boss_hp / gameState.boss_max_hp) * 100;
+                    drawPOBoss(hpPct, gameState.boss_phase || "Carregando PO...");
+
+                    // Desenhar cada Pixel Agente (Felipe, Sofia, Lucas, Beatriz)
+                    agentsList.forEach(a => {
+                        drawPixelSprite(a.x, a.y, a.sprite_color, a.name, a.class);
+                    });
+                }
+
+                requestAnimationFrame(render);
             }
-            scene.add(arenaGroup);
+            render();
 
-            const bossGroup = new THREE.Group();
-            const bossBody = new THREE.Mesh(new THREE.BoxGeometry(2.5, 3.5, 1.5), new THREE.MeshStandardMaterial({ color: 0x111827 }));
-            bossBody.position.y = 2.5; bossGroup.add(bossBody);
-
-            const bossHead = new THREE.Mesh(new THREE.BoxGeometry(2.0, 2.0, 2.0), new THREE.MeshStandardMaterial({ color: 0x374151 }));
-            bossHead.position.y = 5.25; bossGroup.add(bossHead);
-
-            const eyeMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-            const eye1 = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.2, 0.1), eyeMat); eye1.position.set(-0.5, 5.4, 1.01);
-            const eye2 = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.2, 0.1), eyeMat); eye2.position.set(0.5, 5.4, 1.01);
-            bossGroup.add(eye1); bossGroup.add(eye2);
-
-            bossGroup.position.set(0, 0, -4);
-            scene.add(bossGroup);
-
-            const heroMeshes = {};
-            function createHeroMesh(colorHex) {
-                const grp = new THREE.Group();
-                const body = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1.2, 0.5), new THREE.MeshStandardMaterial({ color: colorHex }));
-                body.position.y = 1.1; grp.add(body);
-                const head = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.7, 0.7), new THREE.MeshStandardMaterial({ color: 0x60a5fa }));
-                head.position.y = 2.05; grp.add(head);
-                return grp;
-            }
-
-            function animate() {
-                requestAnimationFrame(animate);
-                bossGroup.position.y = Math.sin(Date.now() * 0.003) * 0.4;
-                renderer.render(scene, camera);
-            }
-            animate();
-
-            async function updateGame() {
+            // Atualizar Estado do Jogo via API REST
+            async function updateState() {
                 const res = await fetch('/api/boss/state');
                 const data = await res.json();
-                const state = data.game_state;
+                gameState = data.game_state;
+                agentsList = data.pixel_agents;
 
-                const hpPercent = (state.boss_hp / state.boss_max_hp) * 100;
-                document.getElementById('boss-hp-fill').style.width = `${hpPercent}%`;
-                document.getElementById('boss-phase-text').innerText = state.boss_phase;
-
-                document.getElementById('heroes-list').innerHTML = data.agents.map(a => `
-                    <div style="background:rgba(0,0,0,0.5); border:1px solid #30363d; padding:0.5rem; border-radius:6px; margin-bottom:0.4rem;">
-                        <div style="font-weight:bold; color:${a.color}; font-size:0.8rem;">🛡️ ${a.name}</div>
-                        <div style="font-size:0.75rem; color:#9ca3af;">${a.action}</div>
+                // Atualizar Cards no Painel
+                document.getElementById('cards-list').innerHTML = data.jira_cards.length ? data.jira_cards.map(c => `
+                    <div class="jira-card">
+                        <div class="card-id">${c.id}</div>
+                        <div>${c.title}</div>
                     </div>
+                `).join('') : '<div style="color:#55ff55; font-size:0.6rem;">🎉 JIRA LIMPO! VITORIA!</div>';
+
+                // Audit Log
+                document.getElementById('audit-log').innerHTML = data.audit_logs.map(l => `
+                    <div style="margin-bottom:0.3rem;">> ${l.action}: ${l.title || ''}</div>
                 `).join('');
-
-                document.getElementById('jira-cards-list').innerHTML = data.jira_cards.length ? data.jira_cards.map(c => `
-                    <div class="jira-card-item">
-                        <div class="jira-card-id">${c.id}</div>
-                        <div style="font-weight:600; margin-top:0.2rem;">${c.title}</div>
-                        <div style="font-size:0.7rem; color:#f59e0b;">${c.type}</div>
-                    </div>
-                `).join('') : '<div style="color:#55ff55; font-weight:bold;">🎉 NENHUM CARD PENDENTE NO JIRA REAL! REPOSITÓRIO LIMPO!</div>';
-
-                document.getElementById('combat-log').innerHTML = data.audit_logs.map(l => `
-                    <div style="margin-bottom:0.4rem; border-bottom:1px solid #30363d; padding-bottom:0.3rem;">
-                        <div style="color:#ffaa00;">[${l.action}]</div>
-                        <div>${l.title || ''}</div>
-                        ${l.damage ? `<div style="color:#55ff55;">💥 -${l.damage} HP no PO Vilão!</div>` : ''}
-                    </div>
-                `).join('');
-
-                data.agents.forEach(a => {
-                    if (!heroMeshes[a.name]) {
-                        const m = createHeroMesh(a.color);
-                        scene.add(m);
-                        heroMeshes[a.name] = m;
-                    }
-                    heroMeshes[a.name].position.x = a.x;
-                    heroMeshes[a.name].position.z = a.z;
-                });
             }
 
             async function clearCard() {
                 await fetch('/api/boss/clear_jira_card', { method: 'POST' });
-                updateGame();
+                updateState();
             }
 
-            async function poSpamCard() {
+            async function poAttack() {
                 await fetch('/api/boss/po_add_card', { method: 'POST' });
-                updateGame();
+                updateState();
             }
 
-            updateGame();
-            setInterval(updateGame, 2000);
-
-            window.addEventListener('resize', () => {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-            });
+            updateState();
+            setInterval(updateState, 2000);
         </script>
     </body>
     </html>
