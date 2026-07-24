@@ -21,7 +21,7 @@ from flose.engines.governance import GovernanceEngine
 from flose.connectors.jira import JiraConnector
 from flose.connectors.gemma_local import GemmaLocalConnector
 
-app = FastAPI(title="FLOSE (AEOS) - Fair Balanced PO Boss & Hero Empowerment Engine")
+app = FastAPI(title="FLOSE (AEOS) - Dynamic PO Frenzy & Hero Training Ground")
 
 bus = EventBus()
 planner = PlanningEngine()
@@ -35,19 +35,21 @@ for c in real_jira_cards:
     c.setdefault("rejections", 0)
 
 game_state = {
-    "boss_name": "PO VILÃO (BALANÇADO E JUSTO)",
+    "boss_name": "PO EVIL BOSS (FRENZY MODE)",
     "boss_hp": 1000,
     "boss_max_hp": 1000,
-    "current_turn": "PO_BURST_PHASE", 
-    "turn_timer_sec": 60,
-    "boss_cards_created_in_burst": 0,
+    "current_phase": "HERO_TRAINING_PHASE", # HERO_TRAINING_PHASE (2 min vantagem) -> PO_FRENZY_30S -> HEROES_CLEARING_PHASE (limpar 80%)
+    "phase_timer_sec": 120,
+    "boss_cards_created_in_frenzy": 0,
+    "target_cards_to_clear_80pct": 0,
+    "cards_cleared_in_current_wave": 0,
     "cards_coded_count": 0,
     "victory": False,
     "duel": {
         "is_active": False,
         "active_hero": None,
         "active_card": None,
-        "timeout_timer_sec": 18.0, # AUMENTADO DE 10s PARA 18s (MAIS TEMPO JUSTO!)
+        "timeout_timer_sec": 18.0,
         "max_timeout_sec": 18.0,
         "damage_dealt": 0
     },
@@ -59,7 +61,7 @@ game_state = {
     }
 }
 
-# HERÓIS COM RESISTÊNCIA DE TIMEOUT AUMENTADA E RESPOSTA ULTRA-RÁPIDA
+# HERÓIS COM ACADEMIA DE TREINAMENTO E APRENDIZADO DE NOVAS SKILLS
 pixel_agents: Dict[str, Dict[str, Any]] = {
     "felipe": {
         "name": "Felipe",
@@ -68,9 +70,10 @@ pixel_agents: Dict[str, Dict[str, Any]] = {
         "x": 100, "y": 260,
         "skill_level": 1,
         "xp": 0,
-        "response_speed_ms": 280.0,      # Acelerado para ser justo!
-        "timeout_resistance_sec": 18.0, # 18 Segundos de Margem Justa!
-        "action": "Supervisionando Duelo Justo",
+        "new_skills_learned": ["Arquitetura Async Core", "Gerenciamento de Memória"],
+        "response_speed_ms": 250.0,
+        "timeout_resistance_sec": 18.0,
+        "action": "Treinando e Aprendendo Novas Arquiteturas",
     },
     "sofia": {
         "name": "Sofia",
@@ -79,9 +82,10 @@ pixel_agents: Dict[str, Dict[str, Any]] = {
         "x": 220, "y": 220,
         "skill_level": 1,
         "xp": 0,
-        "response_speed_ms": 220.0,
+        "new_skills_learned": ["Fine-Tuning Gemma 4", "Prompt Optimization"],
+        "response_speed_ms": 200.0,
         "timeout_resistance_sec": 18.0,
-        "action": "Minerando Soluções Rápidas no Gemma 4",
+        "action": "Estudando Modelos no Gemma 4 & Ollama",
     },
     "lucas": {
         "name": "Lucas",
@@ -90,9 +94,10 @@ pixel_agents: Dict[str, Dict[str, Any]] = {
         "x": 350, "y": 270,
         "skill_level": 1,
         "xp": 0,
-        "response_speed_ms": 150.0,
+        "new_skills_learned": ["Refatoração Rust/Python", "AGY Automation"],
+        "response_speed_ms": 120.0,
         "timeout_resistance_sec": 18.0,
-        "action": "Codificando PRs Rápidos e Aprovados",
+        "action": "Treinando Algoritmos de Alta Velocidade",
     },
     "beatriz": {
         "name": "Beatriz",
@@ -101,96 +106,129 @@ pixel_agents: Dict[str, Dict[str, Any]] = {
         "x": 480, "y": 230,
         "skill_level": 1,
         "xp": 0,
-        "response_speed_ms": 240.0,
+        "new_skills_learned": ["Testes de Mutação", "Zero-Trust Security"],
+        "response_speed_ms": 210.0,
         "timeout_resistance_sec": 18.0,
-        "action": "Auditando Testes e Defesas Justas",
+        "action": "Aprimorando Suíte de Testes de Aceite",
     }
 }
 
 audit_logs: List[Dict[str, Any]] = []
 
-def check_autonomous_skill_evolution(agent_key: str):
+def learn_new_skills_autonomously(agent_key: str):
     agt = pixel_agents[agent_key]
-    agt["xp"] += 35
+    agt["xp"] += 50
+    skills_pool = ["Design Pattern Master", "EventBus Acceleration", "Ollama Quantization", "AGY Scripting", "Pixel Perfect CSS Engine"]
+    new_skill = random.choice(skills_pool)
+    if new_skill not in agt["new_skills_learned"]:
+        agt["new_skills_learned"].append(new_skill)
+    
     if agt["xp"] >= 100:
         agt["xp"] = 0
         agt["skill_level"] += 1
-        agt["response_speed_ms"] = max(20.0, round(agt["response_speed_ms"] * 0.7, 1))
+        agt["response_speed_ms"] = max(15.0, round(agt["response_speed_ms"] * 0.65, 1))
         agt["timeout_resistance_sec"] += 3.0
         
         audit_logs.append({
             "event_id": f"evt_{len(audit_logs)+1}",
-            "action": "HERO_SKILL_LEVEL_UP",
+            "action": "HERO_LEARNED_NEW_SKILL",
             "agent": agt["name"],
-            "new_level": agt["skill_level"],
-            "speed": f"{agt['response_speed_ms']}ms"
+            "new_skill": new_skill,
+            "new_level": agt["skill_level"]
         })
 
 async def async_create_jira_card_background(topic_title: str, topic_desc: str):
     try:
-        jira_res = await asyncio.to_thread(jira.create_detailed_epic_or_task, "KAN", topic_title, topic_desc, "ÉPICO PO GEMMA4")
+        jira_res = await asyncio.to_thread(jira.create_detailed_epic_or_task, "KAN", topic_title, topic_desc, "ÉPICO PO FRENZY")
         new_key = jira_res.get("key", f"KAN-{random.randint(9700, 9999)}")
         new_card = {
             "id": new_key,
-            "title": f"[PO-GEMMA4] {topic_title}",
+            "title": f"[PO-FRENZY] {topic_title}",
             "description": topic_desc,
             "status": "A FAZER",
             "rejections": 0,
-            "comments": [{"author": "PO EVIL BOSS", "text": f"Criado no 'A FAZER': {topic_title}."}]
+            "comments": [{"author": "PO EVIL BOSS", "text": f"Criado na Rajada de 30s: {topic_title}."}]
         }
         game_state["kanban"]["to_do"].append(new_card)
-        game_state["boss_cards_created_in_burst"] += 1
-        game_state["boss_phase"] = f"⚖️ PO BALANÇADO CRIOU CARD REAL {new_key} NO JIRA!"
+        game_state["boss_cards_created_in_frenzy"] += 1
         
         audit_logs.append({
             "event_id": f"evt_{len(audit_logs)+1}",
-            "action": "PO_REAL_JIRA_CARD_CREATED",
+            "action": "PO_FRENZY_CARD_CREATED",
             "card_id": new_key,
             "title": topic_title
         })
     except Exception as e:
         print(f"[Async Jira Error] {e}")
 
-# LOOP BALANÇADO E JUSTO: PO CRIA NO MÁXIMO 3 CARDS POR TURNO (EM VEZ DE 5) E OS HERÓIS TEM 75% DE CHANCE DE VENCER O DUELO!
-async def fair_balanced_game_loop():
-    po_turn_duration = 60      
-    heroes_turn_duration = 120 
-    
+# NOVO CICLO DINÂMICO DE REGRAS SOLICITADO:
+# 1. HERÓIS GANHAM 2 MINUTOS DE VANTAGEM INICIAL PARA ESTUDAR E APRENDER NOVAS SKILLS!
+# 2. PO ENTRA EM MODO FRENZY DE 30 SEGUNDOS E CRIA O MÁXIMO DE CARDS QUE CONSEGUIR NO JIRA!
+# 3. OS HERÓIS ENTRAM EM AÇÃO E SÓ VOLTAM AO TURNO NORMAL APÓS LIMPAR 80% DOS CARDS CRIADOS!
+async def dynamic_frenzy_and_training_game_loop():
     while True:
         # =========================================================================
-        # FASE 1: TURNO DO PO VILÃO (JUSTO: MÁXIMO DE 3 CARDS POR RAJADA)
+        # REGRA 1: FASE DE TREINAMENTO DOS HERÓIS (2 MINUTOS / 120 SEGUNDOS DE VANTAGEM)
         # =========================================================================
-        game_state["current_turn"] = "PO_BURST_PHASE"
-        game_state["boss_cards_created_in_burst"] = 0
+        game_state["current_phase"] = "HERO_TRAINING_PHASE"
+        game_state["boss_phase"] = "🎓 ACADEMIA DOS HERÓIS: 2 MINUTOS DE VANTAGEM PARA ESTUDAR E EVOLUIR SKILLS!"
         game_state["duel"]["is_active"] = False
 
-        for sec in range(po_turn_duration, 0, -1):
+        for sec in range(120, 0, -1):
             if game_state["victory"]: break
-            game_state["turn_timer_sec"] = sec
+            game_state["phase_timer_sec"] = sec
 
-            # O PO Vilão agora cria no máximo 3 cards (mais justo e sem sobrecarregar o backlog!)
-            if game_state["boss_cards_created_in_burst"] < 3 and sec % 15 == 0:
-                po_topics = [
-                    ("Refatorar UI Frontend Nível Pixel Perfect 16-Bit", "O PO exige alinhamento de bordas HSL."),
-                    ("Otimização de Performance Backend Async & Caching", "Reduzir latência do EventBus para <5ms."),
-                    ("Auditoria Anti-Alucinação e Cobertura de Testes Mutation", "Testes de mutação com evidência SHA-256.")
-                ]
-                topic_title, topic_desc = po_topics[game_state["boss_cards_created_in_burst"] % len(po_topics)]
+            # Todos os heróis aprendem novas skills continuamente durante o treinamento!
+            if sec % 5 == 0:
+                hero_k = random.choice(["felipe", "sofia", "lucas", "beatriz"])
+                learn_new_skills_autonomously(hero_k)
+                pixel_agents[hero_k]["action"] = f"🎓 Aprendendo nova skill: {pixel_agents[hero_k]['new_skills_learned'][-1]}"
+
+            await asyncio.sleep(1.0)
+
+        # =========================================================================
+        # REGRA 2: PO ENTRA EM JANELA FRENZY DE 30 SEGUNDOS (GERA TUDO QUE CONSEGUIR!)
+        # =========================================================================
+        game_state["current_phase"] = "PO_FRENZY_30S"
+        game_state["boss_phase"] = "⚡ PO FRENZY MODE! 30 SEGUNDOS GERANDO O MÁXIMO DE CARDS NO JIRA!"
+        game_state["boss_cards_created_in_frenzy"] = 0
+
+        po_topics_frenzy = [
+            ("Refatorar UI Frontend Nível Pixel Perfect 16-Bit", "PO exige alinhamento HSL."),
+            ("Otimização de Performance Backend Async & Caching", "Latência do EventBus <5ms."),
+            ("Auditoria Anti-Alucinação e Cobertura de Testes Mutation", "Testes de mutação com evidência SHA-256."),
+            ("CONTRATAÇÃO: Onboarding de Desenvolvedor Frontend Senior", "Recrutar colaborador especialista em React."),
+            ("Sanitização Estrita contra Vulnerabilidades XSS & SQL", "Falhas de segurança nos endpoints REST."),
+            ("Implementação de Protocolo MCP Bridge", "Exportar métricas de telemetria."),
+            ("Melhoria de Cores e Gradientes em 2D/3D Canvas", "Bordas dinâmicas e animações smooth.")
+        ]
+
+        for sec in range(30, 0, -1):
+            if game_state["victory"]: break
+            game_state["phase_timer_sec"] = sec
+
+            # Dispara requisições contínuas a cada 2 segundos na janela de 30s!
+            if sec % 2 == 0:
+                topic_title, topic_desc = po_topics_frenzy[game_state["boss_cards_created_in_frenzy"] % len(po_topics_frenzy)]
                 asyncio.create_task(async_create_jira_card_background(topic_title, topic_desc))
 
             await asyncio.sleep(1.0)
 
         # =========================================================================
-        # FASE 2: TURNO DOS HERÓIS (120 SEGUNDOS - DUELOS JUSTOS COM DANO DE 350 HP NO VILÃO!)
+        # REGRA 3: HERÓIS PRECISAM RESOLVER E BAIXAR PELO MENOS 80% DOS CARDS CRIADOS!
         # =========================================================================
-        game_state["current_turn"] = "HEROES_REST_PHASE"
-        game_state["boss_phase"] = "⚖️ TURNO JUSTO: HERÓIS COM DANO AUMENTADO E MARGEM MAIOR CONTRA O TIMEOUT!"
+        cards_created = max(1, game_state["boss_cards_created_in_frenzy"])
+        target_clear_count = int(cards_created * 0.8) # 80% dos cards criados!
+        game_state["target_cards_to_clear_80pct"] = target_clear_count
+        game_state["cards_cleared_in_current_wave"] = 0
+        game_state["current_phase"] = "HEROES_CLEARING_PHASE"
 
-        for sec in range(heroes_turn_duration, 0, -1):
+        game_state["boss_phase"] = f"⚔️ META DOS HERÓIS: BAIXAR 80% DOS CARDS ({target_clear_count} CARDS) DA RAJADA!"
+
+        while game_state["cards_cleared_in_current_wave"] < target_clear_count:
             if game_state["victory"]: break
-            game_state["turn_timer_sec"] = sec
 
-            # 1. Inicia duelo com card do 'A Fazer'
+            # Se não há duelo ativo, inicia duelo no card
             if not game_state["duel"]["is_active"] and game_state["kanban"]["to_do"]:
                 card = game_state["kanban"]["to_do"].pop(0)
                 card.setdefault("rejections", 0)
@@ -210,14 +248,7 @@ async def fair_balanced_game_loop():
                     "damage_dealt": 0
                 }
 
-                audit_logs.append({
-                    "event_id": f"evt_{len(audit_logs)+1}",
-                    "action": "FAIR_DUEL_STARTED",
-                    "hero": hero["name"],
-                    "card_id": card["id"]
-                })
-
-            # 2. Resolução do Duelo (Taxa de sucesso aumentada para 75% para ser um jogo justo e equilibrado!)
+            # Executa o duelo com as novas habilidades aprendidas pelos heróis!
             if game_state["duel"]["is_active"]:
                 duel = game_state["duel"]
                 hero_key = duel["hero_key"]
@@ -225,26 +256,26 @@ async def fair_balanced_game_loop():
 
                 duel["timeout_timer_sec"] = round(duel["timeout_timer_sec"] - 1.0, 1)
 
-                # 75% DE CHANCE DE VENCER O DUELO!
-                if duel["timeout_timer_sec"] > 0 and random.random() < (0.60 + (hero["skill_level"] * 0.1)):
+                # Heróis agora estão MUITO MAIS ESPERTOS (85% de acerto com as novas skills aprendidas!)
+                if duel["timeout_timer_sec"] > 0 and random.random() < (0.75 + (hero["skill_level"] * 0.05)):
                     card_duel = duel["active_card"]
-                    check_autonomous_skill_evolution(hero_key)
-
+                    
                     card_duel["status"] = "CONCLUÍDO"
-                    damage = 350 # Dano aumentado para derrotar o PO mais rapidamente!
+                    damage = 300
                     game_state["boss_hp"] = max(0, game_state["boss_hp"] - damage)
                     
                     if card_duel in game_state["kanban"]["in_progress"]:
                         game_state["kanban"]["in_progress"].remove(card_duel)
                     game_state["kanban"]["done"].append(card_duel)
                     game_state["cards_coded_count"] += 1
+                    game_state["cards_cleared_in_current_wave"] += 1
 
-                    game_state["boss_phase"] = f"💥 {hero['name']} VENCEU O DUELO JUSTO! PO SOFREU -350 HP DE DANO!"
+                    game_state["boss_phase"] = f"💥 {hero['name']} RESPEITOU A META! ({game_state['cards_cleared_in_current_wave']}/{target_clear_count} CARDS 80%)"
                     
-                    h = governance.generate_audit_hash("agt_lucas", "FAIR_DUEL_WON", card_duel['title'])
+                    h = governance.generate_audit_hash("agt_lucas", "HERO_80PCT_CLEAR_CARD", card_duel['title'])
                     audit_logs.append({
                         "event_id": f"evt_{len(audit_logs)+1}",
-                        "action": "FAIR_DUEL_WON_CRITICAL_HIT",
+                        "action": "HERO_80PCT_CARD_RESOLVED",
                         "hero": hero["name"],
                         "card_id": card_duel["id"],
                         "hash": h
@@ -254,7 +285,7 @@ async def fair_balanced_game_loop():
 
                     if game_state["boss_hp"] <= 0:
                         game_state["victory"] = True
-                        game_state["boss_phase"] = "🏆 VITÓRIA IMPECÁVEL! OS HERÓIS VENCERAM O PO VILÃO EM UM DUELO TOTALMENTE BALANÇADO!"
+                        game_state["boss_phase"] = "🏆 VITÓRIA ABSOLUTA! OS HERÓIS BAIXARAM 80% DOS CARDS E DERROTARAM O PO VILÃO!"
 
                 elif duel["timeout_timer_sec"] <= 0:
                     card_duel = duel["active_card"]
@@ -266,15 +297,6 @@ async def fair_balanced_game_loop():
                         game_state["kanban"]["in_progress"].remove(card_duel)
                     game_state["kanban"]["to_do"].append(card_duel)
 
-                    game_state["boss_phase"] = f"⚠️ TIMEOUT MARGINAL! {hero['name']} REPETIRÁ O CARD {card_duel['id']}!"
-
-                    audit_logs.append({
-                        "event_id": f"evt_{len(audit_logs)+1}",
-                        "action": "MARGINAL_TIMEOUT",
-                        "hero": hero["name"],
-                        "card_id": card_duel["id"]
-                    })
-
                     duel["is_active"] = False
 
             await asyncio.sleep(1.0)
@@ -282,7 +304,7 @@ async def fair_balanced_game_loop():
 @app.on_event("startup")
 async def start_autonomous_loop():
     await bus.start()
-    asyncio.create_task(fair_balanced_game_loop())
+    asyncio.create_task(dynamic_frenzy_and_training_game_loop())
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -312,7 +334,7 @@ async def serve_autonomous_pixel_game():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>FLOSE AEOS - Fair Balanced PO Boss & Hero Empowerment</title>
+        <title>FLOSE AEOS - Dynamic PO Frenzy & Hero Training Ground</title>
         <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
         <style>
             * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -354,8 +376,8 @@ async def serve_autonomous_pixel_game():
             }
 
             .turn-banner {
-                background: rgba(59, 130, 246, 0.2);
-                border: 2px solid #3b82f6;
+                background: rgba(168, 85, 247, 0.2);
+                border: 2px solid #a855f7;
                 border-radius: 6px;
                 padding: 0.6rem;
                 text-align: center;
@@ -430,15 +452,15 @@ async def serve_autonomous_pixel_game():
 
             <div class="side-panel">
                 <div>
-                    <div class="hud-title">⚖️ JOGO BALANÇADO & DUELO JUSTO DE HERÓIS</div>
+                    <div class="hud-title">⚡ PO FRENZY 30s & ACADEMIA DOS HERÓIS</div>
                     
                     <div id="turn-banner" class="turn-banner">
-                        TURNO ATUAL: CARREGANDO...
+                        FASE ATUAL: CARREGANDO...
                     </div>
 
-                    <!-- CAIXA DE DUELO BALANÇADO -->
+                    <!-- CAIXA DE DUELO COM SKILLS APRENDIDAS -->
                     <div id="duel-box" class="duel-arena-box">
-                        <div style="font-size:0.5rem; color:#60a5fa; text-align:center;">AGUARDANDO DUELO...</div>
+                        <div style="font-size:0.5rem; color:#60a5fa; text-align:center;">AGUARDANDO PROCESSO...</div>
                     </div>
 
                     <div class="kanban-grid">
@@ -456,7 +478,7 @@ async def serve_autonomous_pixel_game():
                         </div>
                     </div>
 
-                    <div style="font-size:0.48rem; color:#a855f7; margin-bottom:0.4rem;">🛡️ EVOLUÇÃO E MARGEM DOS HERÓIS:</div>
+                    <div style="font-size:0.48rem; color:#a855f7; margin-bottom:0.4rem;">🎓 NOVAS SKILLS APRENDIDAS PELOS HERÓIS:</div>
                     <div id="skills-list">Carregando heróis...</div>
                 </div>
 
@@ -524,7 +546,7 @@ async def serve_autonomous_pixel_game():
 
                 ctx.font = '10px "Press Start 2P"';
                 ctx.fillStyle = "#ff5555";
-                ctx.fillText("👹 PO BALANÇADO", bx - 30, by - 15);
+                ctx.fillText("👹 PO FRENZY BOSS", bx - 40, by - 15);
 
                 ctx.fillStyle = "#440000";
                 ctx.fillRect(canvas.width / 2 - 150, 15, 300, 16);
@@ -552,7 +574,7 @@ async def serve_autonomous_pixel_game():
 
                 if (gameState) {
                     const hpPct = (gameState.boss_hp / gameState.boss_max_hp) * 100;
-                    drawPOBoss(hpPct, gameState.boss_phase || "Jogo Balançado...");
+                    drawPOBoss(hpPct, gameState.boss_phase || "Carregando...");
 
                     const duel = gameState.duel;
                     agentsList.forEach(a => {
@@ -573,24 +595,33 @@ async def serve_autonomous_pixel_game():
                 const duel = data.duel;
                 const kanban = data.kanban;
 
-                const isPoTurn = gameState.current_turn === "PO_BURST_PHASE";
-                document.getElementById('turn-banner').style.borderColor = isPoTurn ? "#ff5555" : "#3b82f6";
-                document.getElementById('turn-banner').style.color = isPoTurn ? "#ff5555" : "#3b82f6";
-                document.getElementById('turn-banner').innerHTML = isPoTurn ?
-                    `👹 TURNO PO: CARDS JUSTOS NO JIRA | ⏱️ ${gameState.turn_timer_sec}s` :
-                    `⚡ TURNO HERÓIS: CHANCE AUMENTADA & DANO +350 HP | ⏱️ ${gameState.turn_timer_sec}s`;
+                // Dynamic Turn Banner
+                const phase = gameState.current_phase;
+                if (phase === "HERO_TRAINING_PHASE") {
+                    document.getElementById('turn-banner').style.borderColor = "#a855f7";
+                    document.getElementById('turn-banner').style.color = "#a855f7";
+                    document.getElementById('turn-banner').innerHTML = `🎓 ACADEMIA: 2 MINUTOS DE ESTUDO & SKILLS | ⏱️ ${gameState.phase_timer_sec}s`;
+                } else if (phase === "PO_FRENZY_30S") {
+                    document.getElementById('turn-banner').style.borderColor = "#ff5555";
+                    document.getElementById('turn-banner').style.color = "#ff5555";
+                    document.getElementById('turn-banner').innerHTML = `🔥 PO FRENZY MODE: 30 SEGUNDOS GERANDO CARDS | ⏱️ ${gameState.phase_timer_sec}s`;
+                } else {
+                    document.getElementById('turn-banner').style.borderColor = "#55ff55";
+                    document.getElementById('turn-banner').style.color = "#55ff55";
+                    document.getElementById('turn-banner').innerHTML = `⚔️ HERÓIS LIMPANDO METAS (80% DOS CARDS): ${gameState.cards_cleared_in_current_wave}/${gameState.target_cards_to_clear_80pct}`;
+                }
 
                 if (duel && duel.is_active && duel.active_card) {
                     const pct = Math.max(0, (duel.timeout_timer_sec / duel.max_timeout_sec) * 100);
                     document.getElementById('duel-box').innerHTML = `
                         <div style="font-size:0.55rem; color:#60a5fa; font-weight:bold; margin-bottom:0.4rem;">
-                            ⚔️ DUELO JUSTO: <span style="color:#a855f7;">${duel.active_hero}</span> VS PO!
+                            ⚔️ DUELO EM ANDAMENTO: <span style="color:#a855f7;">${duel.active_hero}</span> VS PO!
                         </div>
                         <div style="font-size:0.48rem; color:#ec4899; margin-bottom:0.4rem;">
                             🎴 CARD EM CODIFICAÇÃO: [${duel.active_card.id}] ${duel.active_card.title}
                         </div>
                         <div style="font-size:0.45rem; color:#9ca3af;">
-                            ⏱️ MARGEM DE TIMEOUT JUSTA: <span style="color:${pct < 30 ? '#ff5555' : '#00ff00'}; font-weight:bold;">${duel.timeout_timer_sec.toFixed(1)}s</span> (Max ${duel.max_timeout_sec.toFixed(0)}s)
+                            ⏱️ TIMEOUT: <span style="color:${pct < 30 ? '#ff5555' : '#00ff00'}; font-weight:bold;">${duel.timeout_timer_sec.toFixed(1)}s</span>
                         </div>
                         <div class="duel-timer-bg">
                             <div class="duel-timer-fill" style="width:${pct}%; background:${pct < 30 ? '#ff5555' : '#00ff00'};"></div>
@@ -599,7 +630,7 @@ async def serve_autonomous_pixel_game():
                 } else {
                     document.getElementById('duel-box').innerHTML = `
                         <div style="font-size:0.48rem; color:#9ca3af; text-align:center;">
-                            😴 DUELO CONCLUÍDO! PO GERANDO PRÓXIMOS CARDS JUSTOS...
+                            ${phase === "HERO_TRAINING_PHASE" ? "🎓 HERÓIS NO CENTRO DE TREINAMENTO APRENDENDO NOVAS SKILLS!" : "😴 AGUARDANDO PRÓXIMO CARD DA META..."}
                         </div>
                     `;
                 }
@@ -625,10 +656,11 @@ async def serve_autonomous_pixel_game():
                     </div>
                 `).join('');
 
+                // Render Novas Skills Aprendidas
                 document.getElementById('skills-list').innerHTML = agentsList.map(a => `
-                    <div style="background:rgba(0,0,0,0.5); border:1px solid #30363d; padding:0.4rem; border-radius:4px; margin-bottom:0.3rem; font-size:0.42rem;">
+                    <div style="background:rgba(0,0,0,0.5); border:1px solid #30363d; padding:0.4rem; border-radius:4px; margin-bottom:0.3rem; font-size:0.41rem;">
                         <div style="color:${a.sprite_color}; font-weight:bold;">${a.name} (Lv.${a.skill_level}) <span style="float:right; color:#a855f7;">XP: ${a.xp}%</span></div>
-                        <div style="color:#9ca3af; margin-top:0.2rem;">Velocidade: <span style="color:#55ffff;">${a.response_speed_ms.toFixed(0)}ms</span> | Margem Timeout: ${a.timeout_resistance_sec.toFixed(1)}s</div>
+                        <div style="color:#55ff55; margin-top:0.2rem;">Skills Aprendidas: ${a.new_skills_learned.join(', ')}</div>
                     </div>
                 `).join('');
 
