@@ -668,3 +668,4 @@
 - [2026-07-25 15:50:40] [Sofia] [KAN-9814] implementou código Python REAL: `kan_9814_onboarding_subst_novo_colabora_aa2501.py` (+49 linhas, testes unitários OK)
 - [2026-07-25 15:51:00] [Beatriz] [KAN-9809] implementou código Python REAL: `kan_9809_recrutamento_contrata_o_para_k_205d62.py` (+32 linhas, testes unitários OK)
 - [2026-07-25 15:51:21] [Beatriz] [KAN-9744] implementou código Python REAL: `kan_9744_po_evil_boss_sanitiza_o_estrit_fb7518.py` (+34 linhas, testes unitários OK)
+- [2026-07-25 15:51:41] [Beatriz] [KAN-9743] implementou código Python REAL: `kan_9743_recrutamento_contrata_o_para_k_02cfe2.py` (+32 linhas, testes unitários OK)
