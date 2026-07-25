@@ -331,3 +331,4 @@
 - [2026-07-25 11:30:58] [Beatriz] [KAN-9822] implementou código Python REAL: `kan_9822_onboarding_subst_novo_colabora_ed7d76.py` (+49 linhas, testes unitários OK)
 - [2026-07-25 11:31:12] [Sofia] implementou código Python REAL: `sofia_pixel_perfect_css_engine_76350d.py` (+49 linhas, testes unitários OK)
 - [2026-07-25 11:31:33] [Beatriz] [KAN-9821] implementou código Python REAL: `kan_9821_demiss_o_por_desempenho_silvio_cd9580.py` (+33 linhas, testes unitários OK)
+- [2026-07-25 11:31:50] [Sofia] [KAN-9820] implementou código Python REAL: `kan_9820_onboarding_subst_novo_colabora_23fd79.py` (+49 linhas, testes unitários OK)
