@@ -843,11 +843,27 @@ async def serve_autonomous_pixel_game():
             }
 
             .kanban-col {
-                background: rgba(0,0,0,0.5);
+                background: rgba(0,0,0,0.6);
                 border: 2px solid #30363d;
                 border-radius: 6px;
                 padding: 0.4rem;
-                min-height: 90px;
+                height: 270px;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .kanban-col-cards {
+                flex: 1;
+                overflow-y: auto;
+                padding-right: 0.2rem;
+            }
+
+            .kanban-col-cards::-webkit-scrollbar {
+                width: 4px;
+            }
+            .kanban-col-cards::-webkit-scrollbar-thumb {
+                background: #3b82f6;
+                border-radius: 2px;
             }
 
             .kanban-col-title {
@@ -942,20 +958,20 @@ async def serve_autonomous_pixel_game():
                 <!-- KANBAN BOARD (4 COLUNAS) -->
                 <div class="kanban-grid">
                     <div class="kanban-col">
-                        <div class="kanban-col-title card-todo">🔴 A FAZER</div>
-                        <div id="col-todo"></div>
+                        <div class="kanban-col-title card-todo" id="title-todo">🔴 A FAZER (0)</div>
+                        <div class="kanban-col-cards" id="col-todo"></div>
                     </div>
                     <div class="kanban-col">
-                        <div class="kanban-col-title card-progress">🔵 EM PROGRESSO</div>
-                        <div id="col-progress"></div>
+                        <div class="kanban-col-title card-progress" id="title-progress">🔵 EM PROGRESSO (0)</div>
+                        <div class="kanban-col-cards" id="col-progress"></div>
                     </div>
                     <div class="kanban-col">
-                        <div class="kanban-col-title card-validation">🟡 EM VALIDAÇÃO</div>
-                        <div id="col-validation"></div>
+                        <div class="kanban-col-title card-validation" id="title-validation">🟡 EM VALIDAÇÃO (0)</div>
+                        <div class="kanban-col-cards" id="col-validation"></div>
                     </div>
                     <div class="kanban-col">
-                        <div class="kanban-col-title card-done">🟢 CONCLUÍDO</div>
-                        <div id="col-done"></div>
+                        <div class="kanban-col-title card-done" id="title-done">🟢 CONCLUÍDO (0)</div>
+                        <div class="kanban-col-cards" id="col-done"></div>
                     </div>
                 </div>
 
@@ -1204,27 +1220,54 @@ async def serve_autonomous_pixel_game():
                         `;
                     }
 
-                    // ---- KANBAN (4 COLUNAS) ----
+                    // ---- KANBAN (4 COLUNAS INTERATIVAS COM LINK JIRA) ----
                     const activeCardId = duel && duel.active_card ? duel.active_card.id : null;
                     
+                    const todoCards = kanbanState.to_do || [];
+                    const progressCards = kanbanState.in_progress || [];
+                    const validationCards = kanbanState.in_validation || [];
+                    const doneCards = kanbanState.done || [];
+
+                    document.getElementById('title-todo').textContent = `🔴 A FAZER (${todoCards.length})`;
+                    document.getElementById('title-progress').textContent = `🔵 EM PROGRESSO (${progressCards.length})`;
+                    document.getElementById('title-validation').textContent = `🟡 EM VALIDAÇÃO (${validationCards.length})`;
+                    document.getElementById('title-done').textContent = `🟢 CONCLUÍDO (${doneCards.length})`;
+
                     function renderCards(cards, colorClass) {
+                        if (!cards || cards.length === 0) {
+                            return '<div style="font-size:0.32rem; color:#4b5563; text-align:center; padding:0.8rem 0;">Nenhum card</div>';
+                        }
                         return cards.map(c => {
                             const isActive = c.id === activeCardId;
                             const isRejected = c.rejections > 0;
+                            const jiraUrl = `https://felipeflose.atlassian.net/browse/${c.id}`;
+                            const titleFull = c.title || '';
+                            const titleDisplay = titleFull.length > 30 ? titleFull.substring(0, 27) + '...' : titleFull;
+                            const commitHash = c.commit_info ? c.commit_info.commit_hash : null;
+                            
                             return `
                                 <div class="kanban-card-item ${isActive ? 'active-card' : ''} ${isRejected && !isActive ? 'rejected-card' : ''}">
-                                    <div style="color:${colorClass}; font-weight:bold; font-size:0.36rem;">${c.id}</div>
-                                    <div style="font-size:0.33rem; color:#d1d5db;">${(c.title || '').substring(0, 18)}...</div>
-                                    ${c.rejections > 0 ? `<div style="color:#ff5555; font-size:0.3rem;">⚠️ ${c.rejections}x rejeitado</div>` : ''}
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.15rem;">
+                                        <a href="${jiraUrl}" target="_blank" style="color:${colorClass}; font-weight:bold; font-size:0.38rem; text-decoration:underline;" title="Abrir card no Jira Cloud">
+                                            ${c.id} 🔗
+                                        </a>
+                                        ${commitHash ? `<span style="font-size:0.3rem; color:#60a5fa; background:rgba(96,165,250,0.15); padding:0.05rem 0.2rem; border-radius:3px;">🐙 ${commitHash}</span>` : ''}
+                                    </div>
+                                    <div style="font-size:0.34rem; color:#e5e7eb; line-height:1.3; margin-bottom:0.2rem;" title="${titleFull}">
+                                        ${titleDisplay}
+                                    </div>
+                                    ${c.delegated_to ? `<div style="font-size:0.31rem; color:#3b82f6; margin-bottom:0.15rem;">👔 → <span style="color:#a855f7;">${c.delegated_to}</span></div>` : ''}
+                                    ${c.po_rejection_reason ? `<div style="color:#ff5555; font-size:0.3rem; margin-top:0.1rem;" title="${c.po_rejection_reason}">💬 ${c.po_rejection_reason.substring(0, 42)}</div>` : ''}
+                                    ${c.rejections > 0 && !c.po_rejection_reason ? `<div style="color:#ff5555; font-size:0.3rem;">⚠️ ${c.rejections}x rejeitado</div>` : ''}
                                 </div>
                             `;
                         }).join('');
                     }
 
-                    document.getElementById('col-todo').innerHTML = renderCards(kanbanState.to_do || [], '#ff5555');
-                    document.getElementById('col-progress').innerHTML = renderCards(kanbanState.in_progress || [], '#60a5fa');
-                    document.getElementById('col-validation').innerHTML = renderCards(kanbanState.in_validation || [], '#ffaa00');
-                    document.getElementById('col-done').innerHTML = renderCards(kanbanState.done || [], '#55ff55');
+                    document.getElementById('col-todo').innerHTML = renderCards(todoCards, '#ff5555');
+                    document.getElementById('col-progress').innerHTML = renderCards(progressCards, '#60a5fa');
+                    document.getElementById('col-validation').innerHTML = renderCards(validationCards, '#ffaa00');
+                    document.getElementById('col-done').innerHTML = renderCards(doneCards, '#55ff55');
 
                     // ---- GITHUB COMMITS (REAIS) ----
                     const commitCount = gameState.total_real_commits || 0;
