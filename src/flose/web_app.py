@@ -25,6 +25,7 @@ from flose.engines.governance import GovernanceEngine
 from flose.connectors.jira import JiraConnector
 from flose.connectors.gemma_local import GemmaLocalConnector
 from flose.engines.code_synthesis import synthesize_and_commit_real_code
+from flose.core.persistence import load_persisted_state, save_state_to_disk
 
 app = FastAPI(title="FLOSE AEOS - Real GitHub Skill Commit Engine")
 
@@ -42,95 +43,121 @@ real_jira_cards = jira.fetch_real_jira_issues(project_key="KAN", limit=10)
 for c in real_jira_cards:
     c.setdefault("rejections", 0)
 
-game_state = {
-    "boss_name": "PO EVIL BOSS (FRENZY MODE)",
-    "boss_hp": 1000,
-    "boss_max_hp": 1000,
-    "current_phase": "HERO_TRAINING_PHASE",
-    "phase_timer_sec": 120,
-    "boss_cards_created_in_frenzy": 0,
-    "target_cards_to_clear_80pct": 0,
-    "cards_cleared_in_current_wave": 0,
-    "cards_coded_count": 0,
-    "victory": False,
-    "boss_phase": "🎓 ACADEMIA DOS HERÓIS: ESTUDANDO E CRIANDO COMMITS REAIS NO GITHUB!",
-    "duel": {
-        "is_active": False,
-        "active_hero": None,
-        "hero_key": None,
-        "active_card": None,
-        "timeout_timer_sec": 18.0,
-        "max_timeout_sec": 18.0,
-        "damage_dealt": 0,
-        "phase": "idle"  # idle | hero_working | in_validation | po_reviewing | approved | rejected
-    },
-    "kanban": {
-        "to_do": real_jira_cards if real_jira_cards else [],
-        "in_progress": [],
-        "in_validation": [],
-        "done": []
-    },
-    "last_real_commit": "Nenhum commit ainda",
-    "total_real_commits": 0,
-}
+# 💾 TENTA RESTAURAR ESTADO PERSISTIDO DO DISCO (data/state_persistence.json)
+loaded_gs, loaded_pa, loaded_al = load_persisted_state()
 
-# HERÓIS COM REGISTRO DE COMMITS REAIS NO GITHUB DE CADA SKILL APRENDIDA
-pixel_agents: Dict[str, Dict[str, Any]] = {
-    "felipe": {
-        "name": "Felipe",
-        "class": "Líder de Arquitetura",
-        "sprite_color": "#3b82f6",
-        "x": 100, "y": 260,
-        "skill_level": 1,
-        "xp": 0,
-        "new_skills_learned": ["Arquitetura Async Core"],
-        "github_commits": ["commit 7f3a8b2: docs(architecture): learn Async Core design"],
-        "response_speed_ms": 250.0,
-        "timeout_resistance_sec": 18.0,
-        "action": "Treinando e Aprendendo Novas Arquiteturas",
-    },
-    "sofia": {
-        "name": "Sofia",
-        "class": "Gemma 4 & Ollama Analyst",
-        "sprite_color": "#ec4899",
-        "x": 220, "y": 220,
-        "skill_level": 1,
-        "xp": 0,
-        "new_skills_learned": ["Fine-Tuning Gemma 4"],
-        "github_commits": ["commit c912f5a: docs(gemma4): learn Gemma 4 fine-tuning"],
-        "response_speed_ms": 200.0,
-        "timeout_resistance_sec": 18.0,
-        "action": "Estudando Modelos no Gemma 4 & Ollama",
-    },
-    "lucas": {
-        "name": "Lucas",
-        "class": "Claude-Code Ollama & AGY Coder",
-        "sprite_color": "#f97316",
-        "x": 350, "y": 270,
-        "skill_level": 1,
-        "xp": 0,
-        "new_skills_learned": ["Refatoração Rust/Python"],
-        "github_commits": ["commit e4819a3: feat(skill-rust): learn Rust/Python refactoring"],
-        "response_speed_ms": 120.0,
-        "timeout_resistance_sec": 18.0,
-        "action": "Treinando Algoritmos de Alta Velocidade",
-    },
-    "beatriz": {
-        "name": "Beatriz",
-        "class": "QA & Security Shield",
-        "sprite_color": "#10b981",
-        "x": 480, "y": 230,
-        "skill_level": 1,
-        "xp": 0,
-        "new_skills_learned": ["Testes de Mutação"],
-        "github_commits": ["commit 88f21bc: docs(security): learn mutation testing"],
-        "response_speed_ms": 210.0,
-        "timeout_resistance_sec": 18.0,
-        "action": "Aprimorando Suíte de Testes de Aceite",
+if loaded_gs and loaded_pa:
+    game_state = loaded_gs
+    pixel_agents = loaded_pa
+    audit_logs = loaded_al if loaded_al else []
+    
+    # Mescla novos cards reais do Jira Cloud mantendo a integridade das colunas
+    existing_ids = set()
+    for col in game_state["kanban"].values():
+        for card_item in col:
+            existing_ids.add(card_item.get("id"))
+            
+    for c in real_jira_cards:
+        if c.get("id") not in existing_ids:
+            game_state["kanban"]["to_do"].append(c)
+
+    print(f"[Persistence] Restaurado! Boss HP: {game_state['boss_hp']}/{game_state['boss_max_hp']} | Cards Done: {len(game_state['kanban']['done'])}")
+else:
+    game_state = {
+        "boss_name": "PO EVIL BOSS (FRENZY MODE)",
+        "boss_hp": 1000,
+        "boss_max_hp": 1000,
+        "current_phase": "HERO_TRAINING_PHASE",
+        "phase_timer_sec": 120,
+        "boss_cards_created_in_frenzy": 0,
+        "target_cards_to_clear_80pct": 0,
+        "cards_cleared_in_current_wave": 0,
+        "cards_coded_count": 0,
+        "victory": False,
+        "boss_phase": "🎓 ACADEMIA DOS HERÓIS: ESTUDANDO E CRIANDO COMMITS REAIS NO GITHUB!",
+        "duel": {
+            "is_active": False,
+            "active_hero": None,
+            "hero_key": None,
+            "active_card": None,
+            "timeout_timer_sec": 18.0,
+            "max_timeout_sec": 18.0,
+            "damage_dealt": 0,
+            "phase": "idle"  # idle | hero_working | in_validation | po_reviewing | approved | rejected
+        },
+        "kanban": {
+            "to_do": real_jira_cards if real_jira_cards else [],
+            "in_progress": [],
+            "in_validation": [],
+            "done": []
+        },
+        "last_real_commit": "Nenhum commit ainda",
+        "total_real_commits": 0,
     }
-}
 
-audit_logs: List[Dict[str, Any]] = []
+    pixel_agents: Dict[str, Dict[str, Any]] = {
+        "felipe": {
+            "name": "Felipe",
+            "class": "Líder de Arquitetura",
+            "sprite_color": "#3b82f6",
+            "x": 100, "y": 260,
+            "skill_level": 1,
+            "xp": 0,
+            "new_skills_learned": ["Arquitetura Async Core"],
+            "github_commits": ["commit 7f3a8b2: docs(architecture): learn Async Core design"],
+            "response_speed_ms": 250.0,
+            "timeout_resistance_sec": 18.0,
+            "action": "Treinando e Aprendendo Novas Arquiteturas",
+        },
+        "sofia": {
+            "name": "Sofia",
+            "class": "Gemma 4 & Ollama Analyst",
+            "sprite_color": "#ec4899",
+            "x": 220, "y": 220,
+            "skill_level": 1,
+            "xp": 0,
+            "new_skills_learned": ["Fine-Tuning Gemma 4"],
+            "github_commits": ["commit c912f5a: docs(gemma4): learn Gemma 4 fine-tuning"],
+            "response_speed_ms": 200.0,
+            "timeout_resistance_sec": 18.0,
+            "action": "Estudando Modelos no Gemma 4 & Ollama",
+        },
+        "lucas": {
+            "name": "Lucas",
+            "class": "Claude-Code Ollama & AGY Coder",
+            "sprite_color": "#f97316",
+            "x": 350, "y": 270,
+            "skill_level": 1,
+            "xp": 0,
+            "new_skills_learned": ["Refatoração Rust/Python"],
+            "github_commits": ["commit e4819a3: feat(skill-rust): learn Rust/Python refactoring"],
+            "response_speed_ms": 120.0,
+            "timeout_resistance_sec": 18.0,
+            "action": "Treinando Algoritmos de Alta Velocidade",
+        },
+        "beatriz": {
+            "name": "Beatriz",
+            "class": "QA & Security Shield",
+            "sprite_color": "#10b981",
+            "x": 480, "y": 230,
+            "skill_level": 1,
+            "xp": 0,
+            "new_skills_learned": ["Testes de Mutação"],
+            "github_commits": ["commit 88f21bc: docs(security): learn mutation testing"],
+            "response_speed_ms": 210.0,
+            "timeout_resistance_sec": 18.0,
+            "action": "Aprimorando Suíte de Testes de Aceite",
+        }
+    }
+
+    audit_logs: List[Dict[str, Any]] = []
+
+async def auto_save_persistence_loop():
+    """Salva o estado do jogo periodicamente no disco (data/state_persistence.json)."""
+    while True:
+        await asyncio.sleep(2.0)
+        await save_state_to_disk(game_state, pixel_agents, audit_logs)
+
 
 # ============================================================
 # REAL GITHUB COMMIT ENGINE
@@ -629,7 +656,9 @@ async def _do_real_commit(hero_key: str, topic: str, card_id: Optional[str] = No
 @app.on_event("startup")
 async def start_autonomous_loop():
     await bus.start()
+    asyncio.create_task(auto_save_persistence_loop())
     asyncio.create_task(dynamic_frenzy_and_training_game_loop())
+
 
 @app.on_event("shutdown")
 async def shutdown_event():

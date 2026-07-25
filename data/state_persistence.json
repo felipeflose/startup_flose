@@ -1,0 +1,931 @@
+{
+  "game_state": {
+    "boss_name": "PO EVIL BOSS (FRENZY MODE)",
+    "boss_hp": 1000,
+    "boss_max_hp": 1000,
+    "current_phase": "HERO_TRAINING_PHASE",
+    "phase_timer_sec": 21,
+    "boss_cards_created_in_frenzy": 0,
+    "target_cards_to_clear_80pct": 0,
+    "cards_cleared_in_current_wave": 0,
+    "cards_coded_count": 0,
+    "victory": false,
+    "boss_phase": "🎓 ACADEMIA GITHUB: HERÓIS ESTUDANDO E COMMITANDO SKILLS REAIS!",
+    "duel": {
+      "is_active": false,
+      "active_hero": null,
+      "hero_key": null,
+      "active_card": null,
+      "timeout_timer_sec": 18.0,
+      "max_timeout_sec": 18.0,
+      "damage_dealt": 0,
+      "phase": "idle"
+    },
+    "kanban": {
+      "to_do": [
+        {
+          "id": "KAN-9841",
+          "title": "[Recrutamento] Contratação para KAN-9840: \"[PO-EVIL-BOSS] Refatorar UI Frontend Nív...\"",
+          "status": "A fazer",
+          "type": "Card Real Jira Cloud",
+          "comments": [],
+          "rejections": 0
+        },
+        {
+          "id": "KAN-9840",
+          "title": "[PO-EVIL-BOSS] Refatorar UI Frontend Nível Pixel Perfect 16-Bit",
+          "status": "A fazer",
+          "type": "Card Real Jira Cloud",
+          "comments": [],
+          "rejections": 0
+        },
+        {
+          "id": "KAN-9839",
+          "title": "ONBOARDING SUBST: Novo colaborador Gustavo Augusto Silva para substituir Felipe Viana Flose",
+          "status": "A fazer",
+          "type": "Card Real Jira Cloud",
+          "comments": [],
+          "rejections": 0
+        },
+        {
+          "id": "KAN-9838",
+          "title": "DEMISSÃO POR DESEMPENHO: Felipe Viana Flose",
+          "status": "A fazer",
+          "type": "Card Real Jira Cloud",
+          "comments": [],
+          "rejections": 0
+        },
+        {
+          "id": "KAN-9837",
+          "title": "[Recrutamento] Contratação para KAN-9836: \"[DEV] Implementação: [DEV] Implementação...\"",
+          "status": "A fazer",
+          "type": "Card Real Jira Cloud",
+          "comments": [],
+          "rejections": 0
+        },
+        {
+          "id": "KAN-9836",
+          "title": "[DEV] Implementação: [DEV] Implementação: [DEV] Implementação: [Gemma4] Refatoração da função `createGitBranch` e tratamento de erros do Git",
+          "status": "A fazer",
+          "type": "Card Real Jira Cloud",
+          "comments": [],
+          "rejections": 0
+        },
+        {
+          "id": "KAN-9835",
+          "title": "[Python Migração] Solução de contingência rápida",
+          "status": "A fazer",
+          "type": "Card Real Jira Cloud",
+          "comments": [
+            {
+              "author": "Felipe Flose",
+              "text": " [PO: CARD CRIADO & COMITADO] Felipe Viana Flose analisou docs/REGRAS_DE_NEGOCIO.md e gerou o card.\n\n Responsvel pelo desenvolvimento: Lucas Augusto Silva\n Commit Inicial de Especificao: c09f1e9fbcde"
+            }
+          ],
+          "rejections": 0
+        },
+        {
+          "id": "KAN-9834",
+          "title": "ONBOARDING SUBST: Novo colaborador Guilherme Augusto Silva para substituir Felipe Viana Flose",
+          "status": "Em andamento",
+          "type": "Card Real Jira Cloud",
+          "comments": [
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: 1eeb4828c872\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: 53b75017ed0d\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: 87b9c1d19c4f\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: 48c638ab83f9\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: 4f9a7f4ffe3d\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: bf21911f888e\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: 653b98c355a1\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: 43891e25b26b\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: c846475fe845\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: 3febe9f6d0d6\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: 2fee1b8e4830\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: 2ef60335b4bc\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: c3924916439a\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: 02b6db905d92\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: 609c56027fbf\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: d8eaff1edb08\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: bf79f4ad5222\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: 79d7e9c7b770\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: ef28bee43a95\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: 33694d4c396a\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: 482ff2ac92c3\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: cdbfaf49f2b6\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: d680fbb9d82d\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: e5bd561ca206\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: ee70f3190186\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: b99e35e099d8\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: 452f0902c473\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: eb4c238d2b07\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: abb32782b686\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: d2c6b99bbe82\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: 95e90af0579a\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: 9f0f88e5d229\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: 4eb4f5e7cc05\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: 2ac564925fd9\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: 7fc524fed7ae\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: cc8f52d9c7a8\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: a60dbe3aaa5c\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: c650aee65afa\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: 985ffc34a8f2\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: a79118bb4717\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: c21c47f8b014\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: d384f3aa6999\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: 39847e1fc078\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: local_evidenced\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: 91d2eba80627\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: f34034e02220\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: 552bb35d0312\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: 0ced83397b3d\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: 520769643519\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Gabriel Augusto Silva (Desenvolvedor Backend Sênior) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9834"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Gabriel Augusto Silva\nSHA: f406a84fb0cf\nArquivo Modificado: .card-work/KAN-9834.md & src/simulations/KAN-9834-code.js\nBranch: feature/KAN-9834"
+            }
+          ],
+          "rejections": 0
+        },
+        {
+          "id": "KAN-9833",
+          "title": "DEMISSÃO POR DESEMPENHO: Felipe Viana Flose",
+          "status": "A fazer",
+          "type": "Card Real Jira Cloud",
+          "comments": [],
+          "rejections": 0
+        },
+        {
+          "id": "KAN-9832",
+          "title": "[Recrutamento] Contratação para KAN-9829: \"[QA] Validação: [DEV] Implementação: [Ge...\"",
+          "status": "Em andamento",
+          "type": "Card Real Jira Cloud",
+          "comments": [
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Felipe Viana Flose (DONO (Arquiteto de Soluções & IA)) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Felipe Viana Flose\nSHA: e952885cb7e5\nArquivo Modificado: .card-work/KAN-9832.md & src/simulations/KAN-9832-code.js\nBranch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Felipe Viana Flose (DONO (Arquiteto de Soluções & IA)) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Felipe Viana Flose\nSHA: b7152ce5bac0\nArquivo Modificado: .card-work/KAN-9832.md & src/simulations/KAN-9832-code.js\nBranch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Felipe Viana Flose (DONO (Arquiteto de Soluções & IA)) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Felipe Viana Flose\nSHA: b07d6773c437\nArquivo Modificado: .card-work/KAN-9832.md & src/simulations/KAN-9832-code.js\nBranch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Felipe Viana Flose (DONO (Arquiteto de Soluções & IA)) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Felipe Viana Flose\nSHA: 591a8302dbae\nArquivo Modificado: .card-work/KAN-9832.md & src/simulations/KAN-9832-code.js\nBranch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Felipe Viana Flose (DONO (Arquiteto de Soluções & IA)) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Felipe Viana Flose\nSHA: 8d4db55c6367\nArquivo Modificado: .card-work/KAN-9832.md & src/simulations/KAN-9832-code.js\nBranch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Felipe Viana Flose (DONO (Arquiteto de Soluções & IA)) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Felipe Viana Flose\nSHA: 719508661ced\nArquivo Modificado: .card-work/KAN-9832.md & src/simulations/KAN-9832-code.js\nBranch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Felipe Viana Flose (DONO (Arquiteto de Soluções & IA)) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Felipe Viana Flose\nSHA: a0ab664591ac\nArquivo Modificado: .card-work/KAN-9832.md & src/simulations/KAN-9832-code.js\nBranch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Felipe Viana Flose (DONO (Arquiteto de Soluções & IA)) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Felipe Viana Flose\nSHA: 0657d0ddd508\nArquivo Modificado: .card-work/KAN-9832.md & src/simulations/KAN-9832-code.js\nBranch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Felipe Viana Flose (DONO (Arquiteto de Soluções & IA)) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Felipe Viana Flose\nSHA: 0985ee33dbf7\nArquivo Modificado: .card-work/KAN-9832.md & src/simulations/KAN-9832-code.js\nBranch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Felipe Viana Flose (DONO (Arquiteto de Soluções & IA)) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Felipe Viana Flose\nSHA: 5fe9b4af1b24\nArquivo Modificado: .card-work/KAN-9832.md & src/simulations/KAN-9832-code.js\nBranch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Felipe Viana Flose (DONO (Arquiteto de Soluções & IA)) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Felipe Viana Flose\nSHA: 3eb6e2f199ec\nArquivo Modificado: .card-work/KAN-9832.md & src/simulations/KAN-9832-code.js\nBranch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Felipe Viana Flose (DONO (Arquiteto de Soluções & IA)) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Felipe Viana Flose\nSHA: 6863bd89c440\nArquivo Modificado: .card-work/KAN-9832.md & src/simulations/KAN-9832-code.js\nBranch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Felipe Viana Flose (DONO (Arquiteto de Soluções & IA)) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Felipe Viana Flose\nSHA: 5725a61caf44\nArquivo Modificado: .card-work/KAN-9832.md & src/simulations/KAN-9832-code.js\nBranch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Felipe Viana Flose (DONO (Arquiteto de Soluções & IA)) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Felipe Viana Flose\nSHA: 3f480464889d\nArquivo Modificado: .card-work/KAN-9832.md & src/simulations/KAN-9832-code.js\nBranch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Felipe Viana Flose (DONO (Arquiteto de Soluções & IA)) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Felipe Viana Flose\nSHA: 79b46d877f00\nArquivo Modificado: .card-work/KAN-9832.md & src/simulations/KAN-9832-code.js\nBranch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Felipe Viana Flose (DONO (Arquiteto de Soluções & IA)) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Felipe Viana Flose\nSHA: bec109c5f137\nArquivo Modificado: .card-work/KAN-9832.md & src/simulations/KAN-9832-code.js\nBranch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Felipe Viana Flose (DONO (Arquiteto de Soluções & IA)) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Felipe Viana Flose\nSHA: 9a7b7b1e179d\nArquivo Modificado: .card-work/KAN-9832.md & src/simulations/KAN-9832-code.js\nBranch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Felipe Viana Flose (DONO (Arquiteto de Soluções & IA)) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Felipe Viana Flose\nSHA: 13f2b6bdfe79\nArquivo Modificado: .card-work/KAN-9832.md & src/simulations/KAN-9832-code.js\nBranch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Felipe Viana Flose (DONO (Arquiteto de Soluções & IA)) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Felipe Viana Flose\nSHA: 79703604a0d9\nArquivo Modificado: .card-work/KAN-9832.md & src/simulations/KAN-9832-code.js\nBranch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Felipe Viana Flose (DONO (Arquiteto de Soluções & IA)) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Felipe Viana Flose\nSHA: e3629cd6435e\nArquivo Modificado: .card-work/KAN-9832.md & src/simulations/KAN-9832-code.js\nBranch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Felipe Viana Flose (DONO (Arquiteto de Soluções & IA)) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Felipe Viana Flose\nSHA: 9cceede4120b\nArquivo Modificado: .card-work/KAN-9832.md & src/simulations/KAN-9832-code.js\nBranch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Felipe Viana Flose (DONO (Arquiteto de Soluções & IA)) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Felipe Viana Flose\nSHA: 4111323bbb05\nArquivo Modificado: .card-work/KAN-9832.md & src/simulations/KAN-9832-code.js\nBranch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Felipe Viana Flose (DONO (Arquiteto de Soluções & IA)) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Felipe Viana Flose\nSHA: 2acdd545b084\nArquivo Modificado: .card-work/KAN-9832.md & src/simulations/KAN-9832-code.js\nBranch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [DEV: INICIADO & ARQUIVOS MODIFICADOS] Felipe Viana Flose (DONO (Arquiteto de Soluções & IA)) aplicou as alteraes nos arquivos do projeto.\n\nqwen2.5-coder:32b executou a tarefa com sucesso em modo resiliente.\n\n Branch: feature/KAN-9832"
+            },
+            {
+              "author": "Felipe Flose",
+              "text": " [EVIDNCIA DE CDIGO REAL] Alterao de arquivo salva no projeto por Felipe Viana Flose\nSHA: a32ea7762529\nArquivo Modificado: .card-work/KAN-9832.md & src/simulations/KAN-9832-code.js\nBranch: feature/KAN-9832"
+            }
+          ],
+          "rejections": 0
+        }
+      ],
+      "in_progress": [],
+      "in_validation": [],
+      "done": []
+    },
+    "last_real_commit": "Nenhum commit ainda",
+    "total_real_commits": 0
+  },
+  "pixel_agents": {
+    "felipe": {
+      "name": "Felipe",
+      "class": "Líder de Arquitetura",
+      "sprite_color": "#3b82f6",
+      "x": 90,
+      "y": 260,
+      "skill_level": 2,
+      "xp": 50,
+      "new_skills_learned": [
+        "Arquitetura Async Core",
+        "Zero-Trust Security Shield",
+        "Design Pattern Master",
+        "Pixel Perfect CSS Engine"
+      ],
+      "github_commits": [
+        "commit 7f3a8b2: docs(architecture): learn Async Core design",
+        "commit 38377cc: feat(felipe-skill): Felipe implemented felipe_zero_trust_security_shield_54e867.py (+34 lines Python code & unit tests)",
+        "📄 src/flose/solutions/felipe_zero_trust_security_shield_54e867.py (+34 linhas Python)",
+        "commit 2369445: feat(felipe-skill): Felipe implemented felipe_design_pattern_master_cc8d70.py (+33 lines Python code & unit tests)",
+        "📄 src/flose/solutions/felipe_design_pattern_master_cc8d70.py (+33 linhas Python)",
+        "commit 5f034d4: feat(felipe-skill): Felipe implemented felipe_pixel_perfect_css_engine_d533b7.py (+49 lines Python code & unit tests)",
+        "📄 src/flose/solutions/felipe_pixel_perfect_css_engine_d533b7.py (+49 linhas Python)"
+      ],
+      "response_speed_ms": 162.5,
+      "timeout_resistance_sec": 21.0,
+      "action": "🐙 GitHub: commit 5f034d4: feat(felipe-skill): Feli..."
+    },
+    "sofia": {
+      "name": "Sofia",
+      "class": "Gemma 4 & Ollama Analyst",
+      "sprite_color": "#ec4899",
+      "x": 228,
+      "y": 208,
+      "skill_level": 2,
+      "xp": 50,
+      "new_skills_learned": [
+        "Fine-Tuning Gemma 4",
+        "Pixel Perfect CSS Engine",
+        "Mutation Testing Suite",
+        "Design Pattern Master"
+      ],
+      "github_commits": [
+        "commit c912f5a: docs(gemma4): learn Gemma 4 fine-tuning",
+        "commit 4a1d599: feat(sofia-skill): Sofia implemented sofia_pixel_perfect_css_engine_fa71f8.py (+49 lines Python code & unit tests)",
+        "📄 src/flose/solutions/sofia_pixel_perfect_css_engine_fa71f8.py (+49 linhas Python)",
+        "commit 56eb32e: feat(sofia-skill): Sofia implemented sofia_mutation_testing_suite_ba577c.py (+49 lines Python code & unit tests)",
+        "📄 src/flose/solutions/sofia_mutation_testing_suite_ba577c.py (+49 linhas Python)",
+        "commit 915d0d0: feat(sofia-skill): Sofia implemented sofia_design_pattern_master_a2a6d9.py (+33 lines Python code & unit tests)",
+        "📄 src/flose/solutions/sofia_design_pattern_master_a2a6d9.py (+33 linhas Python)"
+      ],
+      "response_speed_ms": 130.0,
+      "timeout_resistance_sec": 21.0,
+      "action": "🐙 GitHub: commit 915d0d0: feat(sofia-skill): Sofia..."
+    },
+    "lucas": {
+      "name": "Lucas",
+      "class": "Claude-Code Ollama & AGY Coder",
+      "sprite_color": "#f97316",
+      "x": 354,
+      "y": 270,
+      "skill_level": 2,
+      "xp": 50,
+      "new_skills_learned": [
+        "Refatoração Rust/Python",
+        "Claude-Code Integration",
+        "AGY Scripting Engine",
+        "Pixel Perfect CSS Engine"
+      ],
+      "github_commits": [
+        "commit e4819a3: feat(skill-rust): learn Rust/Python refactoring",
+        "commit 7e90a15: feat(lucas-skill): Lucas implemented lucas_claude_code_integration_82b9d3.py (+33 lines Python code & unit tests)",
+        "📄 src/flose/solutions/lucas_claude_code_integration_82b9d3.py (+33 linhas Python)",
+        "commit fa14c86: feat(lucas-skill): Lucas implemented lucas_agy_scripting_engine_fd6672.py (+33 lines Python code & unit tests)",
+        "📄 src/flose/solutions/lucas_agy_scripting_engine_fd6672.py (+33 linhas Python)",
+        "commit bfbaadc: feat(lucas-skill): Lucas implemented lucas_pixel_perfect_css_engine_3d7da0.py (+49 lines Python code & unit tests)",
+        "📄 src/flose/solutions/lucas_pixel_perfect_css_engine_3d7da0.py (+49 linhas Python)"
+      ],
+      "response_speed_ms": 78.0,
+      "timeout_resistance_sec": 21.0,
+      "action": "🐙 GitHub: commit bfbaadc: feat(lucas-skill): Lucas..."
+    },
+    "beatriz": {
+      "name": "Beatriz",
+      "class": "QA & Security Shield",
+      "sprite_color": "#10b981",
+      "x": 468,
+      "y": 240,
+      "skill_level": 3,
+      "xp": 0,
+      "new_skills_learned": [
+        "Testes de Mutação",
+        "Zero-Trust Security Shield",
+        "AGY Scripting Engine",
+        "Pixel Perfect CSS Engine"
+      ],
+      "github_commits": [
+        "commit 88f21bc: docs(security): learn mutation testing",
+        "commit e5c6b12: feat(beatriz-skill): Beatriz implemented beatriz_zero_trust_security_shield_f2d516.py (+34 lines Python code & unit tests)",
+        "📄 src/flose/solutions/beatriz_zero_trust_security_shield_f2d516.py (+34 linhas Python)",
+        "commit c3ff958: feat(beatriz-skill): Beatriz implemented beatriz_agy_scripting_engine_345550.py (+33 lines Python code & unit tests)",
+        "📄 src/flose/solutions/beatriz_agy_scripting_engine_345550.py (+33 linhas Python)",
+        "commit 59d6e81: feat(beatriz-skill): Beatriz implemented beatriz_zero_trust_security_shield_73c9dd.py (+34 lines Python code & unit tests)",
+        "📄 src/flose/solutions/beatriz_zero_trust_security_shield_73c9dd.py (+34 linhas Python)",
+        "commit 027c200: feat(beatriz-skill): Beatriz implemented beatriz_pixel_perfect_css_engine_0d968b.py (+49 lines Python code & unit tests)",
+        "📄 src/flose/solutions/beatriz_pixel_perfect_css_engine_0d968b.py (+49 linhas Python)"
+      ],
+      "response_speed_ms": 88.7,
+      "timeout_resistance_sec": 24.0,
+      "action": "🐙 GitHub: commit 027c200: feat(beatriz-skill): Bea..."
+    }
+  },
+  "audit_logs": [
+    {
+      "event_id": "evt_1",
+      "action": "REAL_PYTHON_CODE_COMMITTED",
+      "hero": "Lucas",
+      "topic": "Claude-Code Integration",
+      "card_id": "SKILL",
+      "commit": "commit 7e90a15: feat(lucas-skill): Lucas implemented lucas_c"
+    },
+    {
+      "event_id": "evt_2",
+      "action": "REAL_PYTHON_CODE_COMMITTED",
+      "hero": "Felipe",
+      "topic": "Zero-Trust Security Shield",
+      "card_id": "SKILL",
+      "commit": "commit 38377cc: feat(felipe-skill): Felipe implemented felip"
+    },
+    {
+      "event_id": "evt_3",
+      "action": "REAL_PYTHON_CODE_COMMITTED",
+      "hero": "Felipe",
+      "topic": "Design Pattern Master",
+      "card_id": "SKILL",
+      "commit": "commit 2369445: feat(felipe-skill): Felipe implemented felip"
+    },
+    {
+      "event_id": "evt_4",
+      "action": "REAL_PYTHON_CODE_COMMITTED",
+      "hero": "Sofia",
+      "topic": "Pixel Perfect CSS Engine",
+      "card_id": "SKILL",
+      "commit": "commit 4a1d599: feat(sofia-skill): Sofia implemented sofia_p"
+    },
+    {
+      "event_id": "evt_5",
+      "action": "REAL_PYTHON_CODE_COMMITTED",
+      "hero": "Beatriz",
+      "topic": "Zero-Trust Security Shield",
+      "card_id": "SKILL",
+      "commit": "commit e5c6b12: feat(beatriz-skill): Beatriz implemented bea"
+    },
+    {
+      "event_id": "evt_6",
+      "action": "REAL_PYTHON_CODE_COMMITTED",
+      "hero": "Lucas",
+      "topic": "AGY Scripting Engine",
+      "card_id": "SKILL",
+      "commit": "commit fa14c86: feat(lucas-skill): Lucas implemented lucas_a"
+    },
+    {
+      "event_id": "evt_7",
+      "action": "REAL_PYTHON_CODE_COMMITTED",
+      "hero": "Beatriz",
+      "topic": "AGY Scripting Engine",
+      "card_id": "SKILL",
+      "commit": "commit c3ff958: feat(beatriz-skill): Beatriz implemented bea"
+    },
+    {
+      "event_id": "evt_8",
+      "action": "REAL_PYTHON_CODE_COMMITTED",
+      "hero": "Beatriz",
+      "topic": "Zero-Trust Security Shield",
+      "card_id": "SKILL",
+      "commit": "commit 59d6e81: feat(beatriz-skill): Beatriz implemented bea"
+    },
+    {
+      "event_id": "evt_9",
+      "action": "REAL_PYTHON_CODE_COMMITTED",
+      "hero": "Sofia",
+      "topic": "Mutation Testing Suite",
+      "card_id": "SKILL",
+      "commit": "commit 56eb32e: feat(sofia-skill): Sofia implemented sofia_m"
+    },
+    {
+      "event_id": "evt_10",
+      "action": "REAL_PYTHON_CODE_COMMITTED",
+      "hero": "Lucas",
+      "topic": "Pixel Perfect CSS Engine",
+      "card_id": "SKILL",
+      "commit": "commit bfbaadc: feat(lucas-skill): Lucas implemented lucas_p"
+    },
+    {
+      "event_id": "evt_11",
+      "action": "REAL_PYTHON_CODE_COMMITTED",
+      "hero": "Sofia",
+      "topic": "Design Pattern Master",
+      "card_id": "SKILL",
+      "commit": "commit 915d0d0: feat(sofia-skill): Sofia implemented sofia_d"
+    },
+    {
+      "event_id": "evt_12",
+      "action": "REAL_PYTHON_CODE_COMMITTED",
+      "hero": "Felipe",
+      "topic": "Pixel Perfect CSS Engine",
+      "card_id": "SKILL",
+      "commit": "commit 5f034d4: feat(felipe-skill): Felipe implemented felip"
+    },
+    {
+      "event_id": "evt_13",
+      "action": "REAL_PYTHON_CODE_COMMITTED",
+      "hero": "Beatriz",
+      "topic": "Pixel Perfect CSS Engine",
+      "card_id": "SKILL",
+      "commit": "commit 027c200: feat(beatriz-skill): Beatriz implemented bea"
+    }
+  ]
+}
