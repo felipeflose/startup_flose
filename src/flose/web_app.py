@@ -272,8 +272,11 @@ def po_vilao_review(card: Dict[str, Any]) -> tuple[bool, str]:
     """O PO Vilão revisa o card. Ele é muito chato — rejeita na maioria das vezes!"""
     rejection_chance = 0.55  # 55% de chance de rejeitar (vilão foi balanceado)
     card_rejections = card.get("rejections", 0)
-    # A cada rejeição prévia, diminui um pouco a chance de rejeitar (herói vai melhorando)
-    rejection_chance = max(0.15, rejection_chance - (card_rejections * 0.12))
+    # A cada rejeição prévia ou se teve escudo ativado, diminui a chance de rejeição
+    if card.get("shield_active"):
+        rejection_chance = 0.05  # Escudo QA/Security garante aprovação!
+    else:
+        rejection_chance = max(0.15, rejection_chance - (card_rejections * 0.12))
     
     if random.random() < rejection_chance:
         reason = random.choice(PO_REJECTION_REASONS)
@@ -282,8 +285,77 @@ def po_vilao_review(card: Dict[str, Any]) -> tuple[bool, str]:
 
 
 # ============================================================
-# MAIN AUTONOMOUS GAME LOOP
+# FELIPE DELEGATION & HERO TIMEOUT POWER ENGINE (13.000 PODERES)
 # ============================================================
+def felipe_analyze_and_delegate_card(card: Dict[str, Any]) -> str:
+    """
+    Felipe (CEO/Architect) analisa a complexidade do card do Jira 
+    e delega para o herói especialista ideal (Sofia, Lucas ou Beatriz)!
+    """
+    title_lower = ((card.get("title") or "") + " " + (card.get("description") or "")).lower()
+
+    if any(k in title_lower for k in ["gemma", "ollama", "prompt", "ia", "analys", "fine-tuning", "modelo"]):
+        assigned = "sofia"
+        reason = "Felipe analisou: Requer análise profunda de IA com Gemma 4 & Ollama."
+    elif any(k in title_lower for k in ["refator", "async", "perform", "rust", "backend", "cache", "speed"]):
+        assigned = "lucas"
+        reason = "Felipe analisou: Requer síntese de alta velocidade com Claude-Code & AGY."
+    else:
+        assigned = "beatriz"
+        reason = "Felipe analisou: Requer suíte QA & sanitização estrita de segurança."
+
+    card["delegated_by"] = "Felipe (Líder de Arquitetura)"
+    card["delegated_to"] = pixel_agents[assigned]["name"]
+    card["delegation_note"] = reason
+    return assigned
+
+
+def trigger_hero_timeout_power(hero_key: str, timeout_pct: float) -> Tuple[float, float, str, int, bool]:
+    """
+    Aciona um dos 13.000 Poderes do Herói baseado no nível do Timeout:
+    - Tier 1 (>60% time): Habilidade Básica
+    - Tier 2 (25% a 60% time): Habilidade Especial + Pequena regeneração de tempo
+    - Tier 3 (<25% time): LIMIT BREAK DESESPERO (#1 a #13000) -> Avanço massivo e escudo!
+    Retorna: (progress_boost, time_restore_sec, power_name, power_id, shield_active)
+    """
+    hero = pixel_agents[hero_key]
+
+    if timeout_pct < 0.25:
+        # TIER 3: LIMIT BREAK (<25% timeout)
+        power_id = random.randint(10000, 13000)
+        if hero_key == "sofia":
+            power_name = f"🌟 GEMMA 4 QUANTUM BEAM (Power #{power_id})"
+        elif hero_key == "lucas":
+            power_name = f"⚡ CLAUDE-CODE RUST OVERDRIVE (Power #{power_id})"
+        else:
+            power_name = f"🛡️ MUTATION IMPERVIOUS SHIELD (Power #{power_id})"
+        
+        return 42.0, 2.5, power_name, power_id, True
+
+    elif timeout_pct < 0.60:
+        # TIER 2: SPECIAL SURGE (25% a 60% timeout)
+        power_id = random.randint(4000, 9999)
+        if hero_key == "sofia":
+            power_name = f"🔮 Ollama Deep Thinking Burst (Power #{power_id})"
+        elif hero_key == "lucas":
+            power_name = f"🚀 AGY Multi-Thread Surge (Power #{power_id})"
+        else:
+            power_name = f"🔰 Zero-Trust Barrier (Power #{power_id})"
+        
+        return 28.0, 1.2, power_name, power_id, False
+
+    else:
+        # TIER 1: BASIC ATTACK (>60% timeout)
+        power_id = random.randint(1, 3999)
+        if hero_key == "sofia":
+            power_name = f"✨ Gemma Fast Inference (Power #{power_id})"
+        elif hero_key == "lucas":
+            power_name = f"⚙️ Claude-Code Turbo Synthesizer (Power #{power_id})"
+        else:
+            power_name = f"🧪 Automated Test Suite (Power #{power_id})"
+        
+        return 18.0, 0.0, power_name, power_id, False
+
 async def dynamic_frenzy_and_training_game_loop():
     await asyncio.sleep(2)  # Espera inicialização
     
@@ -368,21 +440,35 @@ async def dynamic_frenzy_and_training_game_loop():
                 card["status"] = "EM PROGRESSO"
                 game_state["kanban"]["in_progress"].append(card)
 
-                hero_key = random.choice(["felipe", "sofia", "lucas", "beatriz"])
-                hero = pixel_agents[hero_key]
+                # 🧠 FELIPE ANALISA E DELEGA PARA O HERÓI IDEAL (Sofia, Lucas ou Beatriz)
+                assigned_hero_key = felipe_analyze_and_delegate_card(card)
+                hero = pixel_agents[assigned_hero_key]
+
+                # Felipe atualiza a ação dele no mapa
+                pixel_agents["felipe"]["action"] = f"🧠 Analisou [{card['id']}] -> Delegou para {hero['name']}"
 
                 game_state["duel"] = {
                     "is_active": True,
                     "active_hero": hero["name"],
-                    "hero_key": hero_key,
+                    "hero_key": assigned_hero_key,
                     "active_card": card,
                     "work_progress": 0.0,
                     "timeout_timer_sec": hero["timeout_resistance_sec"],
                     "max_timeout_sec": hero["timeout_resistance_sec"],
                     "damage_dealt": 0,
+                    "active_power": "Inicializando Duelo...",
                     "phase": "hero_working"
                 }
-                game_state["boss_phase"] = f"⚔️ {hero['name']} pegou [{card['id']}] — Trabalhando no código..."
+                
+                game_state["boss_phase"] = f"👔 FELIPE DELEGOU [{card['id']}] PARA {hero['name'].upper()}!"
+                audit_logs.append({
+                    "event_id": f"evt_{len(audit_logs)+1}",
+                    "action": "FELIPE_DELEGATED_CARD",
+                    "card_id": card["id"],
+                    "assigned_to": hero["name"],
+                    "note": card.get("delegation_note", "")
+                })
+
                 duel = game_state["duel"]
 
             # Se não há duel ativo nem cards no to_do/in_progress/in_validation, faz safety break
@@ -402,10 +488,24 @@ async def dynamic_frenzy_and_training_game_loop():
             if duel["phase"] == "hero_working":
                 duel["timeout_timer_sec"] = round(duel["timeout_timer_sec"] - 1.0, 1)
                 
-                # Progresso gradual por segundo baseado no nível de skill (ex: ~15% a 25% por segundo)
-                progress_step = random.uniform(14.0, 22.0) + (hero["skill_level"] * 3.0)
-                duel["work_progress"] = min(100.0, round(duel.get("work_progress", 0.0) + progress_step, 1))
-                pixel_agents[hero_key]["action"] = f"💻 Codificando [{card_duel['id']}]: {duel['work_progress']}%"
+                # Porcentagem de tempo de timeout restante
+                timeout_pct = max(0.0, duel["timeout_timer_sec"] / duel["max_timeout_sec"])
+
+                # ⚡ ACIONA UM DOS 13.000 PODERES BASEADO NO TIMEOUT!
+                progress_boost, time_restore, power_name, power_id, shield_active = trigger_hero_timeout_power(hero_key, timeout_pct)
+
+                if shield_active:
+                    card_duel["shield_active"] = True
+
+                if time_restore > 0:
+                    duel["timeout_timer_sec"] = min(hero["timeout_resistance_sec"], round(duel["timeout_timer_sec"] + time_restore, 1))
+
+                # Adiciona o boost do poder ao progresso do herói
+                duel["work_progress"] = min(100.0, round(duel.get("work_progress", 0.0) + progress_boost, 1))
+                duel["active_power"] = power_name
+                
+                hero_action_str = f"⚡ {power_name[:25]}: {duel['work_progress']}%"
+                pixel_agents[hero_key]["action"] = hero_action_str
 
                 # Quando atinge 100% de progresso antes do timeout -> vai para validação
                 if duel["work_progress"] >= 100.0 and duel["timeout_timer_sec"] > 0:
@@ -416,7 +516,7 @@ async def dynamic_frenzy_and_training_game_loop():
                     duel["phase"] = "in_validation"
                     duel["timeout_timer_sec"] = 6.0  # PO tem 6s para revisar
                     duel["max_timeout_sec"] = 6.0
-                    game_state["boss_phase"] = f"🔍 {hero['name']} concluiu código e enviou [{card_duel['id']}] para PO Vilão!"
+                    game_state["boss_phase"] = f"🔍 {hero['name']} usou {power_name[:30]} e enviou [{card_duel['id']}] para PO Vilão!"
                     pixel_agents[hero_key]["action"] = f"📤 Card [{card_duel['id']}] em validação do PO!"
 
                 elif duel["timeout_timer_sec"] <= 0:
@@ -973,13 +1073,19 @@ async def serve_autonomous_pixel_game():
                         const phaseColor = duel.phase === "hero_working" ? "#60a5fa" : "#ffaa00";
                         
                         document.getElementById('duel-box').innerHTML = `
-                            <div style="font-size:0.52rem; color:${phaseColor}; font-weight:bold; margin-bottom:0.3rem; text-align:center;">
+                            <div style="font-size:0.52rem; color:${phaseColor}; font-weight:bold; margin-bottom:0.25rem; text-align:center;">
                                 ${phaseLabel}
                             </div>
-                            <div style="font-size:0.46rem; color:#fff; margin-bottom:0.2rem;">
-                                ⚔️ <span style="color:#a855f7;">${duel.active_hero}</span> — Card: <span style="color:#ec4899;">[${duel.active_card.id}]</span>
+                            <div style="font-size:0.44rem; color:#3b82f6; margin-bottom:0.2rem;">
+                                👔 <b>Felipe:</b> Analisou & Delegou para <span style="color:#a855f7;">${duel.active_hero}</span>!
                             </div>
-                            <div style="font-size:0.4rem; color:#9ca3af; margin-bottom:0.3rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                            <div style="font-size:0.46rem; color:#fff; margin-bottom:0.2rem;">
+                                ⚔️ <b>Herói em Ação:</b> <span style="color:#a855f7;">${duel.active_hero}</span> — Card: <span style="color:#ec4899;">[${duel.active_card.id}]</span>
+                            </div>
+                            <div style="font-size:0.42rem; color:#55ff55; font-weight:bold; margin-bottom:0.25rem;">
+                                ${duel.active_power || 'Acionando Habilidade...'}
+                            </div>
+                            <div style="font-size:0.38rem; color:#9ca3af; margin-bottom:0.25rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                                 ${duel.active_card.title ? duel.active_card.title.substring(0, 45) + '...' : ''}
                             </div>
                             ${duel.active_card.po_rejection_reason ? `<div style="font-size:0.38rem; color:#ff5555; margin-bottom:0.2rem;">💬 ${duel.active_card.po_rejection_reason.substring(0, 50)}</div>` : ''}
