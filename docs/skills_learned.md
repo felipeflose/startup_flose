@@ -42,3 +42,4 @@
 - [2026-07-25 09:10:26] [Felipe] aprendeu: **Gemma4 Fine-Tuner**
 - [2026-07-25 09:10:38] [Sofia] aprendeu: **Mutation Testing Suite**
 - [2026-07-25 09:10:46] [Lucas] aprendeu: **Design Pattern Master**
+- [2026-07-25 09:10:54] [Beatriz] aprendeu: **Claude-Code Integration**
