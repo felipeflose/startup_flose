@@ -450,15 +450,31 @@ async def dynamic_frenzy_and_training_game_loop():
     await asyncio.sleep(2)  # Espera inicialização
     
     while True:
+        # Se o Boss foi derrotado na rodada anterior, ele evolui de Estágio com mais HP!
+        if game_state.get("victory") or game_state.get("boss_hp", 0) <= 0:
+            stage = game_state.get("boss_stage", 1) + 1
+            game_state["boss_stage"] = stage
+            game_state["boss_max_hp"] = 1000 + (stage * 500)
+            game_state["boss_hp"] = game_state["boss_max_hp"]
+            game_state["boss_name"] = f"PO EVIL BOSS (STAGE {stage})"
+            game_state["victory"] = False
+            game_state["boss_phase"] = f"🔥 PO VILÃO EVOLUIU PARA O ESTÁGIO {stage}! HP: {game_state['boss_max_hp']}!"
+            audit_logs.append({
+                "event_id": f"evt_{len(audit_logs)+1}",
+                "action": "PO_BOSS_EVOLVED",
+                "stage": stage,
+                "max_hp": game_state["boss_max_hp"]
+            })
+            await asyncio.sleep(3)
+
         # ==============================================================
         # FASE 1: ACADEMIA DOS HERÓIS (2 MINUTOS) - COMMITS REAIS GITHUB
         # ==============================================================
         game_state["current_phase"] = "HERO_TRAINING_PHASE"
-        game_state["boss_phase"] = "🎓 ACADEMIA GITHUB: HERÓIS ESTUDANDO E COMMITANDO SKILLS REAIS!"
+        game_state["boss_phase"] = f"🎓 ACADEMIA GITHUB (STAGE {game_state.get('boss_stage', 1)}): HERÓIS APRENDENDO E COMMITANDO!"
         game_state["duel"]["is_active"] = False
 
         for sec in range(120, 0, -1):
-            if game_state["victory"]: break
             game_state["phase_timer_sec"] = sec
 
             if sec % 8 == 0:
@@ -470,36 +486,26 @@ async def dynamic_frenzy_and_training_game_loop():
 
             await asyncio.sleep(1.0)
 
-        if game_state["victory"]: break
-
         # ==============================================================
         # FASE 2: PO FRENZY MODE (30 SEGUNDOS - VILÃO CRIA CARDS NO JIRA)
         # ==============================================================
         game_state["current_phase"] = "PO_FRENZY_30S"
-        game_state["boss_phase"] = "⚡ PO FRENZY! VILÃO CRIANDO CARDS NO JIRA REAL — 30 SEGUNDOS!"
+        game_state["boss_phase"] = f"⚡ PO FRENZY (STAGE {game_state.get('boss_stage', 1)})! VILÃO CRIANDO CARDS NO JIRA — 30s!"
         game_state["boss_cards_created_in_frenzy"] = 0
 
-        po_topics_frenzy = [
-            ("Refatorar UI Frontend Nível Pixel Perfect 16-Bit", "PO exige alinhamento HSL perfeito, zero bugs visuais em todas resoluções acima de 1024px. Critérios: Screenshot aprovado em 3 navegadores."),
-            ("Otimização de Performance Backend Async & Caching", "Latência do EventBus < 5ms. Implementar cache Redis com TTL configurável. Critérios: Benchmark antes/depois documentado."),
-            ("Auditoria Anti-Alucinação e Cobertura de Testes Mutation", "Testes de mutação com evidência SHA-256. Cobertura >= 90%. Critérios: Relatório Stryker exportado."),
-            ("CONTRATAÇÃO: Onboarding de Desenvolvedor Frontend Senior", "Recrutar colaborador especialista em React/TypeScript. Critérios: CV analisado, entrevista técnica realizada, contrato assinado."),
-            ("Sanitização Estrita contra Vulnerabilidades XSS & SQL", "Falhas de segurança nos endpoints REST. Critérios: Relatório OWASP ZAP sem críticos, PR aprovado com 2 revisores."),
-        ]
-
         for sec in range(30, 0, -1):
-            if game_state["victory"]: break
             game_state["phase_timer_sec"] = sec
 
-            # A cada 6 segundos, cria um card no Jira
             if sec % 6 == 0:
-                idx = game_state["boss_cards_created_in_frenzy"] % len(po_topics_frenzy)
-                topic_title, topic_desc = po_topics_frenzy[idx]
-                asyncio.create_task(async_create_jira_card_background(topic_title, topic_desc))
+                asyncio.create_task(create_real_jira_card_async())
 
             await asyncio.sleep(1.0)
 
-        if game_state["victory"]: break
+        # Garante que há pelo menos 4 cards no Kanban To-Do para trabalhar
+        if len(game_state["kanban"]["to_do"]) < 4:
+            for _ in range(4 - len(game_state["kanban"]["to_do"])):
+                asyncio.create_task(create_real_jira_card_async())
+            await asyncio.sleep(2.0)
 
         # ==============================================================
         # FASE 3: HERÓIS RESOLVEM 80% DOS CARDS (DUELO COMPLETO COM VALIDAÇÃO)
@@ -516,7 +522,7 @@ async def dynamic_frenzy_and_training_game_loop():
         game_state["phase_timer_sec"] = wave_max_timer
 
         while game_state["cards_cleared_in_current_wave"] < target_clear_count and wave_max_timer > 0:
-            if game_state["victory"]: break
+            if game_state.get("boss_hp", 100) <= 0: break
 
             wave_max_timer -= 1
             game_state["phase_timer_sec"] = wave_max_timer
