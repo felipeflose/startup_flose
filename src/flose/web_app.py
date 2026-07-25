@@ -343,8 +343,8 @@ def po_vilao_review(card: Dict[str, Any]) -> tuple[bool, str]:
 def po_vilao_inspect_commit_code(card: Dict[str, Any], commit_info: Dict[str, Any]) -> Tuple[bool, str]:
     """
     O PO Vilão lê o commit real do Git e o código Python gerado no arquivo!
-    Se o commit falhar no Pytest, não contiver as palavras-chave exigidas do card ou for insuficiente,
-    o card NÃO pode ser salvo e é rejeitado de volta para A FAZER!
+    Se o commit for puramente alteração em .md (sem código .py real), falhar no Pytest,
+    ou não contiver as palavras-chave exigidas do card, o card é REJEITADO!
     """
     if not commit_info or not commit_info.get("success"):
         return False, "❌ COMMIT AUDIT: Commit não foi registrado com sucesso no Git!"
@@ -354,13 +354,17 @@ def po_vilao_inspect_commit_code(card: Dict[str, Any], commit_info: Dict[str, An
     lines_added = commit_info.get("lines_added", 0)
     test_passed = commit_info.get("test_passed", False)
 
+    # 🚫 REGRA ESTRITA: Proibir commits de documentação fake (.md)
+    if not file_path or not file_path.endswith(".py"):
+        return False, f"❌ COMMIT AUDIT ({commit_hash}): REJEITADO! Apenas alteração em Markdown (.md) não é aceita! O Herói deve implementar código Python REAL em src/flose/solutions/!"
+
     # 1. Auditoria Pytest
     if not test_passed:
-        return False, f"❌ COMMIT AUDIT ({commit_hash}): O arquivo {file_path} FALHOU no Pytest!"
+        return False, f"❌ COMMIT AUDIT ({commit_hash}): O módulo Python {file_path} FALHOU na suíte de testes do Pytest!"
 
-    # 2. Auditoria de linhas de código
-    if lines_added < 15:
-        return False, f"❌ COMMIT AUDIT ({commit_hash}): O arquivo {file_path} tem apenas {lines_added} linhas! Código insuficiente!"
+    # 2. Auditoria de volume de código Python REAL (Mínimo 20 linhas de código)
+    if lines_added < 20:
+        return False, f"❌ COMMIT AUDIT ({commit_hash}): O arquivo {file_path} possui apenas {lines_added} linhas! Código Python insuficiente (mínimo 20 linhas)!"
 
     # 3. Leitura e Análise do Arquivo Gerado no Disco
     abs_file_path = os.path.join(REPO_PATH, file_path) if file_path else ""
