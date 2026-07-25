@@ -467,3 +467,4 @@
 - [2026-07-25 19:28:51] [Sofia] [KAN-9717] implementou código Python REAL: `kan_9717_po_evil_boss_auditoria_anti_al_d92b24.py` (+33 linhas, testes unitários OK)
 - [2026-07-25 19:29:12] [Lucas] [KAN-9716] implementou código Python REAL: `kan_9716_recrutamento_contrata_o_para_k_a0b621.py` (+49 linhas, testes unitários OK)
 - [2026-07-25 19:29:39] [Lucas] [KAN-9713] implementou código Python REAL: `kan_9713_po_evil_boss_refatorar_ui_fron_1d73e0.py` (+49 linhas, testes unitários OK)
+- [2026-07-25 19:29:57] [Beatriz] [KAN-9712] implementou código Python REAL: `kan_9712_recrutamento_contrata_o_para_k_6249bf.py` (+34 linhas, testes unitários OK)
