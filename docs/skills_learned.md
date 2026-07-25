@@ -515,3 +515,4 @@
 - [2026-07-25 19:40:18] [Beatriz] [KAN-9924] implementou código Python REAL: `kan_9924_onboarding_subst_novo_colabora_9b6954.py` (+49 linhas, testes unitários OK)
 - [2026-07-25 19:40:31] [Beatriz] [KAN-9923] implementou código Python REAL: `kan_9923_demiss_o_por_desempenho_lucas__ebfade.py` (+33 linhas, testes unitários OK)
 - [2026-07-25 19:40:44] [Beatriz] [KAN-9922] implementou código Python REAL: `kan_9922_onboarding_subst_novo_colabora_cc6c53.py` (+49 linhas, testes unitários OK)
+- [2026-07-25 19:40:58] [Beatriz] [KAN-9921] implementou código Python REAL: `kan_9921_demiss_o_por_desempenho_mateus_7dafb6.py` (+33 linhas, testes unitários OK)
