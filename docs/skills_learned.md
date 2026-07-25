@@ -575,3 +575,4 @@
 - [2026-07-25 19:54:07] [Felipe] implementou código Python REAL: `felipe_claude_code_integration_b92358.py` (+33 linhas, testes unitários OK)
 - [2026-07-25 19:54:25] [Sofia] [KAN-9825] implementou código Python REAL: `kan_9825_dev_implementa_o_dev_implement_d8e0b9.py` (+33 linhas, testes unitários OK)
 - [2026-07-25 19:54:39] [Sofia] [KAN-9811] implementou código Python REAL: `kan_9811_dev_implementa_o_gemma4_refato_ee7a2e.py` (+33 linhas, testes unitários OK)
+- [2026-07-25 19:54:53] [Beatriz] [KAN-9924] implementou código Python REAL: `kan_9924_onboarding_subst_novo_colabora_6a04a1.py` (+49 linhas, testes unitários OK)
