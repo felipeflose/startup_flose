@@ -147,3 +147,5 @@
 - [2026-07-25 09:25:48] [Felipe] implementou código Python REAL: `felipe_mutation_testing_suite_3e61cb.py` (+49 linhas, testes unitários OK)
 - [2026-07-25 09:27:18] [Sofia] implementou código Python REAL: `sofia_async_pipeline_builder_3c0663.py` (+49 linhas, testes unitários OK)
 - [2026-07-25 09:27:26] [Sofia] implementou código Python REAL: `sofia_async_pipeline_builder_956a5c.py` (+49 linhas, testes unitários OK)
+- [2026-07-25 09:27:34] [Beatriz] implementou código Python REAL: `beatriz_mutation_testing_suite_7532db.py` (+49 linhas, testes unitários OK)
+- [2026-07-25 09:27:45] [Sofia] implementou código Python REAL: `sofia_ollama_quantization_8bfa16.py` (+33 linhas, testes unitários OK)
