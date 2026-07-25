@@ -24,6 +24,7 @@ from flose.engines.planning import PlanningEngine
 from flose.engines.governance import GovernanceEngine
 from flose.connectors.jira import JiraConnector
 from flose.connectors.gemma_local import GemmaLocalConnector
+from flose.engines.code_synthesis import synthesize_and_commit_real_code
 
 app = FastAPI(title="FLOSE AEOS - Real GitHub Skill Commit Engine")
 
@@ -453,11 +454,14 @@ async def dynamic_frenzy_and_training_game_loop():
                         game_state["boss_hp"] = max(0, game_state["boss_hp"] - damage)
                         
                         game_state["boss_phase"] = f"✅ PO APROVOU [{card_duel['id']}]! -{damage}HP do Vilão! ({game_state['cards_cleared_in_current_wave']}/{target_clear_count})"
-                        pixel_agents[hero_key]["action"] = f"🎉 Card [{card_duel['id']}] APROVADO pelo PO!"
+                        pixel_agents[hero_key]["action"] = f"🎉 Card [{card_duel['id']}] APROVADO! Gerando código Python..."
                         
+                        # Sintetiza módulo de código Python REAL e executa commit & push no GitHub!
+                        asyncio.create_task(_do_real_commit(hero_key, card_duel["title"], card_duel["id"]))
+
                         audit_logs.append({
                             "event_id": f"evt_{len(audit_logs)+1}",
-                            "action": "PO_APPROVED",
+                            "action": "PO_APPROVED_REAL_CODE",
                             "hero": hero["name"],
                             "card_id": card_duel["id"],
                             "damage": damage
@@ -499,19 +503,27 @@ async def dynamic_frenzy_and_training_game_loop():
             await asyncio.sleep(3)
 
 
-async def _do_real_commit(hero_key: str, skill_name: str):
-    """Wrapper async para commit real no GitHub."""
+async def _do_real_commit(hero_key: str, topic: str, card_id: Optional[str] = None):
+    """Sintetiza código Python REAL + Pytest e faz commit/push REAL no GitHub!"""
     hero = pixel_agents[hero_key]
-    commit_msg = await push_real_github_skill_commit(hero["name"], skill_name)
+    res = await synthesize_and_commit_real_code(hero["name"], topic, card_id)
+    commit_msg = res.get("commit_msg", f"[commit] {topic}")
+    
     hero["github_commits"].append(commit_msg)
+    if res.get("file_path"):
+        hero["github_commits"].append(f"📄 {res['file_path']} (+{res.get('lines_added', 0)} linhas Python)")
+    
     hero["action"] = f"🐙 GitHub: {commit_msg[:40]}..."
+    
     audit_logs.append({
         "event_id": f"evt_{len(audit_logs)+1}",
-        "action": "REAL_GITHUB_COMMIT",
+        "action": "REAL_PYTHON_CODE_COMMITTED",
         "hero": hero["name"],
-        "skill": skill_name,
-        "commit": commit_msg[:80]
+        "topic": topic[:30],
+        "card_id": card_id or "SKILL",
+        "commit": commit_msg[:60]
     })
+
 
 
 @app.on_event("startup")
