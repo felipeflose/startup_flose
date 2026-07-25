@@ -335,3 +335,4 @@
 - [2026-07-25 11:32:06] [Sofia] [KAN-9819] implementou código Python REAL: `kan_9819_demiss_o_por_desempenho_felipe_e5939f.py` (+33 linhas, testes unitários OK)
 - [2026-07-25 11:32:23] [Beatriz] [KAN-9818] implementou código Python REAL: `kan_9818_onboarding_subst_novo_colabora_aa3b72.py` (+49 linhas, testes unitários OK)
 - [2026-07-25 11:32:40] [Beatriz] [KAN-9817] implementou código Python REAL: `kan_9817_demiss_o_por_desempenho_lucas__420d53.py` (+33 linhas, testes unitários OK)
+- [2026-07-25 11:32:56] [Beatriz] [KAN-9816] implementou código Python REAL: `kan_9816_onboarding_subst_novo_colabora_c95f08.py` (+49 linhas, testes unitários OK)
