@@ -543,3 +543,4 @@
 - [2026-07-25 13:45:26] [Beatriz] [KAN-9723] implementou código Python REAL: `kan_9723_recrutamento_contrata_o_para_k_87f1e6.py` (+34 linhas, testes unitários OK)
 - [2026-07-25 13:45:47] [Sofia] implementou código Python REAL: `sofia_zero_trust_security_shield_c3470f.py` (+34 linhas, testes unitários OK)
 - [2026-07-25 13:46:09] [Beatriz] [KAN-9722] implementou código Python REAL: `kan_9722_po_evil_boss_sanitiza_o_estrit_14b4fe.py` (+34 linhas, testes unitários OK)
+- [2026-07-25 13:46:29] [Beatriz] [KAN-9721] implementou código Python REAL: `kan_9721_recrutamento_contrata_o_para_k_2821b9.py` (+32 linhas, testes unitários OK)
