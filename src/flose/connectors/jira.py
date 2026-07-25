@@ -213,3 +213,39 @@ class JiraConnector:
                 return json.loads(resp.read().decode("utf-8"))
         except Exception as e:
             return {"error": str(e)}
+
+    def transition_issue(self, issue_key: str, transition_name: str) -> bool:
+        """Transiciona um card no Jira (Ex: To Do -> In Progress -> Done)"""
+        if not self.is_configured:
+            return True
+            
+        # 1. Pega os IDs de transição possíveis para este card
+        url_transitions = f"https://{self.domain}.atlassian.net/rest/api/3/issue/{issue_key}/transitions"
+        req_trans = urllib.request.Request(url_transitions, headers=self._get_headers(), method="GET")
+        
+        transition_id = None
+        try:
+            with urllib.request.urlopen(req_trans, context=ssl_context, timeout=5) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                for t in data.get("transitions", []):
+                    # Faz o match do nome (ex: "Done" ou "Concluído")
+                    if transition_name.lower() in t.get("name", "").lower():
+                        transition_id = t.get("id")
+                        break
+        except Exception as e:
+            print(f"[Jira Transition Error] Falha ao buscar transições: {e}")
+            return False
+            
+        if not transition_id:
+            print(f"[Jira Transition Error] Transição '{transition_name}' não encontrada para o card {issue_key}")
+            return False
+            
+        # 2. Executa a transição
+        payload = {"transition": {"id": transition_id}}
+        req = urllib.request.Request(url_transitions, data=json.dumps(payload).encode("utf-8"), headers=self._get_headers(), method="POST")
+        try:
+            with urllib.request.urlopen(req, context=ssl_context, timeout=5) as resp:
+                return resp.status in (200, 204)
+        except Exception as e:
+            print(f"[Jira Transition Error] Falha ao transicionar: {e}")
+            return False
