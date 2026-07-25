@@ -609,3 +609,4 @@
 - [2026-07-25 20:02:26] [Sofia] [KAN-9914] implementou código Python REAL: `kan_9914_onboarding_subst_novo_colabora_10fe07.py` (+49 linhas, testes unitários OK)
 - [2026-07-25 20:02:41] [Sofia] [KAN-9913] implementou código Python REAL: `kan_9913_demiss_o_por_desempenho_felipe_5af02e.py` (+33 linhas, testes unitários OK)
 - [2026-07-25 20:02:56] [Beatriz] [KAN-9911] implementou código Python REAL: `kan_9911_recrutamento_contrata_o_para_k_df6cd9.py` (+32 linhas, testes unitários OK)
+- [2026-07-25 20:03:12] [Beatriz] [KAN-9910] implementou código Python REAL: `kan_9910_onboarding_subst_novo_colabora_390b8f.py` (+49 linhas, testes unitários OK)
