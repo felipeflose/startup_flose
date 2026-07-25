@@ -311,6 +311,69 @@ def po_vilao_review(card: Dict[str, Any]) -> tuple[bool, str]:
     return True, "✅ Aprovado! Critérios de aceite atendidos."
 
 
+def po_vilao_inspect_commit_code(card: Dict[str, Any], commit_info: Dict[str, Any]) -> Tuple[bool, str]:
+    """
+    O PO Vilão lê o commit real do Git e o código Python gerado no arquivo!
+    Se o commit falhar no Pytest, não contiver as palavras-chave exigidas do card ou for insuficiente,
+    o card NÃO pode ser salvo e é rejeitado de volta para A FAZER!
+    """
+    if not commit_info or not commit_info.get("success"):
+        return False, "❌ COMMIT AUDIT: Commit não foi registrado com sucesso no Git!"
+
+    commit_hash = commit_info.get("commit_hash", "????")
+    file_path = commit_info.get("file_path", "")
+    lines_added = commit_info.get("lines_added", 0)
+    test_passed = commit_info.get("test_passed", False)
+
+    # 1. Auditoria Pytest
+    if not test_passed:
+        return False, f"❌ COMMIT AUDIT ({commit_hash}): O arquivo {file_path} FALHOU no Pytest!"
+
+    # 2. Auditoria de linhas de código
+    if lines_added < 15:
+        return False, f"❌ COMMIT AUDIT ({commit_hash}): O arquivo {file_path} tem apenas {lines_added} linhas! Código insuficiente!"
+
+    # 3. Leitura e Análise do Arquivo Gerado no Disco
+    abs_file_path = os.path.join(REPO_PATH, file_path) if file_path else ""
+    if not abs_file_path or not os.path.exists(abs_file_path):
+        return False, f"❌ COMMIT AUDIT ({commit_hash}): Módulo {file_path} não encontrado no repositório!"
+
+    try:
+        with open(abs_file_path, "r", encoding="utf-8") as f:
+            code_text = f.read().lower()
+
+        card_title = (card.get("title") or "").lower()
+        
+        # Palavras-chave necessárias baseadas no card
+        required_keywords = []
+        if any(k in card_title for k in ["xss", "sql", "secur", "sanitiz"]):
+            required_keywords = ["sanitize", "sql"]
+        elif any(k in card_title for k in ["async", "performance", "backend", "cache"]):
+            required_keywords = ["async", "cache"]
+        elif any(k in card_title for k in ["ui", "pixel", "frontend", "grid"]):
+            required_keywords = ["grid", "hsl"]
+        elif any(k in card_title for k in ["onboard", "contrat", "hiring"]):
+            required_keywords = ["onboarding", "role"]
+
+        missing = [kw for kw in required_keywords if kw not in code_text]
+        if missing:
+            return False, f"❌ COMMIT AUDIT ({commit_hash}): O código em {file_path} não implementou: {', '.join(missing)}!"
+            
+    except Exception as e:
+        return False, f"❌ COMMIT AUDIT Error: Erro ao inspecionar código: {e}"
+
+    # Escudo ativado pelo herói garante aprovação
+    if card.get("shield_active"):
+        return True, f"✅ COMMIT AUDIT APPROVED ({commit_hash}): Protegido por Escudo! Código {file_path} ({lines_added} linhas, Pytest OK) aprovado!"
+
+    # Risco de rejeição do PO Vilão (25% se o código passou na auditoria técnica)
+    if random.random() < 0.25 and card.get("rejections", 0) < 2:
+        return False, f"❌ COMMIT AUDIT ({commit_hash}): PO Vilão exigiu refatoração adicional na arquitetura do código!"
+
+    return True, f"✅ COMMIT AUDIT APPROVED ({commit_hash}): Código {file_path} ({lines_added} linhas, Pytest OK) inspecionado e aprovado!"
+
+
+
 # ============================================================
 # FELIPE DELEGATION & HERO TIMEOUT POWER ENGINE (13.000 PODERES)
 # ============================================================
@@ -529,13 +592,18 @@ async def dynamic_frenzy_and_training_game_loop():
 
                 # Adiciona o boost do poder ao progresso do herói
                 duel["work_progress"] = min(100.0, round(duel.get("work_progress", 0.0) + progress_boost, 1))
-                duel["active_power"] = power_name
-                
-                hero_action_str = f"⚡ {power_name[:25]}: {duel['work_progress']}%"
-                pixel_agents[hero_key]["action"] = hero_action_str
-
-                # Quando atinge 100% de progresso antes do timeout -> vai para validação
+                        
+                # Quando atinge 100% de progresso antes do timeout -> Submete commit e vai para validação
                 if duel["work_progress"] >= 100.0 and duel["timeout_timer_sec"] > 0:
+                    # 🐙 Sintetiza o código Python REAL e registra o commit no GitHub!
+                    commit_res = await synthesize_and_commit_real_code(hero["name"], card_duel["title"], card_duel["id"])
+                    card_duel["commit_info"] = commit_res
+                    
+                    commit_msg = commit_res.get("commit_msg", "")
+                    hero["github_commits"].append(commit_msg)
+                    if commit_res.get("file_path"):
+                        hero["github_commits"].append(f"📄 {commit_res['file_path']} (+{commit_res.get('lines_added', 0)} linhas)")
+
                     card_duel["status"] = "EM VALIDAÇÃO"
                     if card_duel in game_state["kanban"]["in_progress"]:
                         game_state["kanban"]["in_progress"].remove(card_duel)
@@ -543,8 +611,8 @@ async def dynamic_frenzy_and_training_game_loop():
                     duel["phase"] = "in_validation"
                     duel["timeout_timer_sec"] = 6.0  # PO tem 6s para revisar
                     duel["max_timeout_sec"] = 6.0
-                    game_state["boss_phase"] = f"🔍 {hero['name']} usou {power_name[:30]} e enviou [{card_duel['id']}] para PO Vilão!"
-                    pixel_agents[hero_key]["action"] = f"📤 Card [{card_duel['id']}] em validação do PO!"
+                    game_state["boss_phase"] = f"🔍 PO VILÃO AUDITANDO COMMIT DO CARD [{card_duel['id']}] NO GIT!"
+                    pixel_agents[hero_key]["action"] = f"📤 Commit [{commit_res.get('commit_hash', '???')}] em auditoria pelo PO!"
 
                 elif duel["timeout_timer_sec"] <= 0:
                     # Timeout! Card volta ao A Fazer
@@ -559,16 +627,17 @@ async def dynamic_frenzy_and_training_game_loop():
                     duel["phase"] = "idle"
                     pixel_agents[hero_key]["action"] = f"😰 TIMEOUT! Card [{card_duel['id']}] retornou!"
 
-            # ---- FASE: in_validation (PO revisa) ----
+            # ---- FASE: in_validation (PO REVISA O COMMIT REAL DO GIT) ----
             elif duel["phase"] == "in_validation":
                 duel["timeout_timer_sec"] = round(duel["timeout_timer_sec"] - 1.0, 1)
 
                 if duel["timeout_timer_sec"] <= 0:
-                    # PO revisa o card
-                    approved, reason = po_vilao_review(card_duel)
+                    # 👹 PO VILÃO INSPECIONA O COMMIT REAL NO GIT E O CÓDIGO FONTE GERADO!
+                    commit_info = card_duel.get("commit_info", {})
+                    approved, reason = po_vilao_inspect_commit_code(card_duel, commit_info)
                     
                     if approved:
-                        # APROVADO! Move para Done
+                        # APROVADO! O card é salvo e movido para Done!
                         card_duel["status"] = "CONCLUÍDO"
                         card_duel["po_rejection_reason"] = reason
                         if card_duel in game_state["kanban"]["in_validation"]:
@@ -580,17 +649,15 @@ async def dynamic_frenzy_and_training_game_loop():
                         damage = 280 + (hero["skill_level"] * 20)
                         game_state["boss_hp"] = max(0, game_state["boss_hp"] - damage)
                         
-                        game_state["boss_phase"] = f"✅ PO APROVOU [{card_duel['id']}]! -{damage}HP do Vilão! ({game_state['cards_cleared_in_current_wave']}/{target_clear_count})"
-                        pixel_agents[hero_key]["action"] = f"🎉 Card [{card_duel['id']}] APROVADO! Gerando código Python..."
+                        game_state["boss_phase"] = f"✅ PO APROVOU COMMIT DE [{card_duel['id']}]! -{damage}HP! ({game_state['cards_cleared_in_current_wave']}/{target_clear_count})"
+                        pixel_agents[hero_key]["action"] = f"🎉 Commit [{card_duel['id']}] APROVADO no Git!"
                         
-                        # Sintetiza módulo de código Python REAL e executa commit & push no GitHub!
-                        asyncio.create_task(_do_real_commit(hero_key, card_duel["title"], card_duel["id"]))
-
                         audit_logs.append({
                             "event_id": f"evt_{len(audit_logs)+1}",
-                            "action": "PO_APPROVED_REAL_CODE",
+                            "action": "PO_APPROVED_GIT_COMMIT",
                             "hero": hero["name"],
                             "card_id": card_duel["id"],
+                            "commit_hash": commit_info.get("commit_hash", ""),
                             "damage": damage
                         })
                         
@@ -601,23 +668,23 @@ async def dynamic_frenzy_and_training_game_loop():
                             game_state["victory"] = True
                             game_state["boss_phase"] = "🏆 VITÓRIA! HERÓIS DERROTARAM O PO VILÃO!"
                     else:
-                        # REJEITADO! Volta ao A Fazer com motivo
+                        # 🚫 REJEITADO NO COMMIT AUDIT! O card NÃO É SALVO! Volta ao A Fazer
                         card_duel["rejections"] += 1
                         card_duel["status"] = "A FAZER"
-                        card_duel["po_rejection_reason"] = f"❌ {reason}"
+                        card_duel["po_rejection_reason"] = f"{reason}"
                         if card_duel in game_state["kanban"]["in_validation"]:
                             game_state["kanban"]["in_validation"].remove(card_duel)
                         game_state["kanban"]["to_do"].append(card_duel)
                         
-                        game_state["boss_phase"] = f"🚫 PO REJEITOU [{card_duel['id']}]! Motivo: {reason[:40]}"
-                        pixel_agents[hero_key]["action"] = f"💢 Card [{card_duel['id']}] REJEITADO! Volta ao A Fazer!"
+                        game_state["boss_phase"] = f"🚫 PO BARRATION! Commit de [{card_duel['id']}] REJEITADO! Motivo: {reason[:45]}"
+                        pixel_agents[hero_key]["action"] = f"💢 Commit [{card_duel['id']}] REJEITADO! Card devolvido ao A FAZER!"
                         
                         audit_logs.append({
                             "event_id": f"evt_{len(audit_logs)+1}",
-                            "action": "PO_REJECTED",
+                            "action": "PO_REJECTED_GIT_COMMIT",
                             "hero": hero["name"],
                             "card_id": card_duel["id"],
-                            "reason": reason[:60]
+                            "reason": reason[:65]
                         })
                         
                         duel["is_active"] = False
