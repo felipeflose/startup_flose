@@ -50,6 +50,50 @@ class JiraConnector:
             "Accept": "application/json"
         }
 
+    def delete_issue(self, issue_key: str) -> bool:
+        if not self.is_configured: return True
+        url = f"https://{self.domain}.atlassian.net/rest/api/3/issue/{issue_key}"
+        req = urllib.request.Request(url, headers=self._get_headers(), method="DELETE")
+        try:
+            with urllib.request.urlopen(req, context=ssl_context, timeout=5) as resp:
+                return resp.status in (200, 204)
+        except Exception:
+            return False
+
+    def transition_issue(self, issue_key: str, target_status_name: str) -> bool:
+        """Busca as transições válidas e move o card para o status desejado (ex: 'Done' ou 'Concluído')."""
+        if not self.is_configured: return True
+        
+        # 1. Obter transições disponíveis para esse card
+        url_get = f"https://{self.domain}.atlassian.net/rest/api/3/issue/{issue_key}/transitions"
+        req_get = urllib.request.Request(url_get, headers=self._get_headers(), method="GET")
+        try:
+            with urllib.request.urlopen(req_get, context=ssl_context, timeout=5) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                transitions = data.get("transitions", [])
+                
+                target_id = None
+                # Procura transição que contenha o termo (case insensitive)
+                for t in transitions:
+                    t_name = t.get("name", "").lower()
+                    if target_status_name.lower() in t_name or "conclu" in t_name or "done" in t_name:
+                        target_id = t.get("id")
+                        break
+                
+                if not target_id:
+                    print(f"[Jira Transition] Status alvo '{target_status_name}' não encontrado para {issue_key}.")
+                    return False
+                
+                # 2. Faz o POST para transacionar
+                payload = {"transition": {"id": target_id}}
+                req_post = urllib.request.Request(url_get, data=json.dumps(payload).encode("utf-8"), headers=self._get_headers(), method="POST")
+                with urllib.request.urlopen(req_post, context=ssl_context, timeout=10) as resp_post:
+                    print(f"[Jira Transition] Card {issue_key} movido para {target_status_name} com sucesso!")
+                    return resp_post.status in (200, 204)
+        except Exception as e:
+            print(f"[Jira Transition Error] {e}")
+            return False
+
     def fetch_real_jira_issues(self, project_key: str = "KAN", limit: int = 10) -> List[Dict[str, Any]]:
         """Busca as issues REAIS e seus detalhes na conta felipeflose.atlassian.net do Jira."""
         if not self.is_configured:
@@ -133,6 +177,10 @@ class JiraConnector:
                 "issuetype": {"name": "Task"}
             }
         }
+        
+        # Se for passado um ID de épico KAN-XXX, cria o vínculo de sub-tarefa / parent.
+        if epic_name.startswith("KAN-"):
+            payload["fields"]["parent"] = {"key": epic_name.strip()}
 
         req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=self._get_headers(), method="POST")
         try:

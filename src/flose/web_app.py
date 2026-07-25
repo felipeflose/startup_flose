@@ -26,6 +26,7 @@ from flose.connectors.jira import JiraConnector
 from flose.connectors.gemma_local import GemmaLocalConnector
 from flose.engines.code_synthesis import synthesize_and_commit_real_code
 from flose.core.persistence import load_persisted_state, save_state_to_disk
+from flose.agents.po_auditor import scan_host_codebase
 
 app = FastAPI(title="FLOSE AEOS - Real GitHub Skill Commit Engine")
 
@@ -262,6 +263,24 @@ def learn_new_skills_autonomously(agent_key: str):
 # ============================================================
 # JIRA CARD CREATION (BACKGROUND)
 # ============================================================
+async def create_real_jira_card_async():
+    """Chama o Auditor Físico para buscar Smells na máquina e cria um Jira Cloud real vinculado a um Epic."""
+    try:
+        # 1. Faz o parse do repositório físico na máquina do host
+        smell_report = await asyncio.to_thread(scan_host_codebase, "src/flose")
+        
+        # 2. Se achar falha real, cria o título e desc. Senão, faz genérico.
+        if smell_report:
+            title, desc = smell_report
+        else:
+            title = f"Refatorar Componente X{random.randint(10,99)}"
+            desc = "Não foram achadas falhas estruturais pelo AST. Faça uma revisão geral de segurança."
+            
+        # 3. Dispara a criação no Jira Cloud (Vincula com o épico da fase)
+        await async_create_jira_card_background(title, desc)
+    except Exception as e:
+        print(f"[Create Real Card Error] {e}")
+
 async def async_create_jira_card_background(topic_title: str, topic_desc: str):
     try:
         jira_res = await asyncio.to_thread(
@@ -661,6 +680,12 @@ async def dynamic_frenzy_and_training_game_loop():
                         game_state["kanban"]["done"].append(card_duel)
                         game_state["cards_cleared_in_current_wave"] += 1
                         game_state["cards_coded_count"] += 1
+                        
+                        # [Fase 8] Sincronização Bidirecional: Mover o card no Jira para Done
+                        if str(card_duel["id"]).startswith("KAN-"):
+                            print(f"[{hero['name']}] Transicionando {card_duel['id']} para DONE no Jira...")
+                            asyncio.create_task(asyncio.to_thread(jira.transition_issue, card_duel["id"], "Done"))
+
 
                         damage = 280 + (hero["skill_level"] * 20)
                         game_state["boss_hp"] = max(0, game_state["boss_hp"] - damage)
