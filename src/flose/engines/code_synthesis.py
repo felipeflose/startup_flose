@@ -418,10 +418,10 @@ async def synthesize_and_commit_real_code(
                     "commit_msg": f"[skip] {slug}"
                 }
 
-            # Push pro GitHub
+            # Push pro GitHub (branch atual)
             await asyncio.to_thread(
                 subprocess.run,
-                ["git", "push", "origin", "main"],
+                ["git", "push", "origin", "HEAD"],
                 cwd=REPO_PATH, capture_output=True, text=True
             )
 

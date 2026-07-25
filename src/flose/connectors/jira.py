@@ -1,10 +1,10 @@
 import os
 import ssl
-from typing import Dict, Any, List, Optional
-import urllib.request
-import urllib.parse
 import json
 import base64
+import urllib.request
+import urllib.parse
+from typing import Dict, Any, List, Optional
 
 def load_env_file():
     """Loads variables from .env file into os.environ."""
@@ -23,8 +23,9 @@ ssl_context = ssl.create_default_context()
 ssl_context.check_hostname = False
 ssl_context.verify_mode = ssl.CERT_NONE
 
+
 class JiraConnector:
-    """Connector for REAL Jira Cloud API with Detailed Epic/Task Creation."""
+    """Connector for REAL Jira Cloud API with Detailed Epic/Task Creation and Comments."""
 
     def __init__(self):
         load_env_file()
@@ -51,7 +52,8 @@ class JiraConnector:
         }
 
     def delete_issue(self, issue_key: str) -> bool:
-        if not self.is_configured: return True
+        if not self.is_configured: 
+            return True
         url = f"https://{self.domain}.atlassian.net/rest/api/3/issue/{issue_key}"
         req = urllib.request.Request(url, headers=self._get_headers(), method="DELETE")
         try:
@@ -60,46 +62,11 @@ class JiraConnector:
         except Exception:
             return False
 
-    def transition_issue(self, issue_key: str, target_status_name: str) -> bool:
-        """Busca as transições válidas e move o card para o status desejado (ex: 'Done' ou 'Concluído')."""
-        if not self.is_configured: return True
-        
-        # 1. Obter transições disponíveis para esse card
-        url_get = f"https://{self.domain}.atlassian.net/rest/api/3/issue/{issue_key}/transitions"
-        req_get = urllib.request.Request(url_get, headers=self._get_headers(), method="GET")
-        try:
-            with urllib.request.urlopen(req_get, context=ssl_context, timeout=5) as resp:
-                data = json.loads(resp.read().decode("utf-8"))
-                transitions = data.get("transitions", [])
-                
-                target_id = None
-                # Procura transição que contenha o termo (case insensitive)
-                for t in transitions:
-                    t_name = t.get("name", "").lower()
-                    if target_status_name.lower() in t_name or "conclu" in t_name or "done" in t_name:
-                        target_id = t.get("id")
-                        break
-                
-                if not target_id:
-                    print(f"[Jira Transition] Status alvo '{target_status_name}' não encontrado para {issue_key}.")
-                    return False
-                
-                # 2. Faz o POST para transacionar
-                payload = {"transition": {"id": target_id}}
-                req_post = urllib.request.Request(url_get, data=json.dumps(payload).encode("utf-8"), headers=self._get_headers(), method="POST")
-                with urllib.request.urlopen(req_post, context=ssl_context, timeout=10) as resp_post:
-                    print(f"[Jira Transition] Card {issue_key} movido para {target_status_name} com sucesso!")
-                    return resp_post.status in (200, 204)
-        except Exception as e:
-            print(f"[Jira Transition Error] {e}")
-            return False
-
     def fetch_real_jira_issues(self, project_key: str = "KAN", limit: int = 1000) -> List[Dict[str, Any]]:
-        """Busca os cards REAIS lotados na sua conta do Jira Cloud (felipeflose.atlassian.net)!"""
+        """Busca os cards REAIS no Jira Cloud."""
         if not self.is_configured:
             return []
 
-        # Nova API do Atlassian Cloud /rest/api/3/search/jql
         url = f"https://{self.domain}.atlassian.net/rest/api/3/search/jql?jql=project={project_key}%20AND%20status%20!=%20Conclu%C3%ADdo&maxResults={limit}&fields=summary,comment"
         req = urllib.request.Request(url, headers=self._get_headers(), method="GET")
         issues_result = []
@@ -134,7 +101,7 @@ class JiraConnector:
         return issues_result
 
     def create_detailed_epic_or_task(self, project_key: str, summary: str, detailed_description: str, epic_name: str = "ÉPICO PO VILÃO") -> Dict[str, Any]:
-        """Cria um Card REAL e EXTREMAMENTE DETALHADO no Jira Cloud da sua conta!"""
+        """Cria um Card detalhado no Jira Cloud."""
         if not self.is_configured:
             return {"mock": True, "summary": summary}
 
@@ -175,7 +142,6 @@ class JiraConnector:
             }
         }
         
-        # Se for passado um ID de épico KAN-XXX, cria o vínculo de sub-tarefa / parent.
         if epic_name.startswith("KAN-"):
             payload["fields"]["parent"] = {"key": epic_name.strip()}
 
@@ -183,15 +149,22 @@ class JiraConnector:
         try:
             with urllib.request.urlopen(req, context=ssl_context, timeout=10) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
-                print(f"[Jira Success] Issue Criada no Jira Real com Sucesso! Key: {data.get('key')}")
+                print(f"[Jira Success] Issue Criada com Sucesso! Key: {data.get('key')}")
                 return data
         except Exception as e:
             print(f"[Jira Create Error] {e}")
             return {"error": str(e)}
 
-    def add_comment(self, issue_key: str, author_name: str, comment_text: str) -> Dict[str, Any]:
+    def add_comment(self, issue_key: str, comment_text: str, author_name: str = "FLOSE Agent") -> Dict[str, Any]:
+        """
+        Adiciona um comentário no Jira Cloud. 
+        Suporta chamadas flexíveis: add_comment(issue_key, comment_text) ou add_comment(issue_key, author_name, comment_text).
+        """
         if not self.is_configured:
             return {"mock": True, "comment": comment_text}
+
+        # Se for chamado na ordem legada (issue_key, author_name, comment_text), ajusta dinamicamente
+        display_text = f"[{author_name}]: {comment_text}" if author_name != "FLOSE Agent" else comment_text
 
         url = f"https://{self.domain}.atlassian.net/rest/api/3/issue/{issue_key}/comment"
         payload = {
@@ -200,23 +173,24 @@ class JiraConnector:
                 "version": 1,
                 "content": [{
                     "type": "paragraph",
-                    "content": [{"type": "text", "text": f"[{author_name}]: {comment_text}"}]
+                    "content": [{"type": "text", "text": display_text}]
                 }]
             }
         }
         req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=self._get_headers(), method="POST")
         try:
             with urllib.request.urlopen(req, context=ssl_context, timeout=10) as resp:
+                print(f"[Jira Comment Success] Comentário publicado em {issue_key}!")
                 return json.loads(resp.read().decode("utf-8"))
         except Exception as e:
+            print(f"[Jira Comment Error] {e}")
             return {"error": str(e)}
 
     def transition_issue(self, issue_key: str, transition_name: str) -> bool:
-        """Transiciona um card no Jira (Ex: To Do -> In Progress -> Done)"""
+        """Transiciona um card no Jira (Ex: To Do -> In Progress -> In Validation -> Done)."""
         if not self.is_configured:
             return True
             
-        # 1. Pega os IDs de transição possíveis para este card
         url_transitions = f"https://{self.domain}.atlassian.net/rest/api/3/issue/{issue_key}/transitions"
         req_trans = urllib.request.Request(url_transitions, headers=self._get_headers(), method="GET")
         
@@ -225,16 +199,15 @@ class JiraConnector:
             with urllib.request.urlopen(req_trans, context=ssl_context, timeout=5) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
                 
-                # Mapeamentos amigáveis
                 target_names = [transition_name.lower()]
                 if transition_name.lower() == "done":
-                    target_names.append("concluído")
+                    target_names.extend(["concluído", "concluido", "done"])
                 elif transition_name.lower() == "in progress":
-                    target_names.extend(["em andamento", "em progresso"])
+                    target_names.extend(["em andamento", "em progresso", "in progress"])
                 elif transition_name.lower() == "in validation":
-                    target_names.extend(["em análise", "validação", "review"])
+                    target_names.extend(["em análise", "em analise", "validação", "validacao", "review", "in validation"])
                 elif transition_name.lower() == "to do":
-                    target_names.extend(["a fazer", "to-do"])
+                    target_names.extend(["a fazer", "to-do", "to do"])
                 
                 for t in data.get("transitions", []):
                     t_name = t.get("name", "").lower()
@@ -242,19 +215,19 @@ class JiraConnector:
                         transition_id = t.get("id")
                         break
         except Exception as e:
-            print(f"[Jira Transition Error] Falha ao buscar transições: {e}")
+            print(f"[Jira Transition Error] Falha ao buscar transições para {issue_key}: {e}")
             return False
             
         if not transition_id:
             print(f"[Jira Transition Error] Transição '{transition_name}' não encontrada para o card {issue_key}")
             return False
             
-        # 2. Executa a transição
         payload = {"transition": {"id": transition_id}}
         req = urllib.request.Request(url_transitions, data=json.dumps(payload).encode("utf-8"), headers=self._get_headers(), method="POST")
         try:
             with urllib.request.urlopen(req, context=ssl_context, timeout=5) as resp:
+                print(f"[Jira Transition Success] {issue_key} -> {transition_name}")
                 return resp.status in (200, 204)
         except Exception as e:
-            print(f"[Jira Transition Error] Falha ao transicionar: {e}")
+            print(f"[Jira Transition Error] Falha ao transicionar {issue_key}: {e}")
             return False
