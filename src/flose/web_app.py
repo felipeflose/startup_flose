@@ -1,6 +1,10 @@
 import asyncio
 import time
 import random
+import os
+import subprocess
+import json
+from datetime import datetime
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel
@@ -21,13 +25,16 @@ from flose.engines.governance import GovernanceEngine
 from flose.connectors.jira import JiraConnector
 from flose.connectors.gemma_local import GemmaLocalConnector
 
-app = FastAPI(title="FLOSE (AEOS) - Dynamic PO Frenzy & Hero Training Ground")
+app = FastAPI(title="FLOSE AEOS - Real GitHub Skill Commit Engine")
 
 bus = EventBus()
 planner = PlanningEngine()
 governance = GovernanceEngine()
 jira = JiraConnector()
 gemma = GemmaLocalConnector()
+
+REPO_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+SKILLS_DOC_PATH = os.path.join(REPO_PATH, "docs", "skills_learned.md")
 
 # Busca os cards REAIS do Jira Cloud da sua conta (felipeflose.atlassian.net)
 real_jira_cards = jira.fetch_real_jira_issues(project_key="KAN", limit=10)
@@ -38,30 +45,35 @@ game_state = {
     "boss_name": "PO EVIL BOSS (FRENZY MODE)",
     "boss_hp": 1000,
     "boss_max_hp": 1000,
-    "current_phase": "HERO_TRAINING_PHASE", # HERO_TRAINING_PHASE (2 min vantagem) -> PO_FRENZY_30S -> HEROES_CLEARING_PHASE (limpar 80%)
+    "current_phase": "HERO_TRAINING_PHASE",
     "phase_timer_sec": 120,
     "boss_cards_created_in_frenzy": 0,
     "target_cards_to_clear_80pct": 0,
     "cards_cleared_in_current_wave": 0,
     "cards_coded_count": 0,
     "victory": False,
+    "boss_phase": "🎓 ACADEMIA DOS HERÓIS: ESTUDANDO E CRIANDO COMMITS REAIS NO GITHUB!",
     "duel": {
         "is_active": False,
         "active_hero": None,
+        "hero_key": None,
         "active_card": None,
         "timeout_timer_sec": 18.0,
         "max_timeout_sec": 18.0,
-        "damage_dealt": 0
+        "damage_dealt": 0,
+        "phase": "idle"  # idle | hero_working | in_validation | po_reviewing | approved | rejected
     },
     "kanban": {
         "to_do": real_jira_cards if real_jira_cards else [],
         "in_progress": [],
         "in_validation": [],
         "done": []
-    }
+    },
+    "last_real_commit": "Nenhum commit ainda",
+    "total_real_commits": 0,
 }
 
-# HERÓIS COM ACADEMIA DE TREINAMENTO E APRENDIZADO DE NOVAS SKILLS
+# HERÓIS COM REGISTRO DE COMMITS REAIS NO GITHUB DE CADA SKILL APRENDIDA
 pixel_agents: Dict[str, Dict[str, Any]] = {
     "felipe": {
         "name": "Felipe",
@@ -70,7 +82,8 @@ pixel_agents: Dict[str, Dict[str, Any]] = {
         "x": 100, "y": 260,
         "skill_level": 1,
         "xp": 0,
-        "new_skills_learned": ["Arquitetura Async Core", "Gerenciamento de Memória"],
+        "new_skills_learned": ["Arquitetura Async Core"],
+        "github_commits": ["commit 7f3a8b2: docs(architecture): learn Async Core design"],
         "response_speed_ms": 250.0,
         "timeout_resistance_sec": 18.0,
         "action": "Treinando e Aprendendo Novas Arquiteturas",
@@ -82,7 +95,8 @@ pixel_agents: Dict[str, Dict[str, Any]] = {
         "x": 220, "y": 220,
         "skill_level": 1,
         "xp": 0,
-        "new_skills_learned": ["Fine-Tuning Gemma 4", "Prompt Optimization"],
+        "new_skills_learned": ["Fine-Tuning Gemma 4"],
+        "github_commits": ["commit c912f5a: docs(gemma4): learn Gemma 4 fine-tuning"],
         "response_speed_ms": 200.0,
         "timeout_resistance_sec": 18.0,
         "action": "Estudando Modelos no Gemma 4 & Ollama",
@@ -94,7 +108,8 @@ pixel_agents: Dict[str, Dict[str, Any]] = {
         "x": 350, "y": 270,
         "skill_level": 1,
         "xp": 0,
-        "new_skills_learned": ["Refatoração Rust/Python", "AGY Automation"],
+        "new_skills_learned": ["Refatoração Rust/Python"],
+        "github_commits": ["commit e4819a3: feat(skill-rust): learn Rust/Python refactoring"],
         "response_speed_ms": 120.0,
         "timeout_resistance_sec": 18.0,
         "action": "Treinando Algoritmos de Alta Velocidade",
@@ -106,7 +121,8 @@ pixel_agents: Dict[str, Dict[str, Any]] = {
         "x": 480, "y": 230,
         "skill_level": 1,
         "xp": 0,
-        "new_skills_learned": ["Testes de Mutação", "Zero-Trust Security"],
+        "new_skills_learned": ["Testes de Mutação"],
+        "github_commits": ["commit 88f21bc: docs(security): learn mutation testing"],
         "response_speed_ms": 210.0,
         "timeout_resistance_sec": 18.0,
         "action": "Aprimorando Suíte de Testes de Aceite",
@@ -115,31 +131,104 @@ pixel_agents: Dict[str, Dict[str, Any]] = {
 
 audit_logs: List[Dict[str, Any]] = []
 
+# ============================================================
+# REAL GITHUB COMMIT ENGINE
+# ============================================================
+_git_commit_lock = asyncio.Lock()
+
+async def push_real_github_skill_commit(agent_name: str, skill_name: str) -> str:
+    """Faz um commit REAL no GitHub com a nova skill aprendida."""
+    async with _git_commit_lock:
+        try:
+            # Cria o arquivo docs/skills_learned.md
+            os.makedirs(os.path.dirname(SKILLS_DOC_PATH), exist_ok=True)
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            entry = f"- [{timestamp}] [{agent_name}] aprendeu: **{skill_name}**\n"
+            
+            with open(SKILLS_DOC_PATH, "a", encoding="utf-8") as f:
+                f.write(entry)
+
+            commit_msg = f"feat(skills-{agent_name.lower()}): {agent_name} learned '{skill_name}' - auto commit by FLOSE AEOS"
+
+            # Git add
+            await asyncio.to_thread(
+                subprocess.run,
+                ["git", "add", "docs/skills_learned.md"],
+                cwd=REPO_PATH, capture_output=True, text=True
+            )
+
+            # Git commit
+            result_commit = await asyncio.to_thread(
+                subprocess.run,
+                ["git", "commit", "-m", commit_msg],
+                cwd=REPO_PATH, capture_output=True, text=True
+            )
+
+            if result_commit.returncode != 0:
+                # Pode ser "nothing to commit"
+                return f"[skip] {skill_name} (nada novo para commitar)"
+
+            # Git push
+            result_push = await asyncio.to_thread(
+                subprocess.run,
+                ["git", "push", "origin", "main"],
+                cwd=REPO_PATH, capture_output=True, text=True
+            )
+
+            # Pega o hash real do commit
+            result_hash = await asyncio.to_thread(
+                subprocess.run,
+                ["git", "rev-parse", "--short", "HEAD"],
+                cwd=REPO_PATH, capture_output=True, text=True
+            )
+            real_hash = result_hash.stdout.strip() if result_hash.returncode == 0 else "??????"
+            real_commit_msg = f"commit {real_hash}: {commit_msg[:60]}"
+            
+            game_state["last_real_commit"] = real_commit_msg
+            game_state["total_real_commits"] = game_state.get("total_real_commits", 0) + 1
+            
+            return real_commit_msg
+        except Exception as e:
+            return f"[erro commit] {str(e)[:50]}"
+
+
 def learn_new_skills_autonomously(agent_key: str):
     agt = pixel_agents[agent_key]
     agt["xp"] += 50
-    skills_pool = ["Design Pattern Master", "EventBus Acceleration", "Ollama Quantization", "AGY Scripting", "Pixel Perfect CSS Engine"]
+    skills_pool = [
+        "Design Pattern Master",
+        "EventBus Acceleration",
+        "Ollama Quantization",
+        "AGY Scripting Engine",
+        "Pixel Perfect CSS Engine",
+        "Zero-Trust Security Shield",
+        "Mutation Testing Suite",
+        "Async Pipeline Builder",
+        "Claude-Code Integration",
+        "Gemma4 Fine-Tuner",
+    ]
     new_skill = random.choice(skills_pool)
     if new_skill not in agt["new_skills_learned"]:
         agt["new_skills_learned"].append(new_skill)
-    
+
     if agt["xp"] >= 100:
         agt["xp"] = 0
         agt["skill_level"] += 1
         agt["response_speed_ms"] = max(15.0, round(agt["response_speed_ms"] * 0.65, 1))
         agt["timeout_resistance_sec"] += 3.0
-        
-        audit_logs.append({
-            "event_id": f"evt_{len(audit_logs)+1}",
-            "action": "HERO_LEARNED_NEW_SKILL",
-            "agent": agt["name"],
-            "new_skill": new_skill,
-            "new_level": agt["skill_level"]
-        })
+        agt["action"] = f"🆙 LEVEL UP! Lv.{agt['skill_level']} - Resistência: {agt['timeout_resistance_sec']}s"
 
+    return new_skill
+
+
+# ============================================================
+# JIRA CARD CREATION (BACKGROUND)
+# ============================================================
 async def async_create_jira_card_background(topic_title: str, topic_desc: str):
     try:
-        jira_res = await asyncio.to_thread(jira.create_detailed_epic_or_task, "KAN", topic_title, topic_desc, "ÉPICO PO FRENZY")
+        jira_res = await asyncio.to_thread(
+            jira.create_detailed_epic_or_task, "KAN", topic_title, topic_desc, "ÉPICO PO FRENZY"
+        )
         new_key = jira_res.get("key", f"KAN-{random.randint(9700, 9999)}")
         new_card = {
             "id": new_key,
@@ -147,91 +236,134 @@ async def async_create_jira_card_background(topic_title: str, topic_desc: str):
             "description": topic_desc,
             "status": "A FAZER",
             "rejections": 0,
-            "comments": [{"author": "PO EVIL BOSS", "text": f"Criado na Rajada de 30s: {topic_title}."}]
+            "po_rejection_reason": "",
+            "comments": [{"author": "PO EVIL BOSS", "text": f"Criado na rajada de 30s: {topic_title}."}]
         }
         game_state["kanban"]["to_do"].append(new_card)
         game_state["boss_cards_created_in_frenzy"] += 1
-        
         audit_logs.append({
             "event_id": f"evt_{len(audit_logs)+1}",
-            "action": "PO_FRENZY_CARD_CREATED",
+            "action": "PO_FRENZY_CARD_CREATED_JIRA",
             "card_id": new_key,
-            "title": topic_title
+            "title": topic_title[:40]
         })
     except Exception as e:
         print(f"[Async Jira Error] {e}")
 
-# NOVO CICLO DINÂMICO DE REGRAS SOLICITADO:
-# 1. HERÓIS GANHAM 2 MINUTOS DE VANTAGEM INICIAL PARA ESTUDAR E APRENDER NOVAS SKILLS!
-# 2. PO ENTRA EM MODO FRENZY DE 30 SEGUNDOS E CRIA O MÁXIMO DE CARDS QUE CONSEGUIR NO JIRA!
-# 3. OS HERÓIS ENTRAM EM AÇÃO E SÓ VOLTAM AO TURNO NORMAL APÓS LIMPAR 80% DOS CARDS CRIADOS!
+
+# ============================================================
+# VILÃO VALIDA OS CARDS (PO REVIEW)
+# ============================================================
+PO_REJECTION_REASONS = [
+    "Falta critério de aceite detalhado!",
+    "Sem evidência de teste unitário!",
+    "Estimativa em story points ausente!",
+    "Descrição muito vaga, reescreva!",
+    "Sem link para épico pai!",
+    "A implementação viola nosso padrão de arquitetura!",
+    "Nenhum cenário de borda documentado!",
+    "Falta definição de 'Done' explícita!",
+    "Sem aprovação de segurança XSS!",
+    "Performance não foi validada com métricas!"
+]
+
+def po_vilao_review(card: Dict[str, Any]) -> tuple[bool, str]:
+    """O PO Vilão revisa o card. Ele é muito chato — rejeita na maioria das vezes!"""
+    rejection_chance = 0.55  # 55% de chance de rejeitar (vilão foi balanceado)
+    card_rejections = card.get("rejections", 0)
+    # A cada rejeição prévia, diminui um pouco a chance de rejeitar (herói vai melhorando)
+    rejection_chance = max(0.15, rejection_chance - (card_rejections * 0.12))
+    
+    if random.random() < rejection_chance:
+        reason = random.choice(PO_REJECTION_REASONS)
+        return False, reason
+    return True, "✅ Aprovado! Critérios de aceite atendidos."
+
+
+# ============================================================
+# MAIN AUTONOMOUS GAME LOOP
+# ============================================================
 async def dynamic_frenzy_and_training_game_loop():
+    await asyncio.sleep(2)  # Espera inicialização
+    
     while True:
-        # =========================================================================
-        # REGRA 1: FASE DE TREINAMENTO DOS HERÓIS (2 MINUTOS / 120 SEGUNDOS DE VANTAGEM)
-        # =========================================================================
+        # ==============================================================
+        # FASE 1: ACADEMIA DOS HERÓIS (2 MINUTOS) - COMMITS REAIS GITHUB
+        # ==============================================================
         game_state["current_phase"] = "HERO_TRAINING_PHASE"
-        game_state["boss_phase"] = "🎓 ACADEMIA DOS HERÓIS: 2 MINUTOS DE VANTAGEM PARA ESTUDAR E EVOLUIR SKILLS!"
+        game_state["boss_phase"] = "🎓 ACADEMIA GITHUB: HERÓIS ESTUDANDO E COMMITANDO SKILLS REAIS!"
         game_state["duel"]["is_active"] = False
 
         for sec in range(120, 0, -1):
             if game_state["victory"]: break
             game_state["phase_timer_sec"] = sec
 
-            # Todos os heróis aprendem novas skills continuamente durante o treinamento!
-            if sec % 5 == 0:
+            if sec % 8 == 0:
                 hero_k = random.choice(["felipe", "sofia", "lucas", "beatriz"])
-                learn_new_skills_autonomously(hero_k)
-                pixel_agents[hero_k]["action"] = f"🎓 Aprendendo nova skill: {pixel_agents[hero_k]['new_skills_learned'][-1]}"
+                new_skill = learn_new_skills_autonomously(hero_k)
+                
+                # Faz o commit REAL no GitHub em background
+                asyncio.create_task(_do_real_commit(hero_k, new_skill))
 
             await asyncio.sleep(1.0)
 
-        # =========================================================================
-        # REGRA 2: PO ENTRA EM JANELA FRENZY DE 30 SEGUNDOS (GERA TUDO QUE CONSEGUIR!)
-        # =========================================================================
+        if game_state["victory"]: break
+
+        # ==============================================================
+        # FASE 2: PO FRENZY MODE (30 SEGUNDOS - VILÃO CRIA CARDS NO JIRA)
+        # ==============================================================
         game_state["current_phase"] = "PO_FRENZY_30S"
-        game_state["boss_phase"] = "⚡ PO FRENZY MODE! 30 SEGUNDOS GERANDO O MÁXIMO DE CARDS NO JIRA!"
+        game_state["boss_phase"] = "⚡ PO FRENZY! VILÃO CRIANDO CARDS NO JIRA REAL — 30 SEGUNDOS!"
         game_state["boss_cards_created_in_frenzy"] = 0
 
         po_topics_frenzy = [
-            ("Refatorar UI Frontend Nível Pixel Perfect 16-Bit", "PO exige alinhamento HSL."),
-            ("Otimização de Performance Backend Async & Caching", "Latência do EventBus <5ms."),
-            ("Auditoria Anti-Alucinação e Cobertura de Testes Mutation", "Testes de mutação com evidência SHA-256."),
-            ("CONTRATAÇÃO: Onboarding de Desenvolvedor Frontend Senior", "Recrutar colaborador especialista em React."),
-            ("Sanitização Estrita contra Vulnerabilidades XSS & SQL", "Falhas de segurança nos endpoints REST."),
-            ("Implementação de Protocolo MCP Bridge", "Exportar métricas de telemetria."),
-            ("Melhoria de Cores e Gradientes em 2D/3D Canvas", "Bordas dinâmicas e animações smooth.")
+            ("Refatorar UI Frontend Nível Pixel Perfect 16-Bit", "PO exige alinhamento HSL perfeito, zero bugs visuais em todas resoluções acima de 1024px. Critérios: Screenshot aprovado em 3 navegadores."),
+            ("Otimização de Performance Backend Async & Caching", "Latência do EventBus < 5ms. Implementar cache Redis com TTL configurável. Critérios: Benchmark antes/depois documentado."),
+            ("Auditoria Anti-Alucinação e Cobertura de Testes Mutation", "Testes de mutação com evidência SHA-256. Cobertura >= 90%. Critérios: Relatório Stryker exportado."),
+            ("CONTRATAÇÃO: Onboarding de Desenvolvedor Frontend Senior", "Recrutar colaborador especialista em React/TypeScript. Critérios: CV analisado, entrevista técnica realizada, contrato assinado."),
+            ("Sanitização Estrita contra Vulnerabilidades XSS & SQL", "Falhas de segurança nos endpoints REST. Critérios: Relatório OWASP ZAP sem críticos, PR aprovado com 2 revisores."),
         ]
 
         for sec in range(30, 0, -1):
             if game_state["victory"]: break
             game_state["phase_timer_sec"] = sec
 
-            # Dispara requisições contínuas a cada 2 segundos na janela de 30s!
-            if sec % 2 == 0:
-                topic_title, topic_desc = po_topics_frenzy[game_state["boss_cards_created_in_frenzy"] % len(po_topics_frenzy)]
+            # A cada 6 segundos, cria um card no Jira
+            if sec % 6 == 0:
+                idx = game_state["boss_cards_created_in_frenzy"] % len(po_topics_frenzy)
+                topic_title, topic_desc = po_topics_frenzy[idx]
                 asyncio.create_task(async_create_jira_card_background(topic_title, topic_desc))
 
             await asyncio.sleep(1.0)
 
-        # =========================================================================
-        # REGRA 3: HERÓIS PRECISAM RESOLVER E BAIXAR PELO MENOS 80% DOS CARDS CRIADOS!
-        # =========================================================================
+        if game_state["victory"]: break
+
+        # ==============================================================
+        # FASE 3: HERÓIS RESOLVEM 80% DOS CARDS (DUELO COMPLETO COM VALIDAÇÃO)
+        # ==============================================================
         cards_created = max(1, game_state["boss_cards_created_in_frenzy"])
-        target_clear_count = int(cards_created * 0.8) # 80% dos cards criados!
+        target_clear_count = max(1, int(cards_created * 0.8))
         game_state["target_cards_to_clear_80pct"] = target_clear_count
         game_state["cards_cleared_in_current_wave"] = 0
         game_state["current_phase"] = "HEROES_CLEARING_PHASE"
+        game_state["boss_phase"] = f"⚔️ HERÓIS BAIXANDO 80% ({target_clear_count} CARDS) COM VALIDAÇÃO DO PO VILÃO!"
+        
+        # Safety timeout para a onda inteira (180 segundos max)
+        wave_max_timer = 180
+        game_state["phase_timer_sec"] = wave_max_timer
 
-        game_state["boss_phase"] = f"⚔️ META DOS HERÓIS: BAIXAR 80% DOS CARDS ({target_clear_count} CARDS) DA RAJADA!"
-
-        while game_state["cards_cleared_in_current_wave"] < target_clear_count:
+        while game_state["cards_cleared_in_current_wave"] < target_clear_count and wave_max_timer > 0:
             if game_state["victory"]: break
 
-            # Se não há duelo ativo, inicia duelo no card
-            if not game_state["duel"]["is_active"] and game_state["kanban"]["to_do"]:
+            wave_max_timer -= 1
+            game_state["phase_timer_sec"] = wave_max_timer
+            duel = game_state["duel"]
+
+            # ---- IDLE: pega um novo card do to_do ----
+            if not duel["is_active"] and game_state["kanban"]["to_do"]:
                 card = game_state["kanban"]["to_do"].pop(0)
                 card.setdefault("rejections", 0)
+                card.setdefault("po_rejection_reason", "")
                 card["status"] = "EM PROGRESSO"
                 game_state["kanban"]["in_progress"].append(card)
 
@@ -243,63 +375,144 @@ async def dynamic_frenzy_and_training_game_loop():
                     "active_hero": hero["name"],
                     "hero_key": hero_key,
                     "active_card": card,
+                    "work_progress": 0.0,
                     "timeout_timer_sec": hero["timeout_resistance_sec"],
                     "max_timeout_sec": hero["timeout_resistance_sec"],
-                    "damage_dealt": 0
+                    "damage_dealt": 0,
+                    "phase": "hero_working"
                 }
-
-            # Executa o duelo com as novas habilidades aprendidas pelos heróis!
-            if game_state["duel"]["is_active"]:
+                game_state["boss_phase"] = f"⚔️ {hero['name']} pegou [{card['id']}] — Trabalhando no código..."
                 duel = game_state["duel"]
-                hero_key = duel["hero_key"]
-                hero = pixel_agents[hero_key]
 
+            # Se não há duel ativo nem cards no to_do/in_progress/in_validation, faz safety break
+            if not duel["is_active"] and not game_state["kanban"]["to_do"] and not game_state["kanban"]["in_progress"] and not game_state["kanban"]["in_validation"]:
+                print("[Safety Break] Nenhum card restante no Kanban. Finalizando onda.")
+                break
+
+            if not duel["is_active"]:
+                await asyncio.sleep(1.0)
+                continue
+
+            hero_key = duel["hero_key"]
+            hero = pixel_agents[hero_key]
+            card_duel = duel["active_card"]
+
+            # ---- FASE: hero_working ----
+            if duel["phase"] == "hero_working":
                 duel["timeout_timer_sec"] = round(duel["timeout_timer_sec"] - 1.0, 1)
+                
+                # Progresso gradual por segundo baseado no nível de skill (ex: ~15% a 25% por segundo)
+                progress_step = random.uniform(14.0, 22.0) + (hero["skill_level"] * 3.0)
+                duel["work_progress"] = min(100.0, round(duel.get("work_progress", 0.0) + progress_step, 1))
+                pixel_agents[hero_key]["action"] = f"💻 Codificando [{card_duel['id']}]: {duel['work_progress']}%"
 
-                # Heróis agora estão MUITO MAIS ESPERTOS (85% de acerto com as novas skills aprendidas!)
-                if duel["timeout_timer_sec"] > 0 and random.random() < (0.75 + (hero["skill_level"] * 0.05)):
-                    card_duel = duel["active_card"]
-                    
-                    card_duel["status"] = "CONCLUÍDO"
-                    damage = 300
-                    game_state["boss_hp"] = max(0, game_state["boss_hp"] - damage)
-                    
+                # Quando atinge 100% de progresso antes do timeout -> vai para validação
+                if duel["work_progress"] >= 100.0 and duel["timeout_timer_sec"] > 0:
+                    card_duel["status"] = "EM VALIDAÇÃO"
                     if card_duel in game_state["kanban"]["in_progress"]:
                         game_state["kanban"]["in_progress"].remove(card_duel)
-                    game_state["kanban"]["done"].append(card_duel)
-                    game_state["cards_coded_count"] += 1
-                    game_state["cards_cleared_in_current_wave"] += 1
-
-                    game_state["boss_phase"] = f"💥 {hero['name']} RESPEITOU A META! ({game_state['cards_cleared_in_current_wave']}/{target_clear_count} CARDS 80%)"
-                    
-                    h = governance.generate_audit_hash("agt_lucas", "HERO_80PCT_CLEAR_CARD", card_duel['title'])
-                    audit_logs.append({
-                        "event_id": f"evt_{len(audit_logs)+1}",
-                        "action": "HERO_80PCT_CARD_RESOLVED",
-                        "hero": hero["name"],
-                        "card_id": card_duel["id"],
-                        "hash": h
-                    })
-
-                    duel["is_active"] = False
-
-                    if game_state["boss_hp"] <= 0:
-                        game_state["victory"] = True
-                        game_state["boss_phase"] = "🏆 VITÓRIA ABSOLUTA! OS HERÓIS BAIXARAM 80% DOS CARDS E DERROTARAM O PO VILÃO!"
+                    game_state["kanban"]["in_validation"].append(card_duel)
+                    duel["phase"] = "in_validation"
+                    duel["timeout_timer_sec"] = 6.0  # PO tem 6s para revisar
+                    duel["max_timeout_sec"] = 6.0
+                    game_state["boss_phase"] = f"🔍 {hero['name']} concluiu código e enviou [{card_duel['id']}] para PO Vilão!"
+                    pixel_agents[hero_key]["action"] = f"📤 Card [{card_duel['id']}] em validação do PO!"
 
                 elif duel["timeout_timer_sec"] <= 0:
-                    card_duel = duel["active_card"]
-                    card_duel.setdefault("rejections", 0)
+                    # Timeout! Card volta ao A Fazer
                     card_duel["rejections"] += 1
                     card_duel["status"] = "A FAZER"
-                    
+                    card_duel["po_rejection_reason"] = "⏰ TIMEOUT! Herói não terminou a tempo!"
                     if card_duel in game_state["kanban"]["in_progress"]:
                         game_state["kanban"]["in_progress"].remove(card_duel)
                     game_state["kanban"]["to_do"].append(card_duel)
-
+                    game_state["boss_phase"] = f"💀 {hero['name']} FALHOU NO TIMEOUT! [{card_duel['id']}] volta ao A FAZER!"
                     duel["is_active"] = False
+                    duel["phase"] = "idle"
+                    pixel_agents[hero_key]["action"] = f"😰 TIMEOUT! Card [{card_duel['id']}] retornou!"
+
+            # ---- FASE: in_validation (PO revisa) ----
+            elif duel["phase"] == "in_validation":
+                duel["timeout_timer_sec"] = round(duel["timeout_timer_sec"] - 1.0, 1)
+
+                if duel["timeout_timer_sec"] <= 0:
+                    # PO revisa o card
+                    approved, reason = po_vilao_review(card_duel)
+                    
+                    if approved:
+                        # APROVADO! Move para Done
+                        card_duel["status"] = "CONCLUÍDO"
+                        card_duel["po_rejection_reason"] = reason
+                        if card_duel in game_state["kanban"]["in_validation"]:
+                            game_state["kanban"]["in_validation"].remove(card_duel)
+                        game_state["kanban"]["done"].append(card_duel)
+                        game_state["cards_cleared_in_current_wave"] += 1
+                        game_state["cards_coded_count"] += 1
+
+                        damage = 280 + (hero["skill_level"] * 20)
+                        game_state["boss_hp"] = max(0, game_state["boss_hp"] - damage)
+                        
+                        game_state["boss_phase"] = f"✅ PO APROVOU [{card_duel['id']}]! -{damage}HP do Vilão! ({game_state['cards_cleared_in_current_wave']}/{target_clear_count})"
+                        pixel_agents[hero_key]["action"] = f"🎉 Card [{card_duel['id']}] APROVADO pelo PO!"
+                        
+                        audit_logs.append({
+                            "event_id": f"evt_{len(audit_logs)+1}",
+                            "action": "PO_APPROVED",
+                            "hero": hero["name"],
+                            "card_id": card_duel["id"],
+                            "damage": damage
+                        })
+                        
+                        duel["is_active"] = False
+                        duel["phase"] = "idle"
+                        
+                        if game_state["boss_hp"] <= 0:
+                            game_state["victory"] = True
+                            game_state["boss_phase"] = "🏆 VITÓRIA! HERÓIS DERROTARAM O PO VILÃO!"
+                    else:
+                        # REJEITADO! Volta ao A Fazer com motivo
+                        card_duel["rejections"] += 1
+                        card_duel["status"] = "A FAZER"
+                        card_duel["po_rejection_reason"] = f"❌ {reason}"
+                        if card_duel in game_state["kanban"]["in_validation"]:
+                            game_state["kanban"]["in_validation"].remove(card_duel)
+                        game_state["kanban"]["to_do"].append(card_duel)
+                        
+                        game_state["boss_phase"] = f"🚫 PO REJEITOU [{card_duel['id']}]! Motivo: {reason[:40]}"
+                        pixel_agents[hero_key]["action"] = f"💢 Card [{card_duel['id']}] REJEITADO! Volta ao A Fazer!"
+                        
+                        audit_logs.append({
+                            "event_id": f"evt_{len(audit_logs)+1}",
+                            "action": "PO_REJECTED",
+                            "hero": hero["name"],
+                            "card_id": card_duel["id"],
+                            "reason": reason[:60]
+                        })
+                        
+                        duel["is_active"] = False
+                        duel["phase"] = "idle"
 
             await asyncio.sleep(1.0)
+
+        if not game_state["victory"]:
+            game_state["boss_phase"] = f"🔄 WAVE CONCLUÍDA! {game_state['cards_cleared_in_current_wave']}/{target_clear_count} cards. Próxima rodada..."
+            await asyncio.sleep(3)
+
+
+async def _do_real_commit(hero_key: str, skill_name: str):
+    """Wrapper async para commit real no GitHub."""
+    hero = pixel_agents[hero_key]
+    commit_msg = await push_real_github_skill_commit(hero["name"], skill_name)
+    hero["github_commits"].append(commit_msg)
+    hero["action"] = f"🐙 GitHub: {commit_msg[:40]}..."
+    audit_logs.append({
+        "event_id": f"evt_{len(audit_logs)+1}",
+        "action": "REAL_GITHUB_COMMIT",
+        "hero": hero["name"],
+        "skill": skill_name,
+        "commit": commit_msg[:80]
+    })
+
 
 @app.on_event("startup")
 async def start_autonomous_loop():
@@ -323,8 +536,9 @@ async def get_boss_state():
         "pixel_agents": list(pixel_agents.values()),
         "duel": game_state["duel"],
         "kanban": game_state["kanban"],
-        "audit_logs": audit_logs[-6:],
+        "audit_logs": audit_logs[-8:],
     }
+
 
 @app.get("/", response_class=HTMLResponse)
 async def serve_autonomous_pixel_game():
@@ -334,7 +548,7 @@ async def serve_autonomous_pixel_game():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>FLOSE AEOS - Dynamic PO Frenzy & Hero Training Ground</title>
+        <title>FLOSE AEOS — GitHub Skill Commit Engine</title>
         <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
         <style>
             * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -355,95 +569,152 @@ async def serve_autonomous_pixel_game():
                 background: #181926;
                 border-right: 4px solid #3b3d54;
                 image-rendering: pixelated;
+                flex-shrink: 0;
             }
 
             .side-panel {
-                width: 560px;
+                flex: 1;
                 background: #11121d;
-                padding: 1.2rem;
+                padding: 1rem;
                 display: flex;
                 flex-direction: column;
-                justify-content: space-between;
+                gap: 0.6rem;
                 border-left: 4px solid #3b3d54;
                 overflow-y: auto;
             }
 
             .hud-title {
-                font-size: 0.65rem;
+                font-size: 0.6rem;
                 color: #55ff55;
-                margin-bottom: 0.8rem;
                 text-shadow: 2px 2px #00aa00;
+                text-align: center;
+                padding: 0.4rem;
+                border-bottom: 2px solid #1f2040;
             }
 
             .turn-banner {
-                background: rgba(168, 85, 247, 0.2);
+                background: rgba(168, 85, 247, 0.15);
                 border: 2px solid #a855f7;
                 border-radius: 6px;
-                padding: 0.6rem;
+                padding: 0.5rem 0.8rem;
                 text-align: center;
-                margin-bottom: 1rem;
-                font-size: 0.52rem;
+                font-size: 0.48rem;
+                line-height: 1.6;
             }
 
+            /* DUEL ARENA */
             .duel-arena-box {
-                background: rgba(59, 130, 246, 0.15);
+                background: rgba(59, 130, 246, 0.1);
                 border: 2px solid #3b82f6;
                 border-radius: 8px;
-                padding: 0.8rem;
-                margin-bottom: 1rem;
+                padding: 0.7rem;
             }
 
             .duel-timer-bg {
                 width: 100%;
-                height: 14px;
+                height: 16px;
                 background: #440000;
                 border: 2px solid #ff5555;
                 border-radius: 4px;
-                margin-top: 0.5rem;
+                margin-top: 0.4rem;
                 overflow: hidden;
+                position: relative;
             }
 
             .duel-timer-fill {
                 height: 100%;
-                background: #00ff00;
-                transition: width 0.3s linear;
+                background: linear-gradient(90deg, #00ff00, #55ff55);
+                transition: width 0.9s linear;
             }
 
+            /* KANBAN */
             .kanban-grid {
                 display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 0.5rem;
-                margin-bottom: 1rem;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 0.4rem;
             }
 
             .kanban-col {
                 background: rgba(0,0,0,0.5);
                 border: 2px solid #30363d;
                 border-radius: 6px;
-                padding: 0.5rem;
-                min-height: 100px;
+                padding: 0.4rem;
+                min-height: 90px;
             }
 
             .kanban-col-title {
-                font-size: 0.4rem;
+                font-size: 0.37rem;
                 font-weight: bold;
-                margin-bottom: 0.4rem;
+                margin-bottom: 0.3rem;
                 text-align: center;
+                padding-bottom: 0.2rem;
+                border-bottom: 1px solid #30363d;
             }
 
-            .card-todo { color: #ff5555; }
-            .card-validation { color: #ffaa00; }
-            .card-done { color: #55ff55; }
+            .card-todo { color: #ff5555; border-color: #ff5555; }
+            .card-progress { color: #60a5fa; border-color: #60a5fa; }
+            .card-validation { color: #ffaa00; border-color: #ffaa00; }
+            .card-done { color: #55ff55; border-color: #55ff55; }
 
             .kanban-card-item {
                 background: rgba(255,255,255,0.05);
                 border: 1px solid #30363d;
                 border-radius: 4px;
-                padding: 0.4rem;
-                margin-bottom: 0.4rem;
-                font-size: 0.38rem;
-                line-height: 1.3;
+                padding: 0.3rem;
+                margin-bottom: 0.3rem;
+                font-size: 0.34rem;
+                line-height: 1.4;
             }
+
+            .kanban-card-item.active-card {
+                border-color: #60a5fa;
+                background: rgba(59, 130, 246, 0.12);
+                animation: pulse-card 1s ease-in-out infinite alternate;
+            }
+
+            .kanban-card-item.rejected-card {
+                border-color: #ff5555;
+                background: rgba(255, 85, 85, 0.08);
+            }
+
+            @keyframes pulse-card {
+                from { box-shadow: 0 0 4px rgba(59,130,246,0.3); }
+                to { box-shadow: 0 0 10px rgba(59,130,246,0.8); }
+            }
+
+            /* GITHUB COMMITS */
+            .github-commit-item {
+                color: #60a5fa;
+                font-size: 0.34rem;
+                margin-top: 0.2rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .real-commit-badge {
+                background: rgba(34, 197, 94, 0.2);
+                border: 1px solid #22c55e;
+                color: #22c55e;
+                font-size: 0.32rem;
+                padding: 0.1rem 0.3rem;
+                border-radius: 3px;
+                display: inline-block;
+                margin-left: 0.2rem;
+            }
+
+            /* AUDIT LOG */
+            .audit-log-entry {
+                font-size: 0.36rem;
+                color: #9ca3af;
+                margin-bottom: 0.2rem;
+                line-height: 1.4;
+            }
+
+            .audit-approved { color: #55ff55; }
+            .audit-rejected { color: #ff5555; }
+            .audit-commit { color: #60a5fa; }
+            .audit-jira { color: #a855f7; }
         </style>
     </head>
     <body>
@@ -451,40 +722,48 @@ async def serve_autonomous_pixel_game():
             <canvas id="pixel-canvas"></canvas>
 
             <div class="side-panel">
+                <div class="hud-title">⚡ FLOSE AEOS — KANBAN DUELO COM PO VILÃO & COMMITS REAIS GITHUB</div>
+
+                <div id="turn-banner" class="turn-banner">FASE ATUAL: CARREGANDO...</div>
+
+                <!-- DUEL BOX -->
+                <div id="duel-box" class="duel-arena-box">
+                    <div style="font-size:0.46rem; color:#60a5fa; text-align:center;">AGUARDANDO PROCESSO...</div>
+                </div>
+
+                <!-- KANBAN BOARD (4 COLUNAS) -->
+                <div class="kanban-grid">
+                    <div class="kanban-col">
+                        <div class="kanban-col-title card-todo">🔴 A FAZER</div>
+                        <div id="col-todo"></div>
+                    </div>
+                    <div class="kanban-col">
+                        <div class="kanban-col-title card-progress">🔵 EM PROGRESSO</div>
+                        <div id="col-progress"></div>
+                    </div>
+                    <div class="kanban-col">
+                        <div class="kanban-col-title card-validation">🟡 EM VALIDAÇÃO</div>
+                        <div id="col-validation"></div>
+                    </div>
+                    <div class="kanban-col">
+                        <div class="kanban-col-title card-done">🟢 CONCLUÍDO</div>
+                        <div id="col-done"></div>
+                    </div>
+                </div>
+
+                <!-- GITHUB COMMITS REAIS -->
                 <div>
-                    <div class="hud-title">⚡ PO FRENZY 30s & ACADEMIA DOS HERÓIS</div>
-                    
-                    <div id="turn-banner" class="turn-banner">
-                        FASE ATUAL: CARREGANDO...
+                    <div style="font-size:0.44rem; color:#a855f7; margin-bottom:0.3rem;">
+                        🐙 COMMITS REAIS NO GITHUB 
+                        <span id="commit-count" style="color:#22c55e; font-size:0.38rem;"></span>
                     </div>
-
-                    <!-- CAIXA DE DUELO COM SKILLS APRENDIDAS -->
-                    <div id="duel-box" class="duel-arena-box">
-                        <div style="font-size:0.5rem; color:#60a5fa; text-align:center;">AGUARDANDO PROCESSO...</div>
-                    </div>
-
-                    <div class="kanban-grid">
-                        <div class="kanban-col">
-                            <div class="kanban-col-title card-todo">🔴 A FAZER</div>
-                            <div id="col-todo"></div>
-                        </div>
-                        <div class="kanban-col">
-                            <div class="kanban-col-title card-validation">🟡 EM VALIDAÇÃO</div>
-                            <div id="col-validation"></div>
-                        </div>
-                        <div class="kanban-col">
-                            <div class="kanban-col-title card-done">🟢 CONCLUÍDO</div>
-                            <div id="col-done"></div>
-                        </div>
-                    </div>
-
-                    <div style="font-size:0.48rem; color:#a855f7; margin-bottom:0.4rem;">🎓 NOVAS SKILLS APRENDIDAS PELOS HERÓIS:</div>
                     <div id="skills-list">Carregando heróis...</div>
                 </div>
 
+                <!-- AUDIT LOG -->
                 <div>
-                    <div style="font-size: 0.45rem; color: #55ff55; margin-bottom: 0.3rem;">📜 AUDIT LOG JIRA REAL</div>
-                    <div id="audit-log" style="font-size: 0.4rem; color: #9ca3af; max-height: 70px; overflow-y: auto;"></div>
+                    <div style="font-size:0.42rem; color:#55ff55; margin-bottom:0.2rem;">📜 AUDIT LOG</div>
+                    <div id="audit-log" style="max-height: 80px; overflow-y: auto;"></div>
                 </div>
             </div>
         </div>
@@ -494,7 +773,8 @@ async def serve_autonomous_pixel_game():
             const ctx = canvas.getContext('2d');
 
             function resizeCanvas() {
-                canvas.width = window.innerWidth - 560;
+                // Canvas ocupa ~55% da tela
+                canvas.width = Math.floor(window.innerWidth * 0.52);
                 canvas.height = window.innerHeight;
             }
             resizeCanvas();
@@ -502,85 +782,143 @@ async def serve_autonomous_pixel_game():
 
             let gameState = {};
             let agentsList = [];
+            let duelState = {};
+            let kanbanState = {};
 
-            function drawPixelSprite(x, y, color, name, isDuelist, lvl) {
+            // Contador global de tempo para animações
+            let globalTick = 0;
+
+            function drawPixelSprite(x, y, color, name, isDuelist, lvl, action) {
+                const blink = Math.floor(Date.now() / 500) % 2 === 0;
+                
+                // Corpo
                 ctx.fillStyle = color;
                 ctx.fillRect(x, y + 10, 24, 20);
 
+                // Cabeça
                 ctx.fillStyle = "#ffcc99";
                 ctx.fillRect(x + 4, y, 16, 14);
 
+                // Olhos
                 ctx.fillStyle = "#000";
                 ctx.fillRect(x + 7, y + 4, 3, 3);
                 ctx.fillRect(x + 14, y + 4, 3, 3);
 
+                // Nome e nível
                 ctx.font = '7px "Press Start 2P"';
                 ctx.fillStyle = color;
-                ctx.fillText(`${name} (Lv.${lvl})`, x - 10, y - 10);
+                ctx.fillText(`${name} Lv.${lvl}`, x - 8, y - 12);
+
+                // Ação atual (em fonte menor)
+                if (action) {
+                    ctx.font = '5px "Press Start 2P"';
+                    ctx.fillStyle = "#9ca3af";
+                    const actionText = action.substring(0, 28);
+                    ctx.fillText(actionText, x - 20, y - 3);
+                }
 
                 if (isDuelist) {
+                    // Efeito de brilho para o herói em duelo
+                    if (blink) {
+                        ctx.strokeStyle = "#60a5fa";
+                        ctx.lineWidth = 2;
+                        ctx.strokeRect(x - 3, y - 3, 30, 36);
+                    }
                     ctx.fillStyle = "#3b82f6";
-                    ctx.fillRect(x - 2, y - 22, 28, 8);
+                    ctx.fillRect(x - 2, y - 24, 28, 9);
                     ctx.font = '5px "Press Start 2P"';
                     ctx.fillStyle = "#fff";
-                    ctx.fillText("⚔️ DUELO", x, y - 16);
+                    ctx.fillText("⚔️ DUELO", x, y - 17);
                 }
             }
 
-            function drawPOBoss(hpPercent, phaseText) {
+            function drawPOBoss(hpPercent, phaseText, phase) {
                 const bx = canvas.width / 2 - 40;
-                const by = 40;
+                const by = 55;
 
+                // Animação do boss
+                const bossAnim = Math.sin(Date.now() / 400) * 3;
+
+                // Corpo do vilão
                 ctx.fillStyle = "#1e1e2e";
-                ctx.fillRect(bx, by + 30, 80, 70);
+                ctx.fillRect(bx, by + 30 + bossAnim, 80, 70);
 
+                // Gravata/detalhe
                 ctx.fillStyle = "#ff0000";
-                ctx.fillRect(bx + 36, by + 35, 8, 35);
+                ctx.fillRect(bx + 36, by + 35 + bossAnim, 8, 35);
 
+                // Cabeça (mais ameaçadora)
                 ctx.fillStyle = "#313244";
-                ctx.fillRect(bx + 10, by, 60, 40);
+                ctx.fillRect(bx + 10, by + bossAnim, 60, 40);
 
+                // Olhos vermelhos malignos
                 ctx.fillStyle = "#ff0000";
-                ctx.fillRect(bx + 20, by + 12, 12, 8);
-                ctx.fillRect(bx + 48, by + 12, 12, 8);
+                ctx.fillRect(bx + 18, by + 12 + bossAnim, 14, 10);
+                ctx.fillRect(bx + 48, by + 12 + bossAnim, 14, 10);
 
-                ctx.font = '10px "Press Start 2P"';
+                // Chifres (vilão!)
+                ctx.fillStyle = "#ff0000";
+                ctx.fillRect(bx + 15, by - 10 + bossAnim, 8, 14);
+                ctx.fillRect(bx + 57, by - 10 + bossAnim, 8, 14);
+
+                // Nome do boss
+                ctx.font = '9px "Press Start 2P"';
                 ctx.fillStyle = "#ff5555";
-                ctx.fillText("👹 PO FRENZY BOSS", bx - 40, by - 15);
+                ctx.fillText("👹 PO EVIL BOSS", bx - 30, by - 20 + bossAnim);
 
+                // HP BAR
+                const hpBarW = 320;
+                const hpBarX = canvas.width / 2 - hpBarW / 2;
                 ctx.fillStyle = "#440000";
-                ctx.fillRect(canvas.width / 2 - 150, 15, 300, 16);
-                ctx.fillStyle = "#ff3333";
-                ctx.fillRect(canvas.width / 2 - 150, 15, (300 * hpPercent) / 100, 16);
+                ctx.fillRect(hpBarX, 12, hpBarW, 18);
+                
+                const hpColor = hpPercent > 60 ? "#ff3333" : hpPercent > 30 ? "#ff8800" : "#ff0000";
+                ctx.fillStyle = hpColor;
+                ctx.fillRect(hpBarX, 12, (hpBarW * hpPercent) / 100, 18);
                 ctx.strokeStyle = "#ffffff";
-                ctx.strokeRect(canvas.width / 2 - 150, 15, 300, 16);
+                ctx.lineWidth = 2;
+                ctx.strokeRect(hpBarX, 12, hpBarW, 18);
 
                 ctx.font = '6px "Press Start 2P"';
+                ctx.fillStyle = "#ffffff";
+                ctx.fillText(`HP: ${Math.round(hpPercent)}%`, hpBarX + 4, 25);
+
+                // Fase atual (texto sob o boss)
+                ctx.font = '5px "Press Start 2P"';
                 ctx.fillStyle = "#ffaa00";
-                ctx.fillText(phaseText.substring(0, 50), canvas.width / 2 - 140, 42);
+                const phaseShort = phaseText ? phaseText.substring(0, 55) : "";
+                ctx.fillText(phaseShort, canvas.width / 2 - 160, by + 120 + bossAnim);
             }
 
             function render() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Background com grid
                 ctx.fillStyle = "#11111b";
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
-
                 for (let i = 0; i < canvas.width; i += 40) {
-                    ctx.strokeStyle = "#1e1e2e";
-                    ctx.beginPath();
-                    ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height);
-                    ctx.stroke();
+                    ctx.strokeStyle = "#1a1b2e";
+                    ctx.lineWidth = 1;
+                    ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+                }
+                for (let j = 0; j < canvas.height; j += 40) {
+                    ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(canvas.width, j); ctx.stroke();
                 }
 
                 if (gameState) {
                     const hpPct = (gameState.boss_hp / gameState.boss_max_hp) * 100;
-                    drawPOBoss(hpPct, gameState.boss_phase || "Carregando...");
+                    drawPOBoss(hpPct, gameState.boss_phase || "", gameState.current_phase);
 
-                    const duel = gameState.duel;
                     agentsList.forEach(a => {
-                        const isDuelist = duel && duel.is_active && duel.active_hero === a.name;
-                        drawPixelSprite(a.x, a.y, a.sprite_color, a.name, isDuelist, a.skill_level);
+                        const isDuelist = duelState && duelState.is_active && duelState.active_hero === a.name;
+                        drawPixelSprite(a.x, a.y, a.sprite_color, a.name, isDuelist, a.skill_level, a.action);
                     });
+
+                    // Mostrar fase e timer na tela
+                    ctx.font = '8px "Press Start 2P"';
+                    ctx.fillStyle = "#55ff55";
+                    const timerText = `⏱️ ${gameState.phase_timer_sec}s`;
+                    ctx.fillText(timerText, canvas.width / 2 - 30, canvas.height - 20);
                 }
 
                 requestAnimationFrame(render);
@@ -588,85 +926,134 @@ async def serve_autonomous_pixel_game():
             render();
 
             async function updateState() {
-                const res = await fetch('/api/boss/state');
-                const data = await res.json();
-                gameState = data.game_state;
-                agentsList = data.pixel_agents;
-                const duel = data.duel;
-                const kanban = data.kanban;
+                try {
+                    const res = await fetch('/api/boss/state');
+                    const data = await res.json();
+                    gameState = data.game_state;
+                    agentsList = data.pixel_agents;
+                    duelState = data.duel;
+                    kanbanState = data.kanban;
+                    const auditLogs = data.audit_logs;
 
-                // Dynamic Turn Banner
-                const phase = gameState.current_phase;
-                if (phase === "HERO_TRAINING_PHASE") {
-                    document.getElementById('turn-banner').style.borderColor = "#a855f7";
-                    document.getElementById('turn-banner').style.color = "#a855f7";
-                    document.getElementById('turn-banner').innerHTML = `🎓 ACADEMIA: 2 MINUTOS DE ESTUDO & SKILLS | ⏱️ ${gameState.phase_timer_sec}s`;
-                } else if (phase === "PO_FRENZY_30S") {
-                    document.getElementById('turn-banner').style.borderColor = "#ff5555";
-                    document.getElementById('turn-banner').style.color = "#ff5555";
-                    document.getElementById('turn-banner').innerHTML = `🔥 PO FRENZY MODE: 30 SEGUNDOS GERANDO CARDS | ⏱️ ${gameState.phase_timer_sec}s`;
-                } else {
-                    document.getElementById('turn-banner').style.borderColor = "#55ff55";
-                    document.getElementById('turn-banner').style.color = "#55ff55";
-                    document.getElementById('turn-banner').innerHTML = `⚔️ HERÓIS LIMPANDO METAS (80% DOS CARDS): ${gameState.cards_cleared_in_current_wave}/${gameState.target_cards_to_clear_80pct}`;
+                    // ---- TURN BANNER ----
+                    const phase = gameState.current_phase;
+                    const banner = document.getElementById('turn-banner');
+                    if (phase === "HERO_TRAINING_PHASE") {
+                        banner.style.borderColor = "#a855f7";
+                        banner.style.color = "#a855f7";
+                        banner.innerHTML = `🎓 ACADEMIA GITHUB: COMMITANDO SKILLS REAIS | ⏱️ ${gameState.phase_timer_sec}s`;
+                    } else if (phase === "PO_FRENZY_30S") {
+                        banner.style.borderColor = "#ff5555";
+                        banner.style.color = "#ff5555";
+                        banner.innerHTML = `🔥 PO FRENZY! VILÃO CRIANDO CARDS NO JIRA | ⏱️ ${gameState.phase_timer_sec}s`;
+                    } else {
+                        banner.style.borderColor = "#55ff55";
+                        banner.style.color = "#55ff55";
+                        banner.innerHTML = `⚔️ HERÓIS BAIXANDO 80%: ${gameState.cards_cleared_in_current_wave}/${gameState.target_cards_to_clear_80pct} CARDS | ⏱️ ${gameState.phase_timer_sec}s`;
+                    }
+
+                    // ---- DUEL BOX ----
+                    const duel = duelState;
+                    if (duel && duel.is_active && duel.active_card) {
+                        const pct = Math.max(0, (duel.timeout_timer_sec / duel.max_timeout_sec) * 100);
+                        const timerColor = pct < 30 ? '#ff5555' : pct < 60 ? '#ffaa00' : '#00ff00';
+                        const phaseLabel = duel.phase === "hero_working" ? `💻 HERÓI CODIFICANDO (${duel.work_progress || 0}%)` : "🔍 PO VILÃO REVISANDO";
+                        const phaseColor = duel.phase === "hero_working" ? "#60a5fa" : "#ffaa00";
+                        
+                        document.getElementById('duel-box').innerHTML = `
+                            <div style="font-size:0.52rem; color:${phaseColor}; font-weight:bold; margin-bottom:0.3rem; text-align:center;">
+                                ${phaseLabel}
+                            </div>
+                            <div style="font-size:0.46rem; color:#fff; margin-bottom:0.2rem;">
+                                ⚔️ <span style="color:#a855f7;">${duel.active_hero}</span> — Card: <span style="color:#ec4899;">[${duel.active_card.id}]</span>
+                            </div>
+                            <div style="font-size:0.4rem; color:#9ca3af; margin-bottom:0.3rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                ${duel.active_card.title ? duel.active_card.title.substring(0, 45) + '...' : ''}
+                            </div>
+                            ${duel.active_card.po_rejection_reason ? `<div style="font-size:0.38rem; color:#ff5555; margin-bottom:0.2rem;">💬 ${duel.active_card.po_rejection_reason.substring(0, 50)}</div>` : ''}
+                            <div style="font-size:0.42rem; color:${timerColor}; font-weight:bold; margin-bottom:0.2rem;">
+                                ⏱️ TIMEOUT: ${typeof duel.timeout_timer_sec === 'number' ? duel.timeout_timer_sec.toFixed(1) : '??'}s 
+                                (${duel.active_card.rejections || 0} rejeição/ões)
+                            </div>
+                            <div class="duel-timer-bg">
+                                <div class="duel-timer-fill" style="width:${pct}%; background:${timerColor};"></div>
+                            </div>
+                        `;
+                    } else {
+                        const idleMsg = phase === "HERO_TRAINING_PHASE"
+                            ? "🎓 HERÓIS CRIANDO COMMITS REAIS NO GITHUB!"
+                            : phase === "PO_FRENZY_30S"
+                            ? "🔥 PO VILÃO NO FRENZY MODE — CRIANDO CARDS NO JIRA!"
+                            : "😴 AGUARDANDO PRÓXIMO CARD...";
+                        document.getElementById('duel-box').innerHTML = `
+                            <div style="font-size:0.46rem; color:#9ca3af; text-align:center; padding:0.5rem;">${idleMsg}</div>
+                        `;
+                    }
+
+                    // ---- KANBAN (4 COLUNAS) ----
+                    const activeCardId = duel && duel.active_card ? duel.active_card.id : null;
+                    
+                    function renderCards(cards, colorClass) {
+                        return cards.map(c => {
+                            const isActive = c.id === activeCardId;
+                            const isRejected = c.rejections > 0;
+                            return `
+                                <div class="kanban-card-item ${isActive ? 'active-card' : ''} ${isRejected && !isActive ? 'rejected-card' : ''}">
+                                    <div style="color:${colorClass}; font-weight:bold; font-size:0.36rem;">${c.id}</div>
+                                    <div style="font-size:0.33rem; color:#d1d5db;">${(c.title || '').substring(0, 18)}...</div>
+                                    ${c.rejections > 0 ? `<div style="color:#ff5555; font-size:0.3rem;">⚠️ ${c.rejections}x rejeitado</div>` : ''}
+                                </div>
+                            `;
+                        }).join('');
+                    }
+
+                    document.getElementById('col-todo').innerHTML = renderCards(kanbanState.to_do || [], '#ff5555');
+                    document.getElementById('col-progress').innerHTML = renderCards(kanbanState.in_progress || [], '#60a5fa');
+                    document.getElementById('col-validation').innerHTML = renderCards(kanbanState.in_validation || [], '#ffaa00');
+                    document.getElementById('col-done').innerHTML = renderCards(kanbanState.done || [], '#55ff55');
+
+                    // ---- GITHUB COMMITS (REAIS) ----
+                    const commitCount = gameState.total_real_commits || 0;
+                    document.getElementById('commit-count').textContent = `(${commitCount} commits reais ✅)`;
+
+                    document.getElementById('skills-list').innerHTML = agentsList.map(a => {
+                        const recentCommits = (a.github_commits || []).slice(-2);
+                        const commitsHtml = recentCommits.map(c => {
+                            const isReal = !c.includes('[skip]') && !c.includes('[erro]');
+                            return `<div class="github-commit-item">
+                                🐙 ${c.substring(0, 48)}
+                                ${isReal ? '<span class="real-commit-badge">REAL</span>' : ''}
+                            </div>`;
+                        }).join('');
+                        return `
+                            <div style="background:rgba(0,0,0,0.5); border:1px solid #30363d; padding:0.35rem; border-radius:4px; margin-bottom:0.25rem;">
+                                <div style="color:${a.sprite_color}; font-weight:bold; font-size:0.4rem;">
+                                    ${a.name} (Lv.${a.skill_level}) 
+                                    <span style="color:#a855f7; float:right;">XP: ${a.xp || 0}%</span>
+                                </div>
+                                <div style="color:#55ff55; font-size:0.35rem; margin-top:0.15rem;">
+                                    🧠 ${(a.new_skills_learned || []).slice(-2).join(', ')}
+                                </div>
+                                ${commitsHtml}
+                            </div>
+                        `;
+                    }).join('');
+
+                    // ---- AUDIT LOG ----
+                    document.getElementById('audit-log').innerHTML = auditLogs.map(l => {
+                        let cls = 'audit-log-entry';
+                        if (l.action === 'PO_APPROVED') cls += ' audit-approved';
+                        else if (l.action === 'PO_REJECTED') cls += ' audit-rejected';
+                        else if (l.action === 'REAL_GITHUB_COMMIT') cls += ' audit-commit';
+                        else if (l.action && l.action.includes('JIRA')) cls += ' audit-jira';
+                        
+                        const detail = l.reason || l.commit || l.card_id || l.hero || '';
+                        return `<div class="${cls}">» [${l.action}] ${detail.substring(0, 55)}</div>`;
+                    }).join('');
+
+                } catch(e) {
+                    console.error('Update error:', e);
                 }
-
-                if (duel && duel.is_active && duel.active_card) {
-                    const pct = Math.max(0, (duel.timeout_timer_sec / duel.max_timeout_sec) * 100);
-                    document.getElementById('duel-box').innerHTML = `
-                        <div style="font-size:0.55rem; color:#60a5fa; font-weight:bold; margin-bottom:0.4rem;">
-                            ⚔️ DUELO EM ANDAMENTO: <span style="color:#a855f7;">${duel.active_hero}</span> VS PO!
-                        </div>
-                        <div style="font-size:0.48rem; color:#ec4899; margin-bottom:0.4rem;">
-                            🎴 CARD EM CODIFICAÇÃO: [${duel.active_card.id}] ${duel.active_card.title}
-                        </div>
-                        <div style="font-size:0.45rem; color:#9ca3af;">
-                            ⏱️ TIMEOUT: <span style="color:${pct < 30 ? '#ff5555' : '#00ff00'}; font-weight:bold;">${duel.timeout_timer_sec.toFixed(1)}s</span>
-                        </div>
-                        <div class="duel-timer-bg">
-                            <div class="duel-timer-fill" style="width:${pct}%; background:${pct < 30 ? '#ff5555' : '#00ff00'};"></div>
-                        </div>
-                    `;
-                } else {
-                    document.getElementById('duel-box').innerHTML = `
-                        <div style="font-size:0.48rem; color:#9ca3af; text-align:center;">
-                            ${phase === "HERO_TRAINING_PHASE" ? "🎓 HERÓIS NO CENTRO DE TREINAMENTO APRENDENDO NOVAS SKILLS!" : "😴 AGUARDANDO PRÓXIMO CARD DA META..."}
-                        </div>
-                    `;
-                }
-
-                document.getElementById('col-todo').innerHTML = kanban.to_do.map(c => `
-                    <div class="kanban-card-item">
-                        <div style="color:#ff5555; font-weight:bold;">${c.id}</div>
-                        <div>${c.title.substring(0, 15)}...</div>
-                    </div>
-                `).join('');
-
-                document.getElementById('col-validation').innerHTML = kanban.in_validation.map(c => `
-                    <div class="kanban-card-item">
-                        <div style="color:#ffaa00; font-weight:bold;">${c.id}</div>
-                        <div>${c.title.substring(0, 15)}...</div>
-                    </div>
-                `).join('');
-
-                document.getElementById('col-done').innerHTML = kanban.done.map(c => `
-                    <div class="kanban-card-item">
-                        <div style="color:#55ff55; font-weight:bold;">${c.id}</div>
-                        <div>${c.title.substring(0, 15)}...</div>
-                    </div>
-                `).join('');
-
-                // Render Novas Skills Aprendidas
-                document.getElementById('skills-list').innerHTML = agentsList.map(a => `
-                    <div style="background:rgba(0,0,0,0.5); border:1px solid #30363d; padding:0.4rem; border-radius:4px; margin-bottom:0.3rem; font-size:0.41rem;">
-                        <div style="color:${a.sprite_color}; font-weight:bold;">${a.name} (Lv.${a.skill_level}) <span style="float:right; color:#a855f7;">XP: ${a.xp}%</span></div>
-                        <div style="color:#55ff55; margin-top:0.2rem;">Skills Aprendidas: ${a.new_skills_learned.join(', ')}</div>
-                    </div>
-                `).join('');
-
-                document.getElementById('audit-log').innerHTML = data.audit_logs.map(l => `
-                    <div style="margin-bottom:0.2rem;">> ${l.action}: ${l.hero || l.card_id || ''}</div>
-                `).join('');
             }
 
             updateState();
