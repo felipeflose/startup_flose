@@ -491,3 +491,4 @@
 - [2026-07-25 13:27:41] [Lucas] [KAN-9776] implementou código Python REAL: `kan_9776_recrutamento_contrata_o_para_k_8a85a2.py` (+49 linhas, testes unitários OK)
 - [2026-07-25 13:27:59] [Sofia] [KAN-9768] implementou código Python REAL: `kan_9768_po_evil_boss_auditoria_anti_al_fa84a0.py` (+33 linhas, testes unitários OK)
 - [2026-07-25 13:28:18] [Lucas] [KAN-9766] implementou código Python REAL: `kan_9766_po_evil_boss_otimiza_o_de_perf_bb9f23.py` (+55 linhas, testes unitários OK)
+- [2026-07-25 13:28:37] [Lucas] [KAN-9765] implementou código Python REAL: `kan_9765_recrutamento_contrata_o_para_k_8321a3.py` (+55 linhas, testes unitários OK)
