@@ -61,7 +61,17 @@ if loaded_gs and loaded_pa:
         if c.get("id") not in existing_ids:
             game_state["kanban"]["to_do"].append(c)
 
-    print(f"[Persistence] Restaurado! Boss HP: {game_state['boss_hp']}/{game_state['boss_max_hp']} | Cards Done: {len(game_state['kanban']['done'])}")
+    # 🛡️ SANITIZAÇÃO ESTRITA: Garante que NENHUM card fique em CONCLUÍDO sem ter sido trabalhado com commit real!
+    valid_done = []
+    for c in game_state["kanban"]["done"]:
+        if c.get("commit_info") and c.get("delegated_to"):
+            valid_done.append(c)
+        else:
+            c["status"] = "A FAZER"
+            game_state["kanban"]["to_do"].append(c)
+    game_state["kanban"]["done"] = valid_done
+
+    print(f"[Persistence] Restaurado! Boss HP: {game_state['boss_hp']}/{game_state['boss_max_hp']} | Cards Done Válidos: {len(game_state['kanban']['done'])}")
 else:
     game_state = {
         "boss_name": "PO EVIL BOSS (FRENZY MODE)",

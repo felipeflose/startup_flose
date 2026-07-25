@@ -80,9 +80,10 @@ class JiraConnector:
                             issues_result.append({
                                 "id": d_data.get("key"),
                                 "title": d_data.get("fields", {}).get("summary", "Card sem título"),
-                                "status": d_data.get("fields", {}).get("status", {}).get("name", "In Progress"),
+                                "status": "A FAZER",
                                 "type": "Card Real Jira Cloud",
-                                "comments": comments
+                                "comments": comments,
+                                "rejections": 0
                             })
                     except Exception:
                         continue
