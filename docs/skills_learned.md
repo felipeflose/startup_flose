@@ -843,3 +843,4 @@
 - [2026-07-25 18:50:06] [Beatriz] [KAN-9824] implementou código Python REAL: `kan_9824_onboarding_subst_novo_colabora_580f99.py` (+49 linhas, testes unitários OK)
 - [2026-07-25 18:50:25] [Beatriz] implementou código Python REAL: `beatriz_async_pipeline_builder_4bafb4.py` (+49 linhas, testes unitários OK)
 - [2026-07-25 18:50:47] [Sofia] [KAN-9814] implementou código Python REAL: `kan_9814_onboarding_subst_novo_colabora_45582c.py` (+49 linhas, testes unitários OK)
+- [2026-07-25 18:51:06] [Beatriz] [KAN-9809] implementou código Python REAL: `kan_9809_recrutamento_contrata_o_para_k_52e204.py` (+32 linhas, testes unitários OK)
