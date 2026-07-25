@@ -94,43 +94,40 @@ class JiraConnector:
             print(f"[Jira Transition Error] {e}")
             return False
 
-    def fetch_real_jira_issues(self, project_key: str = "KAN", limit: int = 10) -> List[Dict[str, Any]]:
-        """Busca as issues REAIS e seus detalhes na conta felipeflose.atlassian.net do Jira."""
+    def fetch_real_jira_issues(self, project_key: str = "KAN", limit: int = 1000) -> List[Dict[str, Any]]:
+        """Busca os cards REAIS lotados na sua conta do Jira Cloud (felipeflose.atlassian.net)!"""
         if not self.is_configured:
             return []
 
-        url = f"https://{self.domain}.atlassian.net/rest/api/3/search/jql?jql=project={project_key}"
+        # Nova API do Atlassian Cloud /rest/api/3/search/jql
+        url = f"https://{self.domain}.atlassian.net/rest/api/3/search/jql?jql=project={project_key}%20AND%20status%20!=%20Conclu%C3%ADdo&maxResults={limit}&fields=summary,comment"
         req = urllib.request.Request(url, headers=self._get_headers(), method="GET")
         issues_result = []
         try:
             with urllib.request.urlopen(req, context=ssl_context, timeout=10) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
-                raw_issues = data.get("issues", [])[:limit]
+                raw_issues = data.get("issues", [])
                 
                 for item in raw_issues:
-                    issue_id = item.get("id")
-                    detail_url = f"https://{self.domain}.atlassian.net/rest/api/3/issue/{issue_id}?expand=renderedFields,comments"
-                    d_req = urllib.request.Request(detail_url, headers=self._get_headers(), method="GET")
-                    try:
-                        with urllib.request.urlopen(d_req, context=ssl_context, timeout=5) as d_resp:
-                            d_data = json.loads(d_resp.read().decode("utf-8"))
-                            comments = []
-                            c_data = d_data.get("fields", {}).get("comment", {}).get("comments", [])
-                            for c in c_data:
-                                author = c.get("author", {}).get("displayName", "Agente")
-                                body = c.get("body", {}).get("content", [{}])[0].get("content", [{}])[0].get("text", "Comentário") if isinstance(c.get("body"), dict) else str(c.get("body"))
-                                comments.append({"author": author, "text": body})
+                    issue_key = item.get("key")
+                    fields = item.get("fields", {})
+                    summary = fields.get("summary", "Card sem título")
+                    
+                    comments = []
+                    c_data = fields.get("comment", {}).get("comments", [])
+                    for c in c_data:
+                        author = c.get("author", {}).get("displayName", "Agente")
+                        body = c.get("body", {}).get("content", [{}])[0].get("content", [{}])[0].get("text", "Comentário") if isinstance(c.get("body"), dict) else str(c.get("body"))
+                        comments.append({"author": author, "text": body})
 
-                            issues_result.append({
-                                "id": d_data.get("key"),
-                                "title": d_data.get("fields", {}).get("summary", "Card sem título"),
-                                "status": "A FAZER",
-                                "type": "Card Real Jira Cloud",
-                                "comments": comments,
-                                "rejections": 0
-                            })
-                    except Exception:
-                        continue
+                    issues_result.append({
+                        "id": issue_key,
+                        "title": summary,
+                        "status": "A FAZER",
+                        "type": "Card Real Jira Cloud",
+                        "comments": comments,
+                        "rejections": 0
+                    })
         except Exception as e:
             print(f"[Jira Fetch Error] {e}")
             
@@ -232,6 +229,12 @@ class JiraConnector:
                 target_names = [transition_name.lower()]
                 if transition_name.lower() == "done":
                     target_names.append("concluído")
+                elif transition_name.lower() == "in progress":
+                    target_names.extend(["em andamento", "em progresso"])
+                elif transition_name.lower() == "in validation":
+                    target_names.extend(["em análise", "validação", "review"])
+                elif transition_name.lower() == "to do":
+                    target_names.extend(["a fazer", "to-do"])
                 
                 for t in data.get("transitions", []):
                     t_name = t.get("name", "").lower()
