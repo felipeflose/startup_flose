@@ -512,3 +512,4 @@
 - [2026-07-25 19:39:34] [Sofia] [KAN-9825] implementou código Python REAL: `kan_9825_dev_implementa_o_dev_implement_69b771.py` (+33 linhas, testes unitários OK)
 - [2026-07-25 19:39:47] [Sofia] [KAN-9811] implementou código Python REAL: `kan_9811_dev_implementa_o_gemma4_refato_2f840f.py` (+33 linhas, testes unitários OK)
 - [2026-07-25 19:40:00] [Beatriz] implementou código Python REAL: `beatriz_design_pattern_master_b3d6bb.py` (+33 linhas, testes unitários OK)
+- [2026-07-25 19:40:18] [Beatriz] [KAN-9924] implementou código Python REAL: `kan_9924_onboarding_subst_novo_colabora_9b6954.py` (+49 linhas, testes unitários OK)
