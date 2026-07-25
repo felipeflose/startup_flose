@@ -600,3 +600,4 @@
 - [2026-07-25 14:36:42] [Beatriz] [KAN-9744] implementou código Python REAL: `kan_9744_po_evil_boss_sanitiza_o_estrit_552ecb.py` (+34 linhas, testes unitários OK)
 - [2026-07-25 14:37:01] [Beatriz] [KAN-9743] implementou código Python REAL: `kan_9743_recrutamento_contrata_o_para_k_b2253e.py` (+32 linhas, testes unitários OK)
 - [2026-07-25 14:37:22] [Beatriz] [KAN-9742] implementou código Python REAL: `kan_9742_recrutamento_contrata_o_para_k_255aea.py` (+32 linhas, testes unitários OK)
+- [2026-07-25 14:37:41] [Beatriz] [KAN-9741] implementou código Python REAL: `kan_9741_po_evil_boss_contrata_o_onboar_9845b1.py` (+49 linhas, testes unitários OK)
