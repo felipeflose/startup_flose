@@ -499,11 +499,14 @@ async def dynamic_frenzy_and_training_game_loop():
         # ==============================================================
         # FASE 1: ACADEMIA DOS HERÓIS (2 MINUTOS) - COMMITS REAIS GITHUB
         # ==============================================================
+        backlog_size = len(game_state["kanban"]["to_do"])
+        training_time = 120 if backlog_size < 5 else 10  # Pula rápido se tem backlog
+        
         game_state["current_phase"] = "HERO_TRAINING_PHASE"
         game_state["boss_phase"] = f"🎓 ACADEMIA GITHUB (STAGE {game_state.get('boss_stage', 1)}): HERÓIS APRENDENDO E COMMITANDO!"
         game_state["duel"]["is_active"] = False
 
-        for sec in range(120, 0, -1):
+        for sec in range(training_time, 0, -1):
             game_state["phase_timer_sec"] = sec
 
             if sec % 8 == 0:
@@ -519,10 +522,12 @@ async def dynamic_frenzy_and_training_game_loop():
         # FASE 2: PO FRENZY MODE (30 SEGUNDOS - VILÃO CRIA CARDS NO JIRA)
         # ==============================================================
         game_state["current_phase"] = "PO_FRENZY_30S"
-        game_state["boss_phase"] = f"⚡ PO FRENZY (STAGE {game_state.get('boss_stage', 1)})! VILÃO CRIANDO CARDS NO JIRA — 30s!"
+        game_state["boss_phase"] = f"⚡ PO FRENZY (STAGE {game_state.get('boss_stage', 1)})! VILÃO CRIANDO CARDS NO JIRA!"
         game_state["boss_cards_created_in_frenzy"] = 0
+        
+        frenzy_time = 30 if backlog_size < 15 else 5 # Pula rápido se já tem muito backlog
 
-        for sec in range(30, 0, -1):
+        for sec in range(frenzy_time, 0, -1):
             game_state["phase_timer_sec"] = sec
 
             if sec % 6 == 0:
