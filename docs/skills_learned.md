@@ -597,3 +597,4 @@
 - [2026-07-25 14:35:40] [Beatriz] [KAN-9815] implementou código Python REAL: `kan_9815_demiss_o_por_desempenho_silvio_817921.py` (+33 linhas, testes unitários OK)
 - [2026-07-25 14:36:01] [Sofia] [KAN-9814] implementou código Python REAL: `kan_9814_onboarding_subst_novo_colabora_8b94a5.py` (+49 linhas, testes unitários OK)
 - [2026-07-25 14:36:21] [Beatriz] [KAN-9809] implementou código Python REAL: `kan_9809_recrutamento_contrata_o_para_k_fcba0a.py` (+32 linhas, testes unitários OK)
+- [2026-07-25 14:36:42] [Beatriz] [KAN-9744] implementou código Python REAL: `kan_9744_po_evil_boss_sanitiza_o_estrit_552ecb.py` (+34 linhas, testes unitários OK)
