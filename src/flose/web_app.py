@@ -539,8 +539,8 @@ async def dynamic_frenzy_and_training_game_loop():
         # ==============================================================
         # FASE 3: HERÓIS RESOLVEM 80% DOS CARDS (DUELO COMPLETO COM VALIDAÇÃO)
         # ==============================================================
-        cards_created = max(1, game_state["boss_cards_created_in_frenzy"])
-        target_clear_count = max(1, int(cards_created * 0.8))
+        total_backlog = len(game_state["kanban"]["to_do"])
+        target_clear_count = max(1, int(total_backlog * 0.8)) if total_backlog > 0 else 1
         game_state["target_cards_to_clear_80pct"] = target_clear_count
         game_state["cards_cleared_in_current_wave"] = 0
         game_state["current_phase"] = "HEROES_CLEARING_PHASE"
