@@ -431,3 +431,4 @@
 - [2026-07-25 12:03:17] [Lucas] [KAN-9746] implementou código Python REAL: `kan_9746_po_evil_boss_refatorar_ui_fron_b4b4a0.py` (+49 linhas, testes unitários OK)
 - [2026-07-25 12:03:37] [Beatriz] [KAN-9745] implementou código Python REAL: `kan_9745_recrutamento_contrata_o_para_k_2f3db5.py` (+34 linhas, testes unitários OK)
 - [2026-07-25 12:18:56] [Sofia] [KAN-9833] implementou código Python REAL: `kan_9833_demiss_o_por_desempenho_felipe_2f175f.py` (+33 linhas, testes unitários OK)
+- [2026-07-25 12:19:16] [Sofia] [KAN-9826] implementou código Python REAL: `kan_9826_qa_valida_o_dev_implementa_o_g_f9ae28.py` (+33 linhas, testes unitários OK)
