@@ -227,9 +227,15 @@ class JiraConnector:
         try:
             with urllib.request.urlopen(req_trans, context=ssl_context, timeout=5) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
+                
+                # Mapeamentos amigáveis
+                target_names = [transition_name.lower()]
+                if transition_name.lower() == "done":
+                    target_names.append("concluído")
+                
                 for t in data.get("transitions", []):
-                    # Faz o match do nome (ex: "Done" ou "Concluído")
-                    if transition_name.lower() in t.get("name", "").lower():
+                    t_name = t.get("name", "").lower()
+                    if any(tn in t_name for tn in target_names):
                         transition_id = t.get("id")
                         break
         except Exception as e:
