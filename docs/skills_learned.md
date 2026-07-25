@@ -319,3 +319,4 @@
 - [2026-07-25 11:23:48] [Sofia] [KAN-9835] implementou código Python REAL: `kan_9835_python_migra_o_solu_o_de_conti_ac1c1c.py` (+33 linhas, testes unitários OK)
 - [2026-07-25 11:27:51] [Sofia] implementou código Python REAL: `sofia_agy_scripting_engine_7223fc.py` (+33 linhas, testes unitários OK)
 - [2026-07-25 11:28:12] [Sofia] [KAN-9834] implementou código Python REAL: `kan_9834_onboarding_subst_novo_colabora_fcda0d.py` (+49 linhas, testes unitários OK)
+- [2026-07-25 11:28:28] [Sofia] [KAN-9833] implementou código Python REAL: `kan_9833_demiss_o_por_desempenho_felipe_6f6726.py` (+33 linhas, testes unitários OK)
