@@ -616,3 +616,4 @@
 - [2026-07-25 20:04:16] [Sofia] [KAN-9907] implementou código Python REAL: `kan_9907_demiss_o_por_desempenho_felipe_f0374e.py` (+33 linhas, testes unitários OK)
 - [2026-07-25 20:04:32] [Sofia] [KAN-9825] implementou código Python REAL: `kan_9825_dev_implementa_o_dev_implement_3b5e13.py` (+33 linhas, testes unitários OK)
 - [2026-07-25 20:04:48] [Sofia] [KAN-9811] implementou código Python REAL: `kan_9811_dev_implementa_o_gemma4_refato_e8ac52.py` (+33 linhas, testes unitários OK)
+- [2026-07-25 20:05:04] [Beatriz] [KAN-9924] implementou código Python REAL: `kan_9924_onboarding_subst_novo_colabora_9cfb40.py` (+49 linhas, testes unitários OK)
