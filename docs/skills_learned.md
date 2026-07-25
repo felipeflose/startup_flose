@@ -417,3 +417,5 @@
 - [2026-07-25 11:58:21] [Beatriz] implementou código Python REAL: `beatriz_agy_scripting_engine_eacdec.py` (+33 linhas, testes unitários OK)
 - [2026-07-25 11:58:43] [Beatriz] [KAN-9756] implementou código Python REAL: `kan_9756_recrutamento_contrata_o_para_k_943855.py` (+32 linhas, testes unitários OK)
 - [2026-07-25 11:58:58] [Sofia] implementou código Python REAL: `sofia_design_pattern_master_f45202.py` (+33 linhas, testes unitários OK)
+- [2026-07-25 11:59:20] [Beatriz] [KAN-9755] implementou código Python REAL: `kan_9755_recrutamento_contrata_o_para_k_5c2ce3.py` (+34 linhas, testes unitários OK)
+- [2026-07-25 11:59:39] [Beatriz] [KAN-9754] implementou código Python REAL: `kan_9754_recrutamento_contrata_o_para_k_979c06.py` (+34 linhas, testes unitários OK)
