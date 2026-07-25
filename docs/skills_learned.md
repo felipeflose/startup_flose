@@ -706,3 +706,4 @@
 - [2026-07-25 20:26:58] [Beatriz] [KAN-9923] implementou código Python REAL: `kan_9923_demiss_o_por_desempenho_lucas__3e4df7.py` (+33 linhas, testes unitários OK)
 - [2026-07-25 20:27:13] [Lucas] implementou código Python REAL: `lucas_async_pipeline_builder_2db07c.py` (+49 linhas, testes unitários OK)
 - [2026-07-25 20:27:32] [Beatriz] [KAN-9909] implementou código Python REAL: `kan_9909_demiss_o_por_desempenho_gabrie_78f758.py` (+33 linhas, testes unitários OK)
+- [2026-07-25 20:27:46] [Sofia] [KAN-9908] implementou código Python REAL: `kan_9908_onboarding_subst_novo_colabora_b028c6.py` (+49 linhas, testes unitários OK)
