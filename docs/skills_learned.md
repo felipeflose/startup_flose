@@ -1086,3 +1086,4 @@
 - [2026-07-26 12:05:28] [Sofia] [FLOSEUP-24] implementou código Python REAL: `floseup_24_card_id_floseup_24_pico_pai_fl_abc739.py` (+274 linhas, testes unitários OK)
 - [2026-07-26 12:05:40] [Lucas] [FLOSEUP-7] implementou código Python REAL: `floseup_7_card_id_floseup_7_pico_pai_flo_19060f.py` (+78 linhas, testes unitários OK)
 - [2026-07-26 12:05:51] [Beatriz] [FLOSEUP-42] implementou código Python REAL: `floseup_42_card_id_floseup_42_pico_pai_fl_0a53e1.py` (+76 linhas, testes unitários OK)
+- [2026-07-26 12:06:02] [Beatriz] [FLOSEUP-41] implementou código Python REAL: `floseup_41_card_id_floseup_41_pico_pai_fl_7a152e.py` (+76 linhas, testes unitários OK)
