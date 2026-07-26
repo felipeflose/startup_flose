@@ -973,3 +973,4 @@
 - [2026-07-26 10:58:26] [Felipe] implementou código Python REAL: `felipe_eventbus_acceleration_aa0ece.py` (+33 linhas, testes unitários OK)
 - [2026-07-26 10:58:45] [Sofia] [FLOSEUP-22] implementou código Python REAL: `floseup_22_card_id_floseup_22_t_tulo_ast__14af80.py` (+87 linhas, testes unitários OK)
 - [2026-07-26 10:58:55] [Lucas] [FLOSEUP-7] implementou código Python REAL: `floseup_7_card_id_floseup_7_t_tulo_po_ev_2d1c73.py` (+75 linhas, testes unitários OK)
+- [2026-07-26 10:59:05] [Sofia] [FLOSEUP-25] implementou código Python REAL: `floseup_25_card_id_floseup_25_t_tulo_ast__75f192.py` (+129 linhas, testes unitários OK)
