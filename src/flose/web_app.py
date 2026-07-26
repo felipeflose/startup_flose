@@ -52,27 +52,24 @@ if loaded_gs and loaded_pa:
     pixel_agents = loaded_pa
     audit_logs = loaded_al if loaded_al else []
     
-    # Mescla novos cards reais do Jira Cloud mantendo a integridade das colunas
+    # 🧹 SANITIZAÇÃO RIGOROSA DE PROJETO: Manter apenas cards do projeto FLOSEUP (Board 34)
+    for col_name in ["to_do", "in_progress", "in_validation", "done"]:
+        game_state["kanban"][col_name] = [
+            c for c in game_state["kanban"].get(col_name, [])
+            if str(c.get("id")).startswith("FLOSEUP-")
+        ]
+
+    # Mescla novos cards reais do Jira Cloud FLOSEUP
     existing_ids = set()
     for col in game_state["kanban"].values():
         for card_item in col:
             existing_ids.add(card_item.get("id"))
             
     for c in real_jira_cards:
-        if c.get("id") not in existing_ids:
+        if c.get("id") not in existing_ids and str(c.get("id")).startswith("FLOSEUP-"):
             game_state["kanban"]["to_do"].append(c)
 
-    # 🛡️ SANITIZAÇÃO ESTRITA: Garante que NENHUM card fique em CONCLUÍDO sem ter sido trabalhado com commit real!
-    valid_done = []
-    for c in game_state["kanban"]["done"]:
-        if c.get("commit_info") and c.get("delegated_to"):
-            valid_done.append(c)
-        else:
-            c["status"] = "A FAZER"
-            game_state["kanban"]["to_do"].append(c)
-    game_state["kanban"]["done"] = valid_done
-
-    print(f"[Persistence] Restaurado! Boss HP: {game_state['boss_hp']}/{game_state['boss_max_hp']} | Cards Done Válidos: {len(game_state['kanban']['done'])}")
+    print(f"[Persistence FLOSEUP] Restaurado! FLOSEUP ToDo: {len(game_state['kanban']['to_do'])}, InProgress: {len(game_state['kanban']['in_progress'])}, Validation: {len(game_state['kanban']['in_validation'])}, Done: {len(game_state['kanban']['done'])}")
 else:
     game_state = {
         "boss_name": "PO EVIL BOSS (FRENZY MODE)",
