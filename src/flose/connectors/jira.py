@@ -159,10 +159,65 @@ class JiraConnector:
             
         return issues_result
 
-    def create_detailed_epic_or_task(self, project_key: str = "FLOSEUP", summary: str = "", detailed_description: str = "", epic_name: str = "ÉPICO PO VILÃO") -> Dict[str, Any]:
-        """Cria um Card REAL e EXTREMAMENTE DETALHADO no Jira Cloud da sua conta no projeto FLOSEUP!"""
+    def get_or_create_epic(self, project_key: str = "FLOSEUP", epic_name: str = "ÉPICO MESTRE AST STAGE 1") -> Optional[str]:
+        """Busca ou cria um Épico PAI no Jira Cloud para vincular todos os cards como filhos."""
+        if not self.is_configured:
+            return None
+
+        if epic_name.startswith("FLOSEUP-") or epic_name.startswith("KAN-"):
+            return epic_name.strip()
+
+        # 1. Tenta buscar um Épico com o nome especificado
+        jql = f'project={project_key} AND issuetype=Epic AND summary ~ "{epic_name}"'
+        url_search = f"https://{self.domain}.atlassian.net/rest/api/3/search/jql?jql={urllib.parse.quote(jql)}"
+        req_search = urllib.request.Request(url_search, headers=self._get_headers(), method="GET")
+        try:
+            with urllib.request.urlopen(req_search, context=ssl_context, timeout=5) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                issues = data.get("issues", [])
+                if issues:
+                    epic_key = issues[0].get("key")
+                    if epic_key:
+                        return epic_key
+        except Exception as e:
+            print(f"[Jira Epic Search Error] {e}")
+
+        # 2. Se não existir, cria o Épico PAI
+        url_create = f"https://{self.domain}.atlassian.net/rest/api/3/issue"
+        payload_epic = {
+            "fields": {
+                "project": {"key": project_key},
+                "summary": epic_name,
+                "issuetype": {"name": "Epic"},
+                "description": {
+                    "type": "doc",
+                    "version": 1,
+                    "content": [{
+                        "type": "paragraph",
+                        "content": [{"type": "text", "text": f"🏆 Épico Pai Mestre do Projeto FLOSEUP: {epic_name}"}]
+                    }]
+                }
+            }
+        }
+        req_create = urllib.request.Request(url_create, data=json.dumps(payload_epic).encode("utf-8"), headers=self._get_headers(), method="POST")
+        try:
+            with urllib.request.urlopen(req_create, context=ssl_context, timeout=10) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                epic_key = data.get("key")
+                print(f"[Jira Parent Epic Created] Épico PAI Real Criado no Jira: {epic_key} ({epic_name})")
+                return epic_key
+        except Exception as e:
+            print(f"[Jira Parent Epic Create Error] {e}")
+
+        return None
+
+    def create_detailed_epic_or_task(self, project_key: str = "FLOSEUP", summary: str = "", detailed_description: str = "", epic_name: str = "ÉPICO PO VILÃO STAGE 1") -> Dict[str, Any]:
+        """Cria um Card REAL e EXTREMAMENTE DETALHADO no Jira Cloud vinculado ao Épico PAI!"""
         if not self.is_configured:
             return {"mock": True, "summary": summary}
+
+        # Garante a existência do Épico PAI no Jira
+        parent_epic_key = self.get_or_create_epic(project_key, epic_name)
 
         url = f"https://{self.domain}.atlassian.net/rest/api/3/issue"
         for itype in ["Tarefa", "Task", "História"]:
@@ -202,14 +257,14 @@ class JiraConnector:
                 }
             }
             
-            if epic_name.startswith("FLOSEUP-") or epic_name.startswith("KAN-"):
-                payload["fields"]["parent"] = {"key": epic_name.strip()}
+            if parent_epic_key:
+                payload["fields"]["parent"] = {"key": parent_epic_key}
 
             req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=self._get_headers(), method="POST")
             try:
                 with urllib.request.urlopen(req, context=ssl_context, timeout=10) as resp:
                     data = json.loads(resp.read().decode("utf-8"))
-                    print(f"[Jira Success] Issue Criada no Jira Real ({project_key}) com Sucesso! Key: {data.get('key')}")
+                    print(f"[Jira Success] Issue Criada no Jira Real ({project_key}) vinculada ao Épico PAI {parent_epic_key}! Key: {data.get('key')}")
                     return data
             except Exception as e:
                 continue
