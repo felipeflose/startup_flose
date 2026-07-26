@@ -955,3 +955,4 @@
 - [2026-07-26 10:55:07] [Sofia] [FLOSEUP-17] implementou código Python REAL: `floseup_17_card_id_floseup_17_t_tulo_ast__02bfe8.py` (+87 linhas, testes unitários OK)
 - [2026-07-26 10:55:18] [Beatriz] [FLOSEUP-35] implementou código Python REAL: `floseup_35_card_id_floseup_35_t_tulo_pico_08f675.py` (+73 linhas, testes unitários OK)
 - [2026-07-26 10:55:28] [Lucas] [FLOSEUP-11] implementou código Python REAL: `floseup_11_card_id_floseup_11_t_tulo_po_e_c47ca0.py` (+73 linhas, testes unitários OK)
+- [2026-07-26 10:55:39] [Sofia] [FLOSEUP-17] implementou código Python REAL: `floseup_17_card_id_floseup_17_t_tulo_ast__4141c7.py` (+125 linhas, testes unitários OK)
