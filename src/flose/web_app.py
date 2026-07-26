@@ -288,18 +288,23 @@ async def create_real_jira_card_async():
 
 async def async_create_jira_card_background(topic_title: str, topic_desc: str):
     try:
+        current_stage = game_state.get("boss_stage", 1)
+        epic_name = f" ÉPICO AST REFACTORING STAGE {current_stage}"
+        
         jira_res = await asyncio.to_thread(
-            jira.create_detailed_epic_or_task, "KAN", topic_title, topic_desc, "ÉPICO PO FRENZY"
+            jira.create_detailed_epic_or_task, "KAN", topic_title, topic_desc, epic_name
         )
         new_key = jira_res.get("key", f"KAN-{random.randint(9700, 9999)}")
         new_card = {
             "id": new_key,
-            "title": f"[PO-FRENZY] {topic_title}",
+            "title": f"[AST-REAL] {topic_title}",
             "description": topic_desc,
             "status": "A FAZER",
             "rejections": 0,
             "po_rejection_reason": "",
-            "comments": [{"author": "PO EVIL BOSS", "text": f"Criado na rajada de 30s: {topic_title}."}]
+            "is_new_ast_card": True,
+            "created_at": datetime.now().isoformat(),
+            "comments": [{"author": "PO EVIL BOSS", "text": f"Épico {epic_name}: {topic_title}."}]
         }
         game_state["kanban"]["to_do"].append(new_card)
         game_state["boss_cards_created_in_frenzy"] += 1
@@ -572,10 +577,30 @@ async def dynamic_frenzy_and_training_game_loop():
             duel = game_state["duel"]
 
             # ---- IDLE: pega um novo card do to_do ----
+            # STEP 1: PEGAR O CARD DO TO_DO, VERIFICAR VALIDADE E APAGAR OBSOLETOS
             if not duel["is_active"] and game_state["kanban"]["to_do"]:
                 card = game_state["kanban"]["to_do"].pop(0)
                 card.setdefault("rejections", 0)
                 card.setdefault("po_rejection_reason", "")
+                
+                # 🗑️ REGRA DOS HERÓIS: Se for um card antigo/passado (sem flag de novidade AST ou sem timestamp recente), DELETAR NO JIRA!
+                if not card.get("is_new_ast_card") and not card.get("created_at"):
+                    card_id = card.get("id")
+                    print(f"🗑️ [Heróis Purga] Card antigo/obsoleto [{card_id}] detectado! Excluindo permanentemente do Jira Cloud...")
+                    
+                    if str(card_id).startswith("KAN-"):
+                        asyncio.create_task(asyncio.to_thread(jira.delete_issue, card_id))
+                        
+                    audit_logs.append({
+                        "event_id": f"evt_{len(audit_logs)+1}",
+                        "action": "HEROES_DELETED_OBSOLETE_CARD",
+                        "card_id": card_id,
+                        "title": card.get("title", "")[:40]
+                    })
+                    game_state["boss_phase"] = f"🗑️ FELIPE & HERÓIS DELETARAM CARD OBSOLETO [{card_id}] DO JIRA!"
+                    await asyncio.sleep(0.3)
+                    continue
+                
                 card["status"] = "EM PROGRESSO"
                 game_state["kanban"]["in_progress"].append(card)
                 
