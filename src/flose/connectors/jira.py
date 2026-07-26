@@ -68,21 +68,32 @@ class JiraConnector:
         # 1. Obter transições disponíveis para esse card
         url_get = f"https://{self.domain}.atlassian.net/rest/api/3/issue/{issue_key}/transitions"
         req_get = urllib.request.Request(url_get, headers=self._get_headers(), method="GET")
+        # Mapping de termos de transição para cobrir Boards em PT e EN (Fazendo, Em análise, Feito, A fazer)
+        target_lower = target_status_name.lower()
+        if any(k in target_lower for k in ["progress", "fazendo", "andamento", "dev"]):
+            keywords = ["fazendo", "progress", "andamento", "dev"]
+        elif any(k in target_lower for k in ["validat", "análise", "analise", "review"]):
+            keywords = ["análise", "analise", "validation", "review"]
+        elif any(k in target_lower for k in ["done", "conclu", "feito"]):
+            keywords = ["feito", "done", "concluí", "conclui"]
+        else:
+            keywords = ["a fazer", "to do", "todo"]
+
         try:
             with urllib.request.urlopen(req_get, context=ssl_context, timeout=5) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
                 transitions = data.get("transitions", [])
                 
                 target_id = None
-                # Procura transição que contenha o termo (case insensitive)
                 for t in transitions:
                     t_name = t.get("name", "").lower()
-                    if target_status_name.lower() in t_name or "conclu" in t_name or "done" in t_name:
+                    to_status = t.get("to", {}).get("name", "").lower()
+                    if any(kw in t_name or kw in to_status for kw in keywords):
                         target_id = t.get("id")
                         break
                 
                 if not target_id:
-                    print(f"[Jira Transition] Status alvo '{target_status_name}' não encontrado para {issue_key}.")
+                    print(f"[Jira Transition] Status alvo '{target_status_name}' não encontrado nas transições {[t.get('name') for t in transitions]} para {issue_key}.")
                     return False
                 
                 # 2. Faz o POST para transacionar
