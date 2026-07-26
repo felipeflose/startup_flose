@@ -794,3 +794,4 @@
 - [2026-07-25 21:05:22] [Sofia] [KAN-9882] implementou código Python REAL: `kan_9882_po_evil_boss_refatorar_sofia_m_1ab07e.py` (+49 linhas, testes unitários OK)
 - [2026-07-25 21:05:35] [Sofia] [KAN-9900] implementou código Python REAL: `kan_9900_po_frenzy_refatorar_beatriz_pi_136958.py` (+49 linhas, testes unitários OK)
 - [2026-07-25 21:05:48] [Sofia] [KAN-9880] implementou código Python REAL: `kan_9880_po_evil_boss_refatorar_sofia_m_66ae48.py` (+49 linhas, testes unitários OK)
+- [2026-07-25 21:06:00] [Beatriz] [KAN-9936] implementou código Python REAL: `kan_9936_onboarding_subst_novo_colabora_2ff833.py` (+49 linhas, testes unitários OK)
