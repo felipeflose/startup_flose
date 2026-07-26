@@ -1048,3 +1048,4 @@
 - [2026-07-26 11:12:46] [Lucas] implementou código Python REAL: `lucas_mutation_testing_suite_cc4bb6.py` (+49 linhas, testes unitários OK)
 - [2026-07-26 11:12:54] [Beatriz] implementou código Python REAL: `beatriz_design_pattern_master_a98670.py` (+33 linhas, testes unitários OK)
 - [2026-07-26 11:13:12] [Sofia] [FLOSEUP-16] implementou código Python REAL: `floseup_16_card_id_floseup_16_pico_pai_fl_234ce6.py` (+92 linhas, testes unitários OK)
+- [2026-07-26 11:13:24] [Sofia] [FLOSEUP-17] implementou código Python REAL: `floseup_17_card_id_floseup_17_pico_pai_fl_6e4cca.py` (+92 linhas, testes unitários OK)
