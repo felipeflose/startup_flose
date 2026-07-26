@@ -331,12 +331,54 @@ class JiraConnector:
             print(f"[Jira Transition Error] Transição '{transition_name}' não encontrada para o card {issue_key}")
             return False
             
-        # 2. Executa a transição
-        payload = {"transition": {"id": transition_id}}
-        req = urllib.request.Request(url_transitions, data=json.dumps(payload).encode("utf-8"), headers=self._get_headers(), method="POST")
+    def get_issue_comments(self, issue_key: str) -> List[Dict[str, Any]]:
+        """Busca a lista de comentários de um card no Jira Cloud."""
+        if not self.is_configured:
+            return []
+
+        url = f"https://{self.domain}.atlassian.net/rest/api/3/issue/{issue_key}/comment"
+        req = urllib.request.Request(url, headers=self._get_headers(), method="GET")
+        try:
+            with urllib.request.urlopen(req, context=ssl_context, timeout=5) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                return data.get("comments", [])
+        except Exception as e:
+            print(f"[Jira Fetch Comments Error] {e}")
+            return []
+
+    def delete_comment(self, issue_key: str, comment_id: str) -> bool:
+        """Apaga um comentário específico de um card no Jira Cloud."""
+        if not self.is_configured:
+            return True
+
+        url = f"https://{self.domain}.atlassian.net/rest/api/3/issue/{issue_key}/comment/{comment_id}"
+        req = urllib.request.Request(url, headers=self._get_headers(), method="DELETE")
         try:
             with urllib.request.urlopen(req, context=ssl_context, timeout=5) as resp:
                 return resp.status in (200, 204)
         except Exception as e:
-            print(f"[Jira Transition Error] Falha ao transicionar: {e}")
+            print(f"[Jira Delete Comment Error] {e}")
             return False
+
+    def clear_all_comments(self, issue_key: str) -> bool:
+        """Remove TODOS os comentários de um card em caso de não conformidade."""
+        comments = self.get_issue_comments(issue_key)
+        for c in comments:
+            c_id = c.get("id")
+            if c_id:
+                self.delete_comment(issue_key, c_id)
+        return True
+
+    def get_issue_details(self, issue_key: str) -> Dict[str, Any]:
+        """Obtém detalhes do card (incluindo parent, status, summary e campos)."""
+        if not self.is_configured:
+            return {}
+
+        url = f"https://{self.domain}.atlassian.net/rest/api/3/issue/{issue_key}?fields=summary,status,parent,comment"
+        req = urllib.request.Request(url, headers=self._get_headers(), method="GET")
+        try:
+            with urllib.request.urlopen(req, context=ssl_context, timeout=5) as resp:
+                return json.loads(resp.read().decode("utf-8"))
+        except Exception as e:
+            print(f"[Jira Get Issue Details Error] {e}")
+            return {}

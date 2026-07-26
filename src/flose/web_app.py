@@ -841,11 +841,114 @@ async def _do_real_commit(hero_key: str, topic: str, card_id: Optional[str] = No
 
 
 
+async def _punish_non_compliant_card(card: Dict[str, Any], col: str, reason: str):
+    card_id = str(card.get("id"))
+    print(f"🚨 [Compliance Auditor] Card [{card_id}] em NÃO CONFORMIDADE ({reason}). Apagando comentários e movendo ao A Fazer...")
+    
+    # 1. Apaga TODOS os comentários do card no Jira Cloud
+    await asyncio.to_thread(jira.clear_all_comments, card_id)
+    
+    # 2. Transiciona o card no Jira Cloud de volta para 'A fazer'
+    await asyncio.to_thread(jira.transition_issue, card_id, "A fazer")
+    
+    # 3. Adiciona comentário de Notificação de Punição por Não Conformidade
+    punishment_msg = (
+        f"🚨 **[PO COMPLIANCE AUDITOR] NON-COMPLIANCE DETECTADO!**\n\n"
+        f"📌 **Motivo da Rejeição:** {reason}\n\n"
+        f"🔨 **Ações de Punição Executadas:**\n"
+        f"1. Todos os comentários antigos foram **removidos/apagados do Jira Cloud**.\n"
+        f"2. O card foi transicionado de volta para a coluna **A fazer**.\n"
+        f"3. O trabalho deve ser refeito em estrita conformidade com as regras (código Python real em src/flose/solutions/, Épico PAI e documentação técnica/negócio)."
+    )
+    await asyncio.to_thread(jira.add_comment, card_id, "PO Compliance Auditor", punishment_msg)
+    
+    # 4. Atualiza o estado local
+    if card in game_state["kanban"].get(col, []):
+        game_state["kanban"][col].remove(card)
+        
+    card["status"] = "A FAZER"
+    card["rejections"] = card.get("rejections", 0) + 1
+    card["po_rejection_reason"] = f"🚨 NON-COMPLIANCE: {reason[:40]}"
+    game_state["kanban"]["to_do"].append(card)
+    
+    audit_logs.append({
+        "event_id": f"evt_{len(audit_logs)+1}",
+        "action": "COMPLIANCE_AUDITOR_PUNISHED_CARD",
+        "card_id": card_id,
+        "reason": reason
+    })
+
+
+async def background_compliance_auditor_worker():
+    """
+    Worker contínuo em segundo plano que auditoria a conformidade de todos os cards.
+    Se um card em 'Fazendo', 'Em análise' ou 'Feito' violar as regras:
+      - Apaga os comentários no Jira Cloud.
+      - Retorna o card para 'A fazer'.
+    """
+    await asyncio.sleep(8)
+    
+    while True:
+        try:
+            check_list = []
+            for c in list(game_state["kanban"].get("in_progress", [])):
+                check_list.append((c, "in_progress"))
+            for c in list(game_state["kanban"].get("in_validation", [])):
+                check_list.append((c, "in_validation"))
+            for c in list(game_state["kanban"].get("done", [])):
+                check_list.append((c, "done"))
+
+            for card, col in check_list:
+                card_id = str(card.get("id"))
+                if not (card_id.startswith("FLOSEUP-") or card_id.startswith("KAN-")):
+                    continue
+
+                # Detalhes da issue no Jira Cloud
+                issue_details = await asyncio.to_thread(jira.get_issue_details, card_id)
+                fields = issue_details.get("fields", {})
+                
+                # Regra A: Deve ter Épico PAI (parent)
+                if not fields.get("parent"):
+                    await _punish_non_compliant_card(card, col, "Ausência de Épico PAI (Parent Epic) no card.")
+                    await asyncio.sleep(2)
+                    continue
+
+                # Regra B: Se estiver em Validação ou Concluído, DEVE ter módulo Python real em src/flose/solutions/
+                commit_info = card.get("commit_info", {})
+                sol_file = commit_info.get("file_path", "")
+                if col in ("in_validation", "done") and (not sol_file or not sol_file.startswith("src/flose/solutions/")):
+                    await _punish_non_compliant_card(card, col, "Falta de ajuste/código Python real no diretório 'src/flose/solutions/'.")
+                    await asyncio.sleep(2)
+                    continue
+
+                # Regra C: Se estiver em Fazendo, deve ter comentário do Felipe com Visão de Negócio & Técnica
+                raw_comments = fields.get("comment", {}).get("comments", [])
+                comments_text = ""
+                for cm in raw_comments:
+                    content_list = cm.get("body", {}).get("content", [])
+                    for node in content_list:
+                        for inner in node.get("content", []):
+                            comments_text += inner.get("text", "") + " "
+                
+                if col == "in_progress" and ("Visão de Negócio" not in comments_text or "Visão Técnica" not in comments_text):
+                    await _punish_non_compliant_card(card, col, "Falta do comentário formal do Felipe com Visão de Negócio e Visão Técnica AST.")
+                    await asyncio.sleep(2)
+                    continue
+
+                await asyncio.sleep(0.3)
+
+        except Exception as e:
+            print(f"[Compliance Auditor Loop Error] {e}")
+
+        await asyncio.sleep(15)
+
+
 @app.on_event("startup")
 async def start_autonomous_loop():
     await bus.start()
     asyncio.create_task(auto_save_persistence_loop())
     asyncio.create_task(dynamic_frenzy_and_training_game_loop())
+    asyncio.create_task(background_compliance_auditor_worker())
 
 
 @app.on_event("shutdown")
