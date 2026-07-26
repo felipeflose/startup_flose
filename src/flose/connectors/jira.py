@@ -1,5 +1,6 @@
 import os
 import ssl
+from datetime import datetime
 from typing import Dict, Any, List, Optional
 import urllib.request
 import urllib.parse
@@ -131,7 +132,9 @@ class JiraConnector:
                             "status": "A FAZER",
                             "type": "Card Real Jira Cloud",
                             "comments": comments,
-                            "rejections": 0
+                            "rejections": 0,
+                            "is_new_ast_card": True,
+                            "created_at": datetime.now().isoformat()
                         })
 
                     start_at += len(raw_issues)
