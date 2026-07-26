@@ -786,3 +786,4 @@
 - [2026-07-25 21:02:48] [Sofia] [KAN-9914] implementou código Python REAL: `kan_9914_onboarding_subst_novo_colabora_a1a41a.py` (+49 linhas, testes unitários OK)
 - [2026-07-25 21:03:15] [Sofia] implementou código Python REAL: `sofia_eventbus_acceleration_54a345.py` (+33 linhas, testes unitários OK)
 - [2026-07-25 21:03:33] [Beatriz] [KAN-9910] implementou código Python REAL: `kan_9910_onboarding_subst_novo_colabora_7e97ea.py` (+49 linhas, testes unitários OK)
+- [2026-07-25 21:03:46] [Sofia] [KAN-9825] implementou código Python REAL: `kan_9825_dev_implementa_o_dev_implement_8ae47a.py` (+33 linhas, testes unitários OK)
