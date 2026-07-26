@@ -484,7 +484,12 @@ def trigger_hero_timeout_power(hero_key: str, timeout_pct: float) -> Tuple[float
         else:
             power_name = f"🧪 Automated Test Suite (Power #{power_id})"
         
-        return 18.0, 0.0, power_name, power_id, False
+def safe_jira_comment(card_id: str, author: str, text: str):
+    try:
+        asyncio.create_task(asyncio.to_thread(jira.add_comment, str(card_id), author, text))
+    except Exception as e:
+        print(f"[Safe Jira Comment Error] {e}")
+
 
 async def dynamic_frenzy_and_training_game_loop():
     await asyncio.sleep(2)  # Espera inicialização
