@@ -40,7 +40,7 @@ REPO_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fi
 SKILLS_DOC_PATH = os.path.join(REPO_PATH, "docs", "skills_learned.md")
 
 # Busca os cards REAIS do Jira Cloud da sua conta (felipeflose.atlassian.net)
-real_jira_cards = jira.fetch_real_jira_issues(project_key="KAN", limit=1000)
+real_jira_cards = jira.fetch_real_jira_issues(project_key="FLOSEUP", limit=1000)
 for c in real_jira_cards:
     c.setdefault("rejections", 0)
 
@@ -292,9 +292,9 @@ async def async_create_jira_card_background(topic_title: str, topic_desc: str):
         epic_name = f" ÉPICO AST REFACTORING STAGE {current_stage}"
         
         jira_res = await asyncio.to_thread(
-            jira.create_detailed_epic_or_task, "KAN", topic_title, topic_desc, epic_name
+            jira.create_detailed_epic_or_task, "FLOSEUP", topic_title, topic_desc, epic_name
         )
-        new_key = jira_res.get("key", f"KAN-{random.randint(9700, 9999)}")
+        new_key = jira_res.get("key", f"FLOSEUP-{random.randint(100, 999)}")
         new_card = {
             "id": new_key,
             "title": f"[AST-REAL] {topic_title}",
@@ -588,7 +588,7 @@ async def dynamic_frenzy_and_training_game_loop():
                     card_id = card.get("id")
                     print(f"🗑️ [Heróis Purga] Card antigo/obsoleto [{card_id}] detectado! Excluindo permanentemente do Jira Cloud...")
                     
-                    if str(card_id).startswith("KAN-"):
+                    if str(card_id).startswith("FLOSEUP-") or str(card_id).startswith("KAN-"):
                         asyncio.create_task(asyncio.to_thread(jira.delete_issue, card_id))
                         
                     audit_logs.append({
@@ -605,7 +605,7 @@ async def dynamic_frenzy_and_training_game_loop():
                 game_state["kanban"]["in_progress"].append(card)
                 
                 # Sincronização Jira: A Fazer -> Em andamento
-                if str(card["id"]).startswith("KAN-"):
+                if str(card["id"]).startswith("FLOSEUP-") or str(card["id"]).startswith("KAN-"):
                     asyncio.create_task(asyncio.to_thread(jira.transition_issue, card["id"], "In Progress"))
 
                 # 🧠 FELIPE ANALISA E DELEGA PARA O HERÓI IDEAL (Sofia, Lucas ou Beatriz)
@@ -688,7 +688,7 @@ async def dynamic_frenzy_and_training_game_loop():
                     game_state["kanban"]["in_validation"].append(card_duel)
                     
                     # Sincronização Jira: Em andamento -> Em análise
-                    if str(card_duel["id"]).startswith("KAN-"):
+                    if str(card_duel["id"]).startswith("FLOSEUP-") or str(card_duel["id"]).startswith("KAN-"):
                         asyncio.create_task(asyncio.to_thread(jira.transition_issue, card_duel["id"], "In Validation"))
                         
                     duel["phase"] = "in_validation"
@@ -707,7 +707,7 @@ async def dynamic_frenzy_and_training_game_loop():
                     game_state["kanban"]["to_do"].append(card_duel)
                     
                     # Sincronização Jira: Em andamento -> A fazer (rejeição)
-                    if str(card_duel["id"]).startswith("KAN-"):
+                    if str(card_duel["id"]).startswith("FLOSEUP-") or str(card_duel["id"]).startswith("KAN-"):
                         asyncio.create_task(asyncio.to_thread(jira.transition_issue, card_duel["id"], "To Do"))
                         
                     game_state["boss_phase"] = f"💀 {hero['name']} FALHOU NO TIMEOUT! [{card_duel['id']}] volta ao A FAZER!"
@@ -771,7 +771,7 @@ async def dynamic_frenzy_and_training_game_loop():
                         game_state["kanban"]["to_do"].append(card_duel)
                         
                         # Sincronização Jira: Em análise -> A fazer (rejeição)
-                        if str(card_duel["id"]).startswith("KAN-"):
+                        if str(card_duel["id"]).startswith("FLOSEUP-") or str(card_duel["id"]).startswith("KAN-"):
                             asyncio.create_task(asyncio.to_thread(jira.transition_issue, card_duel["id"], "To Do"))
                         
                         game_state["boss_phase"] = f"🚫 PO BARRATION! Commit de [{card_duel['id']}] REJEITADO! Motivo: {reason[:45]}"

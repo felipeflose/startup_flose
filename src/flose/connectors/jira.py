@@ -94,7 +94,7 @@ class JiraConnector:
             print(f"[Jira Transition Error] {e}")
             return False
 
-    def fetch_real_jira_issues(self, project_key: str = "KAN", limit: int = 1000) -> List[Dict[str, Any]]:
+    def fetch_real_jira_issues(self, project_key: str = "FLOSEUP", limit: int = 1000) -> List[Dict[str, Any]]:
         """Busca os cards REAIS no Jira Cloud utilizando paginação automática (startAt)."""
         if not self.is_configured:
             return []
@@ -143,61 +143,62 @@ class JiraConnector:
             
         return issues_result
 
-    def create_detailed_epic_or_task(self, project_key: str, summary: str, detailed_description: str, epic_name: str = "ÉPICO PO VILÃO") -> Dict[str, Any]:
-        """Cria um Card REAL e EXTREMAMENTE DETALHADO no Jira Cloud da sua conta!"""
+    def create_detailed_epic_or_task(self, project_key: str = "FLOSEUP", summary: str = "", detailed_description: str = "", epic_name: str = "ÉPICO PO VILÃO") -> Dict[str, Any]:
+        """Cria um Card REAL e EXTREMAMENTE DETALHADO no Jira Cloud da sua conta no projeto FLOSEUP!"""
         if not self.is_configured:
             return {"mock": True, "summary": summary}
 
         url = f"https://{self.domain}.atlassian.net/rest/api/3/issue"
-        payload = {
-            "fields": {
-                "project": {"key": project_key},
-                "summary": f"[PO-EVIL-BOSS] {summary}",
-                "description": {
-                    "type": "doc",
-                    "version": 1,
-                    "content": [
-                        {
-                            "type": "heading",
-                            "attrs": {"level": 2},
-                            "content": [{"type": "text", "text": f"🎯 Épico do PO Vilão: {epic_name}"}]
-                        },
-                        {
-                            "type": "paragraph",
-                            "content": [{"type": "text", "text": detailed_description}]
-                        },
-                        {
-                            "type": "heading",
-                            "attrs": {"level": 3},
-                            "content": [{"type": "text", "text": "📋 Critérios de Aceite & DoD (Definition of Done):"}]
-                        },
-                        {
-                            "type": "bulletList",
-                            "content": [
-                                {"type": "listItem", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Alinhamento Pixel Perfect 100% verificado em 2D/3D Canvas."}]}]},
-                                {"type": "listItem", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Refatoração Backend Async sem estouro de janela de contexto."}]}]},
-                                {"type": "listItem", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Resposta do time antes do limite de Timeout do PO."}]}]}
-                            ]
-                        }
-                    ]
-                },
-                "issuetype": {"name": "Task"}
+        for itype in ["Tarefa", "Task", "História"]:
+            payload = {
+                "fields": {
+                    "project": {"key": project_key},
+                    "summary": f"[PO-EVIL-BOSS] {summary}",
+                    "description": {
+                        "type": "doc",
+                        "version": 1,
+                        "content": [
+                            {
+                                "type": "heading",
+                                "attrs": {"level": 2},
+                                "content": [{"type": "text", "text": f"🎯 Épico do PO Vilão: {epic_name}"}]
+                            },
+                            {
+                                "type": "paragraph",
+                                "content": [{"type": "text", "text": detailed_description}]
+                            },
+                            {
+                                "type": "heading",
+                                "attrs": {"level": 3},
+                                "content": [{"type": "text", "text": "📋 Critérios de Aceite & DoD (Definition of Done):"}]
+                            },
+                            {
+                                "type": "bulletList",
+                                "content": [
+                                    {"type": "listItem", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Alinhamento Pixel Perfect 100% verificado em 2D/3D Canvas."}]}]},
+                                    {"type": "listItem", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Refatoração Backend Async sem estouro de janela de contexto."}]}]},
+                                    {"type": "listItem", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Resposta do time antes do limite de Timeout do PO."}]}]}
+                                ]
+                            }
+                        ]
+                    },
+                    "issuetype": {"name": itype}
+                }
             }
-        }
-        
-        # Se for passado um ID de épico KAN-XXX, cria o vínculo de sub-tarefa / parent.
-        if epic_name.startswith("KAN-"):
-            payload["fields"]["parent"] = {"key": epic_name.strip()}
+            
+            if epic_name.startswith("FLOSEUP-") or epic_name.startswith("KAN-"):
+                payload["fields"]["parent"] = {"key": epic_name.strip()}
 
-        req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=self._get_headers(), method="POST")
-        try:
-            with urllib.request.urlopen(req, context=ssl_context, timeout=10) as resp:
-                data = json.loads(resp.read().decode("utf-8"))
-                print(f"[Jira Success] Issue Criada no Jira Real com Sucesso! Key: {data.get('key')}")
-                return data
-        except Exception as e:
-            print(f"[Jira Create Error] {e}")
-            return {"error": str(e)}
+            req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=self._get_headers(), method="POST")
+            try:
+                with urllib.request.urlopen(req, context=ssl_context, timeout=10) as resp:
+                    data = json.loads(resp.read().decode("utf-8"))
+                    print(f"[Jira Success] Issue Criada no Jira Real ({project_key}) com Sucesso! Key: {data.get('key')}")
+                    return data
+            except Exception as e:
+                continue
+
+        return {"error": "Não foi possível criar issue no Jira"}
 
     def add_comment(self, issue_key: str, author_name: str, comment_text: str) -> Dict[str, Any]:
         if not self.is_configured:
