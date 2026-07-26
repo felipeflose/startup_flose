@@ -596,6 +596,7 @@ async def dynamic_frenzy_and_training_game_loop():
                     target_file = card.get("target_file", "src/flose/web_app.py")
                     line_num = card.get("line_number", "1")
                     snippet = card.get("code_snippet", "# snippet ast")[:250]
+                    hero_role = hero.get("role", hero.get("class", "Especialista em Software"))
                     
                     felipe_comment = (
                         f"👔 **Felipe (Líder de Arquitetura & PO)** analisou o card e realizou a delegação formal:\n\n"
@@ -605,7 +606,7 @@ async def dynamic_frenzy_and_training_game_loop():
                         f"- **Módulo Alvo:** `{target_file}` (Linha {line_num})\n"
                         f"- **Diagnóstico AST:** {card.get('title', 'Refatoração AST')}\n"
                         f"- **Snippet Identificado:**\n```python\n{snippet}\n```\n\n"
-                        f"👤 **Delegação:** Delegado para **{hero['name']}** ({hero['role']})\n\n"
+                        f"👤 **Delegação:** Delegado para **{hero['name']}** ({hero_role})\n\n"
                         f"🎯 **O que a pessoa precisa fazer:**\n"
                         f"1. Criar a branch `feature/floseup-{card['id']}-{assigned_hero_key}`.\n"
                         f"2. Implementar a solução em código Python real em `src/flose/solutions/` com tipagem e docstrings.\n"
@@ -698,8 +699,9 @@ async def dynamic_frenzy_and_training_game_loop():
                         lines_added = commit_res.get("lines_added", 25)
                         target_file = card_duel.get("target_file", "src/flose/web_app.py")
                         
+                        hero_role = hero.get("role", hero.get("class", "Especialista em Software"))
                         hero_comment = (
-                            f"🤖 **{hero['name']}** ({hero['role']}) concluiu a implementação e submeteu para revisão!\n\n"
+                            f"🤖 **{hero['name']}** ({hero_role}) concluiu a implementação e submeteu para revisão!\n\n"
                             f"🛠️ **Explicação Técnica do que foi feito:**\n"
                             f"- **Módulo Gerado:** `{sol_file}` (+{lines_added} linhas de código Python)\n"
                             f"- **Detalhes da Implementação:** Desenvolvida classe/função orientada a objetos com tratamento de exceções, tipagem adequada, conformidade PEP8 e integração com o motor de execução.\n"
