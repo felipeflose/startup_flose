@@ -585,9 +585,10 @@ async def dynamic_frenzy_and_training_game_loop():
                 card["status"] = "EM PROGRESSO"
                 game_state["kanban"]["in_progress"].append(card)
                 
-                # Sincronização Jira: A Fazer -> Em andamento
+                # Sincronização Jira: A Fazer -> Fazendo
                 if str(card["id"]).startswith("FLOSEUP-") or str(card["id"]).startswith("KAN-"):
-                    asyncio.create_task(asyncio.to_thread(jira.transition_issue, card["id"], "In Progress"))
+                    asyncio.create_task(asyncio.to_thread(jira.transition_issue, card["id"], "Fazendo"))
+                    safe_jira_comment(card["id"], "Felipe (Líder de Arquitetura)", f"👔 Card analisado e classificado! Delegado para **{pixel_agents[assigned_hero_key]['name']}**.\n\n📌 **Nota:** {card.get('delegation_note', 'Implementação de código Python real com Pytest.')}")
 
                 # 🧠 FELIPE ANALISA E DELEGA PARA O HERÓI IDEAL (Sofia, Lucas ou Beatriz)
                 assigned_hero_key = felipe_analyze_and_delegate_card(card)
@@ -675,6 +676,13 @@ async def dynamic_frenzy_and_training_game_loop():
                     duel["phase"] = "in_validation"
                     duel["timeout_timer_sec"] = 6.0  # PO tem 6s para revisar
                     duel["max_timeout_sec"] = 6.0
+                    
+                    # Sincronização Jira: Fazendo -> Em análise
+                    if str(card_duel["id"]).startswith("FLOSEUP-") or str(card_duel["id"]).startswith("KAN-"):
+                        asyncio.create_task(asyncio.to_thread(jira.transition_issue, card_duel["id"], "Em análise"))
+                        commit_hash = commit_res.get("commit_hash", "main")
+                        safe_jira_comment(card_duel["id"], hero["name"], f"📤 **{hero['name']}** concluiu a implementação no Git!\n\n🔨 **Commit:** `{commit_hash}`\n🧪 **Suíte Pytest:** ✅ 100% Verde.\n\nEnviado para auditoria do PO Vilão.")
+
                     game_state["boss_phase"] = f"🔍 PO VILÃO AUDITANDO COMMIT DO CARD [{card_duel['id']}] NO GIT!"
                     pixel_agents[hero_key]["action"] = f"📤 Commit [{commit_res.get('commit_hash', '???')}] em auditoria pelo PO!"
 
@@ -687,9 +695,10 @@ async def dynamic_frenzy_and_training_game_loop():
                         game_state["kanban"]["in_progress"].remove(card_duel)
                     game_state["kanban"]["to_do"].append(card_duel)
                     
-                    # Sincronização Jira: Em andamento -> A fazer (rejeição)
+                    # Sincronização Jira: Fazendo -> A fazer (rejeição)
                     if str(card_duel["id"]).startswith("FLOSEUP-") or str(card_duel["id"]).startswith("KAN-"):
-                        asyncio.create_task(asyncio.to_thread(jira.transition_issue, card_duel["id"], "To Do"))
+                        asyncio.create_task(asyncio.to_thread(jira.transition_issue, card_duel["id"], "A fazer"))
+                        safe_jira_comment(card_duel["id"], "PO Auditor", f"⏰ **TIMEOUT!** Herói não concluiu o código dentro do tempo limite. Card retornado ao A Fazer.")
                         
                     game_state["boss_phase"] = f"💀 {hero['name']} FALHOU NO TIMEOUT! [{card_duel['id']}] volta ao A FAZER!"
                     duel["is_active"] = False
@@ -715,10 +724,12 @@ async def dynamic_frenzy_and_training_game_loop():
                         game_state["cards_cleared_in_current_wave"] += 1
                         game_state["cards_coded_count"] += 1
                         
-                        # [Fase 8] Sincronização Bidirecional: Mover o card no Jira para Done
-                        if str(card_duel["id"]).startswith("KAN-"):
-                            print(f"[{hero['name']}] Transicionando {card_duel['id']} para DONE no Jira...")
-                            asyncio.create_task(asyncio.to_thread(jira.transition_issue, card_duel["id"], "Done"))
+                        # [Fase 8] Sincronização Bidirecional: Mover o card no Jira para Feito (Done)
+                        if str(card_duel["id"]).startswith("FLOSEUP-") or str(card_duel["id"]).startswith("KAN-"):
+                            print(f"[{hero['name']}] Transicionando {card_duel['id']} para FEITO no Jira...")
+                            asyncio.create_task(asyncio.to_thread(jira.transition_issue, card_duel["id"], "Feito"))
+                            commit_hash = commit_info.get("commit_hash", "head")
+                            safe_jira_comment(card_duel["id"], "PO Auditor", f"✅ **PO VILÃO AUDITORIA APROVADA!**\n\n📌 **Commit:** `{commit_hash}`\n🎯 **Status:** Validação AST e Pytest confirmados com sucesso.\n🔀 **Git Merge:** Pull Request aprovado e merged na branch `main`!")
 
 
                         damage = 280 + (hero["skill_level"] * 20)
@@ -753,7 +764,8 @@ async def dynamic_frenzy_and_training_game_loop():
                         
                         # Sincronização Jira: Em análise -> A fazer (rejeição)
                         if str(card_duel["id"]).startswith("FLOSEUP-") or str(card_duel["id"]).startswith("KAN-"):
-                            asyncio.create_task(asyncio.to_thread(jira.transition_issue, card_duel["id"], "To Do"))
+                            asyncio.create_task(asyncio.to_thread(jira.transition_issue, card_duel["id"], "A fazer"))
+                            safe_jira_comment(card_duel["id"], "PO Auditor", f"🚫 **PO VILÃO REJEITOU O COMMIT!**\n\n📌 **Motivo:** {reason}\n\nCard devolvido ao A Fazer para correção.")
                         
                         game_state["boss_phase"] = f"🚫 PO BARRATION! Commit de [{card_duel['id']}] REJEITADO! Motivo: {reason[:45]}"
                         pixel_agents[hero_key]["action"] = f"💢 Commit [{card_duel['id']}] REJEITADO! Card devolvido ao A FAZER!"

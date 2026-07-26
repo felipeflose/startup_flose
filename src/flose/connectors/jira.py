@@ -86,14 +86,14 @@ class JiraConnector:
                 
                 target_id = None
                 for t in transitions:
-                    t_name = t.get("name", "").lower()
-                    to_status = t.get("to", {}).get("name", "").lower()
+                    t_name = (t.get("name") or "").lower()
+                    to_status = ((t.get("to") or {}).get("name") or "").lower()
                     if any(kw in t_name or kw in to_status for kw in keywords):
                         target_id = t.get("id")
                         break
                 
                 if not target_id:
-                    print(f"[Jira Transition] Status alvo '{target_status_name}' não encontrado nas transições {[t.get('name') for t in transitions]} para {issue_key}.")
+                    print(f"[Jira Transition] Status alvo '{target_status_name}' não encontrado. Transições disponíveis: {transitions} para {issue_key}.")
                     return False
                 
                 # 2. Faz o POST para transacionar
@@ -103,7 +103,9 @@ class JiraConnector:
                     print(f"[Jira Transition] Card {issue_key} movido para {target_status_name} com sucesso!")
                     return resp_post.status in (200, 204)
         except Exception as e:
-            print(f"[Jira Transition Error] {e}")
+            import traceback
+            print(f"[Jira Transition Exception] {e}")
+            traceback.print_exc()
             return False
 
     def fetch_real_jira_issues(self, project_key: str = "FLOSEUP", limit: int = 1000) -> List[Dict[str, Any]]:
