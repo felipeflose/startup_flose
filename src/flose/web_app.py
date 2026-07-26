@@ -261,22 +261,31 @@ def learn_new_skills_autonomously(agent_key: str):
 
 
 # ============================================================
-# JIRA CARD CREATION (BACKGROUND)
+# PO VILÃO GERA CARDS DINÂMICOS E DIVERSOS (SEM DUPLICAÇÃO)
 # ============================================================
+DYNAMIC_CARD_DOMAINS = [
+    ("Segurança & Sanitização", ["Sanitizador de Token Zero-Trust", "Proteção Contra Injeção SQL em Engine Async", "Escudo Anti-XSS em Renderizador Canvas", "Validação de Payload JWT sem Expiração"]),
+    ("Performance & Backend", ["Cache Distribuído com Redis Lock", "Pipeline de Processamento Async Multi-Thread", "Refatoração de Algoritmo em Rust/PyO3", "Otimização de EventBus para Baixa Latência"]),
+    ("Inteligência Artificial & LLM", ["Fine-Tuning de Modelo Gemma 4 no Ollama", "Quantização de Pesos para Inferência Local", "Prompt Guard contra Prompt Injection", "Engine de Embeddings Vetoriais em Memória"]),
+    ("UI Pixel Perfect & Canvas", ["Renderizador 16-Bit HSL com Grid Responsivo", "Calculador de Interpolador de Animação 60FPS", "Suíte de Layout CSS Pixel-Perfect", "Parser de Sprite 2D/3D com Cache de Textura"]),
+    ("Engenharia de Qualidade (QA)", ["Suíte de Testes de Mutação para Módulos Core", "Fuzzing Engine para Protocolo de Comunicação", "Gerador de Stubs Automáticos para Pytest", "Verificador de Cobertura de Código em Tempo Real"])
+]
+
 async def create_real_jira_card_async():
-    """Chama o Auditor Físico para buscar Smells na máquina e cria um Jira Cloud real vinculado a um Epic."""
+    """Cria um Card REAL, 100% DIVERSO e ÚNICO no Jira Cloud vinculado ao Épico."""
     try:
-        # 1. Faz o parse do repositório físico na máquina do host
-        smell_report = await asyncio.to_thread(scan_host_codebase, "src/flose")
+        domain_name, topics = random.choice(DYNAMIC_CARD_DOMAINS)
+        topic_base = random.choice(topics)
+        unique_id = hashlib.md5(f"{time.time()}_{random.random()}".encode()).hexdigest()[:6]
         
-        # 2. Se achar falha real, cria o título e desc. Senão, faz genérico.
-        if smell_report:
-            title, desc = smell_report
-        else:
-            title = f"Refatorar Componente X{random.randint(10,99)}"
-            desc = "Não foram achadas falhas estruturais pelo AST. Faça uma revisão geral de segurança."
-            
-        # 3. Dispara a criação no Jira Cloud (Vincula com o épico da fase)
+        title = f"[{domain_name}] {topic_base} #{unique_id}"
+        desc = (
+            f"🎯 **Objetivo Arquitetural:** {topic_base}.\n"
+            f"📌 **Domínio:** {domain_name}\n"
+            f"🆔 **Hash da Demanda:** `{unique_id}`\n"
+            f"⚠️ **Exigência do PO Vilão:** Código Python REAL em `src/flose/solutions/` com suíte Pytest 100% verde!"
+        )
+        
         await async_create_jira_card_background(title, desc)
     except Exception as e:
         print(f"[Create Real Card Error] {e}")
