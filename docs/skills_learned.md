@@ -772,3 +772,4 @@
 - [2026-07-25 20:59:30] [Sofia] [KAN-9880] implementou código Python REAL: `kan_9880_po_evil_boss_refatorar_sofia_m_3788d9.py` (+49 linhas, testes unitários OK)
 - [2026-07-25 20:59:42] [Beatriz] [KAN-9923] implementou código Python REAL: `kan_9923_demiss_o_por_desempenho_lucas__bfe1dc.py` (+33 linhas, testes unitários OK)
 - [2026-07-25 20:59:55] [Sofia] [KAN-9908] implementou código Python REAL: `kan_9908_onboarding_subst_novo_colabora_ae9d3e.py` (+49 linhas, testes unitários OK)
+- [2026-07-25 21:00:16] [Beatriz] [KAN-9921] implementou código Python REAL: `kan_9921_demiss_o_por_desempenho_mateus_5260e6.py` (+33 linhas, testes unitários OK)
