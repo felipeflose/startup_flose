@@ -272,20 +272,16 @@ DYNAMIC_CARD_DOMAINS = [
 ]
 
 async def create_real_jira_card_async():
-    """Cria um Card REAL, 100% DIVERSO e ÚNICO no Jira Cloud vinculado ao Épico."""
+    """Chama o Auditor Físico AST para analisar o código REAL no disco e criar o card no Jira Cloud."""
     try:
-        domain_name, topics = random.choice(DYNAMIC_CARD_DOMAINS)
-        topic_base = random.choice(topics)
-        unique_id = hashlib.md5(f"{time.time()}_{random.random()}".encode()).hexdigest()[:6]
+        smell_report = await asyncio.to_thread(scan_host_codebase, "src/flose")
         
-        title = f"[{domain_name}] {topic_base} #{unique_id}"
-        desc = (
-            f"🎯 **Objetivo Arquitetural:** {topic_base}.\n"
-            f"📌 **Domínio:** {domain_name}\n"
-            f"🆔 **Hash da Demanda:** `{unique_id}`\n"
-            f"⚠️ **Exigência do PO Vilão:** Código Python REAL em `src/flose/solutions/` com suíte Pytest 100% verde!"
-        )
-        
+        if smell_report:
+            title, desc = smell_report
+        else:
+            title = f"Refatorar Módulo Core: Análise de Desempenho #{random.randint(100, 999)}"
+            desc = "PO Vilão exigiu auditoria geral nos módulos de infraestrutura async."
+            
         await async_create_jira_card_background(title, desc)
     except Exception as e:
         print(f"[Create Real Card Error] {e}")

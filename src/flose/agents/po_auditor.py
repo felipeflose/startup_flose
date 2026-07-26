@@ -20,58 +20,70 @@ def update_branch(repo_path: str):
         print(f"[PO Auditor] Aviso: Falha ao atualizar a branch: {e}")
 
 class BaseCodeSmellVisitor(ast.NodeVisitor):
-    def __init__(self, filename: str):
+    def __init__(self, filename: str, code_lines: list):
         self.filename = filename
+        self.code_lines = code_lines
         self.smells = []
 
     def add_smell(self, type_: str, node: ast.AST, msg: str):
-        line = getattr(node, 'lineno', '?')
-        self.smells.append((self.filename, type_, line, msg))
+        line = getattr(node, 'lineno', 1)
+        snippet = self.code_lines[line - 1].strip() if 0 <= line - 1 < len(self.code_lines) else ""
+        self.smells.append((self.filename, type_, line, msg, snippet))
 
     def visit_FunctionDef(self, node: ast.FunctionDef):
+        # 1. Documentação técnica
         if not ast.get_docstring(node):
-            self.add_smell("Backend/Docstring", node, f"A função '{node.name}' não possui documentação técnica.")
+            self.add_smell("Backend/Docstring", node, f"A função '{node.name}' no módulo '{self.filename}' não possui docstring.")
         
+        # 2. Type hint no retorno
+        if node.returns is None:
+            self.add_smell("Backend/Typing", node, f"A função '{node.name}' não possui anotação de tipo no retorno (ex: -> Dict[str, Any]).")
+
+        # 3. Complexidade / Tamanho da Função
         end_lineno = getattr(node, 'end_lineno', node.lineno)
         length = end_lineno - node.lineno
-        if length > 50:
-            self.add_smell("Backend/Complexidade", node, f"A função '{node.name}' é um monstro de {length} linhas. Dividir responsabilidades!")
-            
+        if length > 40:
+            self.add_smell("Backend/Refatoracao", node, f"A função '{node.name}' possui {length} linhas. Aplicar refatoração Clean Code!")
+
         self.generic_visit(node)
 
     def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef):
         if not ast.get_docstring(node):
-            self.add_smell("Backend/Docstring", node, f"Endpoint/Task assíncrona '{node.name}' está sem documentação.")
+            self.add_smell("Backend/AsyncDocstring", node, f"Função async '{node.name}' está sem documentação técnica.")
             
+        if node.returns is None:
+            self.add_smell("Backend/AsyncTyping", node, f"Função async '{node.name}' não possui anotação de tipo de retorno.")
+
         end_lineno = getattr(node, 'end_lineno', node.lineno)
         length = end_lineno - node.lineno
-        if length > 50:
-            self.add_smell("Backend/Complexidade", node, f"Endpoint '{node.name}' possui {length} linhas. Aplicar Clean Architecture!")
+        if length > 40:
+            self.add_smell("Backend/AsyncPerformance", node, f"Corotina assíncrona '{node.name}' com {length} linhas. Módulo deve ser modularizado!")
             
         self.generic_visit(node)
 
     def visit_ExceptHandler(self, node: ast.ExceptHandler):
         if node.type is None or (isinstance(node.type, ast.Name) and node.type.id == "Exception"):
-            self.add_smell("Backend/TratamentoErros", node, "Tratamento de exceção genérico (except Exception). Oculte falhas silenciosas!")
+            self.add_smell("Backend/TratamentoErros", node, "Exceção ampla (except Exception). Especificar exceção explícita ou tratar com logger.")
         self.generic_visit(node)
 
 def scan_frontend_smells(filename: str, code: str) -> list:
     """Procura falhas no código Frontend (HTML, JS, CSS)."""
     smells = []
-    if "console.log(" in code:
-        smells.append((filename, "Frontend/JS", "?", "Vazamento de logs de debug (console.log) em código de produção."))
-    if "style=" in code:
-        smells.append((filename, "Frontend/CSS", "?", "Uso excessivo de estilos inline (style=...). Extraia para classes CSS isoladas!"))
-    if "setInterval(" in code:
-        smells.append((filename, "Frontend/Performance", "?", "Uso de setInterval detectado. Pode causar memory leak, prefira requestAnimationFrame ou WebSockets."))
+    lines = code.splitlines()
+    for idx, line in enumerate(lines, 1):
+        if "console.log(" in line:
+            smells.append((filename, "Frontend/JS", idx, "Vazamento de logs de debug (console.log) em código de produção.", line.strip()))
+        if "style=" in line and len(line) > 100:
+            smells.append((filename, "Frontend/CSS", idx, "Estilo inline extenso. Extraia para CSS modular com classes HSL.", line.strip()))
+        if "setInterval(" in line:
+            smells.append((filename, "Frontend/Performance", idx, "Uso de setInterval detectado. Prefira requestAnimationFrame ou EventBus.", line.strip()))
     return smells
 
 def scan_host_codebase(src_dir: str = "src/flose") -> Optional[Tuple[str, str]]:
     """
-    Atualiza o repositório, escaneia arquivos em busca de "Code Smells" Fullstack.
-    Retorna uma tupla (topic_title, topic_desc) pronta para o Jira.
+    Escaneia o repositório REAL via AST em busca de falhas de código.
+    Retorna uma tupla (topic_title, topic_desc) baseada no código real.
     """
-    # Descobre a raiz do repositório a partir do src_dir
     repo_root = os.path.dirname(os.path.dirname(os.path.abspath(src_dir)))
     update_branch(repo_root)
 
@@ -80,35 +92,38 @@ def scan_host_codebase(src_dir: str = "src/flose") -> Optional[Tuple[str, str]]:
     for root, _, files in os.walk(src_dir):
         for file in files:
             filepath = os.path.join(root, file)
+            rel_path = os.path.relpath(filepath, repo_root)
             if file.endswith(".py"):
                 try:
                     with open(filepath, "r", encoding="utf-8") as f:
                         code = f.read()
+                        lines = code.splitlines()
                         
                     tree = ast.parse(code, filename=filepath)
-                    visitor = BaseCodeSmellVisitor(file)
+                    visitor = BaseCodeSmellVisitor(rel_path, lines)
                     visitor.visit(tree)
                     all_smells.extend(visitor.smells)
 
-                    # Além da AST Backend, varre por HTML/JS embutidos (ex: em web_app.py)
-                    fe_smells = scan_frontend_smells(file, code)
+                    fe_smells = scan_frontend_smells(rel_path, code)
                     all_smells.extend(fe_smells)
 
                 except Exception as e:
-                    print(f"[PO Auditor] Falha ao parear {file}: {e}")
+                    print(f"[PO Auditor] Falha ao analisar AST de {file}: {e}")
 
     if not all_smells:
         return None
         
-    # Sorteia um dos problemas encontrados para delegar ao time
     chosen = random.choice(all_smells)
-    filename, smell_type, line_num, msg = chosen
+    filename, smell_type, line_num, msg, snippet = chosen
     
-    title = f"Refatorar {filename}: Corrigir {smell_type}"
-    desc = f"PO Vilão escaneou o repositório REAL e achou uma falha arquitetural:\n\n" \
-           f"- **Arquivo**: `{filename}`\n" \
-           f"- **Linha**: {line_num}\n" \
-           f"- **Problema**: {msg}\n\n" \
-           f"Heróis, corrijam isso urgentemente antes que o sistema caia!"
+    title = f"Refatorar {filename}: {smell_type} (Linha {line_num})"
+    desc = (
+        f"PO Vilão realizou auditoria AST no código REAL do repositório host:\n\n"
+        f"- **Arquivo Real**: `{filename}`\n"
+        f"- **Linha Afetada**: L{line_num}\n"
+        f"- **Código Atual**: `{snippet}`\n"
+        f"- **Diagnóstico AST**: {msg}\n\n"
+        f"⚠️ **Exigência do PO Vilão:** Corrigir este trecho de código no repositório com implementação Python REAL e testes Pytest!"
+    )
            
     return title, desc
