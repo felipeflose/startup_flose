@@ -89,7 +89,12 @@ def scan_host_codebase(src_dir: str = "src/flose") -> Optional[Tuple[str, str]]:
 
     all_smells = []
     
-    for root, _, files in os.walk(src_dir):
+    for root, dirs, files in os.walk(src_dir):
+        # 🚫 Ignorar a pasta 'solutions' (onde ficam os módulos gerados pelos Heróis)
+        dirs[:] = [d for d in dirs if d != "solutions"]
+        if "solutions" in root.split(os.sep):
+            continue
+
         for file in files:
             filepath = os.path.join(root, file)
             rel_path = os.path.relpath(filepath, repo_root)
