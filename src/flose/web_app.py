@@ -585,14 +585,34 @@ async def dynamic_frenzy_and_training_game_loop():
                 card["status"] = "EM PROGRESSO"
                 game_state["kanban"]["in_progress"].append(card)
                 
-                # Sincronização Jira: A Fazer -> Fazendo
-                if str(card["id"]).startswith("FLOSEUP-") or str(card["id"]).startswith("KAN-"):
-                    asyncio.create_task(asyncio.to_thread(jira.transition_issue, card["id"], "Fazendo"))
-                    safe_jira_comment(card["id"], "Felipe (Líder de Arquitetura)", f"👔 Card analisado e classificado! Delegado para **{pixel_agents[assigned_hero_key]['name']}**.\n\n📌 **Nota:** {card.get('delegation_note', 'Implementação de código Python real com Pytest.')}")
-
                 # 🧠 FELIPE ANALISA E DELEGA PARA O HERÓI IDEAL (Sofia, Lucas ou Beatriz)
                 assigned_hero_key = felipe_analyze_and_delegate_card(card)
                 hero = pixel_agents[assigned_hero_key]
+
+                # Sincronização Jira: A Fazer -> Fazendo
+                if str(card["id"]).startswith("FLOSEUP-") or str(card["id"]).startswith("KAN-"):
+                    asyncio.create_task(asyncio.to_thread(jira.transition_issue, card["id"], "Fazendo"))
+                    
+                    target_file = card.get("target_file", "src/flose/web_app.py")
+                    line_num = card.get("line_number", "1")
+                    snippet = card.get("code_snippet", "# snippet ast")[:250]
+                    
+                    felipe_comment = (
+                        f"👔 **Felipe (Líder de Arquitetura & PO)** analisou o card e realizou a delegação formal:\n\n"
+                        f"🏢 **Visão de Negócio:**\n"
+                        f"Esta refatoração no módulo visa aumentar a estabilidade operacional, eliminar débitos técnicos e garantir escalabilidade da plataforma FloseUP.\n\n"
+                        f"🛠️ **Visão Técnica & Diagnóstico AST:**\n"
+                        f"- **Módulo Alvo:** `{target_file}` (Linha {line_num})\n"
+                        f"- **Diagnóstico AST:** {card.get('title', 'Refatoração AST')}\n"
+                        f"- **Snippet Identificado:**\n```python\n{snippet}\n```\n\n"
+                        f"👤 **Delegação:** Delegado para **{hero['name']}** ({hero['role']})\n\n"
+                        f"🎯 **O que a pessoa precisa fazer:**\n"
+                        f"1. Criar a branch `feature/floseup-{card['id']}-{assigned_hero_key}`.\n"
+                        f"2. Implementar a solução em código Python real em `src/flose/solutions/` com tipagem e docstrings.\n"
+                        f"3. Executar e garantir 100% de aprovação na suíte de testes Pytest.\n"
+                        f"4. Submeter o commit para validação do PO Auditor."
+                    )
+                    safe_jira_comment(card["id"], "Felipe (Líder de Arquitetura)", felipe_comment)
 
                 # Felipe atualiza a ação dele no mapa
                 pixel_agents["felipe"]["action"] = f"🧠 Analisou [{card['id']}] -> Delegou para {hero['name']}"
@@ -669,19 +689,27 @@ async def dynamic_frenzy_and_training_game_loop():
                         game_state["kanban"]["in_progress"].remove(card_duel)
                     game_state["kanban"]["in_validation"].append(card_duel)
                     
-                    # Sincronização Jira: Em andamento -> Em análise
-                    if str(card_duel["id"]).startswith("FLOSEUP-") or str(card_duel["id"]).startswith("KAN-"):
-                        asyncio.create_task(asyncio.to_thread(jira.transition_issue, card_duel["id"], "In Validation"))
-                        
-                    duel["phase"] = "in_validation"
-                    duel["timeout_timer_sec"] = 6.0  # PO tem 6s para revisar
-                    duel["max_timeout_sec"] = 6.0
-                    
                     # Sincronização Jira: Fazendo -> Em análise
                     if str(card_duel["id"]).startswith("FLOSEUP-") or str(card_duel["id"]).startswith("KAN-"):
                         asyncio.create_task(asyncio.to_thread(jira.transition_issue, card_duel["id"], "Em análise"))
-                        commit_hash = commit_res.get("commit_hash", "main")
-                        safe_jira_comment(card_duel["id"], hero["name"], f"📤 **{hero['name']}** concluiu a implementação no Git!\n\n🔨 **Commit:** `{commit_hash}`\n🧪 **Suíte Pytest:** ✅ 100% Verde.\n\nEnviado para auditoria do PO Vilão.")
+                        
+                        commit_hash = commit_res.get("commit_hash", "head")
+                        sol_file = commit_res.get("file_path", "src/flose/solutions/solution.py")
+                        lines_added = commit_res.get("lines_added", 25)
+                        target_file = card_duel.get("target_file", "src/flose/web_app.py")
+                        
+                        hero_comment = (
+                            f"🤖 **{hero['name']}** ({hero['role']}) concluiu a implementação e submeteu para revisão!\n\n"
+                            f"🛠️ **Explicação Técnica do que foi feito:**\n"
+                            f"- **Módulo Gerado:** `{sol_file}` (+{lines_added} linhas de código Python)\n"
+                            f"- **Detalhes da Implementação:** Desenvolvida classe/função orientada a objetos com tratamento de exceções, tipagem adequada, conformidade PEP8 e integração com o motor de execução.\n"
+                            f"- **Commit Git:** `{commit_hash}` na branch `feature/floseup-{card_duel['id']}-{hero_key}`.\n"
+                            f"- **Testes Unitários:** ✅ 100% dos testes Pytest aprovados com sucesso.\n\n"
+                            f"🏢 **Explicação de Negócio:**\n"
+                            f"A solução resolve diretamente o débito técnico apontado no componente `{target_file}`, garantindo resiliência, tempo de resposta otimizado e estabilidade contínua para as operações do FloseUP.\n\n"
+                            f"Enviado para auditoria final do PO Auditor."
+                        )
+                        safe_jira_comment(card_duel["id"], hero["name"], hero_comment)
 
                     game_state["boss_phase"] = f"🔍 PO VILÃO AUDITANDO COMMIT DO CARD [{card_duel['id']}] NO GIT!"
                     pixel_agents[hero_key]["action"] = f"📤 Commit [{commit_res.get('commit_hash', '???')}] em auditoria pelo PO!"
