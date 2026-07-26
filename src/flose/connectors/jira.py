@@ -95,41 +95,51 @@ class JiraConnector:
             return False
 
     def fetch_real_jira_issues(self, project_key: str = "KAN", limit: int = 1000) -> List[Dict[str, Any]]:
-        """Busca os cards REAIS lotados na sua conta do Jira Cloud (felipeflose.atlassian.net)!"""
+        """Busca os cards REAIS no Jira Cloud utilizando paginação automática (startAt)."""
         if not self.is_configured:
             return []
 
-        # Nova API do Atlassian Cloud /rest/api/3/search/jql
-        url = f"https://{self.domain}.atlassian.net/rest/api/3/search/jql?jql=project={project_key}%20AND%20status%20!=%20Conclu%C3%ADdo&maxResults={limit}&fields=summary,comment"
-        req = urllib.request.Request(url, headers=self._get_headers(), method="GET")
         issues_result = []
-        try:
-            with urllib.request.urlopen(req, context=ssl_context, timeout=10) as resp:
-                data = json.loads(resp.read().decode("utf-8"))
-                raw_issues = data.get("issues", [])
-                
-                for item in raw_issues:
-                    issue_key = item.get("key")
-                    fields = item.get("fields", {})
-                    summary = fields.get("summary", "Card sem título")
-                    
-                    comments = []
-                    c_data = fields.get("comment", {}).get("comments", [])
-                    for c in c_data:
-                        author = c.get("author", {}).get("displayName", "Agente")
-                        body = c.get("body", {}).get("content", [{}])[0].get("content", [{}])[0].get("text", "Comentário") if isinstance(c.get("body"), dict) else str(c.get("body"))
-                        comments.append({"author": author, "text": body})
+        start_at = 0
+        max_per_page = 100
 
-                    issues_result.append({
-                        "id": issue_key,
-                        "title": summary,
-                        "status": "A FAZER",
-                        "type": "Card Real Jira Cloud",
-                        "comments": comments,
-                        "rejections": 0
-                    })
-        except Exception as e:
-            print(f"[Jira Fetch Error] {e}")
+        while len(issues_result) < limit:
+            url = f"https://{self.domain}.atlassian.net/rest/api/3/search/jql?jql=project={project_key}%20AND%20status%20!=%20Conclu%C3%ADdo&startAt={start_at}&maxResults={max_per_page}&fields=summary,status,comment"
+            req = urllib.request.Request(url, headers=self._get_headers(), method="GET")
+            try:
+                with urllib.request.urlopen(req, context=ssl_context, timeout=10) as resp:
+                    data = json.loads(resp.read().decode("utf-8"))
+                    raw_issues = data.get("issues", [])
+                    if not raw_issues:
+                        break
+                    
+                    for item in raw_issues:
+                        issue_key = item.get("key")
+                        fields = item.get("fields", {})
+                        summary = fields.get("summary", "Card sem título")
+                        
+                        comments = []
+                        c_data = fields.get("comment", {}).get("comments", [])
+                        for c in c_data:
+                            author = c.get("author", {}).get("displayName", "Agente")
+                            body = c.get("body", {}).get("content", [{}])[0].get("content", [{}])[0].get("text", "Comentário") if isinstance(c.get("body"), dict) else str(c.get("body"))
+                            comments.append({"author": author, "text": body})
+
+                        issues_result.append({
+                            "id": issue_key,
+                            "title": summary,
+                            "status": "A FAZER",
+                            "type": "Card Real Jira Cloud",
+                            "comments": comments,
+                            "rejections": 0
+                        })
+
+                    start_at += len(raw_issues)
+                    if len(raw_issues) < max_per_page:
+                        break
+            except Exception as e:
+                print(f"[Jira Fetch Error] {e}")
+                break
             
         return issues_result
 
