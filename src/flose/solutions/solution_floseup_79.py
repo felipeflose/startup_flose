@@ -2,7 +2,7 @@
 Módulo de Solução para a Demanda [FLOSEUP-79]
 Resumo: ÉPICO MASTER REFACTORING STAGE 43
 Engenheiro Responsável: Beatriz
-Data de Criação: 2026-07-26 17:48:30
+Data de Criação: 2026-07-26 17:48:36
 """
 
 import sys
