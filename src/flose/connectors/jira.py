@@ -56,7 +56,7 @@ class JiraConnector:
         url = f"https://{self.domain}.atlassian.net/rest/api/3/issue/{issue_key}"
         req = urllib.request.Request(url, headers=self._get_headers(), method="DELETE")
         try:
-            with urllib.request.urlopen(req, context=ssl_context, timeout=5) as resp:
+            with urllib.request.urlopen(req, context=ssl_context, timeout=30) as resp:
                 return resp.status in (200, 204)
         except Exception:
             return False
@@ -80,7 +80,7 @@ class JiraConnector:
             keywords = ["a fazer", "to do", "todo"]
 
         try:
-            with urllib.request.urlopen(req_get, context=ssl_context, timeout=5) as resp:
+            with urllib.request.urlopen(req_get, context=ssl_context, timeout=30) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
                 transitions = data.get("transitions", [])
                 
@@ -99,7 +99,7 @@ class JiraConnector:
                 # 2. Faz o POST para transacionar
                 payload = {"transition": {"id": target_id}}
                 req_post = urllib.request.Request(url_get, data=json.dumps(payload).encode("utf-8"), headers=self._get_headers(), method="POST")
-                with urllib.request.urlopen(req_post, context=ssl_context, timeout=10) as resp_post:
+                with urllib.request.urlopen(req_post, context=ssl_context, timeout=60) as resp_post:
                     print(f"[Jira Transition] Card {issue_key} movido para {target_status_name} com sucesso!")
                     return resp_post.status in (200, 204)
         except Exception as e:
@@ -121,7 +121,7 @@ class JiraConnector:
             url = f"https://{self.domain}.atlassian.net/rest/api/3/search/jql?jql=project={project_key}%20AND%20status%20!=%20Conclu%C3%ADdo&startAt={start_at}&maxResults={max_per_page}&fields=summary,status,comment"
             req = urllib.request.Request(url, headers=self._get_headers(), method="GET")
             try:
-                with urllib.request.urlopen(req, context=ssl_context, timeout=10) as resp:
+                with urllib.request.urlopen(req, context=ssl_context, timeout=60) as resp:
                     data = json.loads(resp.read().decode("utf-8"))
                     raw_issues = data.get("issues", [])
                     if not raw_issues:
@@ -172,7 +172,7 @@ class JiraConnector:
         url_search = f"https://{self.domain}.atlassian.net/rest/api/3/search/jql?jql={urllib.parse.quote(jql)}"
         req_search = urllib.request.Request(url_search, headers=self._get_headers(), method="GET")
         try:
-            with urllib.request.urlopen(req_search, context=ssl_context, timeout=5) as resp:
+            with urllib.request.urlopen(req_search, context=ssl_context, timeout=30) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
                 issues = data.get("issues", [])
                 if issues:
@@ -201,7 +201,7 @@ class JiraConnector:
         }
         req_create = urllib.request.Request(url_create, data=json.dumps(payload_epic).encode("utf-8"), headers=self._get_headers(), method="POST")
         try:
-            with urllib.request.urlopen(req_create, context=ssl_context, timeout=10) as resp:
+            with urllib.request.urlopen(req_create, context=ssl_context, timeout=60) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
                 epic_key = data.get("key")
                 print(f"[Jira Parent Epic Created] Épico PAI Real Criado no Jira: {epic_key} ({epic_name})")
@@ -262,7 +262,7 @@ class JiraConnector:
 
             req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=self._get_headers(), method="POST")
             try:
-                with urllib.request.urlopen(req, context=ssl_context, timeout=10) as resp:
+                with urllib.request.urlopen(req, context=ssl_context, timeout=60) as resp:
                     data = json.loads(resp.read().decode("utf-8"))
                     print(f"[Jira Success] Issue Criada no Jira Real ({project_key}) vinculada ao Épico PAI {parent_epic_key}! Key: {data.get('key')}")
                     return data
@@ -288,7 +288,7 @@ class JiraConnector:
         }
         req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=self._get_headers(), method="POST")
         try:
-            with urllib.request.urlopen(req, context=ssl_context, timeout=10) as resp:
+            with urllib.request.urlopen(req, context=ssl_context, timeout=60) as resp:
                 return json.loads(resp.read().decode("utf-8"))
         except Exception as e:
             return {"error": str(e)}
@@ -304,7 +304,7 @@ class JiraConnector:
         
         transition_id = None
         try:
-            with urllib.request.urlopen(req_trans, context=ssl_context, timeout=5) as resp:
+            with urllib.request.urlopen(req_trans, context=ssl_context, timeout=30) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
                 
                 # Mapeamentos amigáveis
@@ -339,7 +339,7 @@ class JiraConnector:
         url = f"https://{self.domain}.atlassian.net/rest/api/3/issue/{issue_key}/comment"
         req = urllib.request.Request(url, headers=self._get_headers(), method="GET")
         try:
-            with urllib.request.urlopen(req, context=ssl_context, timeout=5) as resp:
+            with urllib.request.urlopen(req, context=ssl_context, timeout=30) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
                 return data.get("comments", [])
         except Exception as e:
@@ -354,7 +354,7 @@ class JiraConnector:
         url = f"https://{self.domain}.atlassian.net/rest/api/3/issue/{issue_key}/comment/{comment_id}"
         req = urllib.request.Request(url, headers=self._get_headers(), method="DELETE")
         try:
-            with urllib.request.urlopen(req, context=ssl_context, timeout=5) as resp:
+            with urllib.request.urlopen(req, context=ssl_context, timeout=30) as resp:
                 return resp.status in (200, 204)
         except Exception as e:
             print(f"[Jira Delete Comment Error] {e}")
@@ -377,7 +377,7 @@ class JiraConnector:
         url = f"https://{self.domain}.atlassian.net/rest/api/3/issue/{issue_key}?fields=summary,status,parent,comment"
         req = urllib.request.Request(url, headers=self._get_headers(), method="GET")
         try:
-            with urllib.request.urlopen(req, context=ssl_context, timeout=5) as resp:
+            with urllib.request.urlopen(req, context=ssl_context, timeout=30) as resp:
                 return json.loads(resp.read().decode("utf-8"))
         except Exception as e:
             print(f"[Jira Get Issue Details Error] {e}")
