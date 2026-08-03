@@ -6,83 +6,109 @@ Responsável: Sofia
 
 import pytest
 
-def audit_and_handle_error(operation_result):
-    """
-    Audita o resultado de uma operação e lida com exceções de forma específica.
+def audit_ast_with_specific_error(code: str, message: str) -> str:
+    """Audita um trecho de código, simulando a captura de um erro específico."""
+    if 'error_trigger' in code:
+        raise ValueError(f"Erro específico capturado: {message}")
+    elif 'generic_error' in code:
+        raise RuntimeError(f"Erro genérico capturado: {message}")
+    else:
+        # Simula o tratamento de qualquer outra exceção genérica
+        raise Exception(f"Erro inesperado capturado: {message}")
 
-    Args:
-        operation_result: O resultado da operação a ser auditada.
+def handle_auditor_exception(e: Exception, logger: object) -> str:
+    """Trata uma exceção capturada, registrando-a e retornando uma mensagem de auditoria."""
+    if isinstance(e, ValueError):
+        # Trata erros específicos de validação
+        logger.warning(f"Erro de Validação detectado: {e}")
+        return f"Auditoria OK: Erro de Validação tratado. Detalhe: {e}"
+    elif isinstance(e, RuntimeError):
+        # Trata erros de execução/runtime
+        logger.error(f"Erro de Runtime detectado: {e}")
+        return f"Auditoria OK: Erro de Runtime tratado. Detalhe: {e}"
+    else:
+        # Trata exceções genéricas
+        logger.exception(f"Erro inesperado durante a auditoria: {e}")
+        return f"Auditoria Falhou: Erro inesperado. Detalhe: {type(e).__name__}: {e}"
 
-    Returns:
-        O resultado processado ou uma mensagem de erro tratada.
-    """
+def perform_ast_audit(source_code: str, error_message: str, logger: object = None) -> str:
+    """Realiza a auditoria AST, capturando e tratando exceções de forma específica."""
+    if logger is None:
+        # Simula um logger básico se não for fornecido
+        class MockLogger:
+            def warning(self, msg):
+                print(f"[WARNING] {msg}")
+            def error(self, msg):
+                print(f"[ERROR] {msg}")
+            def exception(self, msg):
+                print(f"[EXCEPTION] {msg}")
+        logger = MockLogger()
+
     try:
-        # Simulação da lógica de auditoria
-        if operation_result is None:
-            raise ValueError("Resultado da operação é nulo.")
-        
-        # Simulação de processamento
-        processed_data = operation_result.upper()
-        
-        return f"Auditoria bem-sucedida. Dados processados: {processed_data}"
-
-    except ValueError as ve:
-        # Tratamento específico para erros de valor
-        return f"Erro de Validação: {ve}"
+        # Simula a execução da auditoria
+        audit_result = audit_ast_with_specific_error(source_code, error_message)
+        return f"Auditoria Concluída com Sucesso: {audit_result}"
     except Exception as e:
-        # Tratamento genérico para qualquer outra exceção (substituindo o 'except Exception as e:')
-        # Em um cenário real, aqui se faria um log
-        return f"Erro Inesperado durante a auditoria: {type(e).__name__} - {e}"
+        # Implementação corrigida: Tratamento específico
+        return handle_auditor_exception(e, logger)
 
 
 # --- Funções de Teste Pytest ---
 
-def test_audit_success():
-    """Testa o fluxo de auditoria quando a operação é bem-sucedida."""
-    result = "some_data"
-    expected = "Auditoria bem-sucedida. Dados processados: SOME_DATA"
-    assert audit_and_handle_error(result) == expected
+@pytest.fixture
+def mock_logger():
+    """Fixture para um logger mockado."""
+    class MockLogger:
+        def warning(self, msg):
+            pass
+        def error(self, msg):
+            pass
+        def exception(self, msg):
+            pass
+    return MockLogger()
 
-def test_audit_value_error():
-    """Testa o tratamento específico para exceções de Valor (ValueError)."""
-    result = None
-    expected = "Erro de Validação: Resultado da operação é nulo."
-    assert audit_and_handle_error(result) == expected
+def test_handle_auditor_exception_value_error(mock_logger):
+    "Testa o tratamento de ValueError especificamente."""
+    error = ValueError("Validação de campo falhou")
+    result = handle_auditor_exception(error, mock_logger)
+    assert "Auditoria OK: Erro de Validação tratado" in result
 
-def test_audit_generic_exception():
-    """Testa o tratamento de exceções genéricas (Exception)."""
-    # Simula uma exceção que não é ValueError
-    class CustomError(Exception):
-        pass
+def test_handle_auditor_exception_runtime_error(mock_logger):
+    "Testa o tratamento de RuntimeError especificamente."""
+    error = RuntimeError("Falha na execução do algoritmo")
+    result = handle_auditor_exception(error, mock_logger)
+    assert "Auditoria OK: Erro de Runtime tratado" in result
 
-    result = "data"
-    try:
-        # Forçamos uma exceção que será capturada pelo bloco genérico
-        raise CustomError("Falha na auditoria interna")
-    except Exception as e:
-        # Simulação do que o código real faria
-        pass
+def test_handle_auditor_exception_generic_error(mock_logger):
+    "Testa o tratamento de exceções genéricas (catch-all)."""
+    error = Exception("Erro desconhecido na etapa")
+    result = handle_auditor_exception(error, mock_logger)
+    assert "Auditoria Falhou: Erro inesperado" in result
 
-    # A função audit_and_handle_error precisa ser reexecutada com um input válido, pois o teste de exceção acima não chama a função diretamente
-    # Vamos testar o fluxo de erro diretamente dentro da função para garantir a precisão do tratamento:
-    
-    # Teste direto da lógica de tratamento de exceção:
-    try:
-        audit_and_handle_error("some_data") # Teste de sucesso
-        
-        # Teste de erro:
-        raise TypeError("Erro de Tipo")
-    except TypeError as e:
-        # O tratamento deve capturar o TypeError e retornar a mensagem genérica
-        # Nota: A função foi escrita para capturar qualquer Exception, então este teste valida o caminho de tratamento.
-        # Como o teste acima está complexo de isolar, vamos testar o caso de erro explícito.
-        pass
+def test_perform_ast_audit_success(mock_logger):
+    "Testa o fluxo de auditoria quando tudo corre bem."""
+    source = "def func(): return 1"
+    message = "Nenhuma falha esperada"
+    result = perform_ast_audit(source, message, logger=mock_logger)
+    assert "Auditoria Concluída com Sucesso" in result
 
-    # Reexecutando o teste para garantir que o tratamento genérico funcione com uma exceção real:
-    result_error = "data"
-    try:
-        # Simula o cenário de erro interno que o bloco 'except Exception' deve capturar
-        raise RuntimeError("Falha de sistema")
-    except Exception as e:
-        # A função deve retornar a string de erro tratada
-        assert "Erro Inesperado durante a auditoria: RuntimeError - Falha de sistema" in str(audit_and_handle_error(result_error))
+def test_perform_ast_audit_value_error(mock_logger):
+    "Testa o fluxo de auditoria quando uma ValueError é levantada."""
+    source = "def func(): error_trigger = 1"
+    message = "Erro de validação simulado"
+    result = perform_ast_audit(source, message, logger=mock_logger)
+    assert "Auditoria OK: Erro de Validação tratado" in result
+
+def test_perform_ast_audit_runtime_error(mock_logger):
+    "Testa o fluxo de auditoria quando uma RuntimeError é levantada."""
+    source = "def func(): error_trigger = 1"
+    message = "Erro de runtime simulado"
+    result = perform_ast_audit(source, message, logger=mock_logger)
+    assert "Auditoria OK: Erro de Runtime tratado" in result
+
+def test_perform_ast_audit_generic_exception(mock_logger):
+    "Testa o fluxo de auditoria quando uma exceção genérica é levantada."""
+    source = "def func(): generic_error = 1"
+    message = "Erro genérico simulado"
+    result = perform_ast_audit(source, message, logger=mock_logger)
+    assert "Auditoria Falhou: Erro inesperado" in result
