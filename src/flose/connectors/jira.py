@@ -8,24 +8,15 @@ import json
 import base64
 
 def load_env_file():
-    """Loads variables from .env file into os.environ.
-    Busca o .env na raiz do projeto (3 níveis acima de connectors/jira.py).
-    """
-    # Caminho absoluto: src/flose/connectors/jira.py -> ../../.. -> raiz do projeto
-    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-    env_path = os.path.join(project_root, ".env")
-    
-    # Fallback: tenta também o cwd
-    if not os.path.exists(env_path):
-        env_path = os.path.join(os.getcwd(), ".env")
-    
+    """Loads variables from .env file into os.environ."""
+    env_path = os.path.join(os.getcwd(), ".env")
     if os.path.exists(env_path):
         with open(env_path, "r", encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if line and not line.startswith("#") and "=" in line:
                     k, v = line.split("=", 1)
-                    os.environ.setdefault(k.strip(), v.strip())  # setdefault: não sobrescreve variáveis já definidas no ambiente
+                    os.environ[k.strip()] = v.strip()
 
 load_env_file()
 
@@ -127,7 +118,7 @@ class JiraConnector:
         max_per_page = 100
 
         while len(issues_result) < limit:
-            url = f"https://{self.domain}.atlassian.net/rest/api/3/search/jql?jql=project={project_key}%20AND%20status%20!=%20Conclu%C3%ADdo%20AND%20issuetype%20!=%20Epic&startAt={start_at}&maxResults={max_per_page}&fields=summary,status,comment,description,issuetype"
+            url = f"https://{self.domain}.atlassian.net/rest/api/3/search/jql?jql=project={project_key}%20AND%20status%20!=%20Conclu%C3%ADdo&startAt={start_at}&maxResults={max_per_page}&fields=summary,status,comment"
             req = urllib.request.Request(url, headers=self._get_headers(), method="GET")
             try:
                 with urllib.request.urlopen(req, context=ssl_context, timeout=60) as resp:
@@ -140,21 +131,6 @@ class JiraConnector:
                         issue_key = item.get("key")
                         fields = item.get("fields", {})
                         summary = fields.get("summary", "Card sem título")
-                        issue_type = fields.get("issuetype", {}).get("name", "Task")
-                        
-                        # Extrai a descrição (se houver e for Atlassian Document Format)
-                        raw_desc = fields.get("description")
-                        description_text = "Sem descrição detalhada."
-                        if raw_desc and isinstance(raw_desc, dict) and "content" in raw_desc:
-                            # Tenta extrair o texto limpo do Atlassian Document Format
-                            texts = []
-                            for p in raw_desc.get("content", []):
-                                for content_item in p.get("content", []):
-                                    texts.append(content_item.get("text", ""))
-                            if texts:
-                                description_text = " ".join(texts)
-                        elif isinstance(raw_desc, str):
-                            description_text = raw_desc
                         
                         comments = []
                         c_data = fields.get("comment", {}).get("comments", [])
@@ -163,26 +139,11 @@ class JiraConnector:
                             body = c.get("body", {}).get("content", [{}])[0].get("content", [{}])[0].get("text", "Comentário") if isinstance(c.get("body"), dict) else str(c.get("body"))
                             comments.append({"author": author, "text": body})
 
-                        # Mapeamento robusto de status do Jira Cloud pt-BR
-                        raw_status = fields.get("status", {}).get("name", "Unknown").upper()
-                        if raw_status in ["A FAZER", "TO DO", "BACKLOG", "SELECIONADO PARA DESENVOLVIMENTO", "OPEN"]:
-                            status = "A FAZER"
-                        elif raw_status in ["EM ANDAMENTO", "IN PROGRESS", "FAZENDO", "DOING"]:
-                            status = "FAZENDO"
-                        elif raw_status in ["EM REVISÃO", "IN REVIEW", "CODE REVIEW", "EM ANÁLISE"]:
-                            status = "EM ANÁLISE"
-                        elif raw_status in ["CONCLUÍDO", "DONE", "RESOLVED", "CLOSED", "FEITO"]:
-                            status = "FEITO"
-                        else:
-                            status = "A FAZER"
-
                         issues_result.append({
                             "id": issue_key,
                             "title": summary,
-                            "description": description_text,
-                            "status": status,
-                            "type": f"Card ({issue_type})",
-                            "issue_type": issue_type,
+                            "status": "A FAZER",
+                            "type": "Card Real Jira Cloud",
                             "comments": comments,
                             "rejections": 0,
                             "is_new_ast_card": True,
@@ -250,26 +211,10 @@ class JiraConnector:
 
         return None
 
-    def link_parent_epic(self, issue_key: str, epic_name: str = "ÉPICO MESTRE AST STAGE 1") -> bool:
-        """Vincula automaticamente um card ao Épico PAI no Jira Cloud."""
-        if not self.is_configured: return False
-        epic_key = self.get_or_create_epic("FLOSEUP", epic_name)
-        if not epic_key: return False
-        
-        url = f"https://{self.domain}.atlassian.net/rest/api/3/issue/{issue_key}"
-        payload = {"fields": {"parent": {"key": epic_key}}}
-        req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=self._get_headers(), method="PUT")
-        try:
-            with urllib.request.urlopen(req, context=ssl_context, timeout=5) as resp:
-                return resp.status in (200, 204)
-        except Exception as e:
-            print(f"[Jira Link Epic Error] {e}")
-            return False
-
     def create_detailed_epic_or_task(self, project_key: str = "FLOSEUP", summary: str = "", detailed_description: str = "", epic_name: str = "ÉPICO PO VILÃO STAGE 1") -> Dict[str, Any]:
         """Cria um Card REAL e EXTREMAMENTE DETALHADO no Jira Cloud vinculado ao Épico PAI!"""
         if not self.is_configured:
-            raise ValueError("JIRA_HOST, JIRA_USER, and JIRA_TOKEN must be configured to create tasks")
+            return {"mock": True, "summary": summary}
 
         # Garante a existência do Épico PAI no Jira
         parent_epic_key = self.get_or_create_epic(project_key, epic_name)
@@ -328,17 +273,27 @@ class JiraConnector:
 
     def add_comment(self, issue_key: str, author_name: str, comment_text: str) -> Dict[str, Any]:
         if not self.is_configured:
-            raise ValueError("JIRA_HOST, JIRA_USER, and JIRA_TOKEN must be configured to add comments")
+            return {"mock": True, "comment": comment_text}
 
         url = f"https://{self.domain}.atlassian.net/rest/api/3/issue/{issue_key}/comment"
+        
+        paragraphs = []
+        for line in comment_text.splitlines():
+            if line.strip():
+                paragraphs.append({
+                    "type": "paragraph",
+                    "content": [{"type": "text", "text": line}]
+                })
+        if not paragraphs:
+            paragraphs = [{"type": "paragraph", "content": [{"type": "text", "text": comment_text}]}]
+
+        paragraphs[0]["content"].insert(0, {"type": "text", "text": f"[{author_name}]: ", "marks": [{"type": "strong"}]})
+
         payload = {
             "body": {
                 "type": "doc",
                 "version": 1,
-                "content": [{
-                    "type": "paragraph",
-                    "content": [{"type": "text", "text": f"[{author_name}]: {comment_text}"}]
-                }]
+                "content": paragraphs
             }
         }
         req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=self._get_headers(), method="POST")
@@ -348,7 +303,34 @@ class JiraConnector:
         except Exception as e:
             return {"error": str(e)}
 
-<<<<<<< Updated upstream
+<<<<<<< HEAD
+    def update_issue_hero_and_model(self, issue_key: str, hero_name: str, model_name: str) -> bool:
+        """Atualiza a descrição e metadados no card do Jira Cloud com o Herói e o Motor de IA."""
+        if not self.is_configured:
+            return True
+        url = f"https://{self.domain}.atlassian.net/rest/api/3/issue/{issue_key}"
+        payload = {
+            "fields": {
+                "description": {
+                    "type": "doc", "version": 1,
+                    "content": [{
+                        "type": "paragraph",
+                        "content": [
+                            {"type": "text", "text": f"👤 Herói Responsável: {hero_name}\n🧠 Motor de IA: {model_name}\n\n"}
+                        ]
+                    }]
+                }
+            }
+        }
+        req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=self._get_headers(), method="PUT")
+        try:
+            with urllib.request.urlopen(req, context=ssl_context, timeout=30) as resp:
+                return resp.status in (200, 204)
+        except Exception:
+            return False
+
+=======
+>>>>>>> feature/floseup-321-sofia
     def transition_issue(self, issue_key: str, transition_name: str) -> bool:
         """Transiciona um card no Jira (Ex: To Do -> In Progress -> Done)"""
         if not self.is_configured:
@@ -387,9 +369,6 @@ class JiraConnector:
             print(f"[Jira Transition Error] Transição '{transition_name}' não encontrada para o card {issue_key}")
             return False
             
-=======
-
->>>>>>> Stashed changes
     def get_issue_comments(self, issue_key: str) -> List[Dict[str, Any]]:
         """Busca a lista de comentários de um card no Jira Cloud."""
         if not self.is_configured:

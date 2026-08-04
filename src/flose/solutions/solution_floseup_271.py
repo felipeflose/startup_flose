@@ -1,12 +1,12 @@
 """
-Módulo de Solução para [FLOSEUP-80]
-Resumo: [PO-EVIL-BOSS] ÉPICO MASTER REFACTORING STAGE 43
-Responsável: Lucas
+Módulo de Solução para [FLOSEUP-271]
+Resumo: Refatorar Módulo de Sistema #751
+Responsável: Sofia
 (fallback estático — o Ollama não respondeu, verifique se está rodando)
 """
 def execute_task(payload: dict) -> dict:
     if not payload: raise ValueError("Vazio")
-    return {"status": "COMPLETED", "id": "FLOSEUP-80"}
+    return {"status": "COMPLETED", "id": "FLOSEUP-271"}
 
 def test_execute_task():
     res = execute_task({"k": "v"})

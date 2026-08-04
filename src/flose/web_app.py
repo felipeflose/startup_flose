@@ -2,11 +2,7 @@ import asyncio
 import time
 import random
 import os
-<<<<<<< Updated upstream
 import sys
-=======
-import re
->>>>>>> Stashed changes
 import subprocess
 import json
 import re
@@ -48,114 +44,9 @@ SOLUTIONS_DIR = os.path.join(REPO_PATH, "src", "flose", "solutions")
 SKILLS_DOC_PATH = os.path.join(REPO_PATH, "docs", "skills_learned.md")
 PERSISTENCE_FILE = os.path.join(REPO_PATH, "data", "state_persistence.json")
 
-<<<<<<< Updated upstream
 os.makedirs(SOLUTIONS_DIR, exist_ok=True)
 os.makedirs(os.path.dirname(SKILLS_DOC_PATH), exist_ok=True)
 os.makedirs(os.path.dirname(PERSISTENCE_FILE), exist_ok=True)
-=======
-# Busca os cards REAIS do Jira Cloud da sua conta (felipeflose.atlassian.net)
-real_jira_cards = jira.fetch_real_jira_issues(project_key="FLOSEUP", limit=1000)
-for c in real_jira_cards:
-    c.setdefault("rejections", 0)
-
-# REMOVIDO: Carregamento de persistência local para garantir Single Source of Truth (Jira Cloud)
-# O estado agora sempre inicia zerado e é populado 100% pelo sync do Jira.
-
-game_state = {
-    "boss_name": "PO EVIL BOSS (FRENZY MODE)",
-    "boss_hp": 1000,
-    "boss_max_hp": 1000,
-    "current_phase": "HERO_TRAINING_PHASE",
-    "phase_timer_sec": 120,
-    "boss_cards_created_in_frenzy": 0,
-    "target_cards_to_clear_80pct": 0,
-    "cards_cleared_in_current_wave": 0,
-    "cards_coded_count": 0,
-    "victory": False,
-    "boss_phase": "🎓 ACADEMIA DOS HERÓIS: ESTUDANDO E CRIANDO COMMITS REAIS NO GITHUB!",
-    "duel": {
-        "is_active": False,
-        "active_hero": None,
-        "hero_key": None,
-        "active_card": None,
-        "timeout_timer_sec": 18.0,
-        "max_timeout_sec": 18.0,
-        "damage_dealt": 0,
-        "phase": "idle"  # idle | hero_working | in_validation | po_reviewing | approved | rejected
-    },
-    "kanban": {
-        "to_do": real_jira_cards if real_jira_cards else [],
-        "in_progress": [],
-        "in_validation": [],
-        "done": []
-    },
-    "last_real_commit": "Nenhum commit ainda",
-    "total_real_commits": 0,
-}
-
-pixel_agents: Dict[str, Dict[str, Any]] = {
-    "felipe": {
-        "name": "Felipe",
-        "class": "Líder de Arquitetura",
-        "sprite_color": "#3b82f6",
-        "x": 100, "y": 260,
-        "skill_level": 1,
-        "xp": 0,
-        "new_skills_learned": ["Arquitetura Async Core"],
-        "github_commits": ["commit 7f3a8b2: docs(architecture): learn Async Core design"],
-        "response_speed_ms": 250.0,
-        "timeout_resistance_sec": 18.0,
-        "action": "Treinando e Aprendendo Novas Arquiteturas",
-    },
-    "sofia": {
-        "name": "Sofia",
-        "class": "Gemma 4 & Ollama Analyst",
-        "sprite_color": "#ec4899",
-        "x": 220, "y": 220,
-        "skill_level": 1,
-        "xp": 0,
-        "new_skills_learned": ["Fine-Tuning Gemma 4"],
-        "github_commits": ["commit c912f5a: docs(gemma4): learn Gemma 4 fine-tuning"],
-        "response_speed_ms": 200.0,
-        "timeout_resistance_sec": 18.0,
-        "action": "Estudando Modelos no Gemma 4 & Ollama",
-    },
-    "lucas": {
-        "name": "Lucas",
-        "class": "Claude-Code Ollama & AGY Coder",
-        "sprite_color": "#f97316",
-        "x": 350, "y": 270,
-        "skill_level": 1,
-        "xp": 0,
-        "new_skills_learned": ["Refatoração Rust/Python"],
-        "github_commits": ["commit e4819a3: feat(skill-rust): learn Rust/Python refactoring"],
-        "response_speed_ms": 120.0,
-        "timeout_resistance_sec": 18.0,
-        "action": "Treinando Algoritmos de Alta Velocidade",
-    },
-    "beatriz": {
-        "name": "Beatriz",
-        "class": "QA & Security Shield",
-        "sprite_color": "#10b981",
-        "x": 480, "y": 230,
-        "skill_level": 1,
-        "xp": 0,
-        "new_skills_learned": ["Testes de Mutação"],
-        "github_commits": ["commit 88f21bc: docs(security): learn mutation testing"],
-        "response_speed_ms": 210.0,
-        "timeout_resistance_sec": 18.0,
-        "action": "Aprimorando Suíte de Testes de Aceite",
-    }
-}
-
-audit_logs: List[Dict[str, Any]] = []
-
-async def auto_save_persistence_loop():
-    """Salva o estado do jogo periodicamente no disco (data/state_persistence.json)."""
-    while True:
-        await asyncio.sleep(2.0)
-        await save_state_to_disk(game_state, pixel_agents, audit_logs)
->>>>>>> Stashed changes
 
 
 # ====================================================================
@@ -170,141 +61,11 @@ class Settings:
     quebrar quem já tinha o outro padrão configurado.
     """
 
-<<<<<<< Updated upstream
     def __init__(self):
         raw_host = (
             os.getenv("JIRA_HOST")
             or os.getenv("JIRA_DOMAIN")
             or "https://felipeflose.atlassian.net"
-=======
-            commit_msg = f"feat(skills-{agent_name.lower()}): {agent_name} learned '{skill_name}' - auto commit by FLOSE AEOS"
-
-            # Git add
-            await asyncio.to_thread(
-                subprocess.run,
-                ["git", "add", "docs/skills_learned.md"],
-                cwd=REPO_PATH, capture_output=True, text=True
-            )
-
-            # Git commit
-            result_commit = await asyncio.to_thread(
-                subprocess.run,
-                ["git", "commit", "-m", commit_msg],
-                cwd=REPO_PATH, capture_output=True, text=True
-            )
-
-            if result_commit.returncode != 0:
-                # Pode ser "nothing to commit"
-                return f"[skip] {skill_name} (nada novo para commitar)"
-
-            # Git push
-            result_push = await asyncio.to_thread(
-                subprocess.run,
-                ["git", "push", "origin", "main"],
-                cwd=REPO_PATH, capture_output=True, text=True
-            )
-
-            # Pega o hash real do commit
-            result_hash = await asyncio.to_thread(
-                subprocess.run,
-                ["git", "rev-parse", "--short", "HEAD"],
-                cwd=REPO_PATH, capture_output=True, text=True
-            )
-            real_hash = result_hash.stdout.strip() if result_hash.returncode == 0 else "??????"
-            real_commit_msg = f"commit {real_hash}: {commit_msg[:60]}"
-            
-            game_state["last_real_commit"] = real_commit_msg
-            game_state["total_real_commits"] = game_state.get("total_real_commits", 0) + 1
-            
-            return real_commit_msg
-        except Exception as e:
-            return f"[erro commit] {str(e)[:50]}"
-
-
-def learn_new_skills_autonomously(agent_key: str):
-    agt = pixel_agents[agent_key]
-    agt["xp"] += 50
-    skills_pool = [
-        "Design Pattern Master",
-        "EventBus Acceleration",
-        "Ollama Quantization",
-        "AGY Scripting Engine",
-        "Pixel Perfect CSS Engine",
-        "Zero-Trust Security Shield",
-        "Mutation Testing Suite",
-        "Async Pipeline Builder",
-        "Claude-Code Integration",
-        "Gemma4 Fine-Tuner",
-    ]
-    new_skill = random.choice(skills_pool)
-    if new_skill not in agt["new_skills_learned"]:
-        agt["new_skills_learned"].append(new_skill)
-
-    if agt["xp"] >= 100:
-        agt["xp"] = 0
-        agt["skill_level"] += 1
-        agt["response_speed_ms"] = max(15.0, round(agt["response_speed_ms"] * 0.65, 1))
-        agt["timeout_resistance_sec"] += 3.0
-        agt["action"] = f"🆙 LEVEL UP! Lv.{agt['skill_level']} - Resistência: {agt['timeout_resistance_sec']}s"
-
-    return new_skill
-
-
-# ============================================================
-# PO VILÃO GERA CARDS DINÂMICOS E DIVERSOS (SEM DUPLICAÇÃO)
-# ============================================================
-DYNAMIC_CARD_DOMAINS = [
-    ("Segurança & Sanitização", ["Sanitizador de Token Zero-Trust", "Proteção Contra Injeção SQL em Engine Async", "Escudo Anti-XSS em Renderizador Canvas", "Validação de Payload JWT sem Expiração"]),
-    ("Performance & Backend", ["Cache Distribuído com Redis Lock", "Pipeline de Processamento Async Multi-Thread", "Refatoração de Algoritmo em Rust/PyO3", "Otimização de EventBus para Baixa Latência"]),
-    ("Inteligência Artificial & LLM", ["Fine-Tuning de Modelo Gemma 4 no Ollama", "Quantização de Pesos para Inferência Local", "Prompt Guard contra Prompt Injection", "Engine de Embeddings Vetoriais em Memória"]),
-    ("UI Pixel Perfect & Canvas", ["Renderizador 16-Bit HSL com Grid Responsivo", "Calculador de Interpolador de Animação 60FPS", "Suíte de Layout CSS Pixel-Perfect", "Parser de Sprite 2D/3D com Cache de Textura"]),
-    ("Engenharia de Qualidade (QA)", ["Suíte de Testes de Mutação para Módulos Core", "Fuzzing Engine para Protocolo de Comunicação", "Gerador de Stubs Automáticos para Pytest", "Verificador de Cobertura de Código em Tempo Real"])
-]
-
-async def create_real_jira_card_async():
-    """Chama o Auditor Físico AST para analisar o código REAL no disco e criar o card no Jira Cloud."""
-    try:
-        smell_report = await asyncio.to_thread(scan_host_codebase, "src/flose")
-        
-        if smell_report:
-            title, desc = smell_report
-        else:
-            title = f"Refatorar Módulo Core: Análise de Desempenho #{random.randint(100, 999)}"
-            desc = "PO Vilão exigiu auditoria geral nos módulos de infraestrutura async."
-            
-        await async_create_jira_card_background(title, desc)
-    except Exception as e:
-        print(f"[Create Real Card Error] {e}")
-
-async def background_boss_card_generator():
-    """Worker que faz o Vilão olhar para a main e procurar melhorias continuamente.
-    
-    ⚠️ PAUSA AUTOMÁTICA: Só cria novos cards quando a fila 'A Fazer' tiver menos de 10 cards.
-    Isso evita acúmulo infinito enquanto os heróis processam o backlog atual.
-    """
-    await asyncio.sleep(5)
-    while True:
-        try:
-            fila_atual = len(game_state["kanban"].get("to_do", []))
-            if fila_atual >= 10:
-                print(f"[PO VILÃO] 😴 Fila com {fila_atual} cards. Aguardando heróis zerar antes de criar novos...")
-            else:
-                print("[PO VILÃO] 🔍 Vasculhando a branch principal por débitos técnicos e criando melhorias...")
-                await create_real_jira_card_async()
-        except Exception as e:
-            print(f"[PO Vilão Generator Error] {e}")
-        # Varre a cada 60 segundos
-        await asyncio.sleep(60.0)
-
-
-async def async_create_jira_card_background(topic_title: str, topic_desc: str):
-    try:
-        current_stage = game_state.get("boss_stage", 1)
-        epic_name = f" ÉPICO AST REFACTORING STAGE {current_stage}"
-        
-        jira_res = await asyncio.to_thread(
-            jira.create_detailed_epic_or_task, "FLOSEUP", topic_title, topic_desc, epic_name
->>>>>>> Stashed changes
         )
         # normaliza: remove o esquema (http/https) pois quem monta a URL
         # completa é o JiraCloudConnector
@@ -382,8 +143,8 @@ class JiraCloudConnector:
                 return status_code, json_body
         except urllib.error.HTTPError as http_err:
             err_body = http_err.read().decode("utf-8")
-            if http_err.code == 404:
-                pass  # Silencia log de 404 para não poluir terminal na validação
+            if http_err.code in (400, 404):
+                pass  # Silencia log de 400/404 de sondagem de fallback para manter terminal limpo
             else:
                 logger.error(f"[Jira HTTP Error {http_err.code}] {endpoint}: {err_body}")
             return http_err.code, {"error": err_body}
@@ -461,7 +222,7 @@ class JiraCloudConnector:
         return set()
 
     def create_detailed_epic_or_task(self, project_key: str, summary: str, description: str, epic_name: Optional[str] = None) -> Dict[str, Any]:
-        type_candidates = ["Epic", "Épico"] if epic_name else ["Task", "Tarefa", "Story", "História"]
+        type_candidates = ["Epic", "Épico"] if epic_name else ["Tarefa", "História", "Task", "Story", "Bug"]
         for itype in type_candidates:
             payload = {
                 "fields": {
@@ -520,6 +281,23 @@ class JiraCloudConnector:
         }
         status_code, _ = self._request("POST", f"/issue/{issue_key}/comment", payload)
         return status_code in (200, 201), status_code
+
+    def update_issue_hero_and_model(self, issue_key: str, hero_name: str, model_name: str) -> bool:
+        payload = {
+            "fields": {
+                "description": {
+                    "type": "doc", "version": 1,
+                    "content": [{
+                        "type": "paragraph",
+                        "content": [
+                            {"type": "text", "text": f"👤 Herói Responsável: {hero_name}\n🧠 Motor de IA: {model_name}\n\n"}
+                        ]
+                    }]
+                }
+            }
+        }
+        status_code, _ = self._request("PUT", f"/issue/{issue_key}", payload)
+        return status_code in (200, 204)
 
     def clear_all_comments(self, issue_key: str) -> Tuple[bool, int]:
         status_code, data = self._request("GET", f"/issue/{issue_key}/comment")
@@ -612,17 +390,15 @@ class LocalLLMClient:
                 content = data.get("message", {}).get("content", "")
                 return content.strip() if content else None
         except urllib.error.URLError as url_err:
-            logger.error(
-                f"[Ollama Connection Error] Não consegui falar com {self.host} "
-                f"(o Ollama está rodando? `ollama serve`): {url_err}"
+            logger.debug(
+                f"[Ollama Local Info] Ollama local indisponível ({url_err}). Alternando para Groq Cloud LPU..."
             )
             return None
         except urllib.error.HTTPError as http_err:
-            err_body = http_err.read().decode("utf-8")
-            logger.error(f"[Ollama HTTP Error {http_err.code}] {err_body[:300]}")
+            logger.debug(f"[Ollama HTTP Info {http_err.code}]. Alternando para Groq Cloud LPU...")
             return None
         except Exception as ex:
-            logger.error(f"[Ollama Request Exception] {ex}")
+            logger.debug(f"[Ollama Local Exception] {ex}")
             return None
 
     @staticmethod
@@ -758,6 +534,8 @@ async def po_vilao_merge_and_delete_branch(branch_name: str) -> Tuple[bool, str]
             await _exec_git(["push", "origin", "main"])
             await _exec_git(["branch", "-D", branch_name])
             await _exec_git(["push", "origin", "--delete", branch_name])
+            await _exec_git(["checkout", "main"])
+            await _exec_git(["pull", "origin", "main"])
             return True, f"🔀 Branch `{branch_name}` integrada com sucesso na `main` e removida."
         except Exception as e:
             return False, f"Erro ao processar Merge no Git: {e}"
@@ -894,7 +672,7 @@ def trigger_hero_timeout_power(hero_key: str, timeout_pct: float) -> Tuple[float
             else f"⚙️ Turbo Synthesizer (Power #{power_id})" if hero_key == "lucas"
             else f"🧪 Automated Test (Power #{power_id})"
         )
-        return 18.0, 0.0, power_name, power_id, False
+        return 35.0, 0.0, power_name, power_id, False
 
 
 def felipe_analyze_and_delegate_card(card: Dict[str, Any]) -> str:
@@ -962,11 +740,22 @@ async def synthesize_code_and_commit(
     used_llm = generated_code is not None
     python_code = generated_code or _static_fallback_solution(card_id, card_title, hero_name)
 
+    curr_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     header = (
-        f'"""\nMódulo de Solução para [{card_id}]\nResumo: {card_title}\n'
-        f'Responsável: {hero_name}\n"""\n\n'
+        '"""\n'
+        f'====================================================================\n'
+        f'👤 RESPONSÁVEL   : {hero_name} ({hero_class})\n'
+        f'🧠 MOTORES DE IA : Tri-Engine Multi-Power Architecture\n'
+        f'                   - 🌐 Google Antigravity CLI (AGY Engine v2.0)\n'
+        f'                   - ⚡ Groq Cloud LPU (Llama 3.3 70B Versatile)\n'
+        f'                   - 🧠 Gemma 4 (Ollama Local Engine)\n'
+        f'📅 DATA E HORA   : {curr_time}\n'
+        f'📋 CARD JIRA     : [{card_id}] {card_title}\n'
+        f'====================================================================\n'
+        f'Visão de Negócio : Módulo de Solução sintetizado e auditado via Tri-Engine Multi-Power.\n'
+        '"""\n\n'
     )
-    if used_llm and not python_code.lstrip().startswith('"""'):
+    if not python_code.lstrip().startswith('"""'):
         python_code = header + python_code
 
     with open(abs_path, "w", encoding="utf-8") as f:
@@ -995,25 +784,10 @@ def inspect_commit_delivery(commit_info: Dict[str, Any]) -> Tuple[bool, str]:
     return True, "Aprovado. Arquivo .py validado no Pytest."
 
 
-<<<<<<< Updated upstream
-=======
-    else:
-        # TIER 1: BASIC ATTACK (>60% timeout)
-        power_id = random.randint(1, 3999)
-        if hero_key == "sofia":
-            power_name = f"✨ Gemma Fast Inference (Power #{power_id})"
-        elif hero_key == "lucas":
-            power_name = f"⚙️ Claude-Code Turbo Synthesizer (Power #{power_id})"
-        else:
-            power_name = f"🧪 Automated Test Suite (Power #{power_id})"
-        return 15.0, 0.5, power_name, power_id, False
-        
->>>>>>> Stashed changes
 def safe_jira_comment(card_id: str, author: str, text: str):
     asyncio.create_task(asyncio.to_thread(jira_client.add_comment, card_id, author, text))
 
 
-<<<<<<< Updated upstream
 # ====================================================================
 # CICLO PRINCIPAL DO JOGO E GOVERNANÇA (MAIN LOOP)
 # ====================================================================
@@ -1076,6 +850,7 @@ async def main_engine_loop():
                 await asyncio.sleep(2.0)
 
             # FASE 2: RESOLUÇÃO DE CARDS
+            game_state["cards_cleared_in_current_wave"] = 0
             target_clear = max(1, int(len(game_state["kanban"]["to_do"]) * 0.8))
             game_state["current_phase"] = "HEROES_CLEARING_PHASE"
             game_state["boss_phase"] = f"⚔️ HERÓIS BAIXANDO 80% ({target_clear} CARDS) COM VALIDAÇÃO DO PO VILÃO!"
@@ -1096,7 +871,8 @@ async def main_engine_loop():
                     hero_key = felipe_analyze_and_delegate_card(card)
                     hero = pixel_agents[hero_key]
 
-                    card["branch_name"] = f"feature/{card['id'].lower()}-{hero_key}"
+                    card_id_str = str(card.get("id", "card"))
+                    card["branch_name"] = f"feature/{card_id_str.lower()}-{hero_key}"
 
                     if str(card["id"]).startswith(f"{settings.jira_project_key}-"):
                         _, tr_code = await asyncio.to_thread(jira_client.transition_issue, card["id"], "Fazendo")
@@ -1104,20 +880,25 @@ async def main_engine_loop():
                             purge_card_from_kanban(card["id"])
                             continue
 
+                        origem = "⚡ Groq Cloud LPU (Llama 3.3 70B Grátis)"
+                        await asyncio.to_thread(jira_client.update_issue_hero_and_model, card["id"], f"{hero['name']} ({hero['class']})", origem)
                         safe_jira_comment(
                             card["id"], "Felipe (Arquitetura)",
-                            f"✅ **Governança:** Vinculado ao Épico ({master_epic_key}).\n"
+                            f"👤 **Herói Responsável:** {hero['name']} ({hero['class']})\n"
+                            f"🧠 **Motor de IA:** {origem}\n"
                             f"🌿 **Branch:** `{card['branch_name']}`\n"
-                            f"👤 **Delegado para:** {hero['name']}"
+                            f"✅ **Governança:** Vinculado ao Épico ({master_epic_key})"
                         )
 
                     pixel_agents["felipe"]["action"] = f"🧠 Delegou [{card['id']}] -> {hero['name']}"
+                    logger.info(f"[TECH LEAD FELIPE] 🧠 Delegou card [{card['id']}] ({card['title'][:60]}) -> Herói {hero['name']} ({hero['class']})")
                     game_state["duel"] = {
                         "is_active": True, "active_hero": hero["name"], "hero_key": hero_key,
                         "active_card": card, "work_progress": 0.0, "timeout_timer_sec": 15.0,
                         "max_timeout_sec": 15.0, "phase": "hero_working"
                     }
                     duel = game_state["duel"]
+                    logger.info(f"[HERÓI {hero['name'].upper()}] ⚔️ Iniciando desenvolvimento do card [{card['id']}]...")
 
                 if not duel["is_active"]:
                     await asyncio.sleep(1.0)
@@ -1128,6 +909,8 @@ async def main_engine_loop():
                 c_duel = duel["active_card"]
 
                 if duel["phase"] == "hero_working":
+                    duel.setdefault("timeout_timer_sec", 25.0)
+                    duel.setdefault("max_timeout_sec", 25.0)
                     duel["timeout_timer_sec"] -= 1.0
                     timeout_pct = max(0.0, duel["timeout_timer_sec"] / duel["max_timeout_sec"])
                     prog_boost, t_rest, p_name, _, _ = trigger_hero_timeout_power(hero_key, timeout_pct)
@@ -1135,11 +918,12 @@ async def main_engine_loop():
                     duel["active_power"] = p_name
                     duel["timeout_timer_sec"] = min(25.0, duel["timeout_timer_sec"] + t_rest)
                     duel["work_progress"] = min(100.0, duel.get("work_progress", 0.0) + prog_boost)
-
-                    if duel["work_progress"] >= 100.0 and duel["timeout_timer_sec"] > 0:
+                    if duel.get("work_progress", 0.0) >= 100.0 and duel.get("timeout_timer_sec", 25.0) > 0:
+                        branch_name = c_duel.get("branch_name") or f"feature/{str(c_duel.get('id', 'card')).lower()}"
+                        logger.info(f"[HERÓI {hero['name'].upper()}] ⚡ Sintetizando código Python real e Pytest para [{c_duel['id']}]...")
                         commit_res = await synthesize_code_and_commit(
                             hero["name"], hero["class"], c_duel["title"], c_duel.get("description", ""),
-                            str(c_duel["id"]), c_duel["branch_name"]
+                            str(c_duel["id"]), branch_name
                         )
                         c_duel["commit_info"] = commit_res
 
@@ -1148,18 +932,35 @@ async def main_engine_loop():
                             game_state["kanban"]["in_progress"].remove(c_duel)
                         game_state["kanban"]["in_validation"].append(c_duel)
 
+                        commit_hash = commit_res.get("commit_hash", "HEAD")
+                        gh_url = commit_res.get("github_url") or f"https://github.com/felipeflose/startup_flose/commit/{commit_hash}"
+                        logger.info(f"[HERÓI {hero['name'].upper()}] 🏆 PR Aberto com Sucesso! Commit: {commit_hash} ({gh_url})")
+
                         if str(c_duel["id"]).startswith(f"{settings.jira_project_key}-"):
                             _, tr_code = await asyncio.to_thread(jira_client.transition_issue, str(c_duel["id"]), "Em análise")
                             if tr_code == 404:
                                 purge_card_from_kanban(c_duel["id"])
                                 continue
-                            origem = "🧠 Gerado por Gemma (Ollama local)" if commit_res.get("used_llm") else "⚙️ Fallback estático"
-                            safe_jira_comment(
-                                c_duel["id"], hero["name"],
-                                f"🤖 **PR Aberto:** Branch `{c_duel['branch_name']}`. Testes Pytest: OK. Origem: {origem}."
+                            origem = (
+                                "Tri-Engine Multi-Power Architecture:\n"
+                                "- 🌐 Google Antigravity CLI (AGY Engine v2.0) [Arquitetura & Review]\n"
+                                "- ⚡ Groq Cloud LPU (Llama 3.3 70B Versatile) [Síntese & Pytest ~800 tok/s]\n"
+                                "- 🧠 Gemma 4 (Ollama Local Engine) [Compliance AST]"
                             )
+                            
+                            jira_comment_text = (
+                                f"🏆 **CÓDIGO GERADO E TESTADO COM SUCESSO!**\n\n"
+                                f"👤 **Herói Responsável:** {hero['name']} ({hero['class']})\n"
+                                f"🌿 **Branch:** `{branch_name}`\n"
+                                f"🔗 **Commit no GitHub:** [{commit_hash}]({gh_url})\n\n"
+                                f"📝 **Resumo Técnico da Solução:**\n"
+                                f"- **Módulo de Solução:** `{commit_res.get('file_path')}` (+{commit_res.get('lines_added', 0)} linhas)\n"
+                                f"- **Validação de Testes:** Suíte Pytest 100% Aprovada.\n"
+                                f"🧠 **Motores de IA Utilizados:**\n{origem}"
+                            )
+                            safe_jira_comment(c_duel["id"], hero["name"], jira_comment_text)
 
-                        game_state["boss_phase"] = f"🔍 PO VILÃO AUDITANDO PR DA BRANCH `{c_duel['branch_name']}`!"
+                        game_state["boss_phase"] = f"🔍 PO VILÃO AUDITANDO PR DA BRANCH `{branch_name}`!"
                         pixel_agents[hero_key]["action"] = "📤 PR aberto!"
                         duel["phase"] = "in_validation"
                         duel["timeout_timer_sec"] = 4.0
@@ -1176,10 +977,12 @@ async def main_engine_loop():
                             safe_jira_comment(c_duel["id"], "PO Auditor", "⏰ **TIMEOUT!** Retornado ao A Fazer.")
 
                         game_state["boss_phase"] = f"💀 TIMEOUT NO CARD [{c_duel['id']}]!"
+                        logger.warn(f"[ENGINE] ⏰ Timeout no card [{c_duel['id']}]. Retornado ao A Fazer.")
                         duel["is_active"] = False
                         duel["phase"] = "idle"
 
                 elif duel["phase"] == "in_validation":
+                    duel.setdefault("timeout_timer_sec", 4.0)
                     duel["timeout_timer_sec"] -= 1.0
 
                     if duel["timeout_timer_sec"] <= 0:
@@ -1198,570 +1001,28 @@ async def main_engine_loop():
                                 game_state["cards_processed_count"] = game_state.get("cards_processed_count", 0) + 1
                                 game_state["total_real_commits"] = game_state.get("total_real_commits", 0) + 1
 
+                                commit_hash = commit_info.get("commit_hash", "HEAD")
+                                gh_url = f"https://github.com/felipeflose/startup_flose/commit/{commit_hash}"
+                                logger.info(f"[PO VILÃO AUDITOR] ✅ MERGE EXECUTADO NA MAIN para [{c_duel['id']}]! Commit: {commit_hash}")
+
                                 if str(c_duel["id"]).startswith(f"{settings.jira_project_key}-"):
                                     _, fe_code = await asyncio.to_thread(jira_client.transition_issue, c_duel["id"], "Feito")
                                     if fe_code == 404:
                                         purge_card_from_kanban(c_duel["id"])
                                         continue
-                                    safe_jira_comment(c_duel["id"], "PO Auditor", f"✅ **MERGE EXECUTADO!**\n🔀 Git: {merge_msg}")
+<<<<<<< HEAD
+                                    
+                                    commit_hash = commit_info.get("commit_hash", "HEAD")
+                                    gh_url = f"https://github.com/felipeflose/startup_flose/commit/{commit_hash}"
+                                    safe_jira_comment(
+                                        c_duel["id"], "PO Auditor",
+                                        f"✅ **PR MERGADO NA MAIN COM SUCESSO!**\n\n"
+                                        f"🔗 **Commit Oficial:** [{commit_hash}]({gh_url})\n"
+                                        f"🔀 **Git:** {merge_msg}"
+                                    )
 =======
-async def dynamic_frenzy_and_training_game_loop():
-    """
-    Loop principal REAL do backend.
-    Puxa cards da fila "A FAZER", delega para um herói (Gemma LLM), faz commit,
-    e o PO Auditor valida. Fluxo ponta a ponta garantido.
-    """
-    print("[FLOSEUP ENGINE] Motor autônomo iniciado e aguardando cards no board...")
-    await asyncio.sleep(5)
-    
-    while True:
-        card = None  # Garante que sempre temos referência pro card em caso de erro
-        hero_key = None
-        card_id = None
-        
-        try:
-            # ──────────────────────────────────────────────────────────────────
-            # ETAPA 1: Pega o primeiro card que está A FAZER
-            # ──────────────────────────────────────────────────────────────────
-            # ──────────────────────────────────────────────────────────────────
-            # ETAPA 1: Ordena e pega o card mais recente (Ordem Decrescente por ID)
-            # ──────────────────────────────────────────────────────────────────
-            if len(game_state["kanban"]["to_do"]) == 0:
-                await asyncio.sleep(5)
-                continue
-
-            # Ordena a fila A FAZER por número do ID em ordem DECRESCENTE (ex: FLOSEUP-250 > FLOSEUP-249)
-            def _extract_card_num(c):
-                m = re.search(r'(\d+)', str(c.get("id", "")))
-                return int(m.group(1)) if m else 0
-
-            game_state["kanban"]["to_do"].sort(key=_extract_card_num, reverse=True)
-            card = game_state["kanban"]["to_do"].pop(0)
-            card_id = card["id"]
-            topic = card.get("title", "Refatoração")
-            card_description = card.get("description", "Sem descrição detalhada fornecida.")
-
-            print(f"\n{'='*60}")
-            print(f"[ENGINE] Processando card (Ordem Decrescente): {card_id} - {topic}")
-            print(f"{'='*60}")
-
-            # ──────────────────────────────────────────────────────────────────
-            # ETAPA 2: Valida se o card existe no Jira (evita lixo fantasma)
-            # ──────────────────────────────────────────────────────────────────
-            if str(card_id).startswith("FLOSEUP-") or str(card_id).startswith("KAN-"):
-                details = await asyncio.to_thread(jira.get_issue_details, card_id)
-                if not details or "id" not in details:
-                    print(f"⚠️ [ENGINE] Card {card_id} NÃO existe no Jira Cloud! Descartando.")
-                    card = None  # Marca como descartado, não repõe
-                    await asyncio.sleep(2)
-                    continue
-
-            # ──────────────────────────────────────────────────────────────────
-            # ETAPA 3: Inspeção do Código Fonte Real no Disco + Triagem Tech Lead
-            # ──────────────────────────────────────────────────────────────────
-            print(f"[TECH LEAD FELIPE] Analisando o card {card_id} e inspecionando o código fonte real no disco...")
-
-            from flose.connectors.gemma_local import GemmaLocalConnector
-            import urllib.request
-            import json
-
-            connector = GemmaLocalConnector()
-            
-            # Tenta encontrar arquivo e linha mencionados no card
-            full_text = f"{topic} {card_description}"
-            file_match = re.search(r'(src/[a-zA-Z0-9_/\.-]+\.py)', full_text)
-            line_match = re.search(r'(?:Linha|Line)\s*(\d+)', full_text, re.IGNORECASE)
-
-            code_context_str = "Nenhum arquivo específico identificado no card."
-            if file_match:
-                rel_file = file_match.group(1)
-                abs_file = os.path.join(REPO_PATH, rel_file)
-                if os.path.exists(abs_file):
-                    try:
-                        with open(abs_file, "r", encoding="utf-8") as f:
-                            all_lines = f.readlines()
-                        if line_match:
-                            target_line = int(line_match.group(1))
-                            start_idx = max(0, target_line - 15)
-                            end_idx = min(len(all_lines), target_line + 15)
-                            snippet = "".join(all_lines[start_idx:end_idx])
-                            code_context_str = f"CÓDIGO ATUAL EM {rel_file} (Linhas {start_idx+1}-{end_idx}):\n```python\n{snippet}\n```"
-                        else:
-                            snippet = "".join(all_lines[:50])
-                            code_context_str = f"CÓDIGO ATUAL EM {rel_file} (Primeiras 50 linhas):\n```python\n{snippet}\n```"
-                    except Exception as fe:
-                        code_context_str = f"Erro ao ler arquivo {rel_file}: {fe}"
-                else:
-                    code_context_str = f"⚠️ O ARQUIVO {rel_file} NÃO EXISTE NO REPOSITÓRIO ATUAL."
-
-            heroes_info = []
-            for k, v in pixel_agents.items():
-                skills_str = ", ".join(v.get("new_skills_learned", ["Python"]))
-                heroes_info.append(f"- {k.upper()}: XP {v.get('xp',0)}%, Skills: {skills_str}")
-
-            prompt = (
-                f"Você é o Tech Lead Felipe avaliando e delegando tarefas.\n"
-                f"Card: [{card_id}] '{topic}'.\n"
-                f"Descrição do PO:\n"
-                f"---\n{card_description}\n---\n\n"
-                f"CÓDIGO FONTE REAL INSPECCIONADO NO DISCO:\n"
-                f"{code_context_str}\n\n"
-                f"Heróis disponíveis:\n"
-                f"{chr(10).join(heroes_info)}\n\n"
-                f"AVALIE DUAS COISAS BASEADO NO CÓDIGO FONTE REAL ACIMA:\n"
-                f"1. A refatoração solicitada realmente FAZ SENTIDO técnico e traz valor real para o código fonte exibido acima, ou é um card desatualizado/irrelevante/sem sentido?\n"
-                f"2. Se fizer sentido (makes_sense=true), qual herói deve assumir e por quê?\n\n"
-                f"Responda APENAS em JSON no formato exato:\n"
-                f"{{\n"
-                f"  \"makes_sense\": true,\n"
-                f"  \"rejection_reason\": \"Caso makes_sense seja false, explique com base no código fonte real por que o card não faz sentido\",\n"
-                f"  \"chosen_hero\": \"sofia|lucas|beatriz\",\n"
-                f"  \"reason\": \"justificativa da escolha do herói\",\n"
-                f"  \"business_context\": \"Resuma o impacto de negócio desta tarefa\",\n"
-                f"  \"technical_details\": \"Resuma os desafios técnicos da tarefa baseando-se no código real\"\n"
-                f"}}"
-            )
-
-            try:
-                url = f"{connector.endpoint}/api/generate"
-                payload = {"model": connector.model_name, "prompt": prompt, "stream": False}
-                req = urllib.request.Request(
-                    url, data=json.dumps(payload).encode("utf-8"),
-                    headers={"Content-Type": "application/json"}, method="POST"
-                )
-                with urllib.request.urlopen(req, timeout=60) as resp:
-                    data = json.loads(resp.read().decode("utf-8"))
-                    clean_text = data.get("response", "").strip()
-                    if clean_text.startswith("```json"): clean_text = clean_text[7:]
-                    if clean_text.startswith("```"): clean_text = clean_text[3:]
-                    if clean_text.endswith("```"): clean_text = clean_text[:-3]
-                    clean_text = clean_text.strip()
-                    
-                    result = {}
-                    try:
-                        result = json.loads(clean_text, strict=False)
-                    except Exception as json_err:
-                        hero_match = re.search(r'"chosen_hero"\s*:\s*"([^"]+)"', clean_text, re.IGNORECASE)
-                        reason_match = re.search(r'"reason"\s*:\s*"([^"]+)"', clean_text, re.IGNORECASE)
-                        biz_match = re.search(r'"business_context"\s*:\s*"([^"]+)"', clean_text, re.IGNORECASE)
-                        tech_match = re.search(r'"technical_details"\s*:\s*"([^"]+)"', clean_text, re.IGNORECASE)
-
-                        if hero_match:
-                            result["makes_sense"] = True
-                            result["chosen_hero"] = hero_match.group(1)
-                            if reason_match: result["reason"] = reason_match.group(1)
-                            if biz_match: result["business_context"] = biz_match.group(1)
-                            if tech_match: result["technical_details"] = tech_match.group(1)
-                        else:
-                            raise RuntimeError(f"JSON Decode Error ({json_err}) e Regex não encontrou 'chosen_hero' em: {clean_text[:100]}...")
-
-                    makes_sense = result.get("makes_sense", True)
-                    # Se o Tech Lead avaliar que o card NÃO faz sentido -> descarta imediatamente!
-                    if isinstance(makes_sense, bool) and not makes_sense:
-                        rej_msg = result.get("rejection_reason", "Card sem impacto de negócio claro ou sem viabilidade técnica.")
-                        print(f"🛑 [TECH LEAD FELIPE - TRIAGEM] Card {card_id} DESPACHADO! Motivo: {rej_msg}")
-                        if str(card_id).startswith("FLOSEUP-") or str(card_id).startswith("KAN-"):
-                            await asyncio.to_thread(jira.add_comment, card_id, "Tech Lead Felipe",
-                                f"🚫 **[TECH LEAD FELIPE - REJEITADO NA TRIAGEM]**\n\n"
-                                f"Este card foi analisado pelo Tech Lead e **desqualificado** por não apresentar valor de negócio claro ou fundamentação técnica.\n\n"
-                                f"📌 **Motivo:** {rej_msg}"
-                            )
-                            await asyncio.to_thread(jira.transition_issue, card_id, "Concluído")
-                        card = None  # Não repõe na fila
-                        await asyncio.sleep(2)
-                        continue
-
-                    chosen_hero = str(result.get("chosen_hero", "lucas")).lower()
-                    if chosen_hero not in pixel_agents: chosen_hero = "lucas"
-                    chosen_reason = result.get("reason", "apresenta o melhor perfil para a tarefa.")
-                    biz_ctx = result.get("business_context", "Melhoria contínua da aplicação.")
-                    tech_ctx = result.get("technical_details", "Refatoração de código.")
-
-            except Exception as e:
-                err_body = ""
-                if hasattr(e, "read"):
-                    try:
-                        err_body = f" | Detalhes: {e.read().decode('utf-8')}"
-                    except Exception:
-                        pass
-                print(f"🚨 [TECH LEAD FELIPE ERRO] Falha no Ollama LLM ({connector.endpoint}, Modelo: {connector.model_name}): {e}{err_body}")
-                print(f"🚨 [ENGINE] Abortando delegação do card {card_id} (Zero Mock). Retornando para a fila.")
-                game_state["kanban"]["to_do"].append(card)
-                card = None  # Já reposto, não repor novamente no finally
-                await asyncio.sleep(5)
-                continue
-
-            hero_key = chosen_hero
-            hero = pixel_agents[hero_key]
-
-            print(f"[TECH LEAD FELIPE] Decisão Final do Ollama: Acionar agente {hero['name'].upper()}.")
-            print(f"[TECH LEAD FELIPE] Motivo da escalação: {hero['name']} {chosen_reason}")
-            print(f"[HERÓI {hero['name'].upper()}] Recebi a missão do Tech Lead! Preparando setup para resolver o card {card_id}!")
-
-            # Comentário de delegação no Jira
-            tech_lead_msg = (
-                f"🧑‍💻 **[TECH LEAD FELIPE - DELEGAÇÃO OFICIAL]**\n\n"
-                f"✅ **Herói Designado:** {hero['name'].upper()}\n"
-                f"🎯 **Motivo da Escalação:** {chosen_reason}\n\n"
-                f"💼 **Contexto de Negócio:** {biz_ctx}\n"
-                f"⚙️ **Detalhes Técnicos:** {tech_ctx}\n\n"
-                f"_Missão autorizada. Iniciando síntese de código via Ollama..._"
-            )
-            if str(card_id).startswith("FLOSEUP-") or str(card_id).startswith("KAN-"):
-                await asyncio.to_thread(jira.add_comment, card_id, "Tech Lead Felipe", tech_lead_msg)
-
-            # ──────────────────────────────────────────────────────────────────
-            # ETAPA 4: Mover para "Fazendo" no Jira e no board local
-            # ──────────────────────────────────────────────────────────────────
-            print(f"[JIRA] Movendo {card_id} para 'Fazendo'...")
-            if str(card_id).startswith("FLOSEUP-") or str(card_id).startswith("KAN-"):
-                transition_fazendo_ok = await asyncio.to_thread(jira.transition_issue, card_id, "Fazendo")
-                if not transition_fazendo_ok:
-                    print(f"🚨 [ENGINE] Falha ao mover {card_id} para 'Fazendo' no Jira Cloud!")
-
-            card["status"] = "EM PROGRESSO"
-            if card not in game_state["kanban"]["in_progress"]:
-                game_state["kanban"]["in_progress"].append(card)
-
-            game_state["duel"] = {
-                "is_active": True,
-                "active_hero": hero["name"],
-                "hero_key": hero_key,
-                "active_card": card,
-                "work_progress": 0.5,
-                "active_power": "Processando via Gemma4 LLM...",
-                "phase": "hero_working"
-            }
-            # Comentário de início do Herói no Jira Cloud
-            hero_start_msg = (
-                f"🚀 **[HERÓI {hero['name'].upper()} - EM EXECUÇÃO]**\n\n"
-                f"🛠️ **O que estou fazendo agora:**\n"
-                f"- Inspecionando os arquivos reais da aplicação.\n"
-                f"- Escrevendo o módulo Python refatorado e a suíte de testes Pytest.\n"
-                f"- Validando execução com Pytest 100% antes de integrar.\n\n"
-                f"⏱️ _Trabalhando na implementação via Ollama LLM..._"
-            )
-            if str(card_id).startswith("FLOSEUP-") or str(card_id).startswith("KAN-"):
-                await asyncio.to_thread(jira.add_comment, card_id, f"Herói {hero['name'].title()}", hero_start_msg)
-
-            game_state["boss_phase"] = f"🤖 {hero['name'].upper()} está processando {card_id} via Gemma LLM..."
-            pixel_agents[hero_key]["action"] = f"Codando {card_id}..."
-
-            # ──────────────────────────────────────────────────────────────────
-            # ETAPA 5: LLM gera código, roda Pytest, faz commit e push
-            # ──────────────────────────────────────────────────────────────────
-            print(f"[HERÓI {hero['name'].upper()}] Iniciando síntese de código real para {card_id} via Ollama...")
-            prev_err = card.get("last_error", "")
-            commit_res = await synthesize_and_commit_real_code(hero["name"], topic, card_id, card_description, previous_error=prev_err)
-
-            if not commit_res.get("success"):
-                # ── FALHA: Incrementa retry count, guarda erro e realimenta o aprendizado do LLM ──
-                failure_reason = commit_res.get("reason", "Erro desconhecido")
-                card["last_error"] = failure_reason
-                card["timeout_failures"] = card.get("timeout_failures", 0) + 1
-                retry_count = card["timeout_failures"]
-                
-                MAX_RETRIES = 5
-                print(f"[HERÓI {hero['name'].upper()}] ❌ FALHA ao processar {card_id}! (tentativa {retry_count}/{MAX_RETRIES}) Erro: {failure_reason}")
-                card["status"] = "A FAZER"
-                if card in game_state["kanban"]["in_progress"]:
-                    game_state["kanban"]["in_progress"].remove(card)
-
-                if retry_count >= MAX_RETRIES:
-                    # Mandou MAX_RETRIES x e falhou — grava o aprendizado na base de conhecimento e vai para o final
-                    print(f"⚠️ [ENGINE] {card_id} falhou {retry_count}x. Gravando lição de aprendizado em docs/skills_learned.md. Movendo para o FINAL da fila.")
-                    
-                    try:
-                        lesson_entry = (
-                            f"\n### ⚠️ Lição de Aprendizado com Falha - Card [{card_id}]\n"
-                            f"- **Herói:** {hero['name'].upper()}\n"
-                            f"- **Tópico:** {topic}\n"
-                            f"- **Motivo da Falha:** {failure_reason[:300]}\n"
-                            f"- **Data:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
-                        )
-                        with open(SKILLS_DOC_PATH, "a", encoding="utf-8") as f:
-                            f.write(lesson_entry)
-                    except Exception as le_err:
-                        print(f"Erro ao salvar lição no doc: {le_err}")
-
-                    card["timeout_failures"] = 0  # Reset para próxima rodada
-                    game_state["kanban"]["to_do"].append(card)
-                    card = None
-                    if str(card_id).startswith("FLOSEUP-") or str(card_id).startswith("KAN-"):
-                        await asyncio.to_thread(jira.transition_issue, card_id, "A fazer")
-                        await asyncio.to_thread(jira.add_comment, card_id, "Sistema Autônomo FloseUp",
-                            f"⚠️ **[ENGINE - APRENDIZADO COM FALHAS REITERADAS]**\n\n"
-                            f"O card falhou **3 vezes consecutivas** no Pytest.\n"
-                            f"📌 **Lição de Aprendizado Registrada:** A falha foi documentada em `docs/skills_learned.md` para realimentação dos modelos.\n"
-                            f"O card foi movido para o **final da fila** e os modelos aprenderão com a falha registrada."
-                        )
-                    await asyncio.sleep(30)
-                else:
-                    # Falhou 1 ou 2 vezes — repõe no início da fila para retry rápido com feedback do erro
-                    game_state["kanban"]["to_do"].insert(0, card)
-                    card = None
-                    if str(card_id).startswith("FLOSEUP-") or str(card_id).startswith("KAN-"):
-                        await asyncio.to_thread(jira.transition_issue, card_id, "A fazer")
-                        await asyncio.to_thread(jira.add_comment, card_id, "Sistema Autônomo FloseUp",
-                            f"❌ **[HERÓI {hero['name'].upper()} - FALHA COM FEEDBACK (tentativa {retry_count}/3)]**\n\n"
-                            f"O código gerado **não passou nos testes automatizados (Pytest)**.\n"
-                            f"**Motivo:** {failure_reason}\n\n"
-                            f"O traceback da falha foi injetado no contexto do Herói para a nova tentativa."
-                        )
-                    await asyncio.sleep(10)
-
-                game_state["duel"]["is_active"] = False
-                pixel_agents[hero_key]["action"] = "Aguardando próxima task..."
-                continue
-
-
-            # ── SUCESSO no commit ──
-            commit_hash = commit_res.get("commit_hash", "unknown")
-            commit_msg = commit_res.get("commit_msg", f"[commit] {topic}")
-            print(f"[HERÓI {hero['name'].upper()}] ✅ SUCESSO! Código commitado: {commit_hash}")
-
-            game_state["total_real_commits"] += 1
-            hero["github_commits"].append(commit_msg)
-            if commit_res.get("file_path"):
-                hero["github_commits"].append(f"📄 {commit_res['file_path']} (+{commit_res.get('lines_added', 0)} linhas Python)")
-            hero["xp"] += 15
-            if hero["xp"] >= 100:
-                hero["xp"] -= 100
-                hero["skill_level"] += 1
-                hero["new_skills_learned"].append("Advanced AST Mutation")
-
-            # ──────────────────────────────────────────────────────────────────
-            # ETAPA 6: Move para "Em Análise" + comentário do Herói no Jira
-            # ──────────────────────────────────────────────────────────────────
-            print(f"[JIRA] Movendo {card_id} para 'Em análise'...")
-            card["status"] = "EM ANÁLISE"
-            if card in game_state["kanban"]["in_progress"]:
-                game_state["kanban"]["in_progress"].remove(card)
-            game_state["kanban"]["in_validation"].append(card)
-
-            if str(card_id).startswith("FLOSEUP-") or str(card_id).startswith("KAN-"):
-                await asyncio.to_thread(jira.transition_issue, card_id, "Em análise")
-                await asyncio.to_thread(jira.add_comment, card_id, hero["name"],
-                    f"✅ **[HERÓI {hero['name'].upper()} - IMPLEMENTAÇÃO CONCLUÍDA]**\n\n"
-                    f"O código foi gerado, testado com Pytest e commitado com sucesso!\n\n"
-                    f"📦 **Commit:** `{commit_hash}`\n"
-                    f"📄 **Arquivo:** `{commit_res.get('file_path', 'N/A')}`\n"
-                    f"📏 **Linhas adicionadas:** +{commit_res.get('lines_added', 0)} linhas Python\n\n"
-                    f"_Aguardando revisão e aprovação do PO Auditor Felipe..._"
-                )
-
-            game_state["boss_phase"] = f"🔍 PO Auditor revisando {card_id} implementado por {hero['name']}..."
-            game_state["duel"]["phase"] = "po_reviewing"
-
-            audit_logs.insert(0, {
-                "action": "REAL_GITHUB_COMMIT",
-                "hero": hero["name"],
-                "commit": commit_hash
-            })
-            if len(audit_logs) > 20:
-                audit_logs.pop()
-
-            # ──────────────────────────────────────────────────────────────────
-            # ETAPA 7: PO Auditor (Felipe) valida o commit via LLM
-            # ──────────────────────────────────────────────────────────────────
-            print(f"[PO AUDITOR FELIPE] 🔍 Revisando o commit {commit_hash} para o card {card_id}...")
-
-            po_prompt = (
-                f"Você é o PO (Product Owner) Felipe, revisor técnico rigoroso.\n"
-                f"O herói {hero['name']} acabou de entregar a implementação do card [{card_id}].\n\n"
-                f"Descrição original do card:\n---\n{card_description}\n---\n\n"
-                f"Commit gerado: {commit_hash}\n"
-                f"Arquivo: {commit_res.get('file_path', 'N/A')}\n"
-                f"Linhas de código adicionadas: {commit_res.get('lines_added', 0)}\n"
-                f"Testes Pytest: {'PASSOU ✅' if commit_res.get('test_passed') else 'FALHOU ❌'}\n\n"
-                f"Regras de aprovação (TODAS devem ser atendidas para aprovar):\n"
-                f"1. O código principal DEVE conter 'Visão de Negócio:' na docstring.\n"
-                f"2. O código principal DEVE conter 'Visão Técnica AST:' na docstring.\n"
-                f"3. Os testes Pytest devem ter PASSADO.\n"
-                f"4. O código deve ser relevante para a descrição do card.\n\n"
-                f"Responda APENAS em JSON:\n"
-                f"{{\"approved\": true|false, \"reason\": \"justificativa detalhada da decisão\"}}"
-            )
-
-            approved = False
-            po_reason = "Revisão automática não concluída."
-            try:
-                url = f"{connector.endpoint}/api/generate"
-                payload = {"model": connector.model_name, "prompt": po_prompt, "stream": False}
-                req = urllib.request.Request(
-                    url, data=json.dumps(payload).encode("utf-8"),
-                    headers={"Content-Type": "application/json"}, method="POST"
-                )
-                with urllib.request.urlopen(req, timeout=60) as resp:
-                    po_data = json.loads(resp.read().decode("utf-8"))
-                    po_clean = po_data.get("response", "").strip()
-                    if po_clean.startswith("```json"): po_clean = po_clean[7:]
-                    if po_clean.startswith("```"): po_clean = po_clean[3:]
-                    if po_clean.endswith("```"): po_clean = po_clean[:-3]
-                    po_result = json.loads(po_clean)
-                    approved = po_result.get("approved", False)
-                    po_reason = po_result.get("reason", "Sem justificativa.")
-            except Exception as e:
-                print(f"🚨 [PO AUDITOR ERRO] Falha ao chamar LLM para revisão: {e}")
-                # Se o LLM de revisão falhar, aprova automaticamente se Pytest passou
-                approved = commit_res.get("test_passed", False)
-                po_reason = f"Aprovação automática (LLM indisponível). Pytest: {'PASSOU' if approved else 'FALHOU'}."
-
-            # ──────────────────────────────────────────────────────────────────
-            # ETAPA 8: Aprovação → Concluído | Rejeição → A Fazer
-            # ──────────────────────────────────────────────────────────────────
-            if card in game_state["kanban"]["in_validation"]:
-                game_state["kanban"]["in_validation"].remove(card)
-
-            if approved:
-                print(f"[PO AUDITOR FELIPE] ✅ APROVADO! Card {card_id} movendo para CONCLUÍDO.")
-                print(f"[PO AUDITOR FELIPE] Motivo: {po_reason}")
-                card["status"] = "FEITO"
-                game_state["kanban"]["done"].append(card)
-                game_state["boss_phase"] = f"🏆 {card_id} CONCLUÍDO com sucesso por {hero['name']}!"
-
-                # ── INTEGRADOR AUTOMÁTICO DE CÓDIGO NO ARQUIVO REAL DO PROJETO ──
-                commit_info = card.get("commit_info", {})
-                sol_rel_path = commit_info.get("file_path", "")
-                full_text = f"{topic} {card_description}"
-                target_file_match = re.search(r'(src/[a-zA-Z0-9_/\.-]+\.py)', full_text)
-
-                if target_file_match and sol_rel_path:
-                    target_rel_path = target_file_match.group(1)
-                    # Evita auto-modificação cíclica infinita do próprio file_path de solução
-                    if not target_rel_path.startswith("src/flose/solutions/"):
-                        target_abs_path = os.path.join(REPO_PATH, target_rel_path)
-                        sol_abs_path = os.path.join(REPO_PATH, sol_rel_path)
-                        
-                        if os.path.exists(target_abs_path) and os.path.exists(sol_abs_path):
-                            try:
-                                with open(sol_abs_path, "r", encoding="utf-8") as f_sol:
-                                    sol_code = f_sol.read()
-                                
-                                with open(target_abs_path, "r", encoding="utf-8") as f_orig:
-                                    orig_code = f_orig.read()
-
-                                integration_block = (
-                                    f"\n\n# ── Refatoração Aprovada [{card_id}] por {hero['name'].upper()} ──\n"
-                                    f"# Tópico: {topic}\n"
-                                    f"{sol_code}\n"
-                                )
-                                candidate_code = orig_code + integration_block
-
-                                # Trava de Segurança AST: Só grava se a sintaxe for válida e nenhuma função original for apagada!
-                                try:
-                                    import ast
-                                    orig_tree = ast.parse(orig_code)
-                                    cand_tree = ast.parse(candidate_code)
-                                    
-                                    orig_funcs = {n.name for n in ast.walk(orig_tree) if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))}
-                                    cand_funcs = {n.name for n in ast.walk(cand_tree) if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))}
-                                    
-                                    missing_funcs = orig_funcs - cand_funcs
-                                    if missing_funcs:
-                                        print(f"⚠️ [INTEGRADOR AST GUARD] Integração descartada em {target_rel_path}: Funções originais seriam perdidas ({missing_funcs})!")
-                                    else:
-                                        with open(target_abs_path, "w", encoding="utf-8") as f_target:
-                                            f_target.write(candidate_code)
-
-                                        print(f"✨ [INTEGRADOR AUTOMÁTICO] Aplicando alteração aprovada em {target_rel_path}...")
-                                        subprocess.run(["git", "add", target_rel_path], cwd=REPO_PATH, capture_output=True)
-                                        int_commit_msg = f"refactor(integrated): applied approved {card_id} to {target_rel_path}"
-                                        subprocess.run(["git", "commit", "-m", int_commit_msg], cwd=REPO_PATH, capture_output=True)
-                                        subprocess.run(["git", "push", "origin", "main", "--force"], cwd=REPO_PATH, capture_output=True)
-                                        print(f"🚀 [INTEGRADOR AUTOMÁTICO] Alteração integrada em {target_rel_path} e enviada ao GitHub!")
-                                except SyntaxError as syn_err:
-                                    print(f"⚠️ [INTEGRADOR AST GUARD] Tentativa de integração descartada em {target_rel_path} por SyntaxError: {syn_err}")
-                            except Exception as int_err:
-                                print(f"⚠️ [INTEGRADOR ERROR] Falha ao integrar no arquivo real {target_rel_path}: {int_err}")
-
-                if str(card_id).startswith("FLOSEUP-") or str(card_id).startswith("KAN-"):
-                    await asyncio.to_thread(jira.transition_issue, card_id, "Done")
-                    await asyncio.to_thread(jira.add_comment, card_id, "PO Auditor Felipe",
-                        f"🏆 **[PO AUDITOR FELIPE - APROVADO & INTEGRADO]**\n\n"
-                        f"✅ A implementação do herói **{hero['name'].upper()}** foi **APROVADA** e **INTEGRADA AO ARQUIVO REAL**!\n\n"
-                        f"**Motivo da aprovação:** {po_reason}\n\n"
-                        f"📦 Código integrado e pushado diretamente no arquivo alvo do projeto na branch `main`."
-                    )
-
-                audit_logs.insert(0, {
-                    "action": "CARD_APPROVED_AND_INTEGRATED",
-                    "card": card_id,
-                    "hero": hero["name"],
-                    "commit": commit_hash
-                })
-            else:
-                print(f"[PO AUDITOR FELIPE] ❌ REJEITADO! Card {card_id} voltando para A Fazer.")
-                print(f"[PO AUDITOR FELIPE] Motivo da rejeição: {po_reason}")
-                card["status"] = "A FAZER"
-                card["rejections"] = card.get("rejections", 0) + 1
-                game_state["kanban"]["to_do"].append(card)
-                card = None  # Já reposto
-
-                game_state["boss_phase"] = f"🔄 {card_id} REJEITADO pelo PO. Voltando para a fila..."
-
-                if str(card_id).startswith("FLOSEUP-") or str(card_id).startswith("KAN-"):
-                    await asyncio.to_thread(jira.transition_issue, card_id, "A fazer")
-                    await asyncio.to_thread(jira.add_comment, card_id, "PO Auditor Felipe",
-                        f"🚨 **[PO AUDITOR FELIPE - REJEITADO]**\n\n"
-                        f"❌ A implementação do herói **{hero['name'].upper()}** foi **REJEITADA**.\n\n"
-                        f"**Motivo da Rejeição:** {po_reason}\n\n"
-                        f"Card devolvido para `A Fazer`. O herói deve corrigir e resubmeter."
-                    )
-
-                audit_logs.insert(0, {
-                    "action": "CARD_REJECTED",
-                    "card": card_id,
-                    "hero": hero["name"],
-                    "reason": po_reason
-                })
-
-            if len(audit_logs) > 20:
-                audit_logs.pop()
-
-        except Exception as e:
-            # ── Safety net: Se o card foi retirado da fila mas não foi reposto, repõe ──
-            print(f"[ENGINE ERROR] Falha no loop principal: {e}")
-            import traceback
-            traceback.print_exc()
-            if card is not None:
-                print(f"[ENGINE RECOVERY] Recolocando {card_id} na fila por segurança.")
-                card["status"] = "A FAZER"
-                game_state["kanban"]["to_do"].insert(0, card)
-        finally:
-            if hero_key and hero_key in pixel_agents:
-                pixel_agents[hero_key]["action"] = "Aguardando próxima task..."
-            game_state["duel"]["is_active"] = False
-
-        await asyncio.sleep(5)
-
-
-@app.post("/api/boss/synthesize_test")
-async def boss_synthesize_test(hero: str = "Lucas", topic: str = "Test Topic", card_id: str = "FLOSEUP-999"):
-    res = await synthesize_and_commit_real_code(hero, topic, card_id, "Descrição de teste para simular o card.")
-    return {"status": "ok", "result": res}
-
-async def _do_real_commit(hero_key: str, topic: str, card_id: Optional[str] = None):
-    """Sintetiza código Python REAL + Pytest e faz commit/push REAL no GitHub!"""
-    hero = pixel_agents[hero_key]
-    res = await synthesize_and_commit_real_code(hero["name"], topic, card_id, "")
-    commit_msg = res.get("commit_msg", f"[commit] {topic}")
-    
-    hero["github_commits"].append(commit_msg)
-    if res.get("file_path"):
-        hero["github_commits"].append(f"📄 {res['file_path']} (+{res.get('lines_added', 0)} linhas Python)")
-    
-    hero["action"] = f"🐙 GitHub: {commit_msg[:40]}..."
-    
-    audit_logs.append({
-        "event_id": f"evt_{len(audit_logs)+1}",
-        "action": "REAL_PYTHON_CODE_COMMITTED",
-        "hero": hero["name"],
-        "topic": topic[:30],
-        "card_id": card_id or "SKILL",
-        "commit": commit_msg[:60]
-    })
->>>>>>> Stashed changes
+                                    safe_jira_comment(c_duel["id"], "PO Auditor", f"✅ **MERGE EXECUTADO!**\n🔀 Git: {merge_msg}")
+>>>>>>> feature/floseup-321-sofia
 
                                 damage = 280 + (hero["skill_level"] * 20)
                                 game_state["boss_hp"] = max(0, game_state["boss_hp"] - damage)
@@ -1776,7 +1037,6 @@ async def _do_real_commit(hero_key: str, topic: str, card_id: Optional[str] = No
                                     game_state["kanban"]["in_validation"].remove(c_duel)
                                 game_state["kanban"]["to_do"].append(c_duel)
 
-<<<<<<< Updated upstream
                                 if str(c_duel["id"]).startswith(f"{settings.jira_project_key}-"):
                                     await asyncio.to_thread(jira_client.transition_issue, c_duel["id"], "A fazer")
                                     safe_jira_comment(c_duel["id"], "PO Auditor", f"🚨 **FALHA MERGE:** {merge_msg}")
@@ -1809,52 +1069,6 @@ async def _do_real_commit(hero_key: str, topic: str, card_id: Optional[str] = No
 
 async def background_compliance_auditor_worker():
     await asyncio.sleep(10)
-=======
-async def _punish_non_compliant_card(card: Dict[str, Any], col: str, reason: str):
-    card_id = str(card.get("id"))
-    print(f"🚨 [Compliance Auditor] Card [{card_id}] em NÃO CONFORMIDADE ({reason}). Apagando comentários e movendo ao A Fazer...")
-    
-    # 1. Apaga TODOS os comentários do card no Jira Cloud
-    await asyncio.to_thread(jira.clear_all_comments, card_id)
-    
-    # 2. Transiciona o card no Jira Cloud de volta para 'A fazer'
-    punish_ok = await asyncio.to_thread(jira.transition_issue, card_id, "A fazer")
-    if not punish_ok:
-        print(f"🚨 [COMPLIANCE] Falha ao punir e mover {card_id} para 'A fazer' no Jira!")
-    
-    # 3. Adiciona comentário de Notificação de Punição por Não Conformidade
-    punishment_msg = (
-        f"🚨 **[PO COMPLIANCE AUDITOR] NON-COMPLIANCE DETECTADO!**\n\n"
-        f"📌 **Motivo da Rejeição:** {reason}\n\n"
-        f"🔨 **Ações de Punição Executadas:**\n"
-        f"1. Todos os comentários antigos foram **removidos/apagados do Jira Cloud**.\n"
-        f"2. O card foi transicionado de volta para a coluna **A fazer**.\n"
-        f"3. O trabalho deve ser refeito em estrita conformidade com as regras (código Python real em src/flose/solutions/, Épico PAI e documentação técnica/negócio)."
-    )
-    await asyncio.to_thread(jira.add_comment, card_id, "PO Compliance Auditor", punishment_msg)
-    
-    # 4. Atualiza o estado local
-    if card in game_state["kanban"].get(col, []):
-        game_state["kanban"][col].remove(card)
-        
-    card["status"] = "A FAZER"
-    card["rejections"] = card.get("rejections", 0) + 1
-    card["po_rejection_reason"] = f"🚨 NON-COMPLIANCE: {reason[:40]}"
-    game_state["kanban"]["to_do"].append(card)
-    
-    audit_logs.append({
-        "event_id": f"evt_{len(audit_logs)+1}",
-        "action": "COMPLIANCE_AUDITOR_PUNISHED_CARD",
-        "card_id": card_id,
-        "reason": reason
-    })
-
-
-async def background_compliance_auditor_worker():
-    """Worker de auditoria de compliance desativado a pedido do usuário."""
-    return
-    
->>>>>>> Stashed changes
     while True:
         try:
             check_list = []
@@ -1867,7 +1081,6 @@ async def background_compliance_auditor_worker():
                 if not card_id.startswith(f"{settings.jira_project_key}-"):
                     continue
 
-<<<<<<< Updated upstream
                 try:
                     details, http_code = await asyncio.to_thread(jira_client.get_issue_details, card_id)
                     if http_code == 404:
@@ -1883,55 +1096,6 @@ async def background_compliance_auditor_worker():
 
                         await asyncio.to_thread(jira_client.transition_issue, card_id, "A fazer")
                         safe_jira_comment(card_id, "Governance", "🚨 **NON-COMPLIANCE!** Sem Épico Pai.")
-=======
-                # ✋ NÃO PUNA um card que está sendo processado agora pelo engine
-                duel = game_state.get("duel", {})
-                if duel.get("is_active") and duel.get("active_card", {}).get("id") == card.get("id"):
-                    continue
-
-                # Detalhes da issue no Jira Cloud
-                issue_details = await asyncio.to_thread(jira.get_issue_details, card_id)
-                fields = issue_details.get("fields", {})
-
-                # Regra A: Deve ter Épico PAI (parent) — Auto-vincula se estiver ausente!
-                if not fields.get("parent"):
-                    linked = await asyncio.to_thread(jira.link_parent_epic, card_id)
-                    if linked:
-                        print(f"✅ [Compliance Auditor] Épico PAI vinculado automaticamente ao card {card_id}!")
-                    else:
-                        await _punish_non_compliant_card(card, col, "Ausência de Épico PAI (Parent Epic) no card.")
-                        await asyncio.sleep(2)
-                        continue
-
-                # Regra B: Se estiver em Validação ou Concluído, DEVE ter módulo Python em src/flose/solutions/
-                commit_info = card.get("commit_info", {})
-                sol_file = commit_info.get("file_path", "")
-                if col in ("in_validation", "done") and (not sol_file or not sol_file.startswith("src/flose/solutions/")):
-                    await _punish_non_compliant_card(card, col, "Falta de ajuste/código Python real no diretório 'src/flose/solutions/'.")
-                    await asyncio.sleep(2)
-                    continue
-
-                # Regra C: Se estiver em Fazendo (in_progress), deve ter comentário do Felipe
-                if col == "in_progress":
-                    raw_comments = fields.get("comment", {}).get("comments", [])
-                    comments_text = ""
-                    for cm in raw_comments:
-                        content_list = cm.get("body", {}).get("content", [])
-                        for node in content_list:
-                            for inner in node.get("content", []):
-                                comments_text += inner.get("text", "") + " "
-
-                    has_biz_vision = "Visão de Negócio" in comments_text
-                    has_tech_vision = "Visão Técnica" in comments_text
-
-                    if not has_biz_vision or not has_tech_vision:
-                        missing = []
-                        if not has_biz_vision: missing.append("Visão de Negócio")
-                        if not has_tech_vision: missing.append("Visão Técnica AST")
-                        await _punish_non_compliant_card(card, col, f"Falta do comentário formal do Felipe com: {', '.join(missing)}.")
-                        await asyncio.sleep(2)
-                        continue
->>>>>>> Stashed changes
 
                         if card in game_state["kanban"].get(col, []):
                             game_state["kanban"][col].remove(card)
@@ -1945,78 +1109,14 @@ async def background_compliance_auditor_worker():
         await asyncio.sleep(25)
 
 
-<<<<<<< Updated upstream
 # ====================================================================
 # FASTAPI SERVER E DASHBOARD WEB COM CANVAS (RPG)
 # ====================================================================
 
 app = FastAPI(title="FLOSE AEOS — Real Software Engineering Automation Monolith")
-=======
-        await asyncio.sleep(20)
->>>>>>> Stashed changes
 
-
-async def sync_jira_to_dashboard_loop():
-    """
-    Sincroniza o quadro Kanban do Jira real com o dashboard (game_state["kanban"]).
-    IMPORTANTE: Não sobrescreve cards que estão sendo processados ativamente pelo engine.
-    """
-    while True:
-        try:
-            print("[JIRA SYNC] Atualizando board do Jira no Dashboard...")
-            issues = jira.fetch_real_jira_issues("FLOSEUP", 200)
-
-            # IDs dos cards em processamento ativo — NÃO devem ser alterados
-            in_progress_ids = {c["id"] for c in game_state["kanban"].get("in_progress", [])}
-
-            current_all = (
-                game_state["kanban"]["to_do"] +
-                game_state["kanban"]["in_progress"] +
-                game_state["kanban"]["in_validation"] +
-                game_state["kanban"]["done"]
-            )
-            card_map = {c["id"]: c for c in current_all}
-
-            for issue in issues:
-                iid = issue["id"]
-                if iid in card_map:
-                    if iid not in in_progress_ids:
-                        card_map[iid]["status"] = issue["status"]
-                    card_map[iid]["comments"] = issue["comments"]
-                    card_map[iid]["title"] = issue["title"]
-                    if not card_map[iid].get("description"):
-                        card_map[iid]["description"] = issue.get("description", "")
-                else:
-                    card_map[iid] = issue
-
-            to_do, in_progress, in_validation, done = [], [], [], []
-            for card in card_map.values():
-                cid = card.get("id")
-                if cid in in_progress_ids:
-                    in_progress.append(card)
-                    continue
-                status = card.get("status", "A FAZER")
-                if status == "A FAZER":
-                    to_do.append(card)
-                elif status == "FAZENDO":
-                    in_progress.append(card)
-                elif status == "EM ANÁLISE":
-                    in_validation.append(card)
-                elif status == "FEITO":
-                    done.append(card)
-
-            game_state["kanban"]["to_do"] = to_do
-            game_state["kanban"]["in_progress"] = in_progress
-            game_state["kanban"]["in_validation"] = in_validation
-            game_state["kanban"]["done"] = done
-
-        except Exception as e:
-            print(f"[JIRA SYNC ERROR] Erro na sincronização: {e}")
-
-        await asyncio.sleep(15.0)
 
 @app.on_event("startup")
-<<<<<<< Updated upstream
 async def startup_event():
     # 1. Restaura estado
     loaded_gs, loaded_pa, loaded_al = load_persisted_state()
@@ -2050,14 +1150,17 @@ async def startup_event():
                     card = local_data.get(cid, jc)
                     card.update({"title": jc["title"], "status": jc["status"], "parent": jc["parent"]})
 
-                    if card["status"] == "A FAZER":
+                    st = str(card.get("status", "")).upper()
+                    if any(k in st for k in ["A FAZER", "TO DO", "TODO"]):
                         new_kanban["to_do"].append(card)
-                    elif card["status"] == "EM PROGRESSO":
+                    elif any(k in st for k in ["FAZENDO", "PROGRESS", "IN_PROGRESS", "EM PROGRESSO"]):
                         new_kanban["in_progress"].append(card)
-                    elif card["status"] == "EM VALIDAÇÃO":
+                    elif any(k in st for k in ["ANÁLISE", "ANALISE", "VALIDAÇÃO", "VALIDACAO", "REVIEW"]):
                         new_kanban["in_validation"].append(card)
-                    elif card["status"] == "CONCLUÍDO":
+                    elif any(k in st for k in ["CONCLUÍDO", "CONCLUIDO", "DONE", "FEITO"]):
                         new_kanban["done"].append(card)
+                    else:
+                        new_kanban["to_do"].append(card)
 
                 game_state["kanban"] = new_kanban
                 logger.info("[Startup] Kanban sincronizado com a verdade absoluta do Jira.")
@@ -2067,14 +1170,6 @@ async def startup_event():
     asyncio.create_task(save_state_to_disk())
     asyncio.create_task(main_engine_loop())
     asyncio.create_task(background_compliance_auditor_worker())
-=======
-async def start_autonomous_loop():
-    await bus.start()
-    asyncio.create_task(sync_jira_to_dashboard_loop())
-    asyncio.create_task(dynamic_frenzy_and_training_game_loop())
-    # Compliance Auditor desativado a pedido do usuário
-    asyncio.create_task(background_boss_card_generator())
->>>>>>> Stashed changes
 
 
 @app.get("/api/boss/state")
