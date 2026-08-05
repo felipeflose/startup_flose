@@ -1010,7 +1010,7 @@ async def main_engine_loop():
                                     if fe_code == 404:
                                         purge_card_from_kanban(c_duel["id"])
                                         continue
-<<<<<<< HEAD
+##<<<<<<< HEAD
                                     
                                     commit_hash = commit_info.get("commit_hash", "HEAD")
                                     gh_url = f"https://github.com/felipeflose/startup_flose/commit/{commit_hash}"
@@ -1020,9 +1020,9 @@ async def main_engine_loop():
                                         f"🔗 **Commit Oficial:** [{commit_hash}]({gh_url})\n"
                                         f"🔀 **Git:** {merge_msg}"
                                     )
-=======
+#=======
                                     safe_jira_comment(c_duel["id"], "PO Auditor", f"✅ **MERGE EXECUTADO!**\n🔀 Git: {merge_msg}")
->>>>>>> feature/floseup-321-sofia
+#>>>>>>> feature/floseup-321-sofia
 
                                 damage = 280 + (hero["skill_level"] * 20)
                                 game_state["boss_hp"] = max(0, game_state["boss_hp"] - damage)
