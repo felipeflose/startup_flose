@@ -515,31 +515,48 @@ async def git_commit_and_push(branch_name: str, file_path: str, commit_message: 
 async def po_vilao_merge_and_delete_branch(branch_name: str) -> Tuple[bool, str]:
     if not branch_name or branch_name == "main":
         return True, "Sem branch a integrar."
+    
     async with _git_merge_lock:
         try:
             await _exec_git(["fetch", "origin"])
             await _exec_git(["checkout", "main"])
             await _exec_git(["pull", "origin", "main"])
+
             target_ref = branch_name
             check_branch = await _exec_git(["rev-parse", "--verify", branch_name])
             if check_branch[0] != 0:
                 target_ref = f"origin/{branch_name}"
 
+            # Tenta o Merge
             merge_code, _, stderr = await _exec_git(
                 ["merge", target_ref, "--no-ff", "-m", f"chore(release): PO merged {branch_name} into main"]
             )
+            
+            # PROTEÇÃO ANTI-TRAVAMENTO: Se houver conflito, aborta imediatamente
             if merge_code != 0:
-                return False, f"Falha no Git Merge: {stderr.strip()[:150]}"
+                logger.error(f"[Git Merge Conflict] Abortando merge da branch {branch_name}: {stderr}")
+                await _exec_git(["merge", "--abort"])
+                await _exec_git(["checkout", "main"])
+                return False, f"Falha no Git Merge (Conflito Abortado): {stderr.strip()[:150]}"
 
-            await _exec_git(["push", "origin", "main"])
+            # Tenta o Push da main
+            push_code, _, push_err = await _exec_git(["push", "origin", "main"])
+            if push_code != 0:
+                logger.error(f"[Git Push Main Error] Abortando estado: {push_err}")
+                return False, f"Falha no Push da main após Merge: {push_err.strip()[:150]}"
+
+            # Limpeza das branches
             await _exec_git(["branch", "-D", branch_name])
             await _exec_git(["push", "origin", "--delete", branch_name])
             await _exec_git(["checkout", "main"])
-            await _exec_git(["pull", "origin", "main"])
-            return True, f"🔀 Branch `{branch_name}` integrada com sucesso na `main` e removida."
+            
+            return True, f"🔀 Branch `{branch_name}` integrada com sucesso na `main` e publicada."
+        
         except Exception as e:
+            # Garantia de segurança em exceções
+            await _exec_git(["merge", "--abort"])
+            await _exec_git(["checkout", "main"])
             return False, f"Erro ao processar Merge no Git: {e}"
-
 
 # ====================================================================
 # EXECUTOR DE TESTES UNITÁRIOS COM PYTEST
